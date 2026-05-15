@@ -55,7 +55,8 @@ void ClientProtocol::send_command(ClientCommand command) {
   }
 }
 
-void ClientProtocol::send_register_player(const RegisterPlayerCommand &player_name) {
+void ClientProtocol::send_register_player(
+    const RegisterPlayerCommand &player_name) {
   send_uint8(static_cast<uint8_t>(protocol::ClientOpcode::REGISTER_PLAYER));
 
   send_string(player_name.name);
@@ -69,7 +70,8 @@ void ClientProtocol::send_meditate() {
   send_uint8(static_cast<uint8_t>(protocol::ClientOpcode::MEDITATE));
 }
 
-void ClientProtocol::send_private_message(const PrivateMessageCommand &private_message) {
+void ClientProtocol::send_private_message(
+    const PrivateMessageCommand &private_message) {
   send_uint8(static_cast<uint8_t>(protocol::ClientOpcode::PRIVATE_MESSAGE));
 
   send_string(private_message.target);
