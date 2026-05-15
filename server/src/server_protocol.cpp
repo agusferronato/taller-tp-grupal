@@ -28,20 +28,24 @@ ClientCommand ServerProtocol::recv_command() {
     return ExitCommand{};
 
   default:
-    throw ProtocolError("Unable to process Command: Unknown client opcode received");
+    throw ProtocolError(
+        "Unable to process Command: Unknown client opcode received");
   }
 }
 
-void ServerProtocol::send_event(const ServerEvent& event) {
-    if (std::holds_alternative<ChatMessageEvent>(event)) {
-        send_chat_message(std::get<ChatMessageEvent>(event));
+void ServerProtocol::send_event(const ServerEvent &event) {
+  if (std::holds_alternative<ChatMessageEvent>(event)) {
+    send_chat_message(std::get<ChatMessageEvent>(event));
 
-    } else if (std::holds_alternative<PlayerMovedEvent>(event)) {
-        send_player_moved(std::get<PlayerMovedEvent>(event));
+  } else if (std::holds_alternative<NpcDefeatedEvent>(event)) {
+    send_npc_defeated(std::get<NpcDefeatedEvent>(event));
 
-    } else {
-        throw ProtocolError("Unable to send event: Unknown server event");
-    }
+  } else if (std::holds_alternative<PlayerMovedEvent>(event)) {
+    send_player_moved(std::get<PlayerMovedEvent>(event));
+
+  } else {
+    throw ProtocolError("Unable to send event: Unknown server event");
+  }
 }
 
 void ServerProtocol::send_chat_message(const ChatMessageEvent &chat_msg) {
