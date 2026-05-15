@@ -23,7 +23,6 @@ enum class ClientOpcode : uint8_t {
 // Opcodes para eventos enviados por el servidor a los clientes
 enum class ServerOpcode : uint8_t {
   CHAT_MESSAGE = 0x80,
-  ERROR_MESSAGE,
   NPC_DEFEATED,
   NPC_RESPAWNED,
   PLAYER_MOVED,
