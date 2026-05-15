@@ -17,7 +17,7 @@
 #undef _GNU_SOURCE
 #undef GNU_SOURCE
 
-#include "../include/lib_error.h"
+#include "../include/exceptions/lib_error.h"
 
 #include <cstdarg>
 #include <cstdio>

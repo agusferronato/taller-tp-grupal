@@ -2,9 +2,9 @@
 #define CLIENT_PROTOCOL_H
 
 #include "../../common/include/binary_protocol.h"
-#include "../../common/include/client_command_dto.h"
+#include "../../common/include/dto/client_command_dto.h"
+#include "../../common/include/dto/server_event_dto.h"
 #include "../../common/include/protocol_codes.h"
-#include "../../common/include/server_event_dto.h"
 #include "../../common/include/socket.h"
 #include <string>
 

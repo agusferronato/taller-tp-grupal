@@ -1,4 +1,4 @@
-#include "../include/resolver_error.h"
+#include "../include/exceptions/resolver_error.h"
 
 #include <arpa/inet.h>
 #include <netdb.h>
