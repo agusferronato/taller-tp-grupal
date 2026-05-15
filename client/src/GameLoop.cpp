@@ -2,11 +2,12 @@
 
 
 
-GameLoop::GameLoop()
-{
-}
 
+GameLoop::GameLoop(Queue<Command> &receptionQueue, Queue<Command> &sendingQueue) 
+    : receptionQueue(receptionQueue),
+      sendingQueue(sendingQueue) { }
 
+      
 void GameLoop::run(unsigned int it)
 {
 

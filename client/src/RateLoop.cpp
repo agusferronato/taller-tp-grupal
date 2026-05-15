@@ -1,6 +1,6 @@
 #include "RateLoop.h"
 
-RateLoop::RateLoop() : gameloop(GameLoop()) {
+RateLoop::RateLoop(GameLoop& gameloop) : gameloop(gameloop) {
     rate = 1000 / FPS;
 }
 
