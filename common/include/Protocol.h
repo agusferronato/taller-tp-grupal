@@ -16,7 +16,7 @@ public:
     Protocol (Socket& socket);
 
     Command receive();
-    void send(Command& command);
+    void send(Command& command); 
     
 };
 

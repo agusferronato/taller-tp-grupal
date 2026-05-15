@@ -6,21 +6,22 @@
 #include "Constants.h"
 #include <cmath>
 #include <thread>
+#include "thread.h"
 
-class RateLoop {
+
+class RateLoop : public Thread {
 
 private:
-    GameLoop gameloop;
+    GameLoop& gameloop;
     bool isRunning = true;
     int rate;
 
 
 public:
 
-    RateLoop();
+    RateLoop(GameLoop& gameloop);
 
-
-    void run();
+    virtual void run() override;
 
 };
 
