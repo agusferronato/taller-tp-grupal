@@ -22,16 +22,14 @@ public:
   explicit ServerProtocol(Socket &socket);
 
   ClientCommand recv_command();
+  void send_event(const ServerEvent &event);
 
-  void send_chat_message(const std::string &sender, const std::string &message);
+private:
+  void send_chat_message(const ChatMessageEvent &chat_msg);
 
-  void send_error_message(const std::string &message);
+  void send_npc_defeated(const NpcDefeatedEvent &npc_defeated);
 
-  void send_npc_defeated(uint8_t npc_id);
-
-  void send_npc_respawned(uint8_t npc_id);
-
-  void send_player_moved(uint32_t player_id, uint16_t x, uint16_t y);
+  void send_player_moved(const PlayerMovedEvent &player_moved);
 };
 
 #endif // _SERVER_PROTOCOL_H_

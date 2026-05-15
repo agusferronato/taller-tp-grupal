@@ -28,20 +28,37 @@ ServerEvent ClientProtocol::recv_event() {
     return PlayerMovedEvent{player_id, x, y};
   }
 
-  case protocol::ServerOpcode::ERROR_MESSAGE: {
-    std::string error_msg = recv_string();
-    throw ProtocolError("Server error: " + error_msg);
-  }
-
   default:
     throw ProtocolError("Unknown server opcode received");
   }
 }
 
-void ClientProtocol::send_register_player(const std::string &name) {
+void ClientProtocol::send_command(ClientCommand command) {
+  if (std::holds_alternative<RegisterPlayerCommand>(command)) {
+    send_register_player(std::get<RegisterPlayerCommand>(command));
+
+  } else if (std::holds_alternative<ResurrectCommand>(command)) {
+    send_resurrect();
+
+  } else if (std::holds_alternative<MeditateCommand>(command)) {
+    send_meditate();
+
+  } else if (std::holds_alternative<PrivateMessageCommand>(command)) {
+    const auto &pm_cmd = std::get<PrivateMessageCommand>(command);
+    send_private_message(pm_cmd);
+
+  } else if (std::holds_alternative<ExitCommand>(command)) {
+    send_exit();
+
+  } else {
+    throw ProtocolError("Unable to send command: Unknown client command");
+  }
+}
+
+void ClientProtocol::send_register_player(const RegisterPlayerCommand &player_name) {
   send_uint8(static_cast<uint8_t>(protocol::ClientOpcode::REGISTER_PLAYER));
 
-  send_string(name);
+  send_string(player_name.name);
 }
 
 void ClientProtocol::send_resurrect() {
@@ -52,12 +69,11 @@ void ClientProtocol::send_meditate() {
   send_uint8(static_cast<uint8_t>(protocol::ClientOpcode::MEDITATE));
 }
 
-void ClientProtocol::send_private_message(const std::string &target,
-                                          const std::string &message) {
+void ClientProtocol::send_private_message(const PrivateMessageCommand &private_message) {
   send_uint8(static_cast<uint8_t>(protocol::ClientOpcode::PRIVATE_MESSAGE));
 
-  send_string(target);
-  send_string(message);
+  send_string(private_message.target);
+  send_string(private_message.message);
 }
 
 void ClientProtocol::send_exit() {

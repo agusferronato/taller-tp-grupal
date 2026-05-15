@@ -22,11 +22,13 @@ public:
   explicit ClientProtocol(Socket &socket);
 
   ServerEvent recv_event();
-  void send_register_player(const std::string &name);
+  void send_command(ClientCommand command);
+
+private:
+  void send_register_player(const RegisterPlayerCommand &player_name);
   void send_resurrect();
   void send_meditate();
-  void send_private_message(const std::string &target,
-                            const std::string &message);
+  void send_private_message(const PrivateMessageCommand &private_message);
   void send_exit();
 };
 
