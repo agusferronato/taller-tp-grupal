@@ -12,7 +12,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "../include/lib_error.h"
+#include "../include/exceptions/lib_error.h"
 #include "../include/resolver.h"
 
 #define STREAM_SEND_CLOSED 0x01
