@@ -65,7 +65,6 @@ function(
       -Wduplicated-cond # warn if if / else chain has duplicated conditions
       -Wduplicated-branches # warn if if / else branches have duplicated code
       -Wlogical-op # warn about logical operations being used where bitwise were probably wanted
-      -Wsuggest-override # warn if an overridden member function is not marked 'override' or 'final'
   )
 
   if(WARNINGS_AS_ERRORS)

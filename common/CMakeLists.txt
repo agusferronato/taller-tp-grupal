@@ -1,8 +1,13 @@
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+)
+
 target_sources(taller_common
     PRIVATE
-    # .cpp files
-    foo.cpp
+        ${SOURCES}
+)
+
+target_include_directories(taller_common
     PUBLIC
-    # .h files
-    foo.h
-    )
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+)

@@ -7,26 +7,21 @@
 #include <cmath>
 #include <thread>
 #include "thread.h"
-
+#include "ShutdownEvent.h"
 
 class RateLoop : public Thread {
 
 private:
-    GameLoop& gameloop;
-    bool isRunning = true;
+    GameLoop& game;
+    ShutdownEvent& shutdownEvent;
     int rate;
-
 
 public:
 
-    RateLoop(GameLoop& gameloop);
+    RateLoop(GameLoop& game, ShutdownEvent& shutdownEvent);
 
     virtual void run() override;
 
 };
-
-
-
-
 
 #endif

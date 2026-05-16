@@ -1,32 +1,35 @@
 #include "ClientReceiver.h"
 
-ClientReceiver::ClientReceiver(Socket &socket, Queue<Command> &receptionQueue) 
+ClientReceiver::ClientReceiver(Socket &socket,
+                               Queue<Command> &receptionQueue, 
+                               ShutdownEvent &shutdownEvent)
     : socket(socket),
       receptionQueue(receptionQueue),
+      shutdownEvent(shutdownEvent),
       protocol(Protocol(socket)) { }
-
 
 
 void ClientReceiver::run()
 {
 
-  while (isRunning) {
-    
+  while (true) {
+
     try {
-    
+
       Command command = protocol.receive();
       receptionQueue.push(command);
-    
+
     } catch (const CommunicationEnded& e) {
-     
-      // todo: handle
-      return;
-    
-    } catch (...) {
       
+      shutdownEvent.put(ShutdownReason::ConnectionClosed);
       return;
-    }
-    
+
+    } catch (const ClosedQueue& e) {
+
+      return;
+
+    } 
+
   }
 
 }

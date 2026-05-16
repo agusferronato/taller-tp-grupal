@@ -1,16 +1,18 @@
 #include "ClientSender.h"
 
 
-ClientSender::ClientSender(Socket &socket, Queue<Command> &sendingQueue) 
+ClientSender::ClientSender(Socket &socket,
+                           Queue<Command> &sendingQueue, 
+                           ShutdownEvent& shutdownEvent)
     : socket(socket),
       sendingQueue(sendingQueue),
+      shutdownEvent(shutdownEvent),
       protocol(Protocol(socket)) { }
 
 
-void ClientSender::run()
-{
+void ClientSender::run() {
 
-  while (isRunning) {
+  while (true) {
 
     try {
       Command command = sendingQueue.pop();
@@ -18,12 +20,17 @@ void ClientSender::run()
 
     } catch (const CommunicationEnded& e) {
       
-      // todo: handle
+      shutdownEvent.put(ShutdownReason::ConnectionClosed);
       return;
-    
+
+    } catch (const ClosedQueue& e) {
+
+      return;
+
     } catch (...) {
-      
+
       return;
     }
+  }
 
 }

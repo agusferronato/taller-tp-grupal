@@ -1,10 +1,12 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include "RateLoop.h"
-#include "ClientReceiver.h"
-#include "ClientSender.h"
 #include <socket.h>
+#include <sys/socket.h>
+#include "ShutdownEvent.h"
+#include "GameLoop.h"
+#include "RateLoop.h"
+#include "Connection.h"
 
 class Client {
 
@@ -17,7 +19,6 @@ public:
     Client(const char* hostname, const char* port);
 
     void run();
-
 };
 
 
