@@ -116,11 +116,6 @@ public:
 
   void close() {
     std::unique_lock<std::mutex> lck(mtx);
-
-    if (closed) {
-      throw std::runtime_error("The queue is already closed.");
-    }
-
     closed = true;
     is_not_empty.notify_all();
   }

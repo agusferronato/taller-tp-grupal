@@ -1,13 +1,15 @@
-target_sources(taller_client
-    PRIVATE
-        main.cpp
-        src/Player.cpp
-        src/Display.cpp
-        src/Background.cpp
-    PUBLIC
-        include/Player.h
-        include/Display.h
-        include/Background.h
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 )
 
-target_include_directories(taller_client PRIVATE include)
+target_sources(taller_client
+    PRIVATE
+        ${SOURCES}
+    PUBLIC
+        main.cpp
+)
+
+target_include_directories(taller_client
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+)

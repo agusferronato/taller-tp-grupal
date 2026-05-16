@@ -7,20 +7,22 @@
 #include "Command.h"
 #include "Protocol.h"
 #include "CommunicationEnded.h"
+#include "ShutdownEvent.h"
 
 
 class ClientReceiver : public Thread {
 
 private:
     Socket& socket;
-    Queue<Command> &receptionQueue;
+    Queue<Command>& receptionQueue;
+    ShutdownEvent& shutdownEvent;
     Protocol protocol;
-    bool isRunning = true;
-
 
 public:
 
-    ClientReceiver(Socket& socket, Queue<Command> &receptionQueue);
+    ClientReceiver(Socket& socket, 
+                   Queue<Command>& receptionQueue, 
+                   ShutdownEvent& shutdownEvent);
 
     virtual void run() override;
 

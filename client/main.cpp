@@ -1,42 +1,26 @@
 #include <iostream>
 #include <exception>
+#include "Client.h"
 
-#include <SDL2pp/SDL2pp.hh>
-#include <SDL2/SDL.h>
+#define EXPECTED_ARGS 2
 
-
-int main(int argc, char* argv[]) try {
-
-	SDL2pp::SDL sdl(SDL_INIT_VIDEO);
-
-	SDL2pp::Window window("Example",
-			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-			720, 410,
-			SDL_WINDOW_MINIMIZED);
-
-	SDL2pp::Renderer renderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-	unsigned int prev_ticks = SDL_GetTicks();
-
-	while (1) {
-		
-        
-		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_QUIT) 
-				return 0;
-		}
-
-		renderer.Clear();
+int main(int argc, char* argv[]) {
 
 
-		renderer.Present();
+    if (argc != EXPECTED_ARGS + 1) {
+        std::cerr << "Bad program call. The following call is expected:"
+                  << "./client <hostname> <servname>" << std::endl;
+        return 1;
+    }
 
-	}
+    try {
+        Client client(argv[1], argv[2]);
+        client.run();
 
-	return 0;
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        return 1;
+    }
 
-} catch (std::exception& e) {
-	std::cerr << e.what() << std::endl;
-	return 1;
+    return 0;
 }

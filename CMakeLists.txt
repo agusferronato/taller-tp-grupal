@@ -122,15 +122,6 @@ if(TALLER_CLIENT)
 
     # Link the taller_common lib target
     target_link_libraries(taller_client taller_common SDL2pp::SDL2pp SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf)
-
-    add_custom_command(TARGET taller_client POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_CURRENT_SOURCE_DIR}/client/textures
-            $<TARGET_FILE_DIR:taller_client>/textures
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_CURRENT_SOURCE_DIR}/client/fonts
-            $<TARGET_FILE_DIR:taller_client>/fonts
-    )
 endif()
 
 if(TALLER_SERVER)

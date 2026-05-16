@@ -3,6 +3,7 @@
 
 
 #include "Command.h"
+#include "socket.h"
 
 class Protocol {
 

@@ -1,6 +1,9 @@
 #include "RateLoop.h"
 
-RateLoop::RateLoop(GameLoop& gameloop) : gameloop(gameloop) {
+RateLoop::RateLoop(GameLoop& game, ShutdownEvent& shutdownEvent) 
+    : game(game),
+      shutdownEvent(shutdownEvent) 
+{
     rate = 1000 / FPS;
 }
 
@@ -10,8 +13,9 @@ void RateLoop::run()
     auto t1 = std::chrono::steady_clock::now();
     unsigned int it = 0;
 
-    while (isRunning) {
-        gameloop.run(it);
+    while (!shutdownEvent.finished()) {
+        
+        game.run(it);
 
         auto t2 = std::chrono::steady_clock::now();
         auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);

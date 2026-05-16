@@ -17,3 +17,11 @@ void Game::run() {
 
 void Game::kill() { keepRunning = false; }
 
+void Game::execute(Command &clientMessage)
+{
+    (void)clientMessage;
+}
+
+void Game::sendMessages()
+{
+}
