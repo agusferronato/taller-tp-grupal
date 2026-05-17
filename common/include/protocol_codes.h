@@ -14,9 +14,10 @@ namespace protocol {
 // Opcodes para comandos enviados por el cliente al servidor
 enum class ClientOpcode : uint8_t {
   REGISTER_PLAYER = 0x10,
-  RESURRECT,
+  LOGIN_PLAYER,
   MEDITATE,
   PRIVATE_MESSAGE,
+  MOVE_COMMAND,
   EXIT,
 };
 
