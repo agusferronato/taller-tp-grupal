@@ -6,12 +6,24 @@ Game::Game(Queue<Command>& gameloopQueue, SenderQueueMonitor& senderQueueMonitor
 
 void Game::run() {
 
+
+    // init resources...
+    ConstantRateLoop rateloop(FPS_SERVER);
+    unsigned int it = 0;
+
+
     while (keepRunning) {
         
+        // receive updates from clients...
         Command command = gameloopQueue.pop();
+        
+        // logic and physics...
         execute(command);
+
+        // broadcast...
         sendMessages();
 
+        rateloop.updateTimer(it);
     }
 }
 
