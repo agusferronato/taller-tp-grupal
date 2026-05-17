@@ -1,5 +1,7 @@
 #include "Gameloop.h"
 #include "ResourcesTesting.h"
+#include "MoveCommandDTO.h"
+#include "direction.h"
 
 Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
                    Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
@@ -54,7 +56,7 @@ void Gameloop::initSDL() {
 }
 
 void Gameloop::updateStateFromServer() {
-  Command cmd;
+  std::unique_ptr<CommandDTO> cmd;
   while (receptionQueue.try_pop(cmd)) {
     // TODO: actualizar estado mapeando entidades (juagdores, fondo, etc) a
     // texturas en memoria
@@ -77,19 +79,19 @@ void Gameloop::handleEvents() {
       switch (event.key.keysym.sym) {
       case SDLK_LEFT:
       case SDLK_a:
-        sendingQueue.push(Command(CommandType::MoveLeft));
+        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::LEFT));
         break;
       case SDLK_RIGHT:
       case SDLK_d:
-        sendingQueue.push(Command(CommandType::MoveRight));
+        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::RIGHT));
         break;
       case SDLK_UP:
       case SDLK_w:
-        sendingQueue.push(Command(CommandType::MoveUp));
+        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::UP));
         break;
       case SDLK_DOWN:
       case SDLK_s:
-        sendingQueue.push(Command(CommandType::MoveDown));
+        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::DOWN));
         break;
       default:
         break;
@@ -99,19 +101,23 @@ void Gameloop::handleEvents() {
       switch (event.key.keysym.sym) {
       case SDLK_LEFT:
       case SDLK_a:
-        sendingQueue.push(Command(CommandType::StopMoveLeft));
+        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::LEFT));
+        // TODO: Implementar StopMoveLeft con nuevo DTO, para que no sena el mismo
         break;
       case SDLK_RIGHT:
       case SDLK_d:
-        sendingQueue.push(Command(CommandType::StopMoveRight));
+        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::RIGHT));
+        // TODO: Implementar StopMoveRight con nuevo DTO
         break;
       case SDLK_UP:
       case SDLK_w:
-        sendingQueue.push(Command(CommandType::StopMoveUp));
+        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::UP));
+        // TODO: Implementar StopMoveUp con nuevo DTO
         break;
       case SDLK_DOWN:
       case SDLK_s:
-        sendingQueue.push(Command(CommandType::StopMoveDown));
+        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::DOWN));
+        // TODO: Implementar StopMoveDown con nuevo DTO
         break;
       default:
         break;
