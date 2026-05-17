@@ -1,4 +1,5 @@
 #include "Gameloop.h"
+#include "ResourcesTesting.h"
 
 Gameloop::Gameloop(Queue<Command> &receptionQueue, Queue<Command> &sendingQueue,
                    ShutdownEvent &shutdownEvent)
@@ -51,7 +52,8 @@ void Gameloop::initSDL() {
 }
 
 void Gameloop::updateStateFromServer() {
-  // TODO: actualizar estado y caragar nuevos Resources (de ser necesario)
+  // TODO: actualizar estado mapeando entidades (juagdores, fondo, etc) a texturas en memoria
+  
 }
 
 void Gameloop::clearDisplay() {
@@ -104,6 +106,8 @@ void Gameloop::render() {
 }
 
 void Gameloop::initResources() {
-  // TODO: caragar los recurso que em diga el server (no puedo caraagr miles de
-  // pngs en memoria debo caragar los necesrios)
+    //TODO: cargar todo en memoria
+
+    // para esta demo asumo una skin de jugador default y un fondo default
+    // Ya esta precargado en ResourcesTesting.h
 }
