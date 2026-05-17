@@ -51,7 +51,7 @@ void Gameloop::initSDL() {
 }
 
 void Gameloop::updateStateFromServer() {
-  // TODO: actualizar estado
+  // TODO: actualizar estado y caragar nuevos Resources (de ser necesario)
 }
 
 void Gameloop::clearDisplay() {
@@ -104,5 +104,6 @@ void Gameloop::render() {
 }
 
 void Gameloop::initResources() {
-  // TODO: caragar todos los archivos en memoria
+  // TODO: caragar los recurso que em diga el server (no puedo caraagr miles de
+  // pngs en memoria debo caragar los necesrios)
 }
