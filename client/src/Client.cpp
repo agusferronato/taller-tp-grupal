@@ -1,38 +1,39 @@
 #include "Client.h"
 
-
 Client::Client(const char *hostname, const char *port)
-    : socket(Socket(hostname, port)) { }
+    : socket(Socket(hostname, port)),
+      shutdownEvent(ShutdownEvent()) { }
+
+void Client::run()
+{
+
+    Queue<Command> sendingQueue, receptionQueue;
+    ClientReceiver receiver(socket, receptionQueue, shutdownEvent);
+    ClientSender sender(socket, sendingQueue, shutdownEvent);
+    Gameloop gameloop(receptionQueue, sendingQueue, shutdownEvent);
+
+    receiver.start();
+    sender.start();
+    gameloop.start();
+
+    shutdownEvent.wait();
+
+    switch (shutdownEvent.getReason()) {
+
+        case ShutdownReason::SDLQuit:
+            socket.shutdown(SHUT_RDWR);
+            socket.close();
+            [[fallthrough]];
+
+        case ShutdownReason::ConnectionClosed:
+            sendingQueue.close();
+            receptionQueue.close();
+
+        default:
+            break;
+    }
 
 
-void Client::run() {
-
-  ShutdownEvent shutdownEvent;
-  Queue<Command> sendingQueue, receptionQueue;
-  GameLoop game(receptionQueue, sendingQueue, shutdownEvent);
-  RateLoop rateloop(game, shutdownEvent);
-  Connection connection(receptionQueue, sendingQueue, socket, shutdownEvent);
-
-  connection.start();
-  rateloop.start();
-
-  shutdownEvent.wait();
-
-  switch (shutdownEvent.getReason()) {
-
-    case ShutdownReason::SDLQuit:
-      connection.close();
-      [[fallthrough]];
-
-    case ShutdownReason::ConnectionClosed:
-      sendingQueue.close();
-      receptionQueue.close();
-
-    default:
-      break;
-  }
-
-  rateloop.join();
-  connection.join();
-
+    receiver.join();
+    sender.join();
 }

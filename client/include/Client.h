@@ -1,24 +1,31 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include <socket.h>
 #include <sys/socket.h>
+#include "socket.h"
 #include "ShutdownEvent.h"
-#include "GameLoop.h"
-#include "RateLoop.h"
-#include "Connection.h"
+#include "queue.h"
+#include "closed_queue.h"
+#include "Command.h"
+#include "ClientReceiver.h"
+#include "ClientSender.h"
+#include "Gameloop.h"
+
 
 class Client {
 
 
 private:
     Socket socket;
+    ShutdownEvent shutdownEvent;
 
 public:
 
     Client(const char* hostname, const char* port);
 
     void run();
+
+
 };
 
 
