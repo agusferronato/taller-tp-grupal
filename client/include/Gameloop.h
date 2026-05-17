@@ -10,6 +10,7 @@
 #include "WindowClosed.h"
 #include "ConstantRateLoop.h"
 #include "thread.h"
+#include "resource.h
 
 
 class Gameloop : public Thread {
