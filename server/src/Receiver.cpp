@@ -1,19 +1,17 @@
 #include "Receiver.h"
 
-
-Receiver::Receiver(Socket& peer, Queue<Command>& gameloopQueue):
+Receiver::Receiver(Socket& peer, Queue<std::unique_ptr<CommandDTO>>& gameloopQueue):
         peer(peer), gameloopQueue(gameloopQueue), protocol(peer) { }
 
 void Receiver::kill() { keepRunning = false; }
-
 
 void Receiver::run() {
 
     while (keepRunning) {
 
         try {
-            Command command = protocol.receive();
-            gameloopQueue.push(command);
+            auto command = protocol.receive();
+            gameloopQueue.push(std::move(command));
 
         } catch (const CommunicationEnded& e) {
             break;

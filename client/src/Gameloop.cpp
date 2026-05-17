@@ -1,19 +1,20 @@
 #include "Gameloop.h"
 #include "ResourcesTesting.h"
 
-Gameloop::Gameloop(Queue<Command> &receptionQueue, Queue<Command> &sendingQueue,
-                   ShutdownEvent &shutdownEvent)
-    : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
-      shutdownEvent(shutdownEvent) {
-
-  initSDL();
+Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
+                   Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
+                   ShutdownEvent &shutdownEvent) :
+                   receptionQueue(receptionQueue),
+                   sendingQueue(sendingQueue),
+                   shutdownEvent(shutdownEvent)
+{
+    initSDL();
 }
 
-void Gameloop::run() {
-  initResources();
-  unsigned int it = 0;
-
-  ConstantRateLoop rateloop(FPS);
+void Gameloop::run()
+{
+    initResources();
+    unsigned int it = 0;
 
   while (!shutdownEvent.finished()) {
 
