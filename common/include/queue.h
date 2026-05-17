@@ -8,7 +8,7 @@
 #include <queue>
 #include <stdexcept>
 
-#include "../../common/include/closed_queue.h"
+#include "../../common/include/exceptions/closed_queue.h"
 
 /*
  * Multiproducer/Multiconsumer Blocking Queue (MPMC)
