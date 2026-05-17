@@ -40,7 +40,7 @@ private:
 
     void initSDL();
     
-    void updateStateFromServer();
+    void updateStateFromServer(); 
     void clearDisplay();
     void handleEvents();
     void updateAnimationFrames(unsigned int it);
