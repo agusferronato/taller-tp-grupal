@@ -11,10 +11,11 @@ Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
     initSDL();
 }
 
-void Gameloop::run()
-{
-    initResources();
-    unsigned int it = 0;
+void Gameloop::run() {
+  initResources();
+  unsigned int it = 0;
+
+  ConstantRateLoop rateloop(FPS);
 
   while (!shutdownEvent.finished()) {
 
