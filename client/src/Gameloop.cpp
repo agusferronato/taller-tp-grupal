@@ -1,16 +1,14 @@
 #include "Gameloop.h"
-#include "ResourcesTesting.h"
 #include "MoveCommandDTO.h"
+#include "ResourcesTesting.h"
 #include "direction.h"
 
 Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
                    Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
-                   ShutdownEvent &shutdownEvent) :
-                   receptionQueue(receptionQueue),
-                   sendingQueue(sendingQueue),
-                   shutdownEvent(shutdownEvent)
-{
-    initSDL();
+                   ShutdownEvent &shutdownEvent)
+    : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
+      shutdownEvent(shutdownEvent) {
+  initSDL();
 }
 
 void Gameloop::run() {
@@ -102,7 +100,8 @@ void Gameloop::handleEvents() {
       case SDLK_LEFT:
       case SDLK_a:
         sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::LEFT));
-        // TODO: Implementar StopMoveLeft con nuevo DTO, para que no sena el mismo
+        // TODO: Implementar StopMoveLeft con nuevo DTO, para que no sena el
+        // mismo
         break;
       case SDLK_RIGHT:
       case SDLK_d:
