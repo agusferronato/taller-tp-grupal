@@ -5,12 +5,10 @@
 #include "socket.h"
 #include "CommandParser.h"
 #include "CommandDTO.h"
-#include "Protocol.h"
+#include "NetworkUtils.h"
 #include <vector>
 #include <string>
-#include "RegisterPlayerDTO.h"
 #include <memory>
-#include "NetworkUtils.h"
 #include <unordered_map>
 
 class Protocol {
@@ -48,6 +46,18 @@ public:
  
     void getStringData(std::string& str) {
         utils.recv_string(socket, str);
+    }
+
+    uint8_t getUint8() {
+        return utils.receive_uint8(socket);
+    }
+
+    uint16_t getUint16() {
+        return utils.receive_uint16(socket);
+    }
+
+    uint32_t getUint32() {
+        return utils.receive_uint32(socket);
     }
 };
 

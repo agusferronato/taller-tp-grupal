@@ -2,10 +2,11 @@
 #define COMMAND_PARSER_H
 
 #include "CommandDTO.h"
-#include "Protocol.h"
+#include "NetworkUtils.h"
 #include <vector>
 #include <memory>
-#include "NetworkUtils.h"
+
+class Protocol;
 
 
 class CommandParser {

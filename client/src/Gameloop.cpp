@@ -1,21 +1,18 @@
 #include "Gameloop.h"
 
-
-Gameloop::Gameloop(Queue<Command> &receptionQueue, 
-                   Queue<Command> &sendingQueue, 
+Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
+                   Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
                    ShutdownEvent &shutdownEvent) :
                    receptionQueue(receptionQueue),
                    sendingQueue(sendingQueue),
                    shutdownEvent(shutdownEvent)
 {
-
     initSDL();
 }
 
-
-void Gameloop::run() 
+void Gameloop::run()
 {
-    initResources();    
+    initResources();
     unsigned int it = 0;
 
     ConstantRateLoop rateloop(FPS);
@@ -23,7 +20,6 @@ void Gameloop::run()
     while (!shutdownEvent.finished()) {
 
         try {
-            
             handleEvents();
             updateStateFromServer();
             clearDisplay();
@@ -31,7 +27,6 @@ void Gameloop::run()
             render();
 
         } catch (const ClosedQueue& e) {
-
             return;
 
         } catch (const WindowClosed& e) {
@@ -39,59 +34,38 @@ void Gameloop::run()
             shutdownEvent.put(ShutdownReason::SDLQuit);
             return;
         } catch (...) {
-            
             return;
         }
-        
 
         rateloop.updateTimer(it);
     }
 }
 
-
-
 void Gameloop::initSDL()
 {
     this->window = std::make_unique<SDL2pp::Window>(
         SDL2pp::Window("Argentum Online",
-			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-			720, 410,
-			SDL_WINDOW_MINIMIZED)
+            SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+            720, 410,
+            SDL_WINDOW_MINIMIZED)
     );
-    
+
     this->renderer = std::make_unique<SDL2pp::Renderer>(
         SDL2pp::Renderer(*window, -1, SDL_RENDERER_ACCELERATED)
     );
-
 }
 
-void Gameloop::updateStateFromServer()
-{
-}
+void Gameloop::updateStateFromServer() { }
+void Gameloop::clearDisplay() { }
 
-void Gameloop::clearDisplay()
-{
-}
-
-void Gameloop::handleEvents()
-{
+void Gameloop::handleEvents() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT) 
+        if (event.type == SDL_QUIT)
             throw WindowClosed("Window was closed by the user");
     }
 }
 
-
-
-void Gameloop::updateAnimationFrames(unsigned int it)
-{
-}
-
-void Gameloop::render()
-{
-}
-
-void Gameloop::initResources()
-{
-}
+void Gameloop::updateAnimationFrames(unsigned int) { }
+void Gameloop::render() { }
+void Gameloop::initResources() { }

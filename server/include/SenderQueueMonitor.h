@@ -7,17 +7,18 @@
 #include <queue>
 #include <thread>
 #include <utility>
+#include <memory>
 
 #include "queue.h"
-#include <Command.h>
+#include "CommandDTO.h"
 #include "Constants.h"
 
 class SenderQueueMonitor {
 
 private:
     std::mutex mutex;
-    std::list<Queue<Command>*> senderQueues;
-    std::map<Queue<Command>*, std::queue<Command>> queuesPendingMessages;
+    std::list<Queue<std::unique_ptr<CommandDTO>>*> senderQueues;
+    std::map<Queue<std::unique_ptr<CommandDTO>>*, std::queue<std::unique_ptr<CommandDTO>>> queuesPendingMessages;
 
 public:
     SenderQueueMonitor() {}
@@ -25,17 +26,14 @@ public:
     SenderQueueMonitor(const SenderQueueMonitor&) = delete;
     SenderQueueMonitor& operator=(const SenderQueueMonitor&) = delete;
 
+    Queue<std::unique_ptr<CommandDTO>>* getNewSenderQueue();
+    void deleteSenderQueue(Queue<std::unique_ptr<CommandDTO>>& senderQueue);
 
-    Queue<Command>* getNewSenderQueue();
-    void deleteSenderQueue(Queue<Command>& senderQueue);
-
-    void broadCast(std::list<Command>& pendingMessages);
-
+    void broadCast(std::list<std::unique_ptr<CommandDTO>>& pendingMessages);
 
 private:
-    void pushMessageToTheSenderQueues(Command& message);
-    void clearPendingMessages(Queue<Command>& queue);
+    void pushMessageToTheSenderQueues(std::unique_ptr<CommandDTO> message);
+    void clearPendingMessages(Queue<std::unique_ptr<CommandDTO>>& queue);
 };
-
 
 #endif

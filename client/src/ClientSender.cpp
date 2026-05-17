@@ -1,25 +1,23 @@
 #include "ClientSender.h"
 
-
 ClientSender::ClientSender(Socket &socket,
-                           Queue<Command> &sendingQueue, 
+                           Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
                            ShutdownEvent& shutdownEvent)
     : socket(socket),
       sendingQueue(sendingQueue),
       shutdownEvent(shutdownEvent),
       protocol(Protocol(socket)) { }
 
-
 void ClientSender::run() {
 
   while (true) {
 
     try {
-      Command command = sendingQueue.pop();
-      protocol.send(command);
+      auto command = sendingQueue.pop();
+      protocol.send(*command);
 
     } catch (const CommunicationEnded& e) {
-      
+
       shutdownEvent.put(ShutdownReason::ConnectionClosed);
       return;
 
@@ -32,5 +30,4 @@ void ClientSender::run() {
       return;
     }
   }
-
 }

@@ -6,8 +6,7 @@ Client::Client(const char *hostname, const char *port)
 
 void Client::run()
 {
-
-    Queue<Command> sendingQueue, receptionQueue;
+    Queue<std::unique_ptr<CommandDTO>> sendingQueue, receptionQueue;
     ClientReceiver receiver(socket, receptionQueue, shutdownEvent);
     ClientSender sender(socket, sendingQueue, shutdownEvent);
     Gameloop gameloop(receptionQueue, sendingQueue, shutdownEvent);
@@ -32,7 +31,6 @@ void Client::run()
         default:
             break;
     }
-
 
     receiver.join();
     sender.join();
