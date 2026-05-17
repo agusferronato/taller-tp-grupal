@@ -3,7 +3,6 @@
 
 #include "../direction.h"
 #include "../types.h"
-#include "command.h"
 
 /*
     MoveCommand
