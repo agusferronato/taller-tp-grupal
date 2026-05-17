@@ -5,7 +5,16 @@
 #include <cstdint>
 #include <string>
 
+/*
+  BinaryProtocol
+  Protocolo de comunicación binario para enviar y recibir datos entre el cliente
+  y el servidor.
+  Proporciona metodos para enviar y recibir tipos de datos básicos (uint8,
+  uint16, uint32, string) siguiendo un formato especifico.
+*/
+
 class BinaryProtocol {
+
 protected:
   Socket &socket;
 
