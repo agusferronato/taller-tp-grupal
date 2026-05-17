@@ -50,7 +50,9 @@ void Gameloop::initSDL() {
       SDL2pp::Renderer(*window, -1, SDL_RENDERER_ACCELERATED));
 }
 
-void Gameloop::updateStateFromServer() {}
+void Gameloop::updateStateFromServer() {
+  // TODO: actualizar estado
+}
 
 void Gameloop::clearDisplay() {
   if (renderer) {
@@ -92,8 +94,15 @@ void Gameloop::handleEvents() {
   }
 }
 
-void Gameloop::updateAnimationFrames(unsigned int it) {}
+void Gameloop::updateAnimationFrames(unsigned int it) {
+  // TODO: actualizar los frames de animacion de los personajes segun el estado
+  // del juego y el numero de iteracion
+}
 
-void Gameloop::render() {}
+void Gameloop::render() {
+  // TODO: renderizar el estado actual del juego
+}
 
-void Gameloop::initResources() {}
+void Gameloop::initResources() {
+  // TODO: caragar todos los archivos en memoria
+}
