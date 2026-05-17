@@ -9,11 +9,9 @@
   cliente y el servidor.
 */
 
-namespace protocol {
-
 // Opcodes para comandos enviados por el cliente al servidor
-enum class ClientOpcode : uint8_t {
-  REGISTER_PLAYER = 0x10,
+enum class CommandOpCode : uint8_t {
+  RegisterPlayer = 0x10,
   LOGIN_PLAYER,
   MEDITATE,
   PRIVATE_MESSAGE,
@@ -29,6 +27,5 @@ enum class ServerOpcode : uint8_t {
   PLAYER_MOVED,
 };
 
-} // namespace protocol
 
 #endif // PROTOCOL_CODES_H
