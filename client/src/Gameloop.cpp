@@ -119,8 +119,7 @@ void Gameloop::handleEvents() {
 }
 
 void Gameloop::updateAnimationFrames(unsigned int it) {
-  // TODO: actualizar los frames de animacion de los personajes segun el estado
-  // del juego y el numero de iteracion
+  // TODO: avanzar en memoria si es necesario
 }
 
 void Gameloop::render() {
