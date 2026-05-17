@@ -52,8 +52,11 @@ void Gameloop::initSDL() {
 }
 
 void Gameloop::updateStateFromServer() {
-  // TODO: actualizar estado mapeando entidades (juagdores, fondo, etc) a texturas en memoria
-  
+  Command cmd;
+  while (receptionQueue.try_pop(cmd)) {
+    // TODO: actualizar estado mapeando entidades (juagdores, fondo, etc) a
+    // texturas en memoria
+  }
 }
 
 void Gameloop::clearDisplay() {
@@ -91,7 +94,26 @@ void Gameloop::handleEvents() {
       }
 
     } else if (event.type == SDL_KEYUP) {
-      // key release, no lo usamos aun no se si lo vamos a usar
+      switch (event.key.keysym.sym) {
+      case SDLK_LEFT:
+      case SDLK_a:
+        sendingQueue.push(Command(CommandType::StopMoveLeft));
+        break;
+      case SDLK_RIGHT:
+      case SDLK_d:
+        sendingQueue.push(Command(CommandType::StopMoveRight));
+        break;
+      case SDLK_UP:
+      case SDLK_w:
+        sendingQueue.push(Command(CommandType::StopMoveUp));
+        break;
+      case SDLK_DOWN:
+      case SDLK_s:
+        sendingQueue.push(Command(CommandType::StopMoveDown));
+        break;
+      default:
+        break;
+      }
     }
   }
 }
@@ -106,8 +128,8 @@ void Gameloop::render() {
 }
 
 void Gameloop::initResources() {
-    //TODO: cargar todo en memoria
+  // TODO: cargar todo en memoria
 
-    // para esta demo asumo una skin de jugador default y un fondo default
-    // Ya esta precargado en ResourcesTesting.h
+  // para esta demo asumo una skin de jugador default y un fondo default
+  // Ya esta precargado en ResourcesTesting.h
 }
