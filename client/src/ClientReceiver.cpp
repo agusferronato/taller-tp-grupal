@@ -1,35 +1,30 @@
 #include "ClientReceiver.h"
 
 ClientReceiver::ClientReceiver(Socket &socket,
-                               Queue<Command> &receptionQueue, 
+                               Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
                                ShutdownEvent &shutdownEvent)
     : socket(socket),
       receptionQueue(receptionQueue),
       shutdownEvent(shutdownEvent),
       protocol(Protocol(socket)) { }
 
-
-void ClientReceiver::run()
-{
+void ClientReceiver::run() {
 
   while (true) {
 
     try {
 
-      Command command = protocol.receive();
-      receptionQueue.push(command);
+      auto command = protocol.receive();
+      receptionQueue.push(std::move(command));
 
     } catch (const CommunicationEnded& e) {
-      
+
       shutdownEvent.put(ShutdownReason::ConnectionClosed);
       return;
 
     } catch (const ClosedQueue& e) {
 
       return;
-
-    } 
-
+    }
   }
-
 }

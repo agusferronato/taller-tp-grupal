@@ -1,7 +1,7 @@
 #include "ClientConnection.h"
 
 
-ClientConnection::ClientConnection(Socket&& peer, Queue<Command>& gameloopQueue,
+ClientConnection::ClientConnection(Socket&& peer, Queue<std::unique_ptr<CommandDTO>>& gameloopQueue,
                                    SenderQueueMonitor& senderQueueMonitor):
         peer(std::move(peer)),
         receiver(this->peer, gameloopQueue),

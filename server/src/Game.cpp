@@ -1,26 +1,18 @@
 #include "Game.h"
 
-Game::Game(Queue<Command>& gameloopQueue, SenderQueueMonitor& senderQueueMonitor):
+Game::Game(Queue<std::unique_ptr<CommandDTO>>& gameloopQueue, SenderQueueMonitor& senderQueueMonitor):
         gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor) {}
-
 
 void Game::run() {
 
-
-    // init resources...
     ConstantRateLoop rateloop(FPS_SERVER);
     unsigned int it = 0;
 
-
     while (keepRunning) {
         
-        // receive updates from clients...
-        Command command = gameloopQueue.pop();
-        
-        // logic and physics...
-        execute(command);
+        auto command = gameloopQueue.pop();
+        execute(std::move(command));
 
-        // broadcast...
         sendMessages();
 
         rateloop.updateTimer(it);
@@ -29,11 +21,9 @@ void Game::run() {
 
 void Game::kill() { keepRunning = false; }
 
-void Game::execute(Command &clientMessage)
-{
+void Game::execute(std::unique_ptr<CommandDTO> clientMessage) {
     (void)clientMessage;
 }
 
-void Game::sendMessages()
-{
+void Game::sendMessages() {
 }

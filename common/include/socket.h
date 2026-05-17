@@ -177,5 +177,10 @@ public:
    * automáticamente.
    * */
   ~Socket();
+
+#ifdef TESTING
+public:
+  static Socket from_fd(int skt) { return Socket(skt); }
+#endif
 };
 #endif

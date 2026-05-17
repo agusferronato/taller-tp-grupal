@@ -1,12 +1,10 @@
 #include "Sender.h"
 
-
 Sender::Sender(SenderQueueMonitor& senderQueueMonitor, Socket& peer) :
     senderQueueMonitor(senderQueueMonitor),
     peer(peer),
     senderQueue(senderQueueMonitor.getNewSenderQueue()),
     protocol(peer) { }
-
 
 void Sender::kill() {
     keepRunning = false;
@@ -19,8 +17,8 @@ void Sender::run() {
 
         try {
 
-            Command serverMessage = senderQueue->pop();
-            protocol.send(serverMessage);
+            auto serverMessage = senderQueue->pop();
+            protocol.send(*serverMessage);
 
         } catch (const ClosedQueue& e) {
             delete senderQueue;

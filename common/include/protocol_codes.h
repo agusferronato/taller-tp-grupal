@@ -4,28 +4,28 @@
 #include <cstdint>
 
 /*
-    Protocol Codes
-    Tiene los distintos tipos de mensajes que se pueden enviar entre el
-    cliente y el servidor.
+  Protocol Codes
+  Tiene los distintos tipos de mensajes que se pueden enviar entre el
+  cliente y el servidor.
 */
 
-namespace protocol {
-
-enum class ClientOpcode : uint8_t {
-  REGISTER_PLAYER = 0x10,
-  RESURRECT,
+// Opcodes para comandos enviados por el cliente al servidor
+enum class CommandOpCode : uint8_t {
+  RegisterPlayer = 0x10,
+  LOGIN_PLAYER,
   MEDITATE,
   PRIVATE_MESSAGE,
+  MOVE_COMMAND,
   EXIT,
 };
 
+// Opcodes para eventos enviados por el servidor a los clientes
 enum class ServerOpcode : uint8_t {
   CHAT_MESSAGE = 0x80,
-  ERROR_MESSAGE,
   NPC_DEFEATED,
   NPC_RESPAWNED,
+  PLAYER_MOVED,
 };
 
-} // namespace protocol
 
 #endif // PROTOCOL_CODES_H

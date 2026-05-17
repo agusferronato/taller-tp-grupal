@@ -1,21 +1,22 @@
 #ifndef SENDER_H
 #define SENDER_H
 
+#include <memory>
+
 #include "queue.h"
 #include "socket.h"
 #include "thread.h"
 #include "SenderQueueMonitor.h"
-#include "Command.h"
+#include "CommandDTO.h"
 #include "CommunicationEnded.h"
-#include <Protocol.h>
-
+#include "Protocol.h"
 
 class Sender: public Thread {
 
 private:
     SenderQueueMonitor& senderQueueMonitor;
     Socket& peer;
-    Queue<Command>* senderQueue;
+    Queue<std::unique_ptr<CommandDTO>>* senderQueue;
     Protocol protocol;
     bool keepRunning = true;
 
@@ -28,6 +29,5 @@ public:
     void kill();
     virtual void run() override;
 };
-
 
 #endif

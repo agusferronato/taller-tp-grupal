@@ -1,4 +1,6 @@
+target_compile_definitions(taller_tests PRIVATE TESTING)
+
 target_sources(taller_tests
     PRIVATE
-        main.cpp
+        protocol_tests.cpp
 )
