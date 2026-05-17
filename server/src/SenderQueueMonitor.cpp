@@ -1,20 +1,18 @@
 #include "SenderQueueMonitor.h"
 
-
-Queue<Command>* SenderQueueMonitor::getNewSenderQueue() {
+Queue<std::unique_ptr<CommandDTO>>* SenderQueueMonitor::getNewSenderQueue() {
     std::lock_guard<std::mutex> lock(mutex);
 
-    Queue<Command>* senderQueue = new Queue<Command>(SENDER_QUEUE_SIZE);
-    std::queue<Command> pendingMessages;
+    auto senderQueue = new Queue<std::unique_ptr<CommandDTO>>(SENDER_QUEUE_SIZE);
+    std::queue<std::unique_ptr<CommandDTO>> pendingMessages;
 
     senderQueues.push_back(senderQueue);
-
     queuesPendingMessages.insert({senderQueue, std::move(pendingMessages)});
 
     return senderQueue;
 }
 
-void SenderQueueMonitor::deleteSenderQueue(Queue<Command>& senderQueue) {
+void SenderQueueMonitor::deleteSenderQueue(Queue<std::unique_ptr<CommandDTO>>& senderQueue) {
     std::lock_guard<std::mutex> lock(mutex);
 
     senderQueue.close();
@@ -22,31 +20,25 @@ void SenderQueueMonitor::deleteSenderQueue(Queue<Command>& senderQueue) {
     queuesPendingMessages.erase(&senderQueue);
 }
 
-
-void SenderQueueMonitor::broadCast(std::list<Command>& messagesToSend) {
-
+void SenderQueueMonitor::broadCast(std::list<std::unique_ptr<CommandDTO>>& messagesToSend) {
     std::lock_guard<std::mutex> lock(mutex);
 
-    for (Command& message: messagesToSend) pushMessageToTheSenderQueues(message);
+    for (auto& message: messagesToSend)
+        pushMessageToTheSenderQueues(std::move(message));
 
-    for (Queue<Command>* queue: senderQueues) clearPendingMessages(*queue);
+    for (auto queue: senderQueues)
+        clearPendingMessages(*queue);
 }
 
-
-void SenderQueueMonitor::clearPendingMessages(Queue<Command>& queue) {
-
+void SenderQueueMonitor::clearPendingMessages(Queue<std::unique_ptr<CommandDTO>>& queue) {
     while (!queuesPendingMessages[&queue].empty()) {
-
-        Command& pendingMessage = queuesPendingMessages[&queue].front();
-        if (!queue.try_push(pendingMessage))
+        if (!queue.try_push(std::move(queuesPendingMessages[&queue].front())))
             break;
-
         queuesPendingMessages[&queue].pop();
     }
 }
 
-
-void SenderQueueMonitor::pushMessageToTheSenderQueues(Command& message) {
-
-    for (Queue<Command>* queue: senderQueues) queuesPendingMessages[queue].push(message);
+void SenderQueueMonitor::pushMessageToTheSenderQueues(std::unique_ptr<CommandDTO> message) {
+    for (auto queue: senderQueues)
+        queuesPendingMessages[queue].push(std::move(message));
 }

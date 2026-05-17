@@ -57,6 +57,25 @@ public:
     return true;
   }
 
+  bool try_push(T&& val) {
+    std::unique_lock<std::mutex> lck(mtx);
+
+    if (closed) {
+      throw ClosedQueue();
+    }
+
+    if (q.size() == this->max_size) {
+      return false;
+    }
+
+    if (q.empty()) {
+      is_not_empty.notify_all();
+    }
+
+    q.push(std::move(val));
+    return true;
+  }
+
   bool try_pop(T &val) {
     std::unique_lock<std::mutex> lck(mtx);
 
@@ -94,6 +113,24 @@ public:
     q.push(val);
   }
 
+  void push(T&& val) {
+    std::unique_lock<std::mutex> lck(mtx);
+
+    if (closed) {
+      throw ClosedQueue();
+    }
+
+    while (q.size() == this->max_size) {
+      is_not_full.wait(lck);
+    }
+
+    if (q.empty()) {
+      is_not_empty.notify_all();
+    }
+
+    q.push(std::move(val));
+  }
+
   T pop() {
     std::unique_lock<std::mutex> lck(mtx);
 
@@ -108,7 +145,7 @@ public:
       is_not_full.notify_all();
     }
 
-    T const val = q.front();
+    T val = std::move(q.front());
     q.pop();
 
     return val;

@@ -2,10 +2,8 @@
 #define REGISTER_PLAYER_H
 
 #include "CommandDTO.h"
-#include "Protocol.h"
-#include <string>
-#include <memory>
 #include "protocol_codes.h"
+#include <string>
 
 
 class RegisterPlayerDTO : public CommandDTO {

@@ -1,31 +1,30 @@
 #ifndef GAME_H
 #define GAME_H
 
-
 #include <chrono>
 #include <list>
 #include <thread>
 #include <utility>
+#include <memory>
 
 #include "queue.h"
 #include "thread.h"
 #include "SenderQueueMonitor.h"
-#include <Command.h>
+#include "CommandDTO.h"
 #include "ConstantRateLoop.h"
 #include "Constants.h"
-
 
 class Game: public Thread {
 
 private:
-    Queue<Command>& gameloopQueue;
+    Queue<std::unique_ptr<CommandDTO>>& gameloopQueue;
     SenderQueueMonitor& senderQueueMonitor;
 
-    std::list<Command> messagesToSend;
+    std::list<std::unique_ptr<CommandDTO>> messagesToSend;
     bool keepRunning = true;
 
 public:
-    Game(Queue<Command>& gameloopQueue, SenderQueueMonitor& senderQueueMonitor);
+    Game(Queue<std::unique_ptr<CommandDTO>>& gameloopQueue, SenderQueueMonitor& senderQueueMonitor);
 
     virtual void run() override;
 
@@ -35,9 +34,8 @@ public:
     Game& operator=(const Game&) = delete;
 
 private:
-    void execute(Command& clientMessage);
+    void execute(std::unique_ptr<CommandDTO> clientMessage);
     void sendMessages();
-
 };
 
 #endif
