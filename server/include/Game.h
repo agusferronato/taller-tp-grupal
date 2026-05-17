@@ -11,6 +11,8 @@
 #include "thread.h"
 #include "SenderQueueMonitor.h"
 #include <Command.h>
+#include "ConstantRateLoop.h"
+#include "Constants.h"
 
 
 class Game: public Thread {
