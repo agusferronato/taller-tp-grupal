@@ -10,13 +10,11 @@ private:
     uint8_t npc_id;
 
 public:
-    explicit NpcDefeatedEventDTO(uint8_t npc_id) : npc_id(npc_id) {}
+    explicit NpcDefeatedEventDTO(uint8_t npc_id);
 
-    uint8_t getNpcId() const { return npc_id; }
+    uint8_t getNpcId() const;
 
-    uint8_t getCode() override {
-        return static_cast<uint8_t>(ServerOpcode::NPC_DEFEATED);
-    }
+    uint8_t getCode() override;
 };
 
 #endif

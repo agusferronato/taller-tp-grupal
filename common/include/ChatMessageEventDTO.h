@@ -11,15 +11,12 @@ private:
     std::string message;
 
 public:
-    ChatMessageEventDTO(std::string sender, std::string message)
-        : sender(std::move(sender)), message(std::move(message)) {}
+    ChatMessageEventDTO(std::string sender, std::string message);
 
-    const std::string& getSender() const { return sender; }
-    const std::string& getMessage() const { return message; }
+    const std::string& getSender() const;
+    const std::string& getMessage() const;
 
-    uint8_t getCode() override {
-        return static_cast<uint8_t>(ServerOpcode::CHAT_MESSAGE);
-    }
+    uint8_t getCode() override;
 };
 
 #endif

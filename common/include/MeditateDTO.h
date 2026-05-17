@@ -6,11 +6,9 @@
 
 class MeditateDTO : public CommandDTO {
 public:
-    MeditateDTO() = default;
+    MeditateDTO();
 
-    uint8_t getCode() override {
-        return static_cast<uint8_t>(CommandOpCode::MEDITATE);
-    }
+    uint8_t getCode() override;
 };
 
 #endif

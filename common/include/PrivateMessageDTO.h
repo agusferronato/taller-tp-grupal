@@ -11,15 +11,12 @@ private:
     std::string message;
 
 public:
-    PrivateMessageDTO(std::string target, std::string message)
-        : target(std::move(target)), message(std::move(message)) {}
+    PrivateMessageDTO(std::string target, std::string message);
 
-    const std::string& getTarget() const { return target; }
-    const std::string& getMessage() const { return message; }
+    const std::string& getTarget() const;
+    const std::string& getMessage() const;
 
-    uint8_t getCode() override {
-        return static_cast<uint8_t>(CommandOpCode::PRIVATE_MESSAGE);
-    }
+    uint8_t getCode() override;
 };
 
 #endif

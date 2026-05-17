@@ -10,13 +10,11 @@ private:
     std::string name;
 
 public:
-    explicit LoginPlayerDTO(std::string name) : name(std::move(name)) {}
+    explicit LoginPlayerDTO(std::string name);
 
-    const std::string& getName() const { return name; }
+    const std::string& getName() const;
 
-    uint8_t getCode() override {
-        return static_cast<uint8_t>(CommandOpCode::LOGIN_PLAYER);
-    }
+    uint8_t getCode() override;
 };
 
 #endif

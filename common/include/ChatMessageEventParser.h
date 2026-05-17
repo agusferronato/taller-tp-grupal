@@ -12,20 +12,9 @@
 
 class ChatMessageEventParser : public CommandParser {
 public:
-    void getBytesToSend(std::vector<uint8_t>& bytes, CommandDTO& dto) override {
-        auto& eventDTO = dynamic_cast<ChatMessageEventDTO&>(dto);
-        utils.appendToSend(static_cast<uint8_t>(ServerOpcode::CHAT_MESSAGE), bytes);
-        utils.appendToSend(eventDTO.getSender(), bytes);
-        utils.appendToSend(eventDTO.getMessage(), bytes);
-    }
+    void getBytesToSend(std::vector<uint8_t>& bytes, CommandDTO& dto) override;
 
-    std::unique_ptr<CommandDTO> getDTO(Protocol& protocol) override {
-        std::string sender;
-        std::string message;
-        protocol.getStringData(sender);
-        protocol.getStringData(message);
-        return std::make_unique<ChatMessageEventDTO>(std::move(sender), std::move(message));
-    }
+    std::unique_ptr<CommandDTO> getDTO(Protocol& protocol) override;
 };
 
 #endif

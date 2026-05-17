@@ -12,17 +12,9 @@
 
 class LoginPlayerParser : public CommandParser {
 public:
-    void getBytesToSend(std::vector<uint8_t>& bytes, CommandDTO& dto) override {
-        auto& loginDTO = dynamic_cast<LoginPlayerDTO&>(dto);
-        utils.appendToSend(static_cast<uint8_t>(CommandOpCode::LOGIN_PLAYER), bytes);
-        utils.appendToSend(loginDTO.getName(), bytes);
-    }
+    void getBytesToSend(std::vector<uint8_t>& bytes, CommandDTO& dto) override;
 
-    std::unique_ptr<CommandDTO> getDTO(Protocol& protocol) override {
-        std::string name;
-        protocol.getStringData(name);
-        return std::make_unique<LoginPlayerDTO>(std::move(name));
-    }
+    std::unique_ptr<CommandDTO> getDTO(Protocol& protocol) override;
 };
 
 #endif

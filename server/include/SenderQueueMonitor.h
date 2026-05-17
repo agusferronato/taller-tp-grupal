@@ -21,7 +21,7 @@ private:
     std::map<Queue<std::unique_ptr<CommandDTO>>*, std::queue<std::unique_ptr<CommandDTO>>> queuesPendingMessages;
 
 public:
-    SenderQueueMonitor() {}
+    SenderQueueMonitor();
 
     SenderQueueMonitor(const SenderQueueMonitor&) = delete;
     SenderQueueMonitor& operator=(const SenderQueueMonitor&) = delete;

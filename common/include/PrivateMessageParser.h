@@ -12,20 +12,9 @@
 
 class PrivateMessageParser : public CommandParser {
 public:
-    void getBytesToSend(std::vector<uint8_t>& bytes, CommandDTO& dto) override {
-        auto& pmDTO = dynamic_cast<PrivateMessageDTO&>(dto);
-        utils.appendToSend(static_cast<uint8_t>(CommandOpCode::PRIVATE_MESSAGE), bytes);
-        utils.appendToSend(pmDTO.getTarget(), bytes);
-        utils.appendToSend(pmDTO.getMessage(), bytes);
-    }
+    void getBytesToSend(std::vector<uint8_t>& bytes, CommandDTO& dto) override;
 
-    std::unique_ptr<CommandDTO> getDTO(Protocol& protocol) override {
-        std::string target;
-        std::string message;
-        protocol.getStringData(target);
-        protocol.getStringData(message);
-        return std::make_unique<PrivateMessageDTO>(std::move(target), std::move(message));
-    }
+    std::unique_ptr<CommandDTO> getDTO(Protocol& protocol) override;
 };
 
 #endif

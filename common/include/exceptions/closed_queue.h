@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 struct ClosedQueue : public std::runtime_error {
-  ClosedQueue() : std::runtime_error("The queue is closed") {}
+  ClosedQueue();
 };
 
 #endif // CLOSED_QUEUE_H_
