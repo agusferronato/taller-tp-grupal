@@ -6,11 +6,9 @@
 
 class ExitDTO : public CommandDTO {
 public:
-    ExitDTO() = default;
+    ExitDTO();
 
-    uint8_t getCode() override {
-        return static_cast<uint8_t>(CommandOpCode::EXIT);
-    }
+    uint8_t getCode() override;
 };
 
 #endif

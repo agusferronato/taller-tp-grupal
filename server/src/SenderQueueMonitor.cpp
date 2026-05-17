@@ -1,5 +1,7 @@
 #include "SenderQueueMonitor.h"
 
+SenderQueueMonitor::SenderQueueMonitor() {}
+
 Queue<std::unique_ptr<CommandDTO>>* SenderQueueMonitor::getNewSenderQueue() {
     std::lock_guard<std::mutex> lock(mutex);
 

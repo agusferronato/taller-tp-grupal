@@ -11,15 +11,9 @@
 
 class ExitParser : public CommandParser {
 public:
-    void getBytesToSend(std::vector<uint8_t>& bytes, CommandDTO& dto) override {
-        (void)dto;
-        utils.appendToSend(static_cast<uint8_t>(CommandOpCode::EXIT), bytes);
-    }
+    void getBytesToSend(std::vector<uint8_t>& bytes, CommandDTO& dto) override;
 
-    std::unique_ptr<CommandDTO> getDTO(Protocol& protocol) override {
-        (void)protocol;
-        return std::make_unique<ExitDTO>();
-    }
+    std::unique_ptr<CommandDTO> getDTO(Protocol& protocol) override;
 };
 
 #endif

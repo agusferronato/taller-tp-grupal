@@ -10,13 +10,11 @@ private:
     Direction direction;
 
 public:
-    explicit MoveCommandDTO(Direction direction) : direction(direction) {}
+    explicit MoveCommandDTO(Direction direction);
 
-    Direction getDirection() const { return direction; }
+    Direction getDirection() const;
 
-    uint8_t getCode() override {
-        return static_cast<uint8_t>(CommandOpCode::MOVE_COMMAND);
-    }
+    uint8_t getCode() override;
 };
 
 #endif

@@ -6,7 +6,7 @@
 
 class ProtocolError : public std::runtime_error {
 public:
-  explicit ProtocolError(const std::string &msg) : std::runtime_error(msg) {}
+  explicit ProtocolError(const std::string &msg);
 };
 
 #endif

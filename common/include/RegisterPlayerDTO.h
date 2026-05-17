@@ -12,13 +12,11 @@ private:
  
 public:
 
-    explicit RegisterPlayerDTO(std::string name) : name(std::move(name)) {}
- 
-    const std::string& getName() const { return name; }
+    explicit RegisterPlayerDTO(std::string name);
+  
+    const std::string& getName() const;
 
-    uint8_t getCode() override {
-        return static_cast<uint8_t>(CommandOpCode::RegisterPlayer);
-    }
+    uint8_t getCode() override;
 
 };
 
