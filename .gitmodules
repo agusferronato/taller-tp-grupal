@@ -1,0 +1,3 @@
+[submodule "common/resources"]
+	path = common/resources
+	url = git@github.com:ao-org/Recursos.git
