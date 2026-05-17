@@ -9,6 +9,7 @@ if (NOT DEFINED CMAKE_CXX_STANDARD)
 endif()
 
 set(CMAKE_CXX_EXTENSIONS ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(taller_tp
     VERSION 1.0
@@ -175,6 +176,8 @@ endif()
 # ---------------
 
 if(TALLER_TESTS)
+    enable_testing()
+    
     # Let's use google test
     include(FetchContent)
     FetchContent_Declare(
@@ -220,4 +223,6 @@ if(TALLER_TESTS)
         taller_common
         GTest::gtest_main
     )
+    
+    gtest_discover_tests(taller_tests)
 endif()

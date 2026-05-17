@@ -1,8 +1,8 @@
 target_sources(taller_common
     PRIVATE
-    # .cpp files
-    foo.cpp
-    PUBLIC
-    # .h files
-    foo.h
-    )
+        src/socket.cpp
+        src/resolver.cpp
+        src/binary_protocol.cpp
+        src/exceptions/lib_error.cpp
+        src/exceptions/resolver_error.cpp
+)
