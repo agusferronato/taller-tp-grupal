@@ -2,6 +2,7 @@
 #include "MoveCommandDTO.h"
 #include "ResourcesTesting.h"
 #include "direction.h"
+#include <SDL2pp/Event.hh>
 
 Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
                    Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
@@ -68,59 +69,63 @@ void Gameloop::clearDisplay() {
 }
 
 void Gameloop::handleEvents() {
-  SDL_Event event;
-  while (SDL_PollEvent(&event)) {
-    if (event.type == SDL_QUIT) {
+  SDL2pp::Event event;
+  while (event.Poll()) {
+    switch (event.GetType()) {
+    case SDL_QUIT:
       throw WindowClosed("Window was closed by the user");
+      break;
 
-    } else if (event.type == SDL_KEYDOWN) {
+    case SDL_KEYDOWN:
+      if (event.key.repeat == 0) {
+        switch (event.key.keysym.sym) {
+        case SDLK_LEFT:
+        case SDLK_a:
+          sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::LEFT));
+          break;
+        case SDLK_RIGHT:
+        case SDLK_d:
+          sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::RIGHT));
+          break;
+        case SDLK_UP:
+        case SDLK_w:
+          sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::UP));
+          break;
+        case SDLK_DOWN:
+        case SDLK_s:
+          sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::DOWN));
+          break;
+        default:
+          break;
+        }
+      }
+      break;
+
+    case SDL_KEYUP:
       switch (event.key.keysym.sym) {
       case SDLK_LEFT:
       case SDLK_a:
-        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::LEFT));
+        // TODO: Implementar StopMove con nuevo DTO
         break;
       case SDLK_RIGHT:
       case SDLK_d:
-        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::RIGHT));
+        // TODO: Implementar StopMove con nuevo DTO
         break;
       case SDLK_UP:
       case SDLK_w:
-        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::UP));
+        // TODO: Implementar StopMove con nuevo DTO
         break;
       case SDLK_DOWN:
       case SDLK_s:
-        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::DOWN));
+        // TODO: Implementar StopMove con nuevo DTO
         break;
       default:
         break;
       }
+      break;
 
-    } else if (event.type == SDL_KEYUP) {
-      switch (event.key.keysym.sym) {
-      case SDLK_LEFT:
-      case SDLK_a:
-        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::LEFT));
-        // TODO: Implementar StopMoveLeft con nuevo DTO, para que no sena el
-        // mismo
-        break;
-      case SDLK_RIGHT:
-      case SDLK_d:
-        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::RIGHT));
-        // TODO: Implementar StopMoveRight con nuevo DTO
-        break;
-      case SDLK_UP:
-      case SDLK_w:
-        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::UP));
-        // TODO: Implementar StopMoveUp con nuevo DTO
-        break;
-      case SDLK_DOWN:
-      case SDLK_s:
-        sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::DOWN));
-        // TODO: Implementar StopMoveDown con nuevo DTO
-        break;
-      default:
-        break;
-      }
+    default:
+      break;
     }
   }
 }
