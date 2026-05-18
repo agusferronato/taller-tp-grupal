@@ -1,6 +1,6 @@
 #include "Gameloop.h"
 #include "MoveCommandDTO.h"
-#include "ResourcesTesting.h"
+#include "ResourcesTesting.hh"
 #include "direction.h"
 #include <SDL2pp/Event.hh>
 
@@ -57,8 +57,16 @@ void Gameloop::initSDL() {
 void Gameloop::updateStateFromServer() {
   std::unique_ptr<CommandDTO> cmd;
   while (receptionQueue.try_pop(cmd)) {
-    // TODO: actualizar estado mapeando entidades (juagdores, fondo, etc) a
-    // texturas en memoria
+    switch (cmd->getCode()) {
+        case protocol_codes::PLAYER_MOVED
+        // actualizar estado del jugadores
+        break;
+        default:
+        //TODO el resto de comandos
+        break;
+    }
+    // TODO: actualizar estado mapeando entidades (juagdores, fondo, 
+    // etc) a texturas en memoria
   }
 }
 
@@ -103,6 +111,7 @@ void Gameloop::handleEvents() {
 
     case SDL_KEYUP:
       switch (event.key.keysym.sym) {
+        /*
       case SDLK_LEFT:
       case SDLK_a:
         // TODO: Implementar StopMove con nuevo DTO
@@ -119,6 +128,7 @@ void Gameloop::handleEvents() {
       case SDLK_s:
         // TODO: Implementar StopMove con nuevo DTO
         break;
+        */
       default:
         break;
       }
@@ -136,11 +146,14 @@ void Gameloop::updateAnimationFrames(unsigned int it) {
 
 void Gameloop::render() {
   // TODO: renderizar el estado actual del juego
+  renderer->Copy(resources.background, nullptr, nullptr);
+  renderer->Copy(resources.player, nullptr, nullptr);
 }
 
 void Gameloop::initResources() {
   // TODO: cargar todo en memoria
-
-  // para esta demo asumo una skin de jugador default y un fondo default
-  // Ya esta precargado en ResourcesTesting.h
+  
+  // por la demo se tien precaragado en ResourcesTesting.hh
+  resources.player = Player(SDL2pp::Texture(renderer, ResourcesTesting::player) , NULL);
+  resources.background = SDL2pp::Texture(renderer, ResourcesTesting::background);
 }
