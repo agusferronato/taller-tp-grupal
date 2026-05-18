@@ -11,7 +11,9 @@
 #include "WindowClosed.h"
 #include "ConstantRateLoop.h"
 #include "thread.h"
-#include "Resources.hh"
+#include "Camera.h"
+#include "EventHandler.h"
+#include "Player.h"
 
 class Gameloop : public Thread {
 
@@ -19,14 +21,18 @@ private:
     Queue<std::unique_ptr<CommandDTO>>& receptionQueue;
     Queue<std::unique_ptr<CommandDTO>>& sendingQueue;
     ShutdownEvent& shutdownEvent;
+    Camera camera;
+    EventHandler handler;
 
     SDL2pp::SDL sdl{SDL2pp::SDL(SDL_INIT_VIDEO)};
     SDL2pp::SDLTTF ttf;
 
     std::unique_ptr<SDL2pp::Window> window;
     std::unique_ptr<SDL2pp::Renderer> renderer;
+    std::unique_ptr<Player> player;
 
-    Resources resources;
+
+    
 
 public:
     Gameloop(Queue<std::unique_ptr<CommandDTO>>& receptionQueue,

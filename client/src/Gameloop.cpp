@@ -1,18 +1,15 @@
 #include "Gameloop.h"
-#include "MoveCommandDTO.h"
-#include "ResourcesTesting.hh"
-#include "direction.h"
-#include <SDL2pp/Event.hh>
 
 Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
                    Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
                    ShutdownEvent &shutdownEvent)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
-      shutdownEvent(shutdownEvent) {
+      shutdownEvent(shutdownEvent), camera(Camera(720, 410)), handler(EventHandler(sendingQueue)) {
   initSDL();
 }
 
 void Gameloop::run() {
+
   initResources();
   unsigned int it = 0;
 
@@ -33,9 +30,10 @@ void Gameloop::run() {
       return;
 
     } catch (const WindowClosed &e) {
-      // TODO: envio comando de cierre al servidor
+
       shutdownEvent.put(ShutdownReason::SDLQuit);
       return;
+
     } catch (...) {
 
       return;
@@ -59,16 +57,10 @@ void Gameloop::updateStateFromServer() {
   std::unique_ptr<CommandDTO> cmd;
 
   while (receptionQueue.try_pop(cmd)) {
-
-    switch (cmd->getCode()) {
-
-        case protocol_codes::PLAYER_MOVED
-
-          break;
-        default:
-
-          break;
-    }
+    /*
+      Si command == move y move.player_id == player.id => mover a x e y y modificar direccion 
+    
+    */
   }
 
 }
@@ -81,62 +73,36 @@ void Gameloop::clearDisplay() {
 
 void Gameloop::handleEvents() {
 
-  SDL2pp::Event event;
-  while (event.Poll()) {
-
-    switch (event.GetType()) {
-    case SDL_QUIT:
-      throw WindowClosed("Window was closed by the user");
-      break;
-
-    case SDL_KEYDOWN:
-      if (event.key.repeat == 0) {
-        switch (event.key.keysym.sym) {
-        case SDLK_LEFT:
-        case SDLK_a:
-          sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::LEFT));
-          break;
-        case SDLK_RIGHT:
-        case SDLK_d:
-          sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::RIGHT));
-          break;
-        case SDLK_UP:
-        case SDLK_w:
-          sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::UP));
-          break;
-        case SDLK_DOWN:
-        case SDLK_s:
-          sendingQueue.push(std::make_unique<MoveCommandDTO>(Direction::DOWN));
-          break;
-        default:
-          break;
-        }
-      }
-      break;
-
-    case SDL_KEYUP:
-      switch (event.key.keysym.sym) {
-      default:
-        break;
-      }
-      break;
-
-    default:
-      break;
-    }
+  SDL_Event event;
+  while (SDL_PollEvent(&event)) {
+    handler.handleEvent(event, player->getID());  
   }
+
 }
 
 
 void Gameloop::updateAnimationFrames(unsigned int it) {
+  
+  this->player->updateAnimation(it);
+
 }
+
 
 
 
 void Gameloop::render() {
+
+  camera.follow(player->getX(), player->getY(), 32, 32);
+  renderer.Copy(
+      player->getTexture(),
+      player->getFrame(),
+      camera.toScreen(player->getX(), player->getY(), 32, 32)
+  );
 }
 
 
-
 void Gameloop::initResources() {
+
+  this->player = std::make_unique<Player>(Player(*this->renderer));
+
 }
