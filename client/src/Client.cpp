@@ -32,6 +32,7 @@ void Client::run()
             break;
     }
 
+    gameloop.join();
     receiver.join();
     sender.join();
 }

@@ -1,4 +1,5 @@
 #include "ClientSender.h"
+#include "RegisterAllParsers.h"
 
 ClientSender::ClientSender(Socket &socket,
                            Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
@@ -6,7 +7,9 @@ ClientSender::ClientSender(Socket &socket,
     : socket(socket),
       sendingQueue(sendingQueue),
       shutdownEvent(shutdownEvent),
-      protocol(Protocol(socket)) { }
+      protocol(Protocol(socket)) {
+  registerAllParsers(protocol);
+}
 
 void ClientSender::run() {
 

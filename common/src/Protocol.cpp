@@ -35,6 +35,10 @@ uint16_t Protocol::getUint16() {
     return utils.receive_uint16(socket);
 }
 
+int16_t Protocol::getInt16() {
+    return utils.receive_int16(socket);
+}
+
 uint32_t Protocol::getUint32() {
     return utils.receive_uint32(socket);
 }

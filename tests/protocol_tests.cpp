@@ -22,6 +22,10 @@
 #include "../common/include/NpcDefeatedEventParser.h"
 #include "../common/include/PlayerMovedEventDTO.h"
 #include "../common/include/PlayerMovedEventParser.h"
+#include "../common/include/RegisterPlayerResponseDTO.h"
+#include "../common/include/RegisterPlayerResponseParser.h"
+#include "../common/include/PlayerListDTO.h"
+#include "../common/include/PlayerListParser.h"
 #include "../common/include/direction.h"
 #include "../common/include/protocol_codes.h"
 
@@ -57,6 +61,10 @@ protected:
                             std::make_unique<NpcDefeatedEventParser>());
     protocol.registerParser(static_cast<uint8_t>(ServerOpcode::PLAYER_MOVED),
                             std::make_unique<PlayerMovedEventParser>());
+    protocol.registerParser(static_cast<uint8_t>(ServerOpcode::REGISTER_RESPONSE),
+                            std::make_unique<RegisterPlayerResponseParser>());
+    protocol.registerParser(static_cast<uint8_t>(ServerOpcode::PLAYER_LIST),
+                            std::make_unique<PlayerListParser>());
   }
 };
 
@@ -140,13 +148,14 @@ TEST_F(ProtocolTest, SendsAndReceivesMoveCommand) {
   registerAllParsers(client);
   registerAllParsers(server);
 
-  MoveCommandDTO original{Direction::UP};
+  MoveCommandDTO original{42, Direction::Up};
   client.send(original);
 
   auto received = server.receive();
   auto* moveDTO = dynamic_cast<MoveCommandDTO*>(received.get());
   ASSERT_NE(moveDTO, nullptr);
-  EXPECT_EQ(moveDTO->getDirection(), Direction::UP);
+  EXPECT_EQ(moveDTO->getPlayerId(), 42);
+  EXPECT_EQ(moveDTO->getDirection(), Direction::Up);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesExit) {
@@ -193,7 +202,7 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerMovedEvent) {
   registerAllParsers(server);
   registerAllParsers(client);
 
-  PlayerMovedEventDTO original{42, 10, 20};
+  PlayerMovedEventDTO original{42, 10, 20, Direction::Down};
   server.send(original);
 
   auto received = client.receive();
@@ -202,4 +211,46 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerMovedEvent) {
   EXPECT_EQ(moveDTO->getPlayerId(), 42);
   EXPECT_EQ(moveDTO->getX(), 10);
   EXPECT_EQ(moveDTO->getY(), 20);
+  EXPECT_EQ(moveDTO->getDirection(), Direction::Down);
+}
+
+TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerResponse) {
+  Socket server_socket = Socket::from_fd(fds[0]);
+  Socket client_socket = Socket::from_fd(fds[1]);
+
+  Protocol server(server_socket);
+  Protocol client(client_socket);
+  registerAllParsers(server);
+  registerAllParsers(client);
+
+  RegisterPlayerResponseDTO original{1, 0};
+  server.send(original);
+
+  auto received = client.receive();
+  auto* respDTO = dynamic_cast<RegisterPlayerResponseDTO*>(received.get());
+  ASSERT_NE(respDTO, nullptr);
+  EXPECT_EQ(respDTO->getPlayerId(), 1);
+  EXPECT_EQ(respDTO->getStatus(), 0);
+}
+
+TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
+  Socket server_socket = Socket::from_fd(fds[0]);
+  Socket client_socket = Socket::from_fd(fds[1]);
+
+  Protocol server(server_socket);
+  Protocol client(client_socket);
+  registerAllParsers(server);
+  registerAllParsers(client);
+
+  std::vector<PlayerId> ids = {1, 2, 3};
+  PlayerListDTO original{ids};
+  server.send(original);
+
+  auto received = client.receive();
+  auto* listDTO = dynamic_cast<PlayerListDTO*>(received.get());
+  ASSERT_NE(listDTO, nullptr);
+  ASSERT_EQ(listDTO->getPlayerIds().size(), 3);
+  EXPECT_EQ(listDTO->getPlayerIds()[0], 1);
+  EXPECT_EQ(listDTO->getPlayerIds()[1], 2);
+  EXPECT_EQ(listDTO->getPlayerIds()[2], 3);
 }

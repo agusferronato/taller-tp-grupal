@@ -1,4 +1,5 @@
 #include "ClientReceiver.h"
+#include "RegisterAllParsers.h"
 
 ClientReceiver::ClientReceiver(Socket &socket,
                                Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
@@ -6,7 +7,9 @@ ClientReceiver::ClientReceiver(Socket &socket,
     : socket(socket),
       receptionQueue(receptionQueue),
       shutdownEvent(shutdownEvent),
-      protocol(Protocol(socket)) { }
+      protocol(Protocol(socket)) {
+  registerAllParsers(protocol);
+}
 
 void ClientReceiver::run() {
 

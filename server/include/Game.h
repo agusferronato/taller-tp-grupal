@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <list>
+#include <unordered_map>
 #include <thread>
 #include <utility>
 #include <memory>
@@ -13,6 +14,13 @@
 #include "CommandDTO.h"
 #include "ConstantRateLoop.h"
 #include "Constants.h"
+#include "direction.h"
+#include "types.h"
+
+struct PlayerInfo {
+    int x{0}, y{0};
+    Direction direction{Direction::Down};
+};
 
 class Game: public Thread {
 
@@ -22,6 +30,8 @@ private:
 
     std::list<std::unique_ptr<CommandDTO>> messagesToSend;
     bool keepRunning = true;
+    PlayerId nextPlayerId{1};
+    std::unordered_map<PlayerId, PlayerInfo> players;
 
 public:
     Game(Queue<std::unique_ptr<CommandDTO>>& gameloopQueue, SenderQueueMonitor& senderQueueMonitor);

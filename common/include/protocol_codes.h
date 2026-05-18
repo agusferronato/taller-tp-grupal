@@ -25,6 +25,8 @@ enum class ServerOpcode : uint8_t {
   NPC_DEFEATED,
   NPC_RESPAWNED,
   PLAYER_MOVED,
+  REGISTER_RESPONSE,
+  PLAYER_LIST,
 };
 
 

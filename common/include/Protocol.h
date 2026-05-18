@@ -33,6 +33,8 @@ public:
 
     uint16_t getUint16();
 
+    int16_t getInt16();
+
     uint32_t getUint32();
 };
 

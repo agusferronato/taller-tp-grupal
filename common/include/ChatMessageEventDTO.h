@@ -17,6 +17,7 @@ public:
     const std::string& getMessage() const;
 
     uint8_t getCode() override;
+    std::unique_ptr<CommandDTO> clone() override;
 };
 
 #endif

@@ -10,3 +10,7 @@ const std::string& PrivateMessageDTO::getMessage() const { return message; }
 uint8_t PrivateMessageDTO::getCode() {
     return static_cast<uint8_t>(CommandOpCode::PRIVATE_MESSAGE);
 }
+
+std::unique_ptr<CommandDTO> PrivateMessageDTO::clone() {
+    return std::make_unique<PrivateMessageDTO>(*this);
+}

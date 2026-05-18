@@ -12,7 +12,7 @@ private:
 
 public:
 
-    Camera(float x, float y) : x(x), y(y) { }
+    Camera(float screenW, float screenH) : screenW(screenW), screenH(screenH) { }
 
     void follow(float targetX, float targetY, float targetW, float targetH) {
         x = targetX + targetW / 2.0f - screenW / 2.0f;
@@ -26,7 +26,7 @@ public:
             w, h
         );
     }
-    
+
 };
 
 #endif
