@@ -8,6 +8,6 @@
   Representa las direcciones en las que un jugador puede moverse.
 */
 
-enum class Direction : uint8_t { UP, DOWN, LEFT, RIGHT };
+enum class Direction : uint8_t { Up, Down, Left, Right };
 
 #endif // DIRECTION_H
