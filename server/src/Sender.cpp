@@ -1,10 +1,13 @@
 #include "Sender.h"
+#include "RegisterAllParsers.h"
 
 Sender::Sender(SenderQueueMonitor& senderQueueMonitor, Socket& peer) :
     senderQueueMonitor(senderQueueMonitor),
     peer(peer),
     senderQueue(senderQueueMonitor.getNewSenderQueue()),
-    protocol(peer) { }
+    protocol(peer) {
+    registerAllParsers(protocol);
+}
 
 void Sender::kill() {
     keepRunning = false;

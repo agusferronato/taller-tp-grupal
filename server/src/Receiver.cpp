@@ -1,7 +1,10 @@
 #include "Receiver.h"
+#include "RegisterAllParsers.h"
 
 Receiver::Receiver(Socket& peer, Queue<std::unique_ptr<CommandDTO>>& gameloopQueue):
-        peer(peer), gameloopQueue(gameloopQueue), protocol(peer) { }
+        peer(peer), gameloopQueue(gameloopQueue), protocol(peer) {
+    registerAllParsers(protocol);
+}
 
 void Receiver::kill() { keepRunning = false; }
 

@@ -41,6 +41,11 @@ void SenderQueueMonitor::clearPendingMessages(Queue<std::unique_ptr<CommandDTO>>
 }
 
 void SenderQueueMonitor::pushMessageToTheSenderQueues(std::unique_ptr<CommandDTO> message) {
-    for (auto queue: senderQueues)
-        queuesPendingMessages[queue].push(std::move(message));
+    for (auto it = senderQueues.begin(); it != senderQueues.end(); ++it) {
+        if (std::next(it) == senderQueues.end()) {
+            queuesPendingMessages[*it].push(std::move(message));
+        } else {
+            queuesPendingMessages[*it].push(message->clone());
+        }
+    }
 }

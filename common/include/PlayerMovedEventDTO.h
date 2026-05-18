@@ -2,23 +2,28 @@
 #define PLAYER_MOVED_EVENT_DTO_H
 
 #include "CommandDTO.h"
+#include "direction.h"
 #include "protocol_codes.h"
+#include "types.h"
 #include <cstdint>
 
 class PlayerMovedEventDTO : public CommandDTO {
 private:
-    uint32_t player_id;
-    uint16_t x;
-    uint16_t y;
+    PlayerId player_id;
+    int16_t x;
+    int16_t y;
+    Direction direction;
 
 public:
-    PlayerMovedEventDTO(uint32_t player_id, uint16_t x, uint16_t y);
+    PlayerMovedEventDTO(PlayerId player_id, int16_t x, int16_t y, Direction direction);
 
-    uint32_t getPlayerId() const;
-    uint16_t getX() const;
-    uint16_t getY() const;
+    PlayerId getPlayerId() const;
+    int16_t getX() const;
+    int16_t getY() const;
+    Direction getDirection() const;
 
     uint8_t getCode() override;
+    std::unique_ptr<CommandDTO> clone() override;
 };
 
 #endif

@@ -15,11 +15,15 @@ public:
 
     void appendToSend(uint16_t value, std::vector<uint8_t>& bytes);
 
+    void appendToSend(int16_t value, std::vector<uint8_t>& bytes);
+
     void appendToSend(uint32_t value, std::vector<uint8_t>& bytes);
    
     uint8_t receive_uint8(Socket& socket);
    
     uint16_t receive_uint16(Socket& socket);
+
+    int16_t receive_int16(Socket& socket);
 
     uint32_t receive_uint32(Socket& socket);
    

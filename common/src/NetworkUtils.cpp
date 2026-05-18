@@ -19,6 +19,10 @@ void NetworkUtils::appendToSend(uint16_t value, std::vector<uint8_t>& bytes) {
     bytes.insert(bytes.end(), buf, buf + sizeof(buf));
 }
 
+void NetworkUtils::appendToSend(int16_t value, std::vector<uint8_t>& bytes) {
+    appendToSend(static_cast<uint16_t>(value), bytes);
+}
+
 void NetworkUtils::appendToSend(uint32_t value, std::vector<uint8_t>& bytes) {
     uint32_t net = htonl(value);
     uint8_t buf[4];
@@ -36,6 +40,10 @@ uint16_t NetworkUtils::receive_uint16(Socket& socket) {
     uint16_t net_value;
     socket.recvall(&net_value, sizeof(net_value));
     return ntohs(net_value);
+}
+
+int16_t NetworkUtils::receive_int16(Socket& socket) {
+    return static_cast<int16_t>(receive_uint16(socket));
 }
 
 uint32_t NetworkUtils::receive_uint32(Socket& socket) {

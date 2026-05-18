@@ -10,3 +10,7 @@ const std::string& ChatMessageEventDTO::getMessage() const { return message; }
 uint8_t ChatMessageEventDTO::getCode() {
     return static_cast<uint8_t>(ServerOpcode::CHAT_MESSAGE);
 }
+
+std::unique_ptr<CommandDTO> ChatMessageEventDTO::clone() {
+    return std::make_unique<ChatMessageEventDTO>(*this);
+}
