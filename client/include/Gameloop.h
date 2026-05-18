@@ -11,6 +11,7 @@
 #include "WindowClosed.h"
 #include "ConstantRateLoop.h"
 #include "thread.h"
+#include "Resources.hh"
 
 class Gameloop : public Thread {
 
@@ -24,6 +25,8 @@ private:
 
     std::unique_ptr<SDL2pp::Window> window;
     std::unique_ptr<SDL2pp::Renderer> renderer;
+
+    Resources resources;
 
 public:
     Gameloop(Queue<std::unique_ptr<CommandDTO>>& receptionQueue,
