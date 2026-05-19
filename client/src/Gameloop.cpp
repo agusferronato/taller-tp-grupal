@@ -3,7 +3,7 @@
 #include "LoginPlayerDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
-#include <PlayerStoppedDTO.h>
+#include "PlayerStoppedDTO.h"
 
 Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
                    Queue<std::unique_ptr<CommandDTO>> &sendingQueue,

@@ -5,7 +5,7 @@
 #include "PlayerListDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
-#include <PlayerStoppedDTO.h>
+#include "PlayerStoppedDTO.h"
 
 Game::Game(Queue<std::unique_ptr<CommandDTO>>& gameloopQueue, SenderQueueMonitor& senderQueueMonitor):
         gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor) {}
