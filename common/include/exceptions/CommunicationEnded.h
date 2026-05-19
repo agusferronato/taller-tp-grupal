@@ -5,18 +5,16 @@
 #include <cstdio>
 #include <exception>
 
-
 #define BUF_LEN 256
 
-class CommunicationEnded: std::exception {
+class CommunicationEnded : std::exception {
 
 private:
-    char msg[BUF_LEN];
+  char msg[BUF_LEN];
 
 public:
-    CommunicationEnded(const char* format, ...);
-    virtual const char* what() const noexcept;
+  CommunicationEnded(const char *format, ...);
+  virtual const char *what() const noexcept;
 };
-
 
 #endif

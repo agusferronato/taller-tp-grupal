@@ -5,18 +5,16 @@
 #include <cstdio>
 #include <exception>
 
-
 #define BUF_LEN 256
 
-class WindowClosed: std::exception {
+class WindowClosed : std::exception {
 
 private:
-    char msg[BUF_LEN];
+  char msg[BUF_LEN];
 
 public:
-    WindowClosed(const char* format, ...);
-    virtual const char* what() const noexcept;
+  WindowClosed(const char *format, ...);
+  virtual const char *what() const noexcept;
 };
-
 
 #endif

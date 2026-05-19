@@ -1,21 +1,21 @@
 #ifndef MOVE_COMMAND_PARSER_H
 #define MOVE_COMMAND_PARSER_H
 
-#include "CommandParser.h"
 #include "CommandDTO.h"
-#include "Protocol.h"
+#include "CommandParser.h"
 #include "MoveCommandDTO.h"
+#include "Protocol.h"
 #include "direction.h"
-#include "protocol_codes.h"
 #include "exceptions/protocol_error.h"
-#include <vector>
+#include "protocol_codes.h"
 #include <memory>
+#include <vector>
 
 class MoveCommandParser : public CommandParser {
 public:
-    void getBytesToSend(std::vector<uint8_t>& bytes, CommandDTO& dto) override;
+  void getBytesToSend(std::vector<uint8_t> &bytes, CommandDTO &dto) override;
 
-    std::unique_ptr<CommandDTO> getDTO(Protocol& protocol) override;
+  std::unique_ptr<CommandDTO> getDTO(Protocol &protocol) override;
 };
 
 #endif

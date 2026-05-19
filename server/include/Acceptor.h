@@ -2,38 +2,38 @@
 #define ACCEPTOR_H
 
 #include <algorithm>
+#include <memory>
 #include <utility>
 #include <vector>
-#include <memory>
 
+#include "ClientConnection.h"
+#include "CommandDTO.h"
+#include "SenderQueueMonitor.h"
 #include "socket.h"
 #include "thread.h"
-#include "ClientConnection.h"
-#include "SenderQueueMonitor.h"
-#include "CommandDTO.h"
 #include <sys/socket.h>
 
-class Acceptor: public Thread {
+class Acceptor : public Thread {
 
 private:
-    Socket& acceptor;
-    Queue<std::unique_ptr<CommandDTO>>& gameloopQueue;
-    SenderQueueMonitor& senderQueueMonitor;
-    bool keepRunning = true;
+  Socket &acceptor;
+  Queue<std::unique_ptr<CommandDTO>> &gameloopQueue;
+  SenderQueueMonitor &senderQueueMonitor;
+  bool keepRunning = true;
 
 public:
-    Acceptor(Socket& socket, Queue<std::unique_ptr<CommandDTO>>& gameloopQueue,
-             SenderQueueMonitor& senderQueueMonitor);
+  Acceptor(Socket &socket, Queue<std::unique_ptr<CommandDTO>> &gameloopQueue,
+           SenderQueueMonitor &senderQueueMonitor);
 
-    Acceptor(const Acceptor&) = delete;
-    Acceptor& operator=(const Acceptor&) = delete;
+  Acceptor(const Acceptor &) = delete;
+  Acceptor &operator=(const Acceptor &) = delete;
 
-    virtual void run() override;
+  virtual void run() override;
 
-    void kill();
+  void kill();
 
-    void reap(std::vector<ClientConnection*>& connections);
-    void clear(std::vector<ClientConnection*>& connections);
+  void reap(std::vector<ClientConnection *> &connections);
+  void clear(std::vector<ClientConnection *> &connections);
 };
 
 #endif

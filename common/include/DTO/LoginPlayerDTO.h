@@ -3,19 +3,20 @@
 
 #include "CommandDTO.h"
 #include "protocol_codes.h"
+#include <memory>
 #include <string>
 
 class LoginPlayerDTO : public CommandDTO {
 private:
-    std::string name;
+  std::string name;
 
 public:
-    explicit LoginPlayerDTO(std::string name);
+  explicit LoginPlayerDTO(std::string name);
 
-    const std::string& getName() const;
+  const std::string &getName() const;
 
-    uint8_t getCode() override;
-    std::unique_ptr<CommandDTO> clone() override;
+  uint8_t getCode() override;
+  std::unique_ptr<CommandDTO> clone() override;
 };
 
 #endif

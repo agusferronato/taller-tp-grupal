@@ -3,27 +3,24 @@
 
 #include "CommandDTO.h"
 #include "NetworkUtils.h"
-#include <vector>
 #include <memory>
+#include <vector>
 
 class Protocol;
 
-
 class CommandParser {
-    
+
 protected:
-    NetworkUtils utils;
- 
+  NetworkUtils utils;
+
 public:
-    CommandParser() = default;
- 
-    virtual void getBytesToSend(std::vector<uint8_t>& bytes, CommandDTO& dto) = 0;
- 
-    virtual std::unique_ptr<CommandDTO> getDTO(Protocol& protocol) = 0;
- 
-    virtual ~CommandParser() = default;
+  CommandParser() = default;
 
+  virtual void getBytesToSend(std::vector<uint8_t> &bytes, CommandDTO &dto) = 0;
 
+  virtual std::unique_ptr<CommandDTO> getDTO(Protocol &protocol) = 0;
+
+  virtual ~CommandParser() = default;
 };
 
 #endif
