@@ -1,4 +1,5 @@
 #include "Protocol.h"
+#include "CommunicationEnded.h"
 
 Protocol::Protocol(Socket& socket) : socket(socket) {}
 
@@ -6,21 +7,30 @@ void Protocol::registerParser(uint8_t code, std::unique_ptr<CommandParser> parse
     parsers[code] = std::move(parser);
 }
 
-void Protocol::send(CommandDTO& command) {
-    std::vector<uint8_t> bytes;
-    uint8_t code = command.getCode();
-    auto it = parsers.find(code);
+void Protocol::send(CommandDTO &command) {
 
-    it->second->getBytesToSend(bytes, command);
-    if (!bytes.empty())
-        socket.sendall(bytes.data(), bytes.size());
+  
+  std::vector<uint8_t> bytes;
+  uint8_t code = command.getCode();
+  auto it = parsers.find(code);
+  
+  it->second->getBytesToSend(bytes, command);
+  if (!bytes.empty()){
+      if (socket.is_stream_send_closed()) {
+        throw CommunicationEnded("Connection closed by peer");
+      }
+    socket.sendall(bytes.data(), bytes.size());
+  }
 }
 
 std::unique_ptr<CommandDTO> Protocol::receive() {
-    uint8_t code = utils.receive_uint8(socket);
-    auto it = parsers.find(code);
+  uint8_t code = utils.receive_uint8(socket);
+  if (socket.is_stream_recv_closed()) {
+    throw CommunicationEnded("Connection closed by peer");
+  }
 
-    return it->second->getDTO(*this);
+  auto it = parsers.find(code);
+  return it->second->getDTO(*this);
 }
 
 void Protocol::getStringData(std::string& str) {
