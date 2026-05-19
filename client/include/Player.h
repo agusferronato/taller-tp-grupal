@@ -1,8 +1,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include "Direction.h"
 #include "SpriteCalculator.h"
-#include "direction.h"
 #include <SDL2pp/SDL2pp.hh>
 #include <string>
 

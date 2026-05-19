@@ -11,9 +11,9 @@
 #include "PlayerStoppedParser.h"
 #include "PrivateMessageParser.h"
 #include "Protocol.h"
+#include "ProtocolCodes.h"
 #include "RegisterPlayerParser.h"
 #include "RegisterPlayerResponseParser.h"
-#include "protocol_codes.h"
 
 void registerAllParsers(Protocol &protocol) {
   protocol.registerParser(static_cast<uint8_t>(CommandOpCode::RegisterPlayer),

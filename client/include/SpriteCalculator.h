@@ -1,7 +1,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include "direction.h"
+#include "Direction.h"
 #include <cmath>
 
 struct SpriteFrame {

@@ -1,4 +1,4 @@
-#include "resolver.h"
+#include "Resolver.h"
 
 #include <stdexcept>
 
@@ -11,8 +11,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "lib_error.h"
-#include "resolver_error.h"
+#include "LibError.h"
+#include "ResolverError.h"
 
 Resolver::Resolver(const char *hostname, const char *servname,
                    bool is_passive) {

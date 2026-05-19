@@ -8,8 +8,8 @@
 #include "Receiver.h"
 #include "Sender.h"
 #include "SenderQueueMonitor.h"
-#include "socket.h"
-#include "thread.h"
+#include "Socket.h"
+#include "Thread.h"
 #include <sys/socket.h>
 
 class ClientConnection : public Thread {

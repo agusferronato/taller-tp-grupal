@@ -7,12 +7,12 @@
 #include "ClientData.h"
 #include "ClientReceiver.h"
 #include "ClientSender.h"
+#include "ClosedQueue.h"
 #include "CommandDTO.h"
 #include "Gameloop.h"
+#include "Queue.h"
 #include "ShutdownEvent.h"
-#include "exceptions/closed_queue.h"
-#include "queue.h"
-#include "socket.h"
+#include "Socket.h"
 
 class Client {
 

@@ -15,11 +15,11 @@
 #include "Player.h"
 #include "PlayerListDTO.h"
 #include "PlayerMovedEventDTO.h"
+#include "Queue.h"
 #include "RegisterPlayerResponseDTO.h"
 #include "ShutdownEvent.h"
+#include "Thread.h"
 #include "WindowClosed.h"
-#include "queue.h"
-#include "thread.h"
 
 class Gameloop : public Thread {
 

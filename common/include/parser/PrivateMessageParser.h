@@ -5,7 +5,7 @@
 #include "CommandParser.h"
 #include "PrivateMessageDTO.h"
 #include "Protocol.h"
-#include "protocol_codes.h"
+#include "ProtocolCodes.h"
 #include <memory>
 #include <string>
 #include <vector>

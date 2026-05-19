@@ -2,7 +2,7 @@
 #define CHAT_MESSAGE_EVENT_DTO_H
 
 #include "CommandDTO.h"
-#include "protocol_codes.h"
+#include "ProtocolCodes.h"
 #include <memory>
 #include <string>
 

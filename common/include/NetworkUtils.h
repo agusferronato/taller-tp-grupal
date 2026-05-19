@@ -1,7 +1,7 @@
 #ifndef NETWORK_UTILS_H
 #define NETWORK_UTILS_H
 
-#include "socket.h"
+#include "Socket.h"
 #include <cstring>
 #include <netinet/in.h>
 #include <string>

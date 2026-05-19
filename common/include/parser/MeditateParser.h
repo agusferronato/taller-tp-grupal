@@ -5,7 +5,7 @@
 #include "CommandParser.h"
 #include "MeditateDTO.h"
 #include "Protocol.h"
-#include "protocol_codes.h"
+#include "ProtocolCodes.h"
 #include <memory>
 #include <vector>
 

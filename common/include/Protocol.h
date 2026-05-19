@@ -4,7 +4,7 @@
 #include "CommandDTO.h"
 #include "CommandParser.h"
 #include "NetworkUtils.h"
-#include "socket.h"
+#include "Socket.h"
 #include <memory>
 #include <string>
 #include <unordered_map>

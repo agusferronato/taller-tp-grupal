@@ -5,6 +5,7 @@
 #include "ChatMessageEventDTO.h"
 #include "ChatMessageEventParser.h"
 #include "CommandDTO.h"
+#include "Direction.h"
 #include "ExitDTO.h"
 #include "ExitParser.h"
 #include "LoginPlayerDTO.h"
@@ -23,12 +24,11 @@
 #include "PrivateMessageDTO.h"
 #include "PrivateMessageParser.h"
 #include "Protocol.h"
+#include "ProtocolCodes.h"
 #include "RegisterPlayerDTO.h"
 #include "RegisterPlayerParser.h"
 #include "RegisterPlayerResponseDTO.h"
 #include "RegisterPlayerResponseParser.h"
-#include "direction.h"
-#include "protocol_codes.h"
 
 class ProtocolTest : public ::testing::Test {
 protected:

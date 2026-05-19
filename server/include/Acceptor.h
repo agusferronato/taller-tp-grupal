@@ -9,8 +9,8 @@
 #include "ClientConnection.h"
 #include "CommandDTO.h"
 #include "SenderQueueMonitor.h"
-#include "socket.h"
-#include "thread.h"
+#include "Socket.h"
+#include "Thread.h"
 #include <sys/socket.h>
 
 class Acceptor : public Thread {

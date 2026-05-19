@@ -9,7 +9,7 @@
 #include <stdexcept>
 #include <utility>
 
-#include "closed_queue.h"
+#include "ClosedQueue.h"
 
 /*
  * Multiproducer/Multiconsumer Blocking Queue (MPMC)

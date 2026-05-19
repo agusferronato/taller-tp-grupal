@@ -1,5 +1,5 @@
 #include "PlayerAppearedEventParser.h"
-#include "exceptions/protocol_error.h"
+#include "ProtocolError.h"
 
 void PlayerAppearedEventParser::getBytesToSend(std::vector<uint8_t> &bytes,
                                                CommandDTO &dto) {

@@ -2,7 +2,7 @@
 #define PLAYER_STOPPED_DTO_H
 
 #include "CommandDTO.h"
-#include "protocol_codes.h"
+#include "ProtocolCodes.h"
 #include <cstdint>
 #include <memory>
 

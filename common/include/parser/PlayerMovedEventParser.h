@@ -5,7 +5,7 @@
 #include "CommandParser.h"
 #include "PlayerMovedEventDTO.h"
 #include "Protocol.h"
-#include "protocol_codes.h"
+#include "ProtocolCodes.h"
 #include <memory>
 #include <vector>
 

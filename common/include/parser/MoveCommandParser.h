@@ -3,11 +3,11 @@
 
 #include "CommandDTO.h"
 #include "CommandParser.h"
+#include "Direction.h"
 #include "MoveCommandDTO.h"
 #include "Protocol.h"
-#include "direction.h"
-#include "exceptions/protocol_error.h"
-#include "protocol_codes.h"
+#include "ProtocolCodes.h"
+#include "ProtocolError.h"
 #include <memory>
 #include <vector>
 
