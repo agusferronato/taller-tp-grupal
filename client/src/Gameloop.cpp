@@ -1,14 +1,17 @@
 #include "Gameloop.h"
 #include "RegisterPlayerDTO.h"
+#include "LoginPlayerDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include <PlayerStoppedDTO.h>
 
 Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
                    Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
-                   ShutdownEvent &shutdownEvent)
+                   ShutdownEvent &shutdownEvent,
+                   const ClientData &clientData)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
-      shutdownEvent(shutdownEvent), camera(Camera(720, 410)), handler(EventHandler(sendingQueue)) {
+      shutdownEvent(shutdownEvent), camera(Camera(720, 410)), handler(EventHandler(sendingQueue)),
+      clientData(clientData) {
 }
 
 void Gameloop::run() {
@@ -52,7 +55,11 @@ void Gameloop::run() {
 }
 
 void Gameloop::registerPlayer() {
-    sendingQueue.push(std::make_unique<RegisterPlayerDTO>("player"));
+    if (clientData.is_new_character) {
+        sendingQueue.push(std::make_unique<RegisterPlayerDTO>(clientData.character_name));
+    } else {
+        sendingQueue.push(std::make_unique<LoginPlayerDTO>(clientData.username));
+    }
 
     std::unique_ptr<CommandDTO> cmd;
     cmd = receptionQueue.pop();
@@ -86,6 +93,8 @@ void Gameloop::initSDL() {
 
   this->renderer = std::make_unique<SDL2pp::Renderer>(
       SDL2pp::Renderer(*window, -1, SDL_RENDERER_ACCELERATED));
+
+  backgroundTexture = std::make_unique<SDL2pp::Texture>(*renderer, SDL2pp::Surface("assets/10119.png"));
 }
 
 void Gameloop::updateStateFromServer() {
@@ -123,8 +132,10 @@ void Gameloop::updateStateFromServer() {
 
 void Gameloop::clearDisplay() {
   if (renderer) {
-    renderer->SetDrawColor(255, 0, 0, 255);
-    renderer->Clear();
+    renderer->Copy(
+      *backgroundTexture, 
+      SDL2pp::Rect(0, 0, 400, 400), 
+      SDL2pp::Rect(0, 0, 720, 410));
   }
 }
 
