@@ -1,6 +1,7 @@
 #include "Gameloop.h"
 #include "RegisterPlayerDTO.h"
 #include "PlayerMovedEventDTO.h"
+#include "PlayerAppearedEventDTO.h"
 
 Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
                    Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
@@ -87,6 +88,29 @@ void Gameloop::updateStateFromServer() {
   std::unique_ptr<CommandDTO> cmd;
 
   while (receptionQueue.try_pop(cmd)) {
+
+    switch (static_cast<ServerOpcode>(cmd->getCode())) {
+
+      case ServerOpcode::PLAYER_MOVED:
+        break;
+
+      default:
+        break;
+
+      case ServerOpcode::PLAYER_APPEARED: {
+        auto* appeared = dynamic_cast<PlayerAppearedEventDTO*>(cmd.get());
+        if (!appeared) break;
+        PlayerId pid = appeared->getPlayerId();
+        if (pid == myPlayerId) break;
+        auto player = std::make_unique<Player>(*renderer, pid, "assets/11402.png");
+        player->updateCoordinates(appeared->getX(), appeared->getY(), appeared->getDirection());
+        otherPlayers[pid] = std::move(player);
+        break;
+      }
+
+    }
+
+
     auto* moved = dynamic_cast<PlayerMovedEventDTO*>(cmd.get());
     if (!moved) continue;
 
