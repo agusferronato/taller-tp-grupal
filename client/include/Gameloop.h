@@ -19,7 +19,6 @@
 #include "RegisterPlayerResponseDTO.h"
 #include "PlayerListDTO.h"
 #include "PlayerMovedEventDTO.h"
-#include "types.h"
 
 class Gameloop : public Thread {
 
@@ -37,9 +36,9 @@ private:
     std::unique_ptr<SDL2pp::Window> window;
     std::unique_ptr<SDL2pp::Renderer> renderer;
 
-    PlayerId myPlayerId{0};
+    uint32_t myPlayerId{0};
     std::unique_ptr<Player> myPlayer;
-    std::unordered_map<PlayerId, std::unique_ptr<Player>> otherPlayers;
+    std::unordered_map<uint32_t, std::unique_ptr<Player>> otherPlayers;
 
 public:
     Gameloop(Queue<std::unique_ptr<CommandDTO>>& receptionQueue,
@@ -49,6 +48,7 @@ public:
     virtual void run() override;
 
 private:
+    /* Gameloop steps */
     void initSDL();
     void registerPlayer();
     void updateStateFromServer();
@@ -57,6 +57,12 @@ private:
     void updateAnimationFrames(unsigned int it);
     void render();
     void initResources();
+
+private:
+    /* Event handlers */
+    void playerAppeared(std::unique_ptr<CommandDTO> &cmd);
+    void playerMovedHandler(std::unique_ptr<CommandDTO> &cmd);
+    void playerStopped(std::unique_ptr<CommandDTO> &cmd);
 };
 
 #endif

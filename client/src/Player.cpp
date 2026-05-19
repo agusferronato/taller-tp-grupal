@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(SDL2pp::Renderer& renderer, PlayerId id, const std::string& texturePath)
+Player::Player(SDL2pp::Renderer& renderer, uint32_t id, const std::string& texturePath, int xOrigin, int yOrigin)
     : id(id), x(0), y(0),
       texture(renderer, [&](){
           SDL2pp::Surface surface(texturePath);
@@ -11,4 +11,7 @@ Player::Player(SDL2pp::Renderer& renderer, PlayerId id, const std::string& textu
       it_init(0) {
     texture.SetBlendMode(SDL_BLENDMODE_BLEND);
     frame = spriteFrameCalculator.getSprite(Direction::Down, 0);
+    x = xOrigin;
+    y = yOrigin;
 }
+

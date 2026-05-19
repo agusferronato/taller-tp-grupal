@@ -4,20 +4,19 @@
 #include "CommandDTO.h"
 #include "direction.h"
 #include "protocol_codes.h"
-#include "types.h"
 #include <cstdint>
 
 class PlayerMovedEventDTO : public CommandDTO {
 private:
-    PlayerId player_id;
+    uint32_t player_id;
     int16_t x;
     int16_t y;
     Direction direction;
 
 public:
-    PlayerMovedEventDTO(PlayerId player_id, int16_t x, int16_t y, Direction direction);
+    PlayerMovedEventDTO(uint32_t player_id, int16_t x, int16_t y, Direction direction);
 
-    PlayerId getPlayerId() const;
+    uint32_t getPlayerId() const;
     int16_t getX() const;
     int16_t getY() const;
     Direction getDirection() const;

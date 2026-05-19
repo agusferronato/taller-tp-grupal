@@ -4,13 +4,13 @@
 #include <SDL2pp/SDL2pp.hh>
 #include "direction.h"
 #include "SpriteCalculator.h"
-#include "types.h"
+
 
 class Player {
 
 private:
 
-    PlayerId id;
+    uint32_t id;
     bool isMoving{false};
     Direction direction{Direction::Down};
 
@@ -22,11 +22,16 @@ private:
 
 public:
 
-    Player(SDL2pp::Renderer& renderer, PlayerId id, const std::string& texturePath);
+    Player(
+        SDL2pp::Renderer& renderer, 
+        uint32_t id, 
+        const std::string& texturePath,
+        int xOrigin,
+        int yOrigin);
 
     int getX() const { return x; }
     int getY() const { return y; }
-    PlayerId getID() const { return id; }
+    uint32_t getID() const { return id; }
     SDL2pp::Texture& getTexture() { return texture; }
     SpriteFrame& getFrame() { return frame; }
 

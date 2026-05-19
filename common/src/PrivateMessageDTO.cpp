@@ -8,7 +8,7 @@ const std::string& PrivateMessageDTO::getTarget() const { return target; }
 const std::string& PrivateMessageDTO::getMessage() const { return message; }
 
 uint8_t PrivateMessageDTO::getCode() {
-    return static_cast<uint8_t>(CommandOpCode::PRIVATE_MESSAGE);
+    return static_cast<uint8_t>(CommandOpCode::PrivateMessage);
 }
 
 std::unique_ptr<CommandDTO> PrivateMessageDTO::clone() {

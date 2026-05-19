@@ -12,22 +12,23 @@
 // Opcodes para comandos enviados por el cliente al servidor
 enum class CommandOpCode : uint8_t {
   RegisterPlayer = 0x10,
-  LOGIN_PLAYER,
-  MEDITATE,
-  PRIVATE_MESSAGE,
-  MOVE_COMMAND,
-  EXIT,
+  LoginPlayer,
+  Meditate,
+  PrivateMessage,
+  MoveCommand,
+  Exit,
 };
 
 // Opcodes para eventos enviados por el servidor a los clientes
 enum class ServerOpcode : uint8_t {
-  CHAT_MESSAGE = 0x80,
-  NPC_DEFEATED,
-  NPC_RESPAWNED,
-  PLAYER_MOVED,
-  REGISTER_RESPONSE,
-  PLAYER_LIST,
-  PLAYER_APPEARED,
+  ChatMessage = 0x80,
+  NPCDefeated,
+  NPCRespawned,
+  PlayerMoved,
+  RegisterResponse,
+  PlayerList,
+  PlayerAppeared,
+  PlayerStopped,
 };
 
 

@@ -1,14 +1,14 @@
 #include "RegisterPlayerResponseDTO.h"
 
-RegisterPlayerResponseDTO::RegisterPlayerResponseDTO(PlayerId player_id, uint8_t status)
+RegisterPlayerResponseDTO::RegisterPlayerResponseDTO(uint32_t player_id, uint8_t status)
     : player_id(player_id), status(status) {}
 
-PlayerId RegisterPlayerResponseDTO::getPlayerId() const { return player_id; }
+uint32_t RegisterPlayerResponseDTO::getPlayerId() const { return player_id; }
 
 uint8_t RegisterPlayerResponseDTO::getStatus() const { return status; }
 
 uint8_t RegisterPlayerResponseDTO::getCode() {
-    return static_cast<uint8_t>(ServerOpcode::REGISTER_RESPONSE);
+    return static_cast<uint8_t>(ServerOpcode::RegisterResponse);
 }
 
 std::unique_ptr<CommandDTO> RegisterPlayerResponseDTO::clone() {

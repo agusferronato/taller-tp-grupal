@@ -2,7 +2,7 @@
 
 void NpcDefeatedEventParser::getBytesToSend(std::vector<uint8_t>& bytes, CommandDTO& dto) {
     auto& eventDTO = dynamic_cast<NpcDefeatedEventDTO&>(dto);
-    utils.appendToSend(static_cast<uint8_t>(ServerOpcode::NPC_DEFEATED), bytes);
+    utils.appendToSend(static_cast<uint8_t>(ServerOpcode::NPCDefeated), bytes);
     utils.appendToSend(eventDTO.getNpcId(), bytes);
 }
 
