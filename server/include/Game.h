@@ -19,6 +19,7 @@
 struct PlayerInfo {
     int x{0}, y{0};
     Direction direction{Direction::Down};
+    bool moving{false};
 };
 
 class Game: public Thread {
@@ -45,6 +46,7 @@ public:
 private:
     void execute(std::unique_ptr<CommandDTO> clientMessage);
     void sendMessages();
+    void movePlayers();
 };
 
 #endif
