@@ -6,7 +6,6 @@
 #include "RegisterPlayerDTO.h"
 #include "RegisterPlayerResponseDTO.h"
 #include <PlayerStoppedDTO.h>
-#include <ranges>
 
 Game::Game(Queue<std::unique_ptr<CommandDTO>> &gameloopQueue,
            SenderQueueMonitor &senderQueueMonitor)
@@ -20,9 +19,9 @@ void Game::run() {
   while (keepRunning) {
 
     std::unique_ptr<CommandDTO> command;
-    // es un try_pop aun que nadie mande nada los mobs se siguen moviento y
-    // atacando por lo que no se deberia bloquear la logica, se bloquea solo con
-    // el sleep del rateloop
+    // Es un try_pop: aunque nadie mande nada, los mobs se siguen moviendo y
+    // atacando, por lo que no se debería bloquear la lógica. Solo se bloquea
+    // con el sleep del rateloop.
     while (gameloopQueue.try_pop(command)) {
       execute(std::move(command));
     }
