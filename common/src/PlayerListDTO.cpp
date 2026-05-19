@@ -1,9 +1,9 @@
 #include "PlayerListDTO.h"
 
-PlayerListDTO::PlayerListDTO(std::vector<PlayerId> player_ids)
-    : player_ids(std::move(player_ids)) {}
+PlayerListDTO::PlayerListDTO(std::vector<PlayerInfoDTO> players)
+    : players(std::move(players)) {}
 
-const std::vector<PlayerId>& PlayerListDTO::getPlayerIds() const { return player_ids; }
+const std::vector<PlayerInfoDTO>& PlayerListDTO::getPlayers() const { return players; }
 
 uint8_t PlayerListDTO::getCode() {
     return static_cast<uint8_t>(ServerOpcode::PLAYER_LIST);

@@ -242,15 +242,28 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
   registerAllParsers(server);
   registerAllParsers(client);
 
-  std::vector<PlayerId> ids = {1, 2, 3};
-  PlayerListDTO original{ids};
+  std::vector<PlayerInfoDTO> players = {
+    {1, 100, 200, Direction::Down},
+    {2, 300, 400, Direction::Up},
+    {3, 500, 600, Direction::Left}
+  };
+  PlayerListDTO original{players};
   server.send(original);
 
   auto received = client.receive();
   auto* listDTO = dynamic_cast<PlayerListDTO*>(received.get());
   ASSERT_NE(listDTO, nullptr);
-  ASSERT_EQ(listDTO->getPlayerIds().size(), 3);
-  EXPECT_EQ(listDTO->getPlayerIds()[0], 1);
-  EXPECT_EQ(listDTO->getPlayerIds()[1], 2);
-  EXPECT_EQ(listDTO->getPlayerIds()[2], 3);
+  ASSERT_EQ(listDTO->getPlayers().size(), 3);
+  EXPECT_EQ(listDTO->getPlayers()[0].player_id, 1);
+  EXPECT_EQ(listDTO->getPlayers()[0].x, 100);
+  EXPECT_EQ(listDTO->getPlayers()[0].y, 200);
+  EXPECT_EQ(listDTO->getPlayers()[0].direction, Direction::Down);
+  EXPECT_EQ(listDTO->getPlayers()[1].player_id, 2);
+  EXPECT_EQ(listDTO->getPlayers()[1].x, 300);
+  EXPECT_EQ(listDTO->getPlayers()[1].y, 400);
+  EXPECT_EQ(listDTO->getPlayers()[1].direction, Direction::Up);
+  EXPECT_EQ(listDTO->getPlayers()[2].player_id, 3);
+  EXPECT_EQ(listDTO->getPlayers()[2].x, 500);
+  EXPECT_EQ(listDTO->getPlayers()[2].y, 600);
+  EXPECT_EQ(listDTO->getPlayers()[2].direction, Direction::Left);
 }

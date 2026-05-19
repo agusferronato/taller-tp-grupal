@@ -37,12 +37,12 @@ void Game::execute(std::unique_ptr<CommandDTO> clientMessage) {
         messagesToSend.push_back(
             std::make_unique<RegisterPlayerResponseDTO>(newId, 0));
 
-        std::vector<PlayerId> ids;
-        for (auto& [pid, _] : players) {
-            ids.push_back(pid);
+        std::vector<PlayerInfoDTO> playerList;
+        for (auto& [pid, info] : players) {
+            playerList.push_back({pid, static_cast<int16_t>(info.x), static_cast<int16_t>(info.y), info.direction});
         }
         messagesToSend.push_back(
-            std::make_unique<PlayerListDTO>(std::move(ids)));
+            std::make_unique<PlayerListDTO>(std::move(playerList)));
 
         messagesToSend.push_back(
             std::make_unique<PlayerAppearedEventDTO>(newId, 0, 0, Direction::Down));
