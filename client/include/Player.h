@@ -41,7 +41,7 @@ public:
         if (isMoving)
             frame = spriteFrameCalculator.getSprite(direction, it - it_init);
         else
-            frame = spriteFrameCalculator.getSprite(direction, it_init);
+            frame = spriteFrameCalculator.getSprite(direction, 0);
     }
 
     void updateCoordinates(int x, int y, Direction direction) {
