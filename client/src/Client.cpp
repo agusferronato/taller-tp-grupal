@@ -1,39 +1,37 @@
 #include "Client.h"
 
 Client::Client(const char *hostname, const char *port, const ClientData &data)
-    : socket(Socket(hostname, port)),
-      shutdownEvent(ShutdownEvent()),
-      clientData(data) { }
+    : socket(Socket(hostname, port)), shutdownEvent(ShutdownEvent()),
+      clientData(data) {}
 
-void Client::run()
-{
-    Queue<std::unique_ptr<CommandDTO>> sendingQueue, receptionQueue;
-    ClientReceiver receiver(socket, receptionQueue, shutdownEvent);
-    ClientSender sender(socket, sendingQueue, shutdownEvent);
-    Gameloop gameloop(receptionQueue, sendingQueue, shutdownEvent, clientData);
+void Client::run() {
+  Queue<std::unique_ptr<CommandDTO>> sendingQueue, receptionQueue;
+  ClientReceiver receiver(socket, receptionQueue, shutdownEvent);
+  ClientSender sender(socket, sendingQueue, shutdownEvent);
+  Gameloop gameloop(receptionQueue, sendingQueue, shutdownEvent, clientData);
 
-    receiver.start();
-    sender.start();
-    gameloop.start();
+  receiver.start();
+  sender.start();
+  gameloop.start();
 
-    shutdownEvent.wait();
+  shutdownEvent.wait();
 
-    switch (shutdownEvent.getReason()) {
+  switch (shutdownEvent.getReason()) {
 
-        case ShutdownReason::SDLQuit:
-            socket.shutdown(SHUT_RDWR);
-            socket.close();
-            [[fallthrough]];
+  case ShutdownReason::SDLQuit:
+    socket.shutdown(SHUT_RDWR);
+    socket.close();
+    [[fallthrough]];
 
-        case ShutdownReason::ConnectionClosed:
-            sendingQueue.close();
-            receptionQueue.close();
+  case ShutdownReason::ConnectionClosed:
+    sendingQueue.close();
+    receptionQueue.close();
 
-        default:
-            break;
-    }
+  default:
+    break;
+  }
 
-    gameloop.join();
-    receiver.join();
-    sender.join();
+  gameloop.join();
+  receiver.join();
+  sender.join();
 }
