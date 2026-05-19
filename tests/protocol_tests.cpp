@@ -2,31 +2,31 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include "Protocol.h"
+#include "ChatMessageEventDTO.h"
+#include "ChatMessageEventParser.h"
 #include "CommandDTO.h"
-#include "RegisterPlayerDTO.h"
-#include "RegisterPlayerParser.h"
+#include "ExitDTO.h"
+#include "ExitParser.h"
 #include "LoginPlayerDTO.h"
 #include "LoginPlayerParser.h"
 #include "MeditateDTO.h"
 #include "MeditateParser.h"
-#include "PrivateMessageDTO.h"
-#include "PrivateMessageParser.h"
 #include "MoveCommandDTO.h"
 #include "MoveCommandParser.h"
-#include "ExitDTO.h"
-#include "ExitParser.h"
-#include "ChatMessageEventDTO.h"
-#include "ChatMessageEventParser.h"
 #include "NpcDefeatedEventDTO.h"
 #include "NpcDefeatedEventParser.h"
-#include "PlayerMovedEventDTO.h"
-#include "PlayerMovedEventParser.h"
-#include "RegisterPlayerResponseDTO.h"
-#include "RegisterPlayerResponseParser.h"
 #include "PlayerListDTO.h"
 #include "PlayerListParser.h"
+#include "PlayerMovedEventDTO.h"
+#include "PlayerMovedEventParser.h"
 #include "PlayerStoppedParser.h"
+#include "PrivateMessageDTO.h"
+#include "PrivateMessageParser.h"
+#include "Protocol.h"
+#include "RegisterPlayerDTO.h"
+#include "RegisterPlayerParser.h"
+#include "RegisterPlayerResponseDTO.h"
+#include "RegisterPlayerResponseParser.h"
 #include "direction.h"
 #include "protocol_codes.h"
 
@@ -43,7 +43,7 @@ protected:
     close(fds[1]);
   }
 
-  void registerAllParsers(Protocol& protocol) {
+  void registerAllParsers(Protocol &protocol) {
     protocol.registerParser(static_cast<uint8_t>(CommandOpCode::RegisterPlayer),
                             std::make_unique<RegisterPlayerParser>());
     protocol.registerParser(static_cast<uint8_t>(CommandOpCode::LoginPlayer),
@@ -62,8 +62,9 @@ protected:
                             std::make_unique<NpcDefeatedEventParser>());
     protocol.registerParser(static_cast<uint8_t>(ServerOpcode::PlayerMoved),
                             std::make_unique<PlayerMovedEventParser>());
-    protocol.registerParser(static_cast<uint8_t>(ServerOpcode::RegisterResponse),
-                            std::make_unique<RegisterPlayerResponseParser>());
+    protocol.registerParser(
+        static_cast<uint8_t>(ServerOpcode::RegisterResponse),
+        std::make_unique<RegisterPlayerResponseParser>());
     protocol.registerParser(static_cast<uint8_t>(ServerOpcode::PlayerList),
                             std::make_unique<PlayerListParser>());
     protocol.registerParser(static_cast<uint8_t>(ServerOpcode::PlayerStopped),
@@ -84,7 +85,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayer) {
   client.send(original);
 
   auto received = server.receive();
-  auto* registerDTO = dynamic_cast<RegisterPlayerDTO*>(received.get());
+  auto *registerDTO = dynamic_cast<RegisterPlayerDTO *>(received.get());
   ASSERT_NE(registerDTO, nullptr);
   EXPECT_EQ(registerDTO->getName(), "L0rd");
 }
@@ -102,7 +103,7 @@ TEST_F(ProtocolTest, SendsAndReceivesLoginPlayer) {
   client.send(original);
 
   auto received = server.receive();
-  auto* loginDTO = dynamic_cast<LoginPlayerDTO*>(received.get());
+  auto *loginDTO = dynamic_cast<LoginPlayerDTO *>(received.get());
   ASSERT_NE(loginDTO, nullptr);
   EXPECT_EQ(loginDTO->getName(), "TestPlayer");
 }
@@ -120,7 +121,7 @@ TEST_F(ProtocolTest, SendsAndReceivesMeditate) {
   client.send(original);
 
   auto received = server.receive();
-  ASSERT_NE(dynamic_cast<MeditateDTO*>(received.get()), nullptr);
+  ASSERT_NE(dynamic_cast<MeditateDTO *>(received.get()), nullptr);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesPrivateMessage) {
@@ -136,7 +137,7 @@ TEST_F(ProtocolTest, SendsAndReceivesPrivateMessage) {
   client.send(original);
 
   auto received = server.receive();
-  auto* pmDTO = dynamic_cast<PrivateMessageDTO*>(received.get());
+  auto *pmDTO = dynamic_cast<PrivateMessageDTO *>(received.get());
   ASSERT_NE(pmDTO, nullptr);
   EXPECT_EQ(pmDTO->getTarget(), "L0rd");
   EXPECT_EQ(pmDTO->getMessage(), "Hello");
@@ -155,7 +156,7 @@ TEST_F(ProtocolTest, SendsAndReceivesMoveCommand) {
   client.send(original);
 
   auto received = server.receive();
-  auto* moveDTO = dynamic_cast<MoveCommandDTO*>(received.get());
+  auto *moveDTO = dynamic_cast<MoveCommandDTO *>(received.get());
   ASSERT_NE(moveDTO, nullptr);
   EXPECT_EQ(moveDTO->getPlayerId(), 42);
   EXPECT_EQ(moveDTO->getDirection(), Direction::Up);
@@ -174,7 +175,7 @@ TEST_F(ProtocolTest, SendsAndReceivesExit) {
   client.send(original);
 
   auto received = server.receive();
-  ASSERT_NE(dynamic_cast<ExitDTO*>(received.get()), nullptr);
+  ASSERT_NE(dynamic_cast<ExitDTO *>(received.get()), nullptr);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesChatMessageEvent) {
@@ -190,7 +191,7 @@ TEST_F(ProtocolTest, SendsAndReceivesChatMessageEvent) {
   server.send(original);
 
   auto received = client.receive();
-  auto* chatDTO = dynamic_cast<ChatMessageEventDTO*>(received.get());
+  auto *chatDTO = dynamic_cast<ChatMessageEventDTO *>(received.get());
   ASSERT_NE(chatDTO, nullptr);
   EXPECT_EQ(chatDTO->getSender(), "ServerBot");
   EXPECT_EQ(chatDTO->getMessage(), "Welcome");
@@ -209,7 +210,7 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerMovedEvent) {
   server.send(original);
 
   auto received = client.receive();
-  auto* moveDTO = dynamic_cast<PlayerMovedEventDTO*>(received.get());
+  auto *moveDTO = dynamic_cast<PlayerMovedEventDTO *>(received.get());
   ASSERT_NE(moveDTO, nullptr);
   EXPECT_EQ(moveDTO->getPlayerId(), 42);
   EXPECT_EQ(moveDTO->getX(), 10);
@@ -230,7 +231,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerResponse) {
   server.send(original);
 
   auto received = client.receive();
-  auto* respDTO = dynamic_cast<RegisterPlayerResponseDTO*>(received.get());
+  auto *respDTO = dynamic_cast<RegisterPlayerResponseDTO *>(received.get());
   ASSERT_NE(respDTO, nullptr);
   EXPECT_EQ(respDTO->getPlayerId(), 1);
   EXPECT_EQ(respDTO->getStatus(), 0);
@@ -245,16 +246,14 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
   registerAllParsers(server);
   registerAllParsers(client);
 
-  std::vector<PlayerInfoDTO> players = {
-    {1, 100, 200, Direction::Down},
-    {2, 300, 400, Direction::Up},
-    {3, 500, 600, Direction::Left}
-  };
+  std::vector<PlayerInfoDTO> players = {{1, 100, 200, Direction::Down},
+                                        {2, 300, 400, Direction::Up},
+                                        {3, 500, 600, Direction::Left}};
   PlayerListDTO original{players};
   server.send(original);
 
   auto received = client.receive();
-  auto* listDTO = dynamic_cast<PlayerListDTO*>(received.get());
+  auto *listDTO = dynamic_cast<PlayerListDTO *>(received.get());
   ASSERT_NE(listDTO, nullptr);
   ASSERT_EQ(listDTO->getPlayers().size(), 3);
   EXPECT_EQ(listDTO->getPlayers()[0].player_id, 1);

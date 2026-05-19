@@ -8,25 +8,25 @@ class QPushButton;
 class QLabel;
 
 class MainMenuPage : public BackgroundPage {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit MainMenuPage(QWidget *parent = nullptr);
+  explicit MainMenuPage(QWidget *parent = nullptr);
 
 signals:
-    void continueGame();
-    void newGame();
-    void quitGame();
+  void continueGame();
+  void newGame();
+  void quitGame();
 
 protected:
-    void resizeEvent(QResizeEvent *event) override;
+  void resizeEvent(QResizeEvent *event) override;
 
 private:
-    QPixmap logoPixmap;
-    QLabel *logo;
-    QPushButton *continueBtn;
-    QPushButton *newGameBtn;
-    QPushButton *quitBtn;
+  QPixmap logoPixmap;
+  QLabel *logo;
+  QPushButton *continueBtn;
+  QPushButton *newGameBtn;
+  QPushButton *quitBtn;
 };
 
 #endif

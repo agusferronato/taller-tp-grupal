@@ -4,20 +4,21 @@
 #include "CommandDTO.h"
 #include "direction.h"
 #include "protocol_codes.h"
+#include <memory>
 
 class MoveCommandDTO : public CommandDTO {
 private:
-    uint32_t player_id;
-    Direction direction;
+  uint32_t player_id;
+  Direction direction;
 
 public:
-    MoveCommandDTO(uint32_t player_id, Direction direction);
+  MoveCommandDTO(uint32_t player_id, Direction direction);
 
-    uint32_t getPlayerId() const;
-    Direction getDirection() const;
+  uint32_t getPlayerId() const;
+  Direction getDirection() const;
 
-    uint8_t getCode() override;
-    std::unique_ptr<CommandDTO> clone() override;
+  uint8_t getCode() override;
+  std::unique_ptr<CommandDTO> clone() override;
 };
 
 #endif

@@ -3,13 +3,14 @@
 
 #include "CommandDTO.h"
 #include "protocol_codes.h"
+#include <memory>
 
 class MeditateDTO : public CommandDTO {
 public:
-    MeditateDTO();
+  MeditateDTO();
 
-    uint8_t getCode() override;
-    std::unique_ptr<CommandDTO> clone() override;
+  uint8_t getCode() override;
+  std::unique_ptr<CommandDTO> clone() override;
 };
 
 #endif

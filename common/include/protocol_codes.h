@@ -31,5 +31,4 @@ enum class ServerOpcode : uint8_t {
   PlayerStopped,
 };
 
-
 #endif // PROTOCOL_CODES_H

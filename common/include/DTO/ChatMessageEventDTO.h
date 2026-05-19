@@ -3,21 +3,22 @@
 
 #include "CommandDTO.h"
 #include "protocol_codes.h"
+#include <memory>
 #include <string>
 
 class ChatMessageEventDTO : public CommandDTO {
 private:
-    std::string sender;
-    std::string message;
+  std::string sender;
+  std::string message;
 
 public:
-    ChatMessageEventDTO(std::string sender, std::string message);
+  ChatMessageEventDTO(std::string sender, std::string message);
 
-    const std::string& getSender() const;
-    const std::string& getMessage() const;
+  const std::string &getSender() const;
+  const std::string &getMessage() const;
 
-    uint8_t getCode() override;
-    std::unique_ptr<CommandDTO> clone() override;
+  uint8_t getCode() override;
+  std::unique_ptr<CommandDTO> clone() override;
 };
 
 #endif

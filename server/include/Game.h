@@ -3,48 +3,49 @@
 
 #include <chrono>
 #include <list>
-#include <unordered_map>
-#include <thread>
-#include <utility>
 #include <memory>
+#include <thread>
+#include <unordered_map>
+#include <utility>
 
-#include "queue.h"
-#include "thread.h"
-#include "SenderQueueMonitor.h"
 #include "CommandDTO.h"
 #include "ConstantRateLoop.h"
 #include "Constants.h"
+#include "SenderQueueMonitor.h"
 #include "direction.h"
+#include "queue.h"
+#include "thread.h"
 
 struct PlayerInfo {
-    int x{0}, y{0};
-    Direction direction{Direction::Down};
+  int x{0}, y{0};
+  Direction direction{Direction::Down};
 };
 
-class Game: public Thread {
+class Game : public Thread {
 
 private:
-    Queue<std::unique_ptr<CommandDTO>>& gameloopQueue;
-    SenderQueueMonitor& senderQueueMonitor;
+  Queue<std::unique_ptr<CommandDTO>> &gameloopQueue;
+  SenderQueueMonitor &senderQueueMonitor;
 
-    std::list<std::unique_ptr<CommandDTO>> messagesToSend;
-    bool keepRunning = true;
-    uint32_t nextPlayerId{1};
-    std::unordered_map<uint32_t, PlayerInfo> players;
+  std::list<std::unique_ptr<CommandDTO>> messagesToSend;
+  bool keepRunning = true;
+  uint32_t nextPlayerId{1};
+  std::unordered_map<uint32_t, PlayerInfo> players;
 
 public:
-    Game(Queue<std::unique_ptr<CommandDTO>>& gameloopQueue, SenderQueueMonitor& senderQueueMonitor);
+  Game(Queue<std::unique_ptr<CommandDTO>> &gameloopQueue,
+       SenderQueueMonitor &senderQueueMonitor);
 
-    virtual void run() override;
+  virtual void run() override;
 
-    void kill();
+  void kill();
 
-    Game(const Game&) = delete;
-    Game& operator=(const Game&) = delete;
+  Game(const Game &) = delete;
+  Game &operator=(const Game &) = delete;
 
 private:
-    void execute(std::unique_ptr<CommandDTO> clientMessage);
-    void sendMessages();
+  void execute(std::unique_ptr<CommandDTO> clientMessage);
+  void sendMessages();
 };
 
 #endif

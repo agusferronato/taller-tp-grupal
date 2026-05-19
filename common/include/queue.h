@@ -7,6 +7,7 @@
 #include <mutex>
 #include <queue>
 #include <stdexcept>
+#include <utility>
 
 #include "closed_queue.h"
 
@@ -57,7 +58,7 @@ public:
     return true;
   }
 
-  bool try_push(T&& val) {
+  bool try_push(T &&val) {
     std::unique_lock<std::mutex> lck(mtx);
 
     if (closed) {
@@ -113,7 +114,7 @@ public:
     q.push(val);
   }
 
-  void push(T&& val) {
+  void push(T &&val) {
     std::unique_lock<std::mutex> lck(mtx);
 
     if (closed) {
