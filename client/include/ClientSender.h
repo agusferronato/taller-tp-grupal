@@ -6,10 +6,10 @@
 #include "CommandDTO.h"
 #include "CommunicationEnded.h"
 #include "Protocol.h"
+#include "Queue.h"
 #include "ShutdownEvent.h"
-#include "queue.h"
-#include "socket.h"
-#include "thread.h"
+#include "Socket.h"
+#include "Thread.h"
 
 class ClientSender : public Thread {
 

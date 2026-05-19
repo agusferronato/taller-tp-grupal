@@ -4,8 +4,8 @@
 #include "CommandDTO.h"
 #include "MoveCommandDTO.h"
 #include "PlayerStoppedDTO.h"
+#include "Queue.h"
 #include "WindowClosed.h"
-#include "queue.h"
 #include <SDL2pp/SDL2pp.hh>
 #include <memory>
 

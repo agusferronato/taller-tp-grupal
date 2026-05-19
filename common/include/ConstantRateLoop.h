@@ -2,7 +2,7 @@
 #define CONSTANT_RATELOOP_H
 
 #include "Constants.h"
-#include "thread.h"
+#include "Thread.h"
 #include <chrono>
 #include <cmath>
 #include <thread>

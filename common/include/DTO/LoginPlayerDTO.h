@@ -2,7 +2,7 @@
 #define LOGIN_PLAYER_DTO_H
 
 #include "CommandDTO.h"
-#include "protocol_codes.h"
+#include "ProtocolCodes.h"
 #include <memory>
 #include <string>
 

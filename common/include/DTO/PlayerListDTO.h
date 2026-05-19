@@ -2,8 +2,8 @@
 #define PLAYER_LIST_DTO_H
 
 #include "CommandDTO.h"
-#include "direction.h"
-#include "protocol_codes.h"
+#include "Direction.h"
+#include "ProtocolCodes.h"
 #include <cstdint>
 #include <memory>
 #include <vector>

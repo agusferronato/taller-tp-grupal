@@ -11,10 +11,10 @@
 #include "CommandDTO.h"
 #include "ConstantRateLoop.h"
 #include "Constants.h"
+#include "Direction.h"
+#include "Queue.h"
 #include "SenderQueueMonitor.h"
-#include "direction.h"
-#include "queue.h"
-#include "thread.h"
+#include "Thread.h"
 
 struct PlayerInfo {
   int x{0}, y{0};

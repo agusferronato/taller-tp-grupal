@@ -4,8 +4,8 @@
 #include "CommandDTO.h"
 #include "CommandParser.h"
 #include "Protocol.h"
+#include "ProtocolCodes.h"
 #include "RegisterPlayerDTO.h"
-#include "protocol_codes.h"
 #include <memory>
 #include <string>
 #include <vector>

@@ -2,7 +2,7 @@
 #define REGISTER_PLAYER_H
 
 #include "CommandDTO.h"
-#include "protocol_codes.h"
+#include "ProtocolCodes.h"
 #include <memory>
 #include <string>
 

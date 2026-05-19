@@ -11,7 +11,7 @@
 
 #include "CommandDTO.h"
 #include "Constants.h"
-#include "queue.h"
+#include "Queue.h"
 
 class SenderQueueMonitor {
 

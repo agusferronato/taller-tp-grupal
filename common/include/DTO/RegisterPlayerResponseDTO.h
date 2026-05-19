@@ -2,7 +2,7 @@
 #define REGISTER_PLAYER_RESPONSE_DTO_H
 
 #include "CommandDTO.h"
-#include "protocol_codes.h"
+#include "ProtocolCodes.h"
 #include <memory>
 
 class RegisterPlayerResponseDTO : public CommandDTO {
