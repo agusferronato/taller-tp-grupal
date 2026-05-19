@@ -17,4 +17,5 @@ target_sources(taller_client
 target_include_directories(taller_client
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/exceptions
 )

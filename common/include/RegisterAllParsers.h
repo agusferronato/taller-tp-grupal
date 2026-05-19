@@ -3,6 +3,6 @@
 
 class Protocol;
 
-void registerAllParsers(Protocol& protocol);
+void registerAllParsers(Protocol &protocol);
 
 #endif

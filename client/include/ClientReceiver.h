@@ -3,28 +3,28 @@
 
 #include <memory>
 
-#include "socket.h"
-#include "queue.h"
-#include "thread.h"
 #include "CommandDTO.h"
-#include "Protocol.h"
 #include "CommunicationEnded.h"
+#include "Protocol.h"
+#include "Queue.h"
 #include "ShutdownEvent.h"
+#include "Socket.h"
+#include "Thread.h"
 
 class ClientReceiver : public Thread {
 
 private:
-    Socket& socket;
-    Queue<std::unique_ptr<CommandDTO>>& receptionQueue;
-    ShutdownEvent& shutdownEvent;
-    Protocol protocol;
+  Socket &socket;
+  Queue<std::unique_ptr<CommandDTO>> &receptionQueue;
+  ShutdownEvent &shutdownEvent;
+  Protocol protocol;
 
 public:
-    ClientReceiver(Socket& socket,
-                   Queue<std::unique_ptr<CommandDTO>>& receptionQueue,
-                   ShutdownEvent& shutdownEvent);
+  ClientReceiver(Socket &socket,
+                 Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
+                 ShutdownEvent &shutdownEvent);
 
-    virtual void run() override;
+  virtual void run() override;
 };
 
 #endif

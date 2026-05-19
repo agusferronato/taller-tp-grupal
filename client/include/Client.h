@@ -4,27 +4,27 @@
 #include <memory>
 #include <sys/socket.h>
 
-#include "socket.h"
-#include "ShutdownEvent.h"
-#include "queue.h"
-#include "exceptions/closed_queue.h"
-#include "CommandDTO.h"
+#include "ClientData.h"
 #include "ClientReceiver.h"
 #include "ClientSender.h"
+#include "ClosedQueue.h"
+#include "CommandDTO.h"
 #include "Gameloop.h"
-#include "ClientData.h"
+#include "Queue.h"
+#include "ShutdownEvent.h"
+#include "Socket.h"
 
 class Client {
 
 private:
-    Socket socket;
-    ShutdownEvent shutdownEvent;
-    ClientData clientData;
+  Socket socket;
+  ShutdownEvent shutdownEvent;
+  ClientData clientData;
 
 public:
-    Client(const char* hostname, const char* port, const ClientData& data);
+  Client(const char *hostname, const char *port, const ClientData &data);
 
-    void run();
+  void run();
 };
 
 #endif

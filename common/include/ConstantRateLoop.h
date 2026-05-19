@@ -1,22 +1,22 @@
 #ifndef CONSTANT_RATELOOP_H
 #define CONSTANT_RATELOOP_H
 
-#include <chrono>
 #include "Constants.h"
+#include "Thread.h"
+#include <chrono>
 #include <cmath>
 #include <thread>
-#include "thread.h"
 
 class ConstantRateLoop {
 public:
-    ConstantRateLoop(int framesPerSecond);
-    virtual ~ConstantRateLoop() = default;
+  explicit ConstantRateLoop(int framesPerSecond);
+  virtual ~ConstantRateLoop() = default;
 
-    virtual void updateTimer(unsigned int &it);
+  virtual void updateTimer(unsigned int &it);
 
 private:
-    int rateInMiliseconds;
-    std::chrono::time_point<std::chrono::steady_clock> t0;
+  int rateInMiliseconds;
+  std::chrono::time_point<std::chrono::steady_clock> t0;
 };
 
 #endif

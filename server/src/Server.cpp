@@ -1,27 +1,27 @@
 #include "Server.h"
 
-Server::Server(const char* port): socket(Socket(port)) {}
+Server::Server(const char *port) : socket(Socket(port)) {}
 
 void Server::run() {
 
-    Queue<std::unique_ptr<CommandDTO>> gameloopQueue(GAMELOOP_QUEUE_SIZE);
-    SenderQueueMonitor senderQueueMonitor;
+  Queue<std::unique_ptr<CommandDTO>> gameloopQueue(GAMELOOP_QUEUE_SIZE);
+  SenderQueueMonitor senderQueueMonitor;
 
-    Acceptor acceptor(socket, gameloopQueue, senderQueueMonitor);
-    acceptor.start();
+  Acceptor acceptor(socket, gameloopQueue, senderQueueMonitor);
+  acceptor.start();
 
-    Game game(gameloopQueue, senderQueueMonitor);
-    game.start();
+  Game game(gameloopQueue, senderQueueMonitor);
+  game.start();
 
-    std::string input;
-    while (std::getline(std::cin, input)) {
-        if (input == "q") {
-            acceptor.kill();
-            game.kill();
-            break;
-        }
+  std::string input;
+  while (std::getline(std::cin, input)) {
+    if (input == "q") {
+      acceptor.kill();
+      game.kill();
+      break;
     }
+  }
 
-    acceptor.join();
-    game.join();
+  acceptor.join();
+  game.join();
 }
