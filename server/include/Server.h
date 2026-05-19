@@ -11,16 +11,15 @@
 class Server {
 
 private:
-    Socket socket;
+  Socket socket;
 
 public:
-    explicit Server(const char* port);
+  explicit Server(const char *port);
 
-    Server(const Server&) = delete;
-    Server& operator=(const Server&) = delete;
+  Server(const Server &) = delete;
+  Server &operator=(const Server &) = delete;
 
-    void run();
+  void run();
 };
-
 
 #endif /* SERVER_H */

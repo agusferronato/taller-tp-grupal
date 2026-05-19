@@ -1,17 +1,18 @@
 #include "Player.h"
 
-Player::Player(SDL2pp::Renderer& renderer, uint32_t id, const std::string& texturePath, int xOrigin, int yOrigin)
+Player::Player(SDL2pp::Renderer &renderer, uint32_t id,
+               const std::string &texturePath, int xOrigin, int yOrigin)
     : id(id), x(0), y(0),
-      texture(renderer, [&](){
-          SDL2pp::Surface surface(texturePath);
-          Uint32 colorKey = SDL_MapRGB(surface.Get()->format, 0, 0, 0);
-          surface.SetColorKey(true, colorKey);
-          return surface;
-      }()),
+      texture(renderer,
+              [&]() {
+                SDL2pp::Surface surface(texturePath);
+                Uint32 colorKey = SDL_MapRGB(surface.Get()->format, 0, 0, 0);
+                surface.SetColorKey(true, colorKey);
+                return surface;
+              }()),
       it_init(0) {
-    texture.SetBlendMode(SDL_BLENDMODE_BLEND);
-    frame = spriteFrameCalculator.getSprite(Direction::Down, 0);
-    x = xOrigin;
-    y = yOrigin;
+  texture.SetBlendMode(SDL_BLENDMODE_BLEND);
+  frame = spriteFrameCalculator.getSprite(Direction::Down, 0);
+  x = xOrigin;
+  y = yOrigin;
 }
-
