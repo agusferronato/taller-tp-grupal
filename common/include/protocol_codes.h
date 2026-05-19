@@ -27,6 +27,7 @@ enum class ServerOpcode : uint8_t {
   PLAYER_MOVED,
   REGISTER_RESPONSE,
   PLAYER_LIST,
+  PLAYER_APPEARED,
 };
 
 

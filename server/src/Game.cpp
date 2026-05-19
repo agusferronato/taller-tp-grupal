@@ -4,6 +4,7 @@
 #include "RegisterPlayerResponseDTO.h"
 #include "PlayerListDTO.h"
 #include "PlayerMovedEventDTO.h"
+#include "PlayerAppearedEventDTO.h"
 
 Game::Game(Queue<std::unique_ptr<CommandDTO>>& gameloopQueue, SenderQueueMonitor& senderQueueMonitor):
         gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor) {}
@@ -44,7 +45,7 @@ void Game::execute(std::unique_ptr<CommandDTO> clientMessage) {
             std::make_unique<PlayerListDTO>(std::move(ids)));
 
         messagesToSend.push_back(
-            std::make_unique<PlayerMovedEventDTO>(newId, 0, 0, Direction::Down));
+            std::make_unique<PlayerAppearedEventDTO>(newId, 0, 0, Direction::Down));
 
     } else if (code == static_cast<uint8_t>(CommandOpCode::MOVE_COMMAND)) {
 

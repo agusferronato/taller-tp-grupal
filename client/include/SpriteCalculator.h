@@ -13,6 +13,7 @@ class SpriteFrameCalculator {
 private:
     SpriteFrame frames[4][6];
     const int frameCounts[4] = {6, 6, 5, 5};
+    mutable float smoothed{0.0f};
 
 public:
 
@@ -45,7 +46,6 @@ public:
         frames[3][4] = {106, 149, 12, 29};
     }
 
-
     SpriteFrame getSprite(Direction direction, int iterator) const {
 
         int row = 0;
@@ -75,7 +75,6 @@ public:
 
         int count = frameCounts[row];
         int frame = iterator % count;  
-
         return frames[row][frame];
     }
     

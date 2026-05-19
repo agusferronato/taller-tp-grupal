@@ -33,6 +33,7 @@ public:
     void setCoordinates(int x, int y) { this->x = x; this->y = y; }
 
     void updateAnimation(unsigned int it) {
+
         if (changeState) {
             it_init = it;
             changeState = false;

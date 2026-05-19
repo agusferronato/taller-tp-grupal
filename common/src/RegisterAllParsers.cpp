@@ -10,6 +10,7 @@
 #include "ChatMessageEventParser.h"
 #include "NpcDefeatedEventParser.h"
 #include "PlayerMovedEventParser.h"
+#include "PlayerAppearedEventParser.h"
 #include "RegisterPlayerResponseParser.h"
 #include "PlayerListParser.h"
 
@@ -32,6 +33,8 @@ void registerAllParsers(Protocol& protocol) {
                             std::make_unique<NpcDefeatedEventParser>());
     protocol.registerParser(static_cast<uint8_t>(ServerOpcode::PLAYER_MOVED),
                             std::make_unique<PlayerMovedEventParser>());
+    protocol.registerParser(static_cast<uint8_t>(ServerOpcode::PLAYER_APPEARED),
+                            std::make_unique<PlayerAppearedEventParser>());
     protocol.registerParser(static_cast<uint8_t>(ServerOpcode::REGISTER_RESPONSE),
                             std::make_unique<RegisterPlayerResponseParser>());
     protocol.registerParser(static_cast<uint8_t>(ServerOpcode::PLAYER_LIST),
