@@ -8,24 +8,24 @@ class QPushButton;
 class QLabel;
 
 class LoginPage : public BackgroundPage {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit LoginPage(QWidget *parent = nullptr);
+  explicit LoginPage(QWidget *parent = nullptr);
 
 signals:
-    void connectRequested(const QString &username, const QString &password);
-    void backToMenuRequested();
+  void connectRequested(const QString &username, const QString &password);
+  void backToMenuRequested();
 
 private slots:
-    void onConnectClicked();
+  void onConnectClicked();
 
 private:
-    QLabel *titleLabel;
-    QLineEdit *usernameEdit;
-    QLineEdit *passwordEdit;
-    QPushButton *connectBtn;
-    QPushButton *backBtn;
+  QLabel *titleLabel;
+  QLineEdit *usernameEdit;
+  QLineEdit *passwordEdit;
+  QPushButton *connectBtn;
+  QPushButton *backBtn;
 };
 
 #endif

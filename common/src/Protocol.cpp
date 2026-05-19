@@ -1,44 +1,46 @@
 #include "Protocol.h"
+#include "CommunicationEnded.h"
 
-Protocol::Protocol(Socket& socket) : socket(socket) {}
+Protocol::Protocol(Socket &socket) : socket(socket) {}
 
-void Protocol::registerParser(uint8_t code, std::unique_ptr<CommandParser> parser) {
-    parsers[code] = std::move(parser);
+void Protocol::registerParser(uint8_t code,
+                              std::unique_ptr<CommandParser> parser) {
+  parsers[code] = std::move(parser);
 }
 
-void Protocol::send(CommandDTO& command) {
-    std::vector<uint8_t> bytes;
-    uint8_t code = command.getCode();
-    auto it = parsers.find(code);
+void Protocol::send(CommandDTO &command) {
 
-    it->second->getBytesToSend(bytes, command);
-    if (!bytes.empty())
-        socket.sendall(bytes.data(), bytes.size());
+  std::vector<uint8_t> bytes;
+  uint8_t code = command.getCode();
+  auto it = parsers.find(code);
+
+  it->second->getBytesToSend(bytes, command);
+  if (!bytes.empty()) {
+    if (socket.is_stream_send_closed()) {
+      throw CommunicationEnded("Connection closed by peer");
+    }
+    socket.sendall(bytes.data(), bytes.size());
+  }
 }
 
 std::unique_ptr<CommandDTO> Protocol::receive() {
-    uint8_t code = utils.receive_uint8(socket);
-    auto it = parsers.find(code);
+  uint8_t code = utils.receive_uint8(socket);
+  if (socket.is_stream_recv_closed()) {
+    throw CommunicationEnded("Connection closed by peer");
+  }
 
-    return it->second->getDTO(*this);
+  auto it = parsers.find(code);
+  return it->second->getDTO(*this);
 }
 
-void Protocol::getStringData(std::string& str) {
-    utils.recv_string(socket, str);
+void Protocol::getStringData(std::string &str) {
+  utils.recv_string(socket, str);
 }
 
-uint8_t Protocol::getUint8() {
-    return utils.receive_uint8(socket);
-}
+uint8_t Protocol::getUint8() { return utils.receive_uint8(socket); }
 
-uint16_t Protocol::getUint16() {
-    return utils.receive_uint16(socket);
-}
+uint16_t Protocol::getUint16() { return utils.receive_uint16(socket); }
 
-int16_t Protocol::getInt16() {
-    return utils.receive_int16(socket);
-}
+int16_t Protocol::getInt16() { return utils.receive_int16(socket); }
 
-uint32_t Protocol::getUint32() {
-    return utils.receive_uint32(socket);
-}
+uint32_t Protocol::getUint32() { return utils.receive_uint32(socket); }
