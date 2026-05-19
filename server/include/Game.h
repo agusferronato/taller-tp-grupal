@@ -17,9 +17,9 @@
 #include "Thread.h"
 
 struct PlayerInfo {
-    int x{0}, y{0};
-    Direction direction{Direction::Down};
-    bool moving{false};
+  int x{0}, y{0};
+  Direction direction{Direction::Down};
+  bool moving{false};
 };
 
 class Game : public Thread {
@@ -45,9 +45,9 @@ public:
   Game &operator=(const Game &) = delete;
 
 private:
-    void execute(std::unique_ptr<CommandDTO> clientMessage);
-    void sendMessages();
-    void movePlayers();
+  void execute(std::unique_ptr<CommandDTO> clientMessage);
+  void sendMessages();
+  void movePlayers();
 };
 
 #endif
