@@ -26,7 +26,9 @@ public:
                 break;
 
             case SDL_KEYDOWN:
-                handleKeyDown(event.key.keysym.sym, playerID);
+                if (event.key.repeat == 0) {
+                    handleKeyDown(event.key.keysym.sym, playerID);
+                }
                 break;
 
             case SDL_KEYUP:
