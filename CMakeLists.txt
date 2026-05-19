@@ -10,6 +10,7 @@ endif()
 
 set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_AUTOMOC ON)
 
 project(taller_tp
     VERSION 1.0
@@ -54,6 +55,7 @@ target_include_directories(taller_common PUBLIC .)
 # Install libSDL2 and libSDL2pp (for client or editor)
 # HEY!! TODO XXX: add more dependendies (either for client, server or editor)
 if(TALLER_CLIENT OR TALLER_EDITOR)
+    find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
     include(FetchContent)
     FetchContent_Declare(
         SDL2
@@ -122,7 +124,7 @@ if(TALLER_CLIENT)
     target_include_directories(taller_client PRIVATE ${libSDL2pp_SOURCE_DIR})
 
     # Link the taller_common lib target
-    target_link_libraries(taller_client taller_common SDL2pp::SDL2pp SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf)
+    target_link_libraries(taller_client taller_common SDL2pp::SDL2pp SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf Qt6::Widgets)
 
     add_custom_command(TARGET taller_client POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
