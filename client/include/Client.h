@@ -12,15 +12,17 @@
 #include "ClientReceiver.h"
 #include "ClientSender.h"
 #include "Gameloop.h"
+#include "ClientData.h"
 
 class Client {
 
 private:
     Socket socket;
     ShutdownEvent shutdownEvent;
+    ClientData clientData;
 
 public:
-    Client(const char* hostname, const char* port);
+    Client(const char* hostname, const char* port, const ClientData& data);
 
     void run();
 };

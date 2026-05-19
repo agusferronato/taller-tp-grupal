@@ -19,6 +19,7 @@
 #include "RegisterPlayerResponseDTO.h"
 #include "PlayerListDTO.h"
 #include "PlayerMovedEventDTO.h"
+#include "ClientData.h"
 
 class Gameloop : public Thread {
 
@@ -32,9 +33,11 @@ private:
     ShutdownEvent& shutdownEvent;
     Camera camera;
     EventHandler handler;
+    ClientData clientData;
 
     std::unique_ptr<SDL2pp::Window> window;
     std::unique_ptr<SDL2pp::Renderer> renderer;
+    std::unique_ptr<SDL2pp::Texture> backgroundTexture;
 
     uint32_t myPlayerId{0};
     std::unique_ptr<Player> myPlayer;
@@ -43,7 +46,8 @@ private:
 public:
     Gameloop(Queue<std::unique_ptr<CommandDTO>>& receptionQueue,
              Queue<std::unique_ptr<CommandDTO>>& sendingQueue,
-             ShutdownEvent& shutdownEvent);
+             ShutdownEvent& shutdownEvent,
+             const ClientData& clientData);
 
     virtual void run() override;
 
