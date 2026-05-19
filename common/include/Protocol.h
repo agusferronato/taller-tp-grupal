@@ -1,7 +1,6 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-
 #include "socket.h"
 #include "CommandParser.h"
 #include "CommandDTO.h"

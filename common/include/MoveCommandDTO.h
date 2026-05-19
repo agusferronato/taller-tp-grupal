@@ -4,17 +4,16 @@
 #include "CommandDTO.h"
 #include "direction.h"
 #include "protocol_codes.h"
-#include "types.h"
 
 class MoveCommandDTO : public CommandDTO {
 private:
-    PlayerId player_id;
+    uint32_t player_id;
     Direction direction;
 
 public:
-    MoveCommandDTO(PlayerId player_id, Direction direction);
+    MoveCommandDTO(uint32_t player_id, Direction direction);
 
-    PlayerId getPlayerId() const;
+    uint32_t getPlayerId() const;
     Direction getDirection() const;
 
     uint8_t getCode() override;

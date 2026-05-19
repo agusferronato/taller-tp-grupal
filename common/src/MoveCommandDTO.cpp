@@ -1,14 +1,14 @@
 #include "MoveCommandDTO.h"
 
-MoveCommandDTO::MoveCommandDTO(PlayerId player_id, Direction direction)
+MoveCommandDTO::MoveCommandDTO(uint32_t player_id, Direction direction)
     : player_id(player_id), direction(direction) {}
 
-PlayerId MoveCommandDTO::getPlayerId() const { return player_id; }
+uint32_t MoveCommandDTO::getPlayerId() const { return player_id; }
 
 Direction MoveCommandDTO::getDirection() const { return direction; }
 
 uint8_t MoveCommandDTO::getCode() {
-    return static_cast<uint8_t>(CommandOpCode::MOVE_COMMAND);
+    return static_cast<uint8_t>(CommandOpCode::MoveCommand);
 }
 
 std::unique_ptr<CommandDTO> MoveCommandDTO::clone() {

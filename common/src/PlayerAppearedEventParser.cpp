@@ -3,7 +3,7 @@
 
 void PlayerAppearedEventParser::getBytesToSend(std::vector<uint8_t>& bytes, CommandDTO& dto) {
     auto& eventDTO = dynamic_cast<PlayerAppearedEventDTO&>(dto);
-    utils.appendToSend(static_cast<uint8_t>(ServerOpcode::PLAYER_APPEARED), bytes);
+    utils.appendToSend(static_cast<uint8_t>(ServerOpcode::PlayerAppeared), bytes);
     utils.appendToSend(eventDTO.getPlayerId(), bytes);
     utils.appendToSend(eventDTO.getX(), bytes);
     utils.appendToSend(eventDTO.getY(), bytes);

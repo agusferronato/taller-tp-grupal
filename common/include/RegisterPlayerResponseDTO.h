@@ -3,17 +3,16 @@
 
 #include "CommandDTO.h"
 #include "protocol_codes.h"
-#include "types.h"
 
 class RegisterPlayerResponseDTO : public CommandDTO {
 private:
-    PlayerId player_id;
+    uint32_t player_id;
     uint8_t status;
 
 public:
-    RegisterPlayerResponseDTO(PlayerId player_id, uint8_t status);
+    RegisterPlayerResponseDTO(uint32_t player_id, uint8_t status);
 
-    PlayerId getPlayerId() const;
+    uint32_t getPlayerId() const;
     uint8_t getStatus() const;
 
     uint8_t getCode() override;

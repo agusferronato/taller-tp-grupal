@@ -4,12 +4,11 @@
 #include "CommandDTO.h"
 #include "direction.h"
 #include "protocol_codes.h"
-#include "types.h"
 #include <vector>
 #include <cstdint>
 
 struct PlayerInfoDTO {
-    PlayerId player_id;
+    uint32_t player_id;
     int16_t x;
     int16_t y;
     Direction direction;

@@ -2,7 +2,7 @@
 
 void ChatMessageEventParser::getBytesToSend(std::vector<uint8_t>& bytes, CommandDTO& dto) {
     auto& eventDTO = dynamic_cast<ChatMessageEventDTO&>(dto);
-    utils.appendToSend(static_cast<uint8_t>(ServerOpcode::CHAT_MESSAGE), bytes);
+    utils.appendToSend(static_cast<uint8_t>(ServerOpcode::ChatMessage), bytes);
     utils.appendToSend(eventDTO.getSender(), bytes);
     utils.appendToSend(eventDTO.getMessage(), bytes);
 }

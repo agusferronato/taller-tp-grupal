@@ -2,7 +2,7 @@
 
 void LoginPlayerParser::getBytesToSend(std::vector<uint8_t>& bytes, CommandDTO& dto) {
     auto& loginDTO = dynamic_cast<LoginPlayerDTO&>(dto);
-    utils.appendToSend(static_cast<uint8_t>(CommandOpCode::LOGIN_PLAYER), bytes);
+    utils.appendToSend(static_cast<uint8_t>(CommandOpCode::LoginPlayer), bytes);
     utils.appendToSend(loginDTO.getName(), bytes);
 }
 

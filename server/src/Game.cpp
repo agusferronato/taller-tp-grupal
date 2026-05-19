@@ -5,6 +5,7 @@
 #include "PlayerListDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
+#include <PlayerStoppedDTO.h>
 
 Game::Game(Queue<std::unique_ptr<CommandDTO>>& gameloopQueue, SenderQueueMonitor& senderQueueMonitor):
         gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor) {}
@@ -31,7 +32,7 @@ void Game::execute(std::unique_ptr<CommandDTO> clientMessage) {
     uint8_t code = clientMessage->getCode();
 
     if (code == static_cast<uint8_t>(CommandOpCode::RegisterPlayer)) {
-        PlayerId newId = nextPlayerId++;
+        uint32_t newId = nextPlayerId++;
         players[newId] = PlayerInfo{0, 0, Direction::Down};
 
         messagesToSend.push_back(
@@ -47,10 +48,10 @@ void Game::execute(std::unique_ptr<CommandDTO> clientMessage) {
         messagesToSend.push_back(
             std::make_unique<PlayerAppearedEventDTO>(newId, 0, 0, Direction::Down));
 
-    } else if (code == static_cast<uint8_t>(CommandOpCode::MOVE_COMMAND)) {
+    } else if (code == static_cast<uint8_t>(CommandOpCode::MoveCommand)) {
 
         auto& moveCmd = dynamic_cast<MoveCommandDTO&>(*clientMessage);
-        PlayerId pid = moveCmd.getPlayerId();
+        uint32_t pid = moveCmd.getPlayerId();
         Direction dir = moveCmd.getDirection();
 
         auto it = players.find(pid);
@@ -72,6 +73,11 @@ void Game::execute(std::unique_ptr<CommandDTO> clientMessage) {
                 static_cast<int16_t>(player.x),
                 static_cast<int16_t>(player.y), dir));
 
+    } else if (code == static_cast<uint8_t>(ServerOpcode::PlayerStopped)) {
+
+        auto& stoppedCmd = dynamic_cast<PlayerStoppedDTO&>(*clientMessage);
+        messagesToSend.push_back(std::make_unique<PlayerStoppedDTO>(stoppedCmd));
+        
     }
 }
 

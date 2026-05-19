@@ -3,7 +3,7 @@
 MeditateDTO::MeditateDTO() {}
 
 uint8_t MeditateDTO::getCode() {
-    return static_cast<uint8_t>(CommandOpCode::MEDITATE);
+    return static_cast<uint8_t>(CommandOpCode::Meditate);
 }
 
 std::unique_ptr<CommandDTO> MeditateDTO::clone() {

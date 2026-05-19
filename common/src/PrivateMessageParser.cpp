@@ -2,7 +2,7 @@
 
 void PrivateMessageParser::getBytesToSend(std::vector<uint8_t>& bytes, CommandDTO& dto) {
     auto& pmDTO = dynamic_cast<PrivateMessageDTO&>(dto);
-    utils.appendToSend(static_cast<uint8_t>(CommandOpCode::PRIVATE_MESSAGE), bytes);
+    utils.appendToSend(static_cast<uint8_t>(CommandOpCode::PrivateMessage), bytes);
     utils.appendToSend(pmDTO.getTarget(), bytes);
     utils.appendToSend(pmDTO.getMessage(), bytes);
 }

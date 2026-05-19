@@ -6,7 +6,8 @@
 #include "CommandDTO.h"
 #include "WindowClosed.h"
 #include "MoveCommandDTO.h"
-#include "types.h"
+#include "PlayerStoppedDTO.h"
+
 
 class EventHandler {
 
@@ -18,7 +19,7 @@ public:
     EventHandler(Queue<std::unique_ptr<CommandDTO>>& sendingQueue)
         : sendingQueue(sendingQueue) { }
 
-    void handleEvent(SDL_Event& event, PlayerId playerID) {
+    void handleEvent(SDL_Event& event, uint32_t playerID) {
         switch (event.type) {
             case SDL_QUIT:
                 throw WindowClosed("Window was closed by the user");
@@ -36,7 +37,7 @@ public:
 
 private:
 
-    void handleKeyDown(SDL_Keycode& key, PlayerId playerID) {
+    void handleKeyDown(SDL_Keycode& key, uint32_t playerID) {
         switch (key) {
             case SDLK_LEFT:
                 sendingQueue.push(
@@ -67,7 +68,23 @@ private:
         }
     }
 
-    void handleKeyUp(SDL_Keycode&, PlayerId) { }
+    void handleKeyUp(SDL_Keycode& key, uint32_t playerID) {
+
+        switch (key) {
+            case SDLK_LEFT:
+            case SDLK_RIGHT:
+            case SDLK_UP:
+            case SDLK_DOWN:
+                sendingQueue.push(
+                    std::make_unique<PlayerStoppedDTO>(playerID)
+                );
+                break;
+
+            default:
+                break;
+        }
+
+    }
 };
 
 #endif
