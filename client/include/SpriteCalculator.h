@@ -74,7 +74,7 @@ public:
         }
 
         int count = frameCounts[row];
-        int frame = iterator % count;  
+        int frame = static_cast<int>(sqrt(iterator + 1) * 0.25) % count;  
         return frames[row][frame];
     }
     

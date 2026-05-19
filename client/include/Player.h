@@ -11,7 +11,7 @@ class Player {
 private:
 
     PlayerId id;
-    bool isMoving{false}, changeState{false};
+    bool isMoving{false};
     Direction direction{Direction::Down};
 
     int x, y;
@@ -34,13 +34,8 @@ public:
 
     void updateAnimation(unsigned int it) {
 
-        if (changeState) {
-            it_init = it;
-            changeState = false;
-        }
-
         if (isMoving)
-            frame = spriteFrameCalculator.getSprite(direction, it - it_init);
+            frame = spriteFrameCalculator.getSprite(direction, it);
         else
             frame = spriteFrameCalculator.getSprite(direction, 0);
     }
@@ -50,14 +45,12 @@ public:
         this->y = y;
         isMoving = true;
         if (direction != this->direction) {
-            changeState = true;
             this->direction = direction;
         }
     }
 
     void stopMoving() {
         isMoving = false;
-        changeState = true;
     }
 };
 

@@ -66,10 +66,11 @@ void Gameloop::registerPlayer() {
     cmd = receptionQueue.pop();
     auto* list = dynamic_cast<PlayerListDTO*>(cmd.get());
     if (list) {
-        for (auto pid : list->getPlayerIds()) {
-            if (pid == myPlayerId) continue; // Ahora sí está bien saltearse a uno mismo
-            auto player = std::make_unique<Player>(*renderer, pid, "assets/11402.png");
-            otherPlayers[pid] = std::move(player);
+        for (const auto& info : list->getPlayers()) {
+            if (info.player_id == myPlayerId) continue;
+            auto player = std::make_unique<Player>(*renderer, info.player_id, "assets/11402.png");
+            player->updateCoordinates(info.x, info.y, info.direction);
+            otherPlayers[info.player_id] = std::move(player);
         }
     }
 }
