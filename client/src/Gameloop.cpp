@@ -7,12 +7,13 @@ Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
                    ShutdownEvent &shutdownEvent)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
       shutdownEvent(shutdownEvent), camera(Camera(720, 410)), handler(EventHandler(sendingQueue)) {
-  initSDL();
 }
 
 void Gameloop::run() {
 
-  initResources();
+  initSDL();
+
+
   registerPlayer();
 
   unsigned int it = 0;
@@ -58,13 +59,14 @@ void Gameloop::registerPlayer() {
     auto* resp = dynamic_cast<RegisterPlayerResponseDTO*>(cmd.get());
     if (resp && resp->getStatus() == 0) {
         myPlayerId = resp->getPlayerId();
+        this->myPlayer = std::make_unique<Player>(*this->renderer, myPlayerId, "assets/11402.png");
     }
 
     cmd = receptionQueue.pop();
     auto* list = dynamic_cast<PlayerListDTO*>(cmd.get());
     if (list) {
         for (auto pid : list->getPlayerIds()) {
-            if (pid == myPlayerId) continue;
+            if (pid == myPlayerId) continue; // Ahora sí está bien saltearse a uno mismo
             auto player = std::make_unique<Player>(*renderer, pid, "assets/11402.png");
             otherPlayers[pid] = std::move(player);
         }
@@ -127,6 +129,7 @@ void Gameloop::updateAnimationFrames(unsigned int it) {
 }
 
 void Gameloop::render() {
+
   camera.follow(myPlayer->getX(), myPlayer->getY(), 32, 32);
   SDL2pp::Rect screenRect = camera.toScreen(myPlayer->getX(), myPlayer->getY(), 32, 32);
   SpriteFrame& src = myPlayer->getFrame();
@@ -146,8 +149,9 @@ void Gameloop::render() {
               << myPlayer->getTexture().GetHeight() << std::endl;
 
   renderer->Present();
+
 }
 
 void Gameloop::initResources() {
-  this->myPlayer = std::make_unique<Player>(*this->renderer, 0, "assets/11402.png");
+  
 }
