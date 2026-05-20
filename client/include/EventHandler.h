@@ -2,16 +2,17 @@
 #define EVENT_HANDLER_H
 
 #include "CommandDTO.h"
+#include "Direction.h"
 #include "Queue.h"
 #include <SDL2pp/SDL2pp.hh>
 #include <memory>
-#include <set>
+#include <optional>
 
 class EventHandler {
 
 private:
   Queue<std::unique_ptr<CommandDTO>> &sendingQueue;
-  SDL_Keycode pressedLastKey;
+  SDL_Keycode pressedLastMovementKey;
 
 public:
   explicit EventHandler(Queue<std::unique_ptr<CommandDTO>> &sendingQueue);
@@ -20,6 +21,7 @@ public:
 private:
   void handleKeyDown(const SDL_Keycode &key, uint32_t playerID);
   void handleKeyUp(const SDL_Keycode &key, uint32_t playerID);
+  std::optional<Direction> getDirectionFromKey(const SDL_Keycode &key) const;
 };
 
 #endif

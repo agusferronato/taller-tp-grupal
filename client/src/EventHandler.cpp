@@ -26,63 +26,33 @@ void EventHandler::handleEvent(const SDL_Event &event, uint32_t playerID) {
 }
 
 void EventHandler::handleKeyDown(const SDL_Keycode &key, uint32_t playerID) {
-  switch (key) {
-  case SDLK_LEFT:
-    pressedLastKey = key;
+  auto direction = getDirectionFromKey(key);
+  if (direction.has_value()) {
+    pressedLastMovementKey = key;
     sendingQueue.push(
-        std::make_unique<MoveCommandDTO>(playerID, Direction::Left));
-    break;
-
-  case SDLK_RIGHT:
-    pressedLastKey = key;
-    sendingQueue.push(
-        std::make_unique<MoveCommandDTO>(playerID, Direction::Right));
-    break;
-
-  case SDLK_UP:
-    pressedLastKey = key;
-    sendingQueue.push(
-        std::make_unique<MoveCommandDTO>(playerID, Direction::Up));
-    break;
-
-  case SDLK_DOWN:
-    pressedLastKey = key;
-    sendingQueue.push(
-        std::make_unique<MoveCommandDTO>(playerID, Direction::Down));
-    break;
-
-  default:
-    break;
+        std::make_unique<MoveCommandDTO>(playerID, direction.value()));
   }
 }
 
 void EventHandler::handleKeyUp(const SDL_Keycode &key, uint32_t playerID) {
+  if (key == pressedLastMovementKey) {
+    pressedLastMovementKey = SDLK_UNKNOWN;
+    sendingQueue.push(std::make_unique<PlayerStoppedDTO>(playerID));
+  }
+}
+
+std::optional<Direction>
+EventHandler::getDirectionFromKey(const SDL_Keycode &key) const {
   switch (key) {
   case SDLK_LEFT:
-    if (pressedLastKey == SDLK_LEFT) {
-      pressedLastKey = SDLK_UNKNOWN;
-      sendingQueue.push(std::make_unique<PlayerStoppedDTO>(playerID));
-    }
-    break;
+    return Direction::Left;
   case SDLK_RIGHT:
-    if (pressedLastKey == SDLK_RIGHT) {
-      pressedLastKey = SDLK_UNKNOWN;
-      sendingQueue.push(std::make_unique<PlayerStoppedDTO>(playerID));
-    }
-    break;
+    return Direction::Right;
   case SDLK_UP:
-    if (pressedLastKey == SDLK_UP) {
-      pressedLastKey = SDLK_UNKNOWN;
-      sendingQueue.push(std::make_unique<PlayerStoppedDTO>(playerID));
-    }
-    break;
+    return Direction::Up;
   case SDLK_DOWN:
-    if (pressedLastKey == SDLK_DOWN) {
-      pressedLastKey = SDLK_UNKNOWN;
-      sendingQueue.push(std::make_unique<PlayerStoppedDTO>(playerID));
-    }
-    break;
+    return Direction::Down;
   default:
-    break;
+    return std::nullopt;
   }
 }
