@@ -12,7 +12,7 @@ class EventHandler {
 
 private:
   Queue<std::unique_ptr<CommandDTO>> &sendingQueue;
-  SDL_Keycode pressedLastMovementKey;
+  SDL_Keycode pressedLastMovementKey{SDLK_UNKNOWN};
 
 public:
   explicit EventHandler(Queue<std::unique_ptr<CommandDTO>> &sendingQueue);

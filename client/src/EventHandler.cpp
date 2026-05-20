@@ -11,7 +11,6 @@ void EventHandler::handleEvent(const SDL_Event &event, uint32_t playerID) {
   switch (event.type) {
   case SDL_QUIT:
     throw WindowClosed("Window was closed by the user");
-    break;
 
   case SDL_KEYDOWN:
     if (event.key.repeat == 0) {
