@@ -3,6 +3,7 @@
 #include "parser/Commands/LoginPlayerParser.h"
 #include "parser/Commands/MeditateParser.h"
 #include "parser/Commands/MoveCommandParser.h"
+#include "parser/Commands/PlayerStopCommandParser.h"
 #include "parser/Commands/RegisterPlayerParser.h"
 #include "parser/Events/ChatMessageEventParser.h"
 #include "parser/Events/NpcDefeatedEventParser.h"
@@ -25,6 +26,10 @@ void registerAllParsers(Protocol &protocol) {
 
   protocol.registerCommandParser(static_cast<uint8_t>(CommandOpCode::Meditate),
                                  std::make_unique<MeditateParser>());
+
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(CommandOpCode::PlayerStop),
+      std::make_unique<PlayerStopCommandParser>());
 
   protocol.registerCommandParser(
       static_cast<uint8_t>(CommandOpCode::MoveCommand),

@@ -7,7 +7,7 @@
 #include <variant>
 
 void PlayerStopCommandParser::serialize(std::vector<uint8_t> &bytes,
-                                         const ClientRequestDTO &dto) {
+                                        const ClientRequestDTO &dto) {
   const auto &event = std::get<PlayerStopDTO>(dto);
 
   utils.appendToSend(static_cast<uint8_t>(CommandOpCode::PlayerStop), bytes);
@@ -19,4 +19,3 @@ ClientRequestDTO PlayerStopCommandParser::deserialize(Protocol &protocol) {
 
   return PlayerStopDTO{playerId};
 }
-
