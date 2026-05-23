@@ -43,6 +43,10 @@ public:
   Game(const Game &) = delete;
   Game &operator=(const Game &) = delete;
 
+  void registerPlayer();
+  void movePlayer(uint32_t playerId, Direction direction);
+  void stopPlayer(uint32_t playerId);
+
 private:
   void execute(std::unique_ptr<CommandDTO> clientMessage);
   void sendMessages();
