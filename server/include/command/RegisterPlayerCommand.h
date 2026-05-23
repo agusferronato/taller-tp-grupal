@@ -5,7 +5,7 @@
 
 class RegisterPlayerCommand : public Command {
 public:
-    virtual void execute(Game& game) override;
+  virtual void execute(Game &game) override;
 };
 
 #endif // REGISTER_PLAYER_COMMAND_H

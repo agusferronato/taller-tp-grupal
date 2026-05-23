@@ -2,6 +2,4 @@
 
 #include "Game.h"
 
-void RegisterPlayerCommand::execute(Game& game) {
-    game.registerPlayer();
-}
+void RegisterPlayerCommand::execute(Game &game) { game.registerPlayer(); }

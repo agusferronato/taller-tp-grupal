@@ -8,12 +8,12 @@
 
 class PlayerStoppedCommand : public Command {
 private:
-    uint32_t playerId;
+  uint32_t playerId;
 
 public:
-    explicit PlayerStoppedCommand(uint32_t playerId);
+  explicit PlayerStoppedCommand(uint32_t playerId);
 
-    void execute(Game& game) override;
+  void execute(Game &game) override;
 };
 
-#endif
+#endif // PLAYER_STOPPED_COMMAND_H
