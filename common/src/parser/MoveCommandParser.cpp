@@ -2,10 +2,10 @@
 
 void MoveCommandParser::getBytesToSend(std::vector<uint8_t> &bytes,
                                        CommandDTO &dto) {
-  auto &moveDTO = dynamic_cast<MoveCommandDTO &>(dto);
+  auto &moveDTO = std::get<MoveCommandDTO>(dto);
   utils.appendToSend(static_cast<uint8_t>(CommandOpCode::MoveCommand), bytes);
-  utils.appendToSend(moveDTO.getPlayerId(), bytes);
-  bytes.push_back(static_cast<uint8_t>(moveDTO.getDirection()));
+  utils.appendToSend(moveDTO.player_id, bytes);
+  bytes.push_back(static_cast<uint8_t>(moveDTO.direction));
 }
 
 std::unique_ptr<CommandDTO> MoveCommandParser::getDTO(Protocol &protocol) {
@@ -16,7 +16,7 @@ std::unique_ptr<CommandDTO> MoveCommandParser::getDTO(Protocol &protocol) {
   case Direction::Down:
   case Direction::Left:
   case Direction::Right:
-    return std::make_unique<MoveCommandDTO>(player_id,
+    return make_command_dto<MoveCommandDTO>(player_id,
                                             static_cast<Direction>(raw));
   default:
     throw ProtocolError("Invalid direction received");

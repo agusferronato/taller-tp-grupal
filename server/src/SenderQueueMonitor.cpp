@@ -49,7 +49,7 @@ void SenderQueueMonitor::pushMessageToTheSenderQueues(
     if (std::next(it) == senderQueues.end()) {
       queuesPendingMessages[*it].push(std::move(message));
     } else {
-      queuesPendingMessages[*it].push(message->clone());
+      queuesPendingMessages[*it].push(std::make_unique<CommandDTO>(*message));
     }
   }
 }

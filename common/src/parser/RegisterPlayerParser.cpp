@@ -2,8 +2,8 @@
 
 void RegisterPlayerParser::getBytesToSend(std::vector<uint8_t> &bytes,
                                           CommandDTO &dto) {
-  auto &registerDTO = dynamic_cast<RegisterPlayerDTO &>(dto);
-  std::string name = registerDTO.getName();
+  auto &registerDTO = std::get<RegisterPlayerDTO>(dto);
+  std::string name = registerDTO.name;
   utils.appendToSend(static_cast<uint8_t>(CommandOpCode::RegisterPlayer),
                      bytes);
   utils.appendToSend(name, bytes);
@@ -12,5 +12,5 @@ void RegisterPlayerParser::getBytesToSend(std::vector<uint8_t> &bytes,
 std::unique_ptr<CommandDTO> RegisterPlayerParser::getDTO(Protocol &protocol) {
   std::string name;
   protocol.getStringData(name);
-  return std::make_unique<RegisterPlayerDTO>(std::move(name));
+  return make_command_dto<RegisterPlayerDTO>(std::move(name));
 }

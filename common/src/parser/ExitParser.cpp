@@ -7,5 +7,5 @@ void ExitParser::getBytesToSend(std::vector<uint8_t> &bytes, CommandDTO &dto) {
 
 std::unique_ptr<CommandDTO> ExitParser::getDTO(Protocol &protocol) {
   (void)protocol;
-  return std::make_unique<ExitDTO>();
+  return make_command_dto<ExitDTO>();
 }

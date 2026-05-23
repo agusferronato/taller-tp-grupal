@@ -24,6 +24,11 @@ public:
 
   void send(CommandDTO &command);
 
+  template <typename T> void send(T &command) {
+    CommandDTO dto{command};
+    send(dto);
+  }
+
   std::unique_ptr<CommandDTO> receive();
 
   void getStringData(std::string &str);

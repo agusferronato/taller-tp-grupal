@@ -46,7 +46,7 @@ void Game::registerPlayer() {
   players[newId] = PlayerInfo{0, 0, Direction::Down};
 
   messagesToSend.push_back(
-      std::make_unique<RegisterPlayerResponseDTO>(newId, 0));
+      make_command_dto<RegisterPlayerResponseDTO>(newId, 0));
 
   std::vector<PlayerInfoDTO> playerList;
 
@@ -56,10 +56,10 @@ void Game::registerPlayer() {
   }
 
   messagesToSend.push_back(
-      std::make_unique<PlayerListDTO>(std::move(playerList)));
+      make_command_dto<PlayerListDTO>(std::move(playerList)));
 
   messagesToSend.push_back(
-      std::make_unique<PlayerAppearedEventDTO>(newId, 0, 0, Direction::Down));
+      make_command_dto<PlayerAppearedEventDTO>(newId, 0, 0, Direction::Down));
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {
@@ -94,11 +94,11 @@ void Game::movePlayer(uint32_t playerId, Direction direction) {
   std::cout << "player: " << playerId << " moved to x: " << player.x
             << " y: " << player.y << std::endl;
 
-  messagesToSend.push_back(std::make_unique<PlayerMovedEventDTO>(
+  messagesToSend.push_back(make_command_dto<PlayerMovedEventDTO>(
       playerId, static_cast<int16_t>(player.x), static_cast<int16_t>(player.y),
       direction));
 }
 
 void Game::stopPlayer(uint32_t playerId) {
-  messagesToSend.push_back(std::make_unique<PlayerStoppedDTO>(playerId));
+  messagesToSend.push_back(make_command_dto<PlayerStoppedDTO>(playerId));
 }

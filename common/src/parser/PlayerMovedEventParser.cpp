@@ -3,12 +3,12 @@
 
 void PlayerMovedEventParser::getBytesToSend(std::vector<uint8_t> &bytes,
                                             CommandDTO &dto) {
-  auto &eventDTO = dynamic_cast<PlayerMovedEventDTO &>(dto);
+  auto &eventDTO = std::get<PlayerMovedEventDTO>(dto);
   utils.appendToSend(static_cast<uint8_t>(ServerOpcode::PlayerMoved), bytes);
-  utils.appendToSend(eventDTO.getPlayerId(), bytes);
-  utils.appendToSend(eventDTO.getX(), bytes);
-  utils.appendToSend(eventDTO.getY(), bytes);
-  bytes.push_back(static_cast<uint8_t>(eventDTO.getDirection()));
+  utils.appendToSend(eventDTO.player_id, bytes);
+  utils.appendToSend(eventDTO.x, bytes);
+  utils.appendToSend(eventDTO.y, bytes);
+  bytes.push_back(static_cast<uint8_t>(eventDTO.direction));
 }
 
 std::unique_ptr<CommandDTO> PlayerMovedEventParser::getDTO(Protocol &protocol) {
@@ -21,7 +21,7 @@ std::unique_ptr<CommandDTO> PlayerMovedEventParser::getDTO(Protocol &protocol) {
   case Direction::Down:
   case Direction::Left:
   case Direction::Right:
-    return std::make_unique<PlayerMovedEventDTO>(
+    return make_command_dto<PlayerMovedEventDTO>(
         player_id, x, y, static_cast<Direction>(raw_dir));
   default:
     throw ProtocolError("Invalid direction in PlayerMovedEvent");

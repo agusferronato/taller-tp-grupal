@@ -2,12 +2,12 @@
 
 void NpcDefeatedEventParser::getBytesToSend(std::vector<uint8_t> &bytes,
                                             CommandDTO &dto) {
-  auto &eventDTO = dynamic_cast<NpcDefeatedEventDTO &>(dto);
+  auto &eventDTO = std::get<NpcDefeatedEventDTO>(dto);
   utils.appendToSend(static_cast<uint8_t>(ServerOpcode::NPCDefeated), bytes);
-  utils.appendToSend(eventDTO.getNpcId(), bytes);
+  utils.appendToSend(eventDTO.npc_id, bytes);
 }
 
 std::unique_ptr<CommandDTO> NpcDefeatedEventParser::getDTO(Protocol &protocol) {
   uint8_t npc_id = protocol.getUint8();
-  return std::make_unique<NpcDefeatedEventDTO>(npc_id);
+  return make_command_dto<NpcDefeatedEventDTO>(npc_id);
 }
