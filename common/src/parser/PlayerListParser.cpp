@@ -2,11 +2,11 @@
 
 void PlayerListParser::getBytesToSend(std::vector<uint8_t> &bytes,
                                       CommandDTO &dto) {
-  auto &listDTO = dynamic_cast<PlayerListDTO &>(dto);
+  auto &listDTO = std::get<PlayerListDTO>(dto);
   utils.appendToSend(static_cast<uint8_t>(ServerOpcode::PlayerList), bytes);
-  uint16_t count = static_cast<uint16_t>(listDTO.getPlayers().size());
+  uint16_t count = static_cast<uint16_t>(listDTO.players.size());
   utils.appendToSend(count, bytes);
-  for (const auto &player : listDTO.getPlayers()) {
+  for (const auto &player : listDTO.players) {
     utils.appendToSend(player.player_id, bytes);
     utils.appendToSend(player.x, bytes);
     utils.appendToSend(player.y, bytes);
@@ -25,5 +25,5 @@ std::unique_ptr<CommandDTO> PlayerListParser::getDTO(Protocol &protocol) {
     Direction dir = static_cast<Direction>(protocol.getUint8());
     players.push_back({pid, x, y, dir});
   }
-  return std::make_unique<PlayerListDTO>(std::move(players));
+  return make_command_dto<PlayerListDTO>(std::move(players));
 }

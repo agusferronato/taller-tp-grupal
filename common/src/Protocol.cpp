@@ -11,7 +11,7 @@ void Protocol::registerParser(uint8_t code,
 void Protocol::send(CommandDTO &command) {
 
   std::vector<uint8_t> bytes;
-  uint8_t code = command.getCode();
+  uint8_t code = get_command_code(command);
   auto it = parsers.find(code);
 
   it->second->getBytesToSend(bytes, command);
