@@ -18,9 +18,14 @@ void Game::run() {
 
   while (keepRunning) {
 
-    auto command = gameloopQueue.pop();
-    execute(std::move(command));
-
+    std::unique_ptr<CommandDTO> command;
+    // Es un try_pop: aunque nadie mande nada, los mobs se siguen moviendo y
+    // atacando, por lo que no se debería bloquear la lógica. Solo se bloquea
+    // con el sleep del rateloop.
+    while (gameloopQueue.try_pop(command)) {
+      execute(std::move(command));
+    }
+    movePlayers();
     sendMessages();
 
     rateloop.updateTimer(it);
@@ -62,31 +67,19 @@ void Game::execute(std::unique_ptr<CommandDTO> clientMessage) {
 
     PlayerInfo &player = it->second;
     player.direction = dir;
-    switch (dir) {
-    case Direction::Up:
-      player.y -= 1;
-      break;
-    case Direction::Down:
-      player.y += 1;
-      break;
-    case Direction::Left:
-      player.x -= 1;
-      break;
-    case Direction::Right:
-      player.x += 1;
-      break;
-    }
-
-    std::cout << "player: " << pid << "moved to x: " << player.x
-              << " y: " << player.y << std::endl;
-
-    messagesToSend.push_back(std::make_unique<PlayerMovedEventDTO>(
-        pid, static_cast<int16_t>(player.x), static_cast<int16_t>(player.y),
-        dir));
+    player.moving = true;
 
   } else if (code == static_cast<uint8_t>(ServerOpcode::PlayerStopped)) {
 
     auto &stoppedCmd = dynamic_cast<PlayerStoppedDTO &>(*clientMessage);
+    uint32_t playerID = stoppedCmd.getPlayerID();
+
+    auto it = players.find(playerID);
+    if (it == players.end())
+      return;
+
+    PlayerInfo &player = it->second;
+    player.moving = false;
     messagesToSend.push_back(std::make_unique<PlayerStoppedDTO>(stoppedCmd));
   }
 }
@@ -96,4 +89,33 @@ void Game::sendMessages() {
     return;
   senderQueueMonitor.broadCast(messagesToSend);
   messagesToSend.clear();
+}
+
+void Game::movePlayers() {
+  for (auto &[playerID, info] : players) {
+    if (!info.moving)
+      continue;
+
+    switch (info.direction) {
+    case Direction::Up:
+      info.y -= 1;
+      break;
+    case Direction::Down:
+      info.y += 1;
+      break;
+    case Direction::Left:
+      info.x -= 1;
+      break;
+    case Direction::Right:
+      info.x += 1;
+      break;
+    }
+
+    std::cout << "player: " << playerID << "moved to x: " << info.x
+              << " y: " << info.y << std::endl;
+
+    messagesToSend.push_back(std::make_unique<PlayerMovedEventDTO>(
+        playerID, static_cast<int16_t>(info.x), static_cast<int16_t>(info.y),
+        info.direction));
+  }
 }
