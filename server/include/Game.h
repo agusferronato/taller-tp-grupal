@@ -8,9 +8,10 @@
 #include <unordered_map>
 #include <utility>
 
-#include "CommandDTO.h"
 #include "ConstantRateLoop.h"
 #include "Constants.h"
+#include "DTO/Commands/ClientRequestDTO.h"
+#include "DTO/Events/EventDTO.h"
 #include "Direction.h"
 #include "Queue.h"
 #include "SenderQueueMonitor.h"
@@ -24,16 +25,16 @@ struct PlayerInfo {
 class Game : public Thread {
 
 private:
-  Queue<std::unique_ptr<CommandDTO>> &gameloopQueue;
+  Queue<ClientRequestDTO> &gameloopQueue;
   SenderQueueMonitor &senderQueueMonitor;
 
-  std::list<std::unique_ptr<CommandDTO>> messagesToSend;
+  std::list<ServerEventDTO> messagesToSend;
   bool keepRunning = true;
   uint32_t nextPlayerId{1};
   std::unordered_map<uint32_t, PlayerInfo> players;
 
 public:
-  Game(Queue<std::unique_ptr<CommandDTO>> &gameloopQueue,
+  Game(Queue<ClientRequestDTO> &gameloopQueue,
        SenderQueueMonitor &senderQueueMonitor);
 
   virtual void run() override;
@@ -48,7 +49,7 @@ public:
   void stopPlayer(uint32_t playerId);
 
 private:
-  void execute(std::unique_ptr<CommandDTO> clientMessage);
+  void execute(ClientRequestDTO clientMessage);
   void sendMessages();
 };
 

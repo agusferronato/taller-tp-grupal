@@ -1,0 +1,104 @@
+#include "protocol/Protocol.h"
+
+#include "CommunicationEnded.h"
+#include "ProtocolError.h"
+#include "protocol/ClientRequestCodes.h"
+#include "protocol/ServerEventCodes.h"
+
+Protocol::Protocol(Socket &socket) : socket(socket) {}
+
+void Protocol::registerCommandParser(
+    uint8_t code, std::unique_ptr<ClientRequestParser> parser) {
+  commandParsers[code] = std::move(parser);
+}
+
+void Protocol::registerEventParser(uint8_t code,
+                                   std::unique_ptr<ServerEventParser> parser) {
+  eventParsers[code] = std::move(parser);
+}
+
+void Protocol::sendCommand(const ClientRequestDTO &command) {
+  std::vector<uint8_t> bytes;
+
+  uint8_t code = get_client_request_code(command);
+
+  auto it = commandParsers.find(code);
+  if (it == commandParsers.end()) {
+    throw ProtocolError("Unknown command opcode");
+  }
+
+  it->second->serialize(bytes, command);
+
+  if (!bytes.empty()) {
+    if (socket.is_stream_send_closed()) {
+      throw CommunicationEnded("Connection closed by peer");
+    }
+
+    socket.sendall(bytes.data(), bytes.size());
+  }
+}
+
+ClientRequestDTO Protocol::receiveCommand() {
+  uint8_t code = utils.receive_uint8(socket);
+
+  if (socket.is_stream_recv_closed()) {
+    throw CommunicationEnded("Connection closed by peer");
+  }
+
+  auto it = commandParsers.find(code);
+  if (it == commandParsers.end()) {
+    throw ProtocolError("Unknown command opcode");
+  }
+
+  return it->second->deserialize(*this);
+}
+
+void Protocol::sendEvent(const ServerEventDTO &event) {
+  std::vector<uint8_t> bytes;
+
+  uint8_t code = get_server_event_code(event);
+
+  auto it = eventParsers.find(code);
+  if (it == eventParsers.end()) {
+    throw ProtocolError("Unknown event opcode");
+  }
+
+  it->second->serialize(bytes, event);
+
+  if (!bytes.empty()) {
+    if (socket.is_stream_send_closed()) {
+      throw CommunicationEnded("Connection closed by peer");
+    }
+
+    socket.sendall(bytes.data(), bytes.size());
+  }
+}
+
+ServerEventDTO Protocol::receiveEvent() {
+  uint8_t code = utils.receive_uint8(socket);
+
+  if (socket.is_stream_recv_closed()) {
+    throw CommunicationEnded("Connection closed by peer");
+  }
+
+  auto it = eventParsers.find(code);
+  if (it == eventParsers.end()) {
+    throw ProtocolError("Unknown event opcode");
+  }
+
+  return it->second->deserialize(*this);
+}
+
+std::string Protocol::getStringData() {
+  std::string str;
+  utils.recv_string(socket, str);
+  return str;
+}
+
+uint8_t Protocol::getUint8() { return utils.receive_uint8(socket); }
+
+uint16_t Protocol::getUint16() { return utils.receive_uint16(socket); }
+
+int16_t Protocol::getInt16() { return utils.receive_int16(socket); }
+
+uint32_t Protocol::getUint32() { return utils.receive_uint32(socket); }

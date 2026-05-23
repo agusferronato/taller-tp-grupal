@@ -4,8 +4,8 @@
 #include <cstdint>
 
 struct RegisterPlayerResponseDTO {
-    uint32_t playerId;
-    uint8_t status;
+  uint32_t playerId;
+  uint8_t status;
 };
 
 #endif // REGISTER_PLAYER_RESPONSE_DTO_H

@@ -2,33 +2,36 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include "ChatMessageEventDTO.h"
-#include "ChatMessageEventParser.h"
-#include "CommandDTO.h"
+#include "DTO/Commands/ClientRequestDTO.h"
+#include "DTO/Commands/LoginPlayerDTO.h"
+#include "DTO/Commands/MeditateDTO.h"
+#include "DTO/Commands/MoveCommandDTO.h"
+#include "DTO/Commands/PlayerStopDTO.h"
+#include "DTO/Commands/PrivateMessageDTO.h"
+#include "DTO/Commands/RegisterPlayerDTO.h"
+#include "DTO/Events/ChatMessageEventDTO.h"
+#include "DTO/Events/NpcDefeatedEventDTO.h"
+#include "DTO/Events/PlayerListDTO.h"
+#include "DTO/Events/PlayerMovedEventDTO.h"
+#include "DTO/Events/PlayerStoppedDTO.h"
+#include "DTO/Events/RegisterPlayerResponseDTO.h"
 #include "Direction.h"
 #include "ExitDTO.h"
-#include "ExitParser.h"
-#include "LoginPlayerDTO.h"
-#include "LoginPlayerParser.h"
-#include "MeditateDTO.h"
-#include "MeditateParser.h"
-#include "MoveCommandDTO.h"
-#include "MoveCommandParser.h"
-#include "NpcDefeatedEventDTO.h"
-#include "NpcDefeatedEventParser.h"
-#include "PlayerListDTO.h"
-#include "PlayerListParser.h"
-#include "PlayerMovedEventDTO.h"
-#include "PlayerMovedEventParser.h"
-#include "PlayerStoppedParser.h"
-#include "PrivateMessageDTO.h"
-#include "PrivateMessageParser.h"
-#include "Protocol.h"
-#include "ProtocolCodes.h"
-#include "RegisterPlayerDTO.h"
-#include "RegisterPlayerParser.h"
-#include "RegisterPlayerResponseDTO.h"
-#include "RegisterPlayerResponseParser.h"
+#include "parser/Commands/ExitParser.h"
+#include "parser/Commands/LoginPlayerParser.h"
+#include "parser/Commands/MeditateParser.h"
+#include "parser/Commands/MoveCommandParser.h"
+#include "parser/Commands/PlayerStopCommandParser.h"
+#include "parser/Commands/PrivateMessageParser.h"
+#include "parser/Commands/RegisterPlayerParser.h"
+#include "parser/Events/ChatMessageEventParser.h"
+#include "parser/Events/NpcDefeatedEventParser.h"
+#include "parser/Events/PlayerListEventParser.h"
+#include "parser/Events/PlayerMovedEventParser.h"
+#include "parser/Events/PlayerStoppedParser.h"
+#include "parser/Events/RegisterPlayerResponseParser.h"
+#include "protocol/Protocol.h"
+#include "protocol/ProtocolCodes.h"
 
 class ProtocolTest : public ::testing::Test {
 protected:
@@ -44,228 +47,338 @@ protected:
   }
 
   void registerAllParsers(Protocol &protocol) {
-    protocol.registerParser(static_cast<uint8_t>(CommandOpCode::RegisterPlayer),
-                            std::make_unique<RegisterPlayerParser>());
-    protocol.registerParser(static_cast<uint8_t>(CommandOpCode::LoginPlayer),
-                            std::make_unique<LoginPlayerParser>());
-    protocol.registerParser(static_cast<uint8_t>(CommandOpCode::Meditate),
-                            std::make_unique<MeditateParser>());
-    protocol.registerParser(static_cast<uint8_t>(CommandOpCode::PrivateMessage),
-                            std::make_unique<PrivateMessageParser>());
-    protocol.registerParser(static_cast<uint8_t>(CommandOpCode::MoveCommand),
-                            std::make_unique<MoveCommandParser>());
-    protocol.registerParser(static_cast<uint8_t>(CommandOpCode::Exit),
-                            std::make_unique<ExitParser>());
-    protocol.registerParser(static_cast<uint8_t>(ServerOpcode::ChatMessage),
-                            std::make_unique<ChatMessageEventParser>());
-    protocol.registerParser(static_cast<uint8_t>(ServerOpcode::NPCDefeated),
-                            std::make_unique<NpcDefeatedEventParser>());
-    protocol.registerParser(static_cast<uint8_t>(ServerOpcode::PlayerMoved),
-                            std::make_unique<PlayerMovedEventParser>());
-    protocol.registerParser(
+    protocol.registerCommandParser(
+        static_cast<uint8_t>(CommandOpCode::RegisterPlayer),
+        std::make_unique<RegisterPlayerParser>());
+
+    protocol.registerCommandParser(
+        static_cast<uint8_t>(CommandOpCode::LoginPlayer),
+        std::make_unique<LoginPlayerParser>());
+
+    protocol.registerCommandParser(
+        static_cast<uint8_t>(CommandOpCode::Meditate),
+        std::make_unique<MeditateParser>());
+
+    protocol.registerCommandParser(
+        static_cast<uint8_t>(CommandOpCode::PrivateMessage),
+        std::make_unique<PrivateMessageParser>());
+
+    protocol.registerCommandParser(
+        static_cast<uint8_t>(CommandOpCode::MoveCommand),
+        std::make_unique<MoveCommandParser>());
+
+    protocol.registerCommandParser(
+        static_cast<uint8_t>(CommandOpCode::PlayerStop),
+        std::make_unique<PlayerStopCommandParser>());
+
+    protocol.registerCommandParser(static_cast<uint8_t>(CommandOpCode::Exit),
+                                   std::make_unique<ExitParser>());
+
+    protocol.registerEventParser(
+        static_cast<uint8_t>(ServerOpcode::ChatMessage),
+        std::make_unique<ChatMessageEventParser>());
+
+    protocol.registerEventParser(
+        static_cast<uint8_t>(ServerOpcode::NPCDefeated),
+        std::make_unique<NpcDefeatedEventParser>());
+
+    protocol.registerEventParser(
+        static_cast<uint8_t>(ServerOpcode::PlayerMoved),
+        std::make_unique<PlayerMovedEventParser>());
+
+    protocol.registerEventParser(
         static_cast<uint8_t>(ServerOpcode::RegisterResponse),
         std::make_unique<RegisterPlayerResponseParser>());
-    protocol.registerParser(static_cast<uint8_t>(ServerOpcode::PlayerList),
-                            std::make_unique<PlayerListParser>());
-    protocol.registerParser(static_cast<uint8_t>(ServerOpcode::PlayerStopped),
-                            std::make_unique<PlayerStoppedParser>());
+
+    protocol.registerEventParser(static_cast<uint8_t>(ServerOpcode::PlayerList),
+                                 std::make_unique<PlayerListEventParser>());
+
+    protocol.registerEventParser(
+        static_cast<uint8_t>(ServerOpcode::PlayerStopped),
+        std::make_unique<PlayerStoppedEventParser>());
   }
 };
 
-TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayer) {
-  Socket client_socket = Socket::from_fd(fds[0]);
-  Socket server_socket = Socket::from_fd(fds[1]);
+TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerCommand) {
+  Socket clientSocket = Socket::from_fd(fds[0]);
+  Socket serverSocket = Socket::from_fd(fds[1]);
 
-  Protocol client(client_socket);
-  Protocol server(server_socket);
+  Protocol client(clientSocket);
+  Protocol server(serverSocket);
   registerAllParsers(client);
   registerAllParsers(server);
 
-  RegisterPlayerDTO original{"L0rd"};
-  client.send(original);
+  ClientRequestDTO original = RegisterPlayerDTO{"L0rd"};
 
-  auto received = server.receive();
-  auto *registerDTO = std::get_if<RegisterPlayerDTO>(received.get());
-  ASSERT_NE(registerDTO, nullptr);
-  EXPECT_EQ(registerDTO->name, "L0rd");
+  client.sendCommand(original);
+
+  ClientRequestDTO received = server.receiveCommand();
+  auto *dto = std::get_if<RegisterPlayerDTO>(&received);
+
+  ASSERT_NE(dto, nullptr);
+  EXPECT_EQ(dto->name, "L0rd");
 }
 
-TEST_F(ProtocolTest, SendsAndReceivesLoginPlayer) {
-  Socket client_socket = Socket::from_fd(fds[0]);
-  Socket server_socket = Socket::from_fd(fds[1]);
+TEST_F(ProtocolTest, SendsAndReceivesLoginPlayerCommand) {
+  Socket clientSocket = Socket::from_fd(fds[0]);
+  Socket serverSocket = Socket::from_fd(fds[1]);
 
-  Protocol client(client_socket);
-  Protocol server(server_socket);
+  Protocol client(clientSocket);
+  Protocol server(serverSocket);
   registerAllParsers(client);
   registerAllParsers(server);
 
-  LoginPlayerDTO original{"TestPlayer"};
-  client.send(original);
+  ClientRequestDTO original = LoginPlayerDTO{"TestPlayer"};
 
-  auto received = server.receive();
-  auto *loginDTO = std::get_if<LoginPlayerDTO>(received.get());
-  ASSERT_NE(loginDTO, nullptr);
-  EXPECT_EQ(loginDTO->name, "TestPlayer");
+  client.sendCommand(original);
+
+  ClientRequestDTO received = server.receiveCommand();
+  auto *dto = std::get_if<LoginPlayerDTO>(&received);
+
+  ASSERT_NE(dto, nullptr);
+  EXPECT_EQ(dto->name, "TestPlayer");
 }
 
-TEST_F(ProtocolTest, SendsAndReceivesMeditate) {
-  Socket client_socket = Socket::from_fd(fds[0]);
-  Socket server_socket = Socket::from_fd(fds[1]);
+TEST_F(ProtocolTest, SendsAndReceivesMeditateCommand) {
+  Socket clientSocket = Socket::from_fd(fds[0]);
+  Socket serverSocket = Socket::from_fd(fds[1]);
 
-  Protocol client(client_socket);
-  Protocol server(server_socket);
+  Protocol client(clientSocket);
+  Protocol server(serverSocket);
   registerAllParsers(client);
   registerAllParsers(server);
 
-  MeditateDTO original;
-  client.send(original);
+  ClientRequestDTO original = MeditateDTO{};
 
-  auto received = server.receive();
-  ASSERT_NE(std::get_if<MeditateDTO>(received.get()), nullptr);
+  client.sendCommand(original);
+
+  ClientRequestDTO received = server.receiveCommand();
+
+  ASSERT_NE(std::get_if<MeditateDTO>(&received), nullptr);
 }
 
-TEST_F(ProtocolTest, SendsAndReceivesPrivateMessage) {
-  Socket client_socket = Socket::from_fd(fds[0]);
-  Socket server_socket = Socket::from_fd(fds[1]);
+TEST_F(ProtocolTest, SendsAndReceivesPrivateMessageCommand) {
+  Socket clientSocket = Socket::from_fd(fds[0]);
+  Socket serverSocket = Socket::from_fd(fds[1]);
 
-  Protocol client(client_socket);
-  Protocol server(server_socket);
+  Protocol client(clientSocket);
+  Protocol server(serverSocket);
   registerAllParsers(client);
   registerAllParsers(server);
 
-  PrivateMessageDTO original{"L0rd", "Hello"};
-  client.send(original);
+  ClientRequestDTO original = PrivateMessageDTO{"L0rd", "Hello"};
 
-  auto received = server.receive();
-  auto *pmDTO = std::get_if<PrivateMessageDTO>(received.get());
-  ASSERT_NE(pmDTO, nullptr);
-  EXPECT_EQ(pmDTO->target, "L0rd");
-  EXPECT_EQ(pmDTO->message, "Hello");
+  client.sendCommand(original);
+
+  ClientRequestDTO received = server.receiveCommand();
+  auto *dto = std::get_if<PrivateMessageDTO>(&received);
+
+  ASSERT_NE(dto, nullptr);
+  EXPECT_EQ(dto->target, "L0rd");
+  EXPECT_EQ(dto->message, "Hello");
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesMoveCommand) {
-  Socket client_socket = Socket::from_fd(fds[0]);
-  Socket server_socket = Socket::from_fd(fds[1]);
+  Socket clientSocket = Socket::from_fd(fds[0]);
+  Socket serverSocket = Socket::from_fd(fds[1]);
 
-  Protocol client(client_socket);
-  Protocol server(server_socket);
+  Protocol client(clientSocket);
+  Protocol server(serverSocket);
   registerAllParsers(client);
   registerAllParsers(server);
 
-  MoveCommandDTO original{42, Direction::Up};
-  client.send(original);
+  ClientRequestDTO original = MoveCommandDTO{42, Direction::Up};
 
-  auto received = server.receive();
-  auto *moveDTO = std::get_if<MoveCommandDTO>(received.get());
-  ASSERT_NE(moveDTO, nullptr);
-  EXPECT_EQ(moveDTO->player_id, 42);
-  EXPECT_EQ(moveDTO->direction, Direction::Up);
+  client.sendCommand(original);
+
+  ClientRequestDTO received = server.receiveCommand();
+  auto *dto = std::get_if<MoveCommandDTO>(&received);
+
+  ASSERT_NE(dto, nullptr);
+  EXPECT_EQ(dto->player_id, 42);
+  EXPECT_EQ(dto->direction, Direction::Up);
 }
 
-TEST_F(ProtocolTest, SendsAndReceivesExit) {
-  Socket client_socket = Socket::from_fd(fds[0]);
-  Socket server_socket = Socket::from_fd(fds[1]);
+TEST_F(ProtocolTest, SendsAndReceivesPlayerStopCommand) {
+  Socket clientSocket = Socket::from_fd(fds[0]);
+  Socket serverSocket = Socket::from_fd(fds[1]);
 
-  Protocol client(client_socket);
-  Protocol server(server_socket);
+  Protocol client(clientSocket);
+  Protocol server(serverSocket);
   registerAllParsers(client);
   registerAllParsers(server);
 
-  ExitDTO original;
-  client.send(original);
+  ClientRequestDTO original = PlayerStopDTO{42};
 
-  auto received = server.receive();
-  ASSERT_NE(std::get_if<ExitDTO>(received.get()), nullptr);
+  client.sendCommand(original);
+
+  ClientRequestDTO received = server.receiveCommand();
+  auto *dto = std::get_if<PlayerStopDTO>(&received);
+
+  ASSERT_NE(dto, nullptr);
+  EXPECT_EQ(dto->player_id, 42);
+}
+
+TEST_F(ProtocolTest, SendsAndReceivesExitCommand) {
+  Socket clientSocket = Socket::from_fd(fds[0]);
+  Socket serverSocket = Socket::from_fd(fds[1]);
+
+  Protocol client(clientSocket);
+  Protocol server(serverSocket);
+  registerAllParsers(client);
+  registerAllParsers(server);
+
+  ClientRequestDTO original = ExitDTO{};
+
+  client.sendCommand(original);
+
+  ClientRequestDTO received = server.receiveCommand();
+
+  ASSERT_NE(std::get_if<ExitDTO>(&received), nullptr);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesChatMessageEvent) {
-  Socket server_socket = Socket::from_fd(fds[0]);
-  Socket client_socket = Socket::from_fd(fds[1]);
+  Socket serverSocket = Socket::from_fd(fds[0]);
+  Socket clientSocket = Socket::from_fd(fds[1]);
 
-  Protocol server(server_socket);
-  Protocol client(client_socket);
+  Protocol server(serverSocket);
+  Protocol client(clientSocket);
   registerAllParsers(server);
   registerAllParsers(client);
 
-  ChatMessageEventDTO original{"ServerBot", "Welcome"};
-  server.send(original);
+  ServerEventDTO original = ChatMessageEventDTO{"ServerBot", "Welcome"};
 
-  auto received = client.receive();
-  auto *chatDTO = std::get_if<ChatMessageEventDTO>(received.get());
-  ASSERT_NE(chatDTO, nullptr);
-  EXPECT_EQ(chatDTO->sender, "ServerBot");
-  EXPECT_EQ(chatDTO->message, "Welcome");
+  server.sendEvent(original);
+
+  ServerEventDTO received = client.receiveEvent();
+  auto *dto = std::get_if<ChatMessageEventDTO>(&received);
+
+  ASSERT_NE(dto, nullptr);
+  EXPECT_EQ(dto->sender, "ServerBot");
+  EXPECT_EQ(dto->message, "Welcome");
+}
+
+TEST_F(ProtocolTest, SendsAndReceivesNpcDefeatedEvent) {
+  Socket serverSocket = Socket::from_fd(fds[0]);
+  Socket clientSocket = Socket::from_fd(fds[1]);
+
+  Protocol server(serverSocket);
+  Protocol client(clientSocket);
+  registerAllParsers(server);
+  registerAllParsers(client);
+
+  ServerEventDTO original = NpcDefeatedEventDTO{7};
+
+  server.sendEvent(original);
+
+  ServerEventDTO received = client.receiveEvent();
+  auto *dto = std::get_if<NpcDefeatedEventDTO>(&received);
+
+  ASSERT_NE(dto, nullptr);
+  EXPECT_EQ(dto->npcId, 7);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesPlayerMovedEvent) {
-  Socket server_socket = Socket::from_fd(fds[0]);
-  Socket client_socket = Socket::from_fd(fds[1]);
+  Socket serverSocket = Socket::from_fd(fds[0]);
+  Socket clientSocket = Socket::from_fd(fds[1]);
 
-  Protocol server(server_socket);
-  Protocol client(client_socket);
+  Protocol server(serverSocket);
+  Protocol client(clientSocket);
   registerAllParsers(server);
   registerAllParsers(client);
 
-  PlayerMovedEventDTO original{42, 10, 20, Direction::Down};
-  server.send(original);
+  ServerEventDTO original = PlayerMovedEventDTO{42, 10, 20, Direction::Down};
 
-  auto received = client.receive();
-  auto *moveDTO = std::get_if<PlayerMovedEventDTO>(received.get());
-  ASSERT_NE(moveDTO, nullptr);
-  EXPECT_EQ(moveDTO->player_id, 42);
-  EXPECT_EQ(moveDTO->x, 10);
-  EXPECT_EQ(moveDTO->y, 20);
-  EXPECT_EQ(moveDTO->direction, Direction::Down);
+  server.sendEvent(original);
+
+  ServerEventDTO received = client.receiveEvent();
+  auto *dto = std::get_if<PlayerMovedEventDTO>(&received);
+
+  ASSERT_NE(dto, nullptr);
+  EXPECT_EQ(dto->playerId, 42);
+  EXPECT_EQ(dto->x, 10);
+  EXPECT_EQ(dto->y, 20);
+  EXPECT_EQ(dto->direction, Direction::Down);
+}
+
+TEST_F(ProtocolTest, SendsAndReceivesPlayerStoppedEvent) {
+  Socket serverSocket = Socket::from_fd(fds[0]);
+  Socket clientSocket = Socket::from_fd(fds[1]);
+
+  Protocol server(serverSocket);
+  Protocol client(clientSocket);
+  registerAllParsers(server);
+  registerAllParsers(client);
+
+  ServerEventDTO original = PlayerStoppedDTO{42};
+
+  server.sendEvent(original);
+
+  ServerEventDTO received = client.receiveEvent();
+  auto *dto = std::get_if<PlayerStoppedDTO>(&received);
+
+  ASSERT_NE(dto, nullptr);
+  EXPECT_EQ(dto->player_id, 42);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerResponse) {
-  Socket server_socket = Socket::from_fd(fds[0]);
-  Socket client_socket = Socket::from_fd(fds[1]);
+  Socket serverSocket = Socket::from_fd(fds[0]);
+  Socket clientSocket = Socket::from_fd(fds[1]);
 
-  Protocol server(server_socket);
-  Protocol client(client_socket);
+  Protocol server(serverSocket);
+  Protocol client(clientSocket);
   registerAllParsers(server);
   registerAllParsers(client);
 
-  RegisterPlayerResponseDTO original{1, 0};
-  server.send(original);
+  ServerEventDTO original = RegisterPlayerResponseDTO{1, 0};
 
-  auto received = client.receive();
-  auto *respDTO = std::get_if<RegisterPlayerResponseDTO>(received.get());
-  ASSERT_NE(respDTO, nullptr);
-  EXPECT_EQ(respDTO->player_id, 1);
-  EXPECT_EQ(respDTO->status, 0);
+  server.sendEvent(original);
+
+  ServerEventDTO received = client.receiveEvent();
+  auto *dto = std::get_if<RegisterPlayerResponseDTO>(&received);
+
+  ASSERT_NE(dto, nullptr);
+  EXPECT_EQ(dto->playerId, 1);
+  EXPECT_EQ(dto->status, 0);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
-  Socket server_socket = Socket::from_fd(fds[0]);
-  Socket client_socket = Socket::from_fd(fds[1]);
+  Socket serverSocket = Socket::from_fd(fds[0]);
+  Socket clientSocket = Socket::from_fd(fds[1]);
 
-  Protocol server(server_socket);
-  Protocol client(client_socket);
+  Protocol server(serverSocket);
+  Protocol client(clientSocket);
   registerAllParsers(server);
   registerAllParsers(client);
 
-  std::vector<PlayerInfoDTO> players = {{1, 100, 200, Direction::Down},
-                                        {2, 300, 400, Direction::Up},
-                                        {3, 500, 600, Direction::Left}};
-  PlayerListDTO original{players};
-  server.send(original);
+  std::vector<PlayerInfoDTO> players = {
+      {1, 100, 200, Direction::Down},
+      {2, 300, 400, Direction::Up},
+      {3, 500, 600, Direction::Left},
+  };
 
-  auto received = client.receive();
-  auto *listDTO = std::get_if<PlayerListDTO>(received.get());
-  ASSERT_NE(listDTO, nullptr);
-  ASSERT_EQ(listDTO->players.size(), 3);
-  EXPECT_EQ(listDTO->players[0].player_id, 1);
-  EXPECT_EQ(listDTO->players[0].x, 100);
-  EXPECT_EQ(listDTO->players[0].y, 200);
-  EXPECT_EQ(listDTO->players[0].direction, Direction::Down);
-  EXPECT_EQ(listDTO->players[1].player_id, 2);
-  EXPECT_EQ(listDTO->players[1].x, 300);
-  EXPECT_EQ(listDTO->players[1].y, 400);
-  EXPECT_EQ(listDTO->players[1].direction, Direction::Up);
-  EXPECT_EQ(listDTO->players[2].player_id, 3);
-  EXPECT_EQ(listDTO->players[2].x, 500);
-  EXPECT_EQ(listDTO->players[2].y, 600);
-  EXPECT_EQ(listDTO->players[2].direction, Direction::Left);
+  ServerEventDTO original = PlayerListDTO{players};
+
+  server.sendEvent(original);
+
+  ServerEventDTO received = client.receiveEvent();
+  auto *dto = std::get_if<PlayerListDTO>(&received);
+
+  ASSERT_NE(dto, nullptr);
+  ASSERT_EQ(dto->players.size(), 3);
+
+  EXPECT_EQ(dto->players[0].player_id, 1);
+  EXPECT_EQ(dto->players[0].x, 100);
+  EXPECT_EQ(dto->players[0].y, 200);
+  EXPECT_EQ(dto->players[0].direction, Direction::Down);
+
+  EXPECT_EQ(dto->players[1].player_id, 2);
+  EXPECT_EQ(dto->players[1].x, 300);
+  EXPECT_EQ(dto->players[1].y, 400);
+  EXPECT_EQ(dto->players[1].direction, Direction::Up);
+
+  EXPECT_EQ(dto->players[2].player_id, 3);
+  EXPECT_EQ(dto->players[2].x, 500);
+  EXPECT_EQ(dto->players[2].y, 600);
+  EXPECT_EQ(dto->players[2].direction, Direction::Left);
 }
