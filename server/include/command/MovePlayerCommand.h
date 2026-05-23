@@ -8,13 +8,13 @@
 
 class MovePlayerCommand : public Command {
 private:
-    uint32_t playerId;
-    Direction direction;
+  uint32_t playerId;
+  Direction direction;
 
 public:
-    MovePlayerCommand(uint32_t playerId, Direction direction);
+  MovePlayerCommand(uint32_t playerId, Direction direction);
 
-    void execute(Game& game) override;
+  void execute(Game &game) override;
 };
 
 #endif // MOVE_PLAYER_COMMAND_H

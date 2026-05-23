@@ -41,79 +41,64 @@ void Game::sendMessages() {
 }
 
 void Game::registerPlayer() {
-    uint32_t newId = nextPlayerId++;
+  uint32_t newId = nextPlayerId++;
 
-    players[newId] = PlayerInfo{0, 0, Direction::Down};
+  players[newId] = PlayerInfo{0, 0, Direction::Down};
 
-    messagesToSend.push_back(
-        std::make_unique<RegisterPlayerResponseDTO>(newId, 0));
+  messagesToSend.push_back(
+      std::make_unique<RegisterPlayerResponseDTO>(newId, 0));
 
-    std::vector<PlayerInfoDTO> playerList;
+  std::vector<PlayerInfoDTO> playerList;
 
-    for (auto& [pid, info] : players) {
-        playerList.push_back({
-            pid,
-            static_cast<int16_t>(info.x),
-            static_cast<int16_t>(info.y),
-            info.direction
-        });
-    }
+  for (auto &[pid, info] : players) {
+    playerList.push_back({pid, static_cast<int16_t>(info.x),
+                          static_cast<int16_t>(info.y), info.direction});
+  }
 
-    messagesToSend.push_back(
-        std::make_unique<PlayerListDTO>(std::move(playerList)));
+  messagesToSend.push_back(
+      std::make_unique<PlayerListDTO>(std::move(playerList)));
 
-    messagesToSend.push_back(
-        std::make_unique<PlayerAppearedEventDTO>(
-            newId,
-            0,
-            0,
-            Direction::Down));
+  messagesToSend.push_back(
+      std::make_unique<PlayerAppearedEventDTO>(newId, 0, 0, Direction::Down));
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {
-    auto it = players.find(playerId);
+  auto it = players.find(playerId);
 
-    if (it == players.end()) {
-        return;
-    }
+  if (it == players.end()) {
+    return;
+  }
 
-    PlayerInfo& player = it->second;
+  PlayerInfo &player = it->second;
 
-    player.direction = direction;
+  player.direction = direction;
 
-    switch (direction) {
-    case Direction::Up:
-        player.y -= 1;
-        break;
+  switch (direction) {
+  case Direction::Up:
+    player.y -= 1;
+    break;
 
-    case Direction::Down:
-        player.y += 1;
-        break;
+  case Direction::Down:
+    player.y += 1;
+    break;
 
-    case Direction::Left:
-        player.x -= 1;
-        break;
+  case Direction::Left:
+    player.x -= 1;
+    break;
 
-    case Direction::Right:
-        player.x += 1;
-        break;
-    }
+  case Direction::Right:
+    player.x += 1;
+    break;
+  }
 
-    std::cout << "player: " << playerId
-              << " moved to x: " << player.x
-              << " y: " << player.y
-              << std::endl;
+  std::cout << "player: " << playerId << " moved to x: " << player.x
+            << " y: " << player.y << std::endl;
 
-    messagesToSend.push_back(
-        std::make_unique<PlayerMovedEventDTO>(
-            playerId,
-            static_cast<int16_t>(player.x),
-            static_cast<int16_t>(player.y),
-            direction));
+  messagesToSend.push_back(std::make_unique<PlayerMovedEventDTO>(
+      playerId, static_cast<int16_t>(player.x), static_cast<int16_t>(player.y),
+      direction));
 }
 
 void Game::stopPlayer(uint32_t playerId) {
-    messagesToSend.push_back(
-        std::make_unique<PlayerStoppedDTO>(
-            playerId));
+  messagesToSend.push_back(std::make_unique<PlayerStoppedDTO>(playerId));
 }
