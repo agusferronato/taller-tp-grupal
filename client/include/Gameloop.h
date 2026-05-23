@@ -9,8 +9,9 @@
 
 #include "Camera.h"
 #include "ClientData.h"
-#include "CommandDTO.h"
 #include "ConstantRateLoop.h"
+#include "DTO/Commands/ClientRequestDTO.h"
+#include "DTO/Events/EventDTO.h"
 #include "EventHandler.h"
 #include "Player.h"
 #include "PlayerListDTO.h"
@@ -28,8 +29,8 @@ private:
   SDL2pp::SDLTTF ttf;
   SDL2pp::SDLImage sdlimage{IMG_INIT_PNG};
 
-  Queue<std::unique_ptr<CommandDTO>> &receptionQueue;
-  Queue<std::unique_ptr<CommandDTO>> &sendingQueue;
+  Queue<ServerEventDTO> &receptionQueue;
+  Queue<ClientRequestDTO> &sendingQueue;
   ShutdownEvent &shutdownEvent;
   Camera camera;
   EventHandler handler;
@@ -44,9 +45,9 @@ private:
   std::unordered_map<uint32_t, std::unique_ptr<Player>> otherPlayers;
 
 public:
-  Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
-           Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
-           ShutdownEvent &shutdownEvent, const ClientData &clientData);
+  Gameloop(Queue<ServerEventDTO> &receptionQueue,
+           Queue<ClientRequestDTO> &sendingQueue, ShutdownEvent &shutdownEvent,
+           const ClientData &clientData);
 
   virtual void run() override;
 
@@ -63,9 +64,9 @@ private:
 
 private:
   /* Event handlers */
-  void playerAppeared(std::unique_ptr<CommandDTO> &cmd);
-  void playerMovedHandler(std::unique_ptr<CommandDTO> &cmd);
-  void playerStopped(std::unique_ptr<CommandDTO> &cmd);
+  void playerAppeared(const ServerEventDTO &event);
+  void playerMovedHandler(const ServerEventDTO &event);
+  void playerStopped(const ServerEventDTO &event);
 };
 
 #endif

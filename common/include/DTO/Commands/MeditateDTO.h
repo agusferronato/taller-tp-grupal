@@ -4,7 +4,7 @@
 #include <cstdint>
 
 struct MeditateDTO {
-    uint32_t playerId;
+  uint32_t playerId;
 };
 
 #endif

@@ -4,9 +4,11 @@
 #include "PlayerMovedEventDTO.h"
 #include "PlayerStoppedDTO.h"
 #include "RegisterPlayerDTO.h"
+#include "protocol/ProtocolCodes.h"
+#include "protocol/ServerEventCodes.h"
 
-Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
-                   Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
+Gameloop::Gameloop(Queue<ServerEventDTO> &receptionQueue,
+                   Queue<ClientRequestDTO> &sendingQueue,
                    ShutdownEvent &shutdownEvent, const ClientData &clientData)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
       shutdownEvent(shutdownEvent), camera(Camera(720, 410)),
@@ -54,29 +56,33 @@ void Gameloop::run() {
 
 void Gameloop::registerPlayer() {
   if (clientData.is_new_character) {
-    sendingQueue.push(
-        make_command_dto<RegisterPlayerDTO>(clientData.character_name));
+    sendingQueue.push(RegisterPlayerDTO{clientData.character_name});
   } else {
-    sendingQueue.push(make_command_dto<LoginPlayerDTO>(clientData.username));
+    sendingQueue.push(LoginPlayerDTO{clientData.username});
   }
 
-  std::unique_ptr<CommandDTO> cmd;
-  cmd = receptionQueue.pop();
-  auto *resp = std::get_if<RegisterPlayerResponseDTO>(cmd.get());
+  ServerEventDTO event = receptionQueue.pop();
+
+  auto *resp = std::get_if<RegisterPlayerResponseDTO>(&event);
   if (resp && resp->status == 0) {
-    myPlayerId = resp->player_id;
-    this->myPlayer = std::make_unique<Player>(*this->renderer, myPlayerId,
-                                              "assets/11402.png", 0, 0);
+    myPlayerId = resp->playerId;
+
+    myPlayer = std::make_unique<Player>(*renderer, myPlayerId,
+                                        "assets/11402.png", 0, 0);
   }
 
-  cmd = receptionQueue.pop();
-  auto *list = std::get_if<PlayerListDTO>(cmd.get());
+  event = receptionQueue.pop();
+
+  auto *list = std::get_if<PlayerListDTO>(&event);
   if (list) {
     for (const auto &info : list->players) {
-      if (info.player_id == myPlayerId)
+      if (info.player_id == myPlayerId) {
         continue;
+      }
+
       auto player = std::make_unique<Player>(
           *renderer, info.player_id, "assets/11402.png", info.x, info.y);
+
       otherPlayers[info.player_id] = std::move(player);
     }
   }
@@ -95,27 +101,21 @@ void Gameloop::initSDL() {
 }
 
 void Gameloop::updateStateFromServer() {
+  ServerEventDTO event;
 
-  std::unique_ptr<CommandDTO> cmd;
-
-  while (receptionQueue.try_pop(cmd)) {
-
-    switch (static_cast<ServerOpcode>(get_command_code(*cmd))) {
-
-    case ServerOpcode::PlayerMoved: {
-      playerMovedHandler(cmd);
+  while (receptionQueue.try_pop(event)) {
+    switch (static_cast<ServerOpcode>(get_server_event_code(event))) {
+    case ServerOpcode::PlayerMoved:
+      playerMovedHandler(event);
       break;
-    }
 
-    case ServerOpcode::PlayerAppeared: {
-      playerAppeared(cmd);
+    case ServerOpcode::PlayerAppeared:
+      playerAppeared(event);
       break;
-    }
 
-    case ServerOpcode::PlayerStopped: {
-      playerStopped(cmd);
+    case ServerOpcode::PlayerStopped:
+      playerStopped(event);
       break;
-    }
 
     default:
       break;
@@ -171,54 +171,57 @@ void Gameloop::render() {
   renderer->Present();
 }
 
-void Gameloop::playerMovedHandler(std::unique_ptr<CommandDTO> &cmd) {
-
-  auto *moved = std::get_if<PlayerMovedEventDTO>(cmd.get());
-  if (!moved)
+void Gameloop::playerMovedHandler(const ServerEventDTO &event) {
+  const auto *moved = std::get_if<PlayerMovedEventDTO>(&event);
+  if (!moved) {
     return;
+  }
 
-  uint32_t pid = moved->player_id;
+  uint32_t pid = moved->playerId;
   int16_t x = moved->x;
   int16_t y = moved->y;
   Direction dir = moved->direction;
 
   if (pid == myPlayerId) {
     myPlayer->updateCoordinates(x, y, dir);
-  } else {
-    auto it = otherPlayers.find(pid);
-    if (it != otherPlayers.end()) {
-      it->second->updateCoordinates(x, y, dir);
-    }
+    return;
+  }
+
+  auto it = otherPlayers.find(pid);
+  if (it != otherPlayers.end()) {
+    it->second->updateCoordinates(x, y, dir);
   }
 }
 
-void Gameloop::playerStopped(std::unique_ptr<CommandDTO> &cmd) {
-
-  auto *stopped = std::get_if<PlayerStoppedDTO>(cmd.get());
-  if (!stopped)
+void Gameloop::playerStopped(const ServerEventDTO &event) {
+  const auto *stopped = std::get_if<PlayerStoppedDTO>(&event);
+  if (!stopped) {
     return;
+  }
 
   uint32_t pid = stopped->player_id;
 
   if (pid == myPlayerId) {
     myPlayer->stopMoving();
-  } else {
-    auto it = otherPlayers.find(pid);
-    if (it != otherPlayers.end()) {
-      it->second->stopMoving();
-    }
+    return;
+  }
+
+  auto it = otherPlayers.find(pid);
+  if (it != otherPlayers.end()) {
+    it->second->stopMoving();
   }
 }
 
-void Gameloop::playerAppeared(std::unique_ptr<CommandDTO> &cmd) {
-
-  auto *appeared = std::get_if<PlayerAppearedEventDTO>(cmd.get());
-  if (!appeared)
+void Gameloop::playerAppeared(const ServerEventDTO &event) {
+  const auto *appeared = std::get_if<PlayerAppearedEventDTO>(&event);
+  if (!appeared) {
     return;
+  }
 
-  uint32_t pid = appeared->player_id;
-  if (pid == myPlayerId)
+  uint32_t pid = appeared->playerId;
+  if (pid == myPlayerId) {
     return;
+  }
 
   auto player = std::make_unique<Player>(*renderer, pid, "assets/11402.png",
                                          appeared->x, appeared->y);

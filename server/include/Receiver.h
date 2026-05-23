@@ -5,23 +5,23 @@
 #include <string>
 #include <utility>
 
-#include "CommandDTO.h"
 #include "CommunicationEnded.h"
-#include "Protocol.h"
+#include "DTO/Commands/ClientRequestDTO.h"
 #include "Queue.h"
 #include "Socket.h"
 #include "Thread.h"
+#include "protocol/Protocol.h"
 
 class Receiver : public Thread {
 
 private:
   Socket &peer;
-  Queue<std::unique_ptr<CommandDTO>> &gameloopQueue;
+  Queue<ClientRequestDTO> &gameloopQueue;
   Protocol protocol;
   bool keepRunning = true;
 
 public:
-  Receiver(Socket &peer, Queue<std::unique_ptr<CommandDTO>> &gameloopQueue);
+  Receiver(Socket &peer, Queue<ClientRequestDTO> &gameloopQueue);
 
   Receiver(const Receiver &) = delete;
   Receiver &operator=(const Receiver &) = delete;

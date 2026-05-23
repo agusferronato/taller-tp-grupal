@@ -4,7 +4,7 @@
 #include <cstdint>
 
 struct NpcDefeatedEventDTO {
-    uint8_t npcId;
+  uint8_t npcId;
 };
 
 #endif // NPC_DEFEATED_EVENT_DTO_H
