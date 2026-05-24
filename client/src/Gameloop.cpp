@@ -1,4 +1,5 @@
 #include "Gameloop.h"
+#include "GameWindow.h"
 #include "LoginPlayerDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerMovedEventDTO.h"
@@ -9,8 +10,10 @@ Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
                    Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
                    ShutdownEvent &shutdownEvent, const ClientData &clientData)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
-      shutdownEvent(shutdownEvent), view(GameWindow()),
-      controller(EventHandler(sendingQueue)), clientData(clientData) {}
+      shutdownEvent(shutdownEvent), controller(EventHandler(sendingQueue)),
+      clientData(clientData) {
+  view = std::make_unique<GameWindow>();
+}
 
 void Gameloop::run() {
 
@@ -26,7 +29,8 @@ void Gameloop::run() {
 
       controller.update(myPlayerId);
       updateStateFromServer();
-      view.show(it);
+
+      view->show(it);
 
     } catch (const ClosedQueue &e) {
 
@@ -60,8 +64,8 @@ void Gameloop::registerPlayer() {
   if (resp && resp->getStatus() == 0) {
     myPlayerId = resp->getPlayerId();
     this->myPlayer = std::make_unique<Player>(myPlayerId, 0, 0);
-    view.setMyPlayerID(myPlayerId);
-    view.addPlayer(myPlayerId, myPlayer->getObserver());
+    view->setMyPlayerID(myPlayerId);
+    view->addPlayer(myPlayerId, myPlayer->getObserver());
   }
 
   cmd = receptionQueue.pop();
@@ -72,8 +76,8 @@ void Gameloop::registerPlayer() {
         continue;
       auto player = std::make_unique<Player>(info.player_id, info.x, info.y);
       otherPlayers[info.player_id] = std::move(player);
-      view.addPlayer(info.player_id,
-                     otherPlayers[info.player_id]->getObserver());
+      view->addPlayer(info.player_id,
+                      otherPlayers[info.player_id]->getObserver());
     }
   }
 }
@@ -160,5 +164,5 @@ void Gameloop::playerAppeared(std::unique_ptr<CommandDTO> &cmd) {
       std::make_unique<Player>(pid, appeared->getX(), appeared->getY());
 
   otherPlayers[pid] = std::move(player);
-  view.addPlayer(pid, otherPlayers[pid]->getObserver());
+  view->addPlayer(pid, otherPlayers[pid]->getObserver());
 }

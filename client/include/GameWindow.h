@@ -7,6 +7,8 @@
 
 #include "Camera.h"
 #include "PlayerObserver.h"
+#include "SpriteCalculator.h"
+#include <string>
 
 #include <memory>
 #include <unordered_map>
@@ -23,8 +25,9 @@ private:
   std::unique_ptr<SDL2pp::Texture> defaultPlayerTexture;
 
   Camera camera;
+  SpriteFrameCalculator spriteFrameCalculator;
   uint32_t myPlayerID{0};
-  std::unordered_map<uint32_t, std::unique_ptr<PlayerObserver>> players;
+  std::unordered_map<uint32_t, const PlayerObserver *> players;
 
 public:
   GameWindow();
@@ -36,7 +39,9 @@ private:
   void clearDisplay();
   void render(unsigned int it);
   void initResources();
-  void renderPlayer(const PlayerObserver &player);
+  std::unique_ptr<SDL2pp::Texture>
+  loadPlayerTexture(SDL2pp::Renderer &renderer, const std::string &texturePath);
+  void renderPlayer(const PlayerObserver &player, unsigned int it);
 };
 
 #endif

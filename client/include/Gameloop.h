@@ -4,7 +4,6 @@
 #include <memory>
 #include <unordered_map>
 
-#include "Camera.h"
 #include "ClientData.h"
 #include "CommandDTO.h"
 #include "ConstantRateLoop.h"
@@ -27,7 +26,7 @@ private:
   ShutdownEvent &shutdownEvent;
   EventHandler controller;
   ClientData clientData;
-  GameWindow view;
+  std::unique_ptr<GameWindow> view;
   uint32_t myPlayerId{0};
   std::unique_ptr<Player> myPlayer;
   std::unordered_map<uint32_t, std::unique_ptr<Player>> otherPlayers;
