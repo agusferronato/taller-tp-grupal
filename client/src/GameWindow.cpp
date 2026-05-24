@@ -1,6 +1,5 @@
 #include "GameWindow.h"
 
-#include <filesystem>
 #include <stdexcept>
 
 std::unique_ptr<SDL2pp::Texture>
@@ -48,7 +47,7 @@ void GameWindow::render(unsigned int it) {
 
   for (auto &entry : players) {
     if (entry.second) {
-      renderPlayer(*entry.second, it);
+      renderPlayer(entry.second, it);
     }
   }
 
@@ -64,15 +63,15 @@ void GameWindow::clearDisplay() {
 
 void GameWindow::setMyPlayerID(uint32_t id) { this->myPlayerID = id; }
 
-void GameWindow::addPlayer(uint32_t ID, const PlayerObserver &player) {
-  players[ID] = &player;
+void GameWindow::addPlayer(uint32_t ID, const PlayerObserver *player) {
+  players[ID] = player;
 }
 
-void GameWindow::renderPlayer(const PlayerObserver &player, unsigned int it) {
-  const int animationIt = player.getIsMoving() ? static_cast<int>(it) : 0;
+void GameWindow::renderPlayer(const PlayerObserver *player, unsigned int it) {
+  const int animationIt = player->getIsMoving() ? static_cast<int>(it) : 0;
   SpriteFrame src =
-      spriteFrameCalculator.getSprite(player.getDirection(), animationIt);
-  SDL2pp::Rect r = camera.toScreen(player.getX(), player.getY(), 32, 32);
+      spriteFrameCalculator.getSprite(player->getDirection(), animationIt);
+  SDL2pp::Rect r = camera.toScreen(player->getX(), player->getY(), 32, 32);
   if (defaultPlayerTexture && renderer) {
     renderer->Copy(*defaultPlayerTexture,
                    SDL2pp::Rect(src.x, src.y, src.w, src.h), r);

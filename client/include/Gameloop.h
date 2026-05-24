@@ -39,10 +39,8 @@ public:
   virtual void run() override;
 
 private:
-  /* Gameloop steps */
   void registerPlayer();
   void updateStateFromServer();
-  void handleEvents();
 
 private:
   /* Event handlers */
