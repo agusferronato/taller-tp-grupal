@@ -3,10 +3,17 @@
 
 #include <QWidget>
 #include <QTimer>
-#include <SDL2/SDL_events.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <SDL2pp/SDL2pp.hh>
+#include <memory>
 #include <QPaintEngine>
-
+#include "Camera.h"
+#include "TextureMap.h"
+#include "Grid.h"
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QResizeEvent>
 
 class GridSDL : public QWidget {
     Q_OBJECT
@@ -18,6 +25,14 @@ private:
     std::optional<SDL2pp::SDL> sdl;
     std::optional<SDL2pp::Window> window;
     std::optional<SDL2pp::Renderer> renderer;
+    SDL2pp::SDLTTF ttf;
+    std::optional<SDL2pp::SDLImage> sdlimage;
+    int x{0}, y{0};
+
+    std::unique_ptr<TextureMap> textureMap;
+    std::unique_ptr<Grid> grid;
+    std::unique_ptr<Camera> camera;
+
 
 public: 
     explicit GridSDL(QWidget* parent = nullptr);
@@ -29,16 +44,12 @@ private slots:
     void renderLoop();
 
 
-private:
-    void handleEvent();
-
-
-
 protected:
     QPaintEngine* paintEngine() const override {
         return nullptr;
     }
-
+    void keyPressEvent(QKeyEvent* event) override;
+    void showEvent(QShowEvent* event) override;
 };
 
 
