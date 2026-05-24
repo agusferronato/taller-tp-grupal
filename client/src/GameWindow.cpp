@@ -24,12 +24,12 @@ GameWindow::GameWindow() : camera(Camera(720, 410)) {
       SDL2pp::Renderer(*window, -1, SDL_RENDERER_ACCELERATED));
 
   backgroundTexture = std::make_unique<SDL2pp::Texture>(
-      *renderer, SDL2pp::Surface("10119.png"));
+      *renderer, SDL2pp::Surface("assets/10119.png"));
   initResources();
 }
 
 void GameWindow::initResources() {
-  defaultPlayerTexture = loadPlayerTexture(*renderer, "11402.png");
+  defaultPlayerTexture = loadPlayerTexture(*renderer, "assets/11402.png");
 }
 
 void GameWindow::show(unsigned int it) {
