@@ -156,6 +156,8 @@ if(TALLER_EDITOR)
     # HEY!! TODO XXX: Change the name of the executable to the one you like!
     add_executable(taller_editor)
 
+    set_target_properties(taller_editor PROPERTIES AUTOMOC ON)
+
     # Make them depend on taller_common lib
     add_dependencies(taller_editor taller_common SDL2pp::SDL2pp)
 
@@ -169,7 +171,7 @@ if(TALLER_EDITOR)
     target_include_directories(taller_editor PRIVATE ${libSDL2pp_SOURCE_DIR})
 
     # Link the taller_common lib target
-    target_link_libraries(taller_editor taller_common SDL2pp::SDL2pp)
+    target_link_libraries(taller_editor taller_common SDL2pp::SDL2pp Qt6::Widgets)
 endif()
 
 
