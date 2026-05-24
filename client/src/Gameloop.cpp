@@ -9,12 +9,11 @@ Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
                    Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
                    ShutdownEvent &shutdownEvent, const ClientData &clientData)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
-      shutdownEvent(shutdownEvent), camera(Camera(720, 410)),
-      handler(EventHandler(sendingQueue)), clientData(clientData) {}
+      shutdownEvent(shutdownEvent), view(GameWindow()),
+      controller(EventHandler(sendingQueue)), clientData(clientData) {}
 
 void Gameloop::run() {
 
-  initSDL();
   registerPlayer();
 
   unsigned int it = 0;
@@ -25,14 +24,9 @@ void Gameloop::run() {
 
     try {
 
-      handleEvents();
+      controller.update(myPlayerId);
       updateStateFromServer();
-      clearDisplay();
-      updateAnimationFrames(it);
-      std::cout << "it: " << it << std::endl;
-      std::cout << "player x:" << this->myPlayer->getX() << std::endl;
-      std::cout << "player y:" << this->myPlayer->getY() << std::endl;
-      render();
+      view.show(it);
 
     } catch (const ClosedQueue &e) {
 
@@ -65,8 +59,9 @@ void Gameloop::registerPlayer() {
   auto *resp = dynamic_cast<RegisterPlayerResponseDTO *>(cmd.get());
   if (resp && resp->getStatus() == 0) {
     myPlayerId = resp->getPlayerId();
-    this->myPlayer = std::make_unique<Player>(*this->renderer, myPlayerId,
-                                              "assets/11402.png", 0, 0);
+    this->myPlayer = std::make_unique<Player>(myPlayerId, 0, 0);
+    view.setMyPlayerID(myPlayerId);
+    view.addPlayer(myPlayerId, myPlayer->getObserver());
   }
 
   cmd = receptionQueue.pop();
@@ -75,23 +70,12 @@ void Gameloop::registerPlayer() {
     for (const auto &info : list->getPlayers()) {
       if (info.player_id == myPlayerId)
         continue;
-      auto player = std::make_unique<Player>(
-          *renderer, info.player_id, "assets/11402.png", info.x, info.y);
+      auto player = std::make_unique<Player>(info.player_id, info.x, info.y);
       otherPlayers[info.player_id] = std::move(player);
+      view.addPlayer(info.player_id,
+                     otherPlayers[info.player_id]->getObserver());
     }
   }
-}
-
-void Gameloop::initSDL() {
-  this->window = std::make_unique<SDL2pp::Window>(
-      SDL2pp::Window("Argentum Online", SDL_WINDOWPOS_UNDEFINED,
-                     SDL_WINDOWPOS_UNDEFINED, 720, 410, SDL_WINDOW_SHOWN));
-
-  this->renderer = std::make_unique<SDL2pp::Renderer>(
-      SDL2pp::Renderer(*window, -1, SDL_RENDERER_ACCELERATED));
-
-  backgroundTexture = std::make_unique<SDL2pp::Texture>(
-      *renderer, SDL2pp::Surface("assets/10119.png"));
 }
 
 void Gameloop::updateStateFromServer() {
@@ -121,54 +105,6 @@ void Gameloop::updateStateFromServer() {
       break;
     }
   }
-}
-
-void Gameloop::clearDisplay() {
-  if (renderer) {
-    renderer->Copy(*backgroundTexture, SDL2pp::Rect(0, 0, 400, 400),
-                   SDL2pp::Rect(0, 0, 720, 410));
-  }
-}
-
-void Gameloop::handleEvents() {
-
-  SDL_Event event;
-  while (SDL_PollEvent(&event)) {
-    handler.handleEvent(event, myPlayerId);
-  }
-}
-
-void Gameloop::updateAnimationFrames(unsigned int it) {
-  myPlayer->updateAnimation(it);
-  for (auto &[_, player] : otherPlayers) {
-    player->updateAnimation(it);
-  }
-}
-
-void Gameloop::render() {
-
-  camera.follow(myPlayer->getX(), myPlayer->getY(), 32, 32);
-  SDL2pp::Rect screenRect =
-      camera.toScreen(myPlayer->getX(), myPlayer->getY(), 32, 32);
-  SpriteFrame &src = myPlayer->getFrame();
-  renderer->Copy(myPlayer->getTexture(),
-                 SDL2pp::Rect(src.x, src.y, src.w, src.h), screenRect);
-
-  for (auto &[_, player] : otherPlayers) {
-    SDL2pp::Rect r = camera.toScreen(player->getX(), player->getY(), 32, 32);
-    SpriteFrame &psrc = player->getFrame();
-    renderer->Copy(player->getTexture(),
-                   SDL2pp::Rect(psrc.x, psrc.y, psrc.w, psrc.h), r);
-  }
-
-  std::cout << "frame: " << src.x << " " << src.y << " " << src.w << " "
-            << src.h << std::endl;
-  std::cout << "screenRect: " << screenRect.x << " " << screenRect.y << " "
-            << screenRect.w << " " << screenRect.h << std::endl;
-  std::cout << "texture size: " << myPlayer->getTexture().GetWidth() << "x"
-            << myPlayer->getTexture().GetHeight() << std::endl;
-
-  renderer->Present();
 }
 
 void Gameloop::playerMovedHandler(std::unique_ptr<CommandDTO> &cmd) {
@@ -220,10 +156,9 @@ void Gameloop::playerAppeared(std::unique_ptr<CommandDTO> &cmd) {
   if (pid == myPlayerId)
     return;
 
-  auto player = std::make_unique<Player>(*renderer, pid, "assets/11402.png",
-                                         appeared->getX(), appeared->getY());
+  auto player =
+      std::make_unique<Player>(pid, appeared->getX(), appeared->getY());
 
   otherPlayers[pid] = std::move(player);
+  view.addPlayer(pid, otherPlayers[pid]->getObserver());
 }
-
-void Gameloop::initResources() {}
