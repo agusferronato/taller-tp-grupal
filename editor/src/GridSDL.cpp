@@ -12,7 +12,15 @@ GridSDL::GridSDL(QWidget *parent) :
 
     connect(&timer, &QTimer::timeout, this, &GridSDL::renderLoop);
 
-    initSDL();
+}
+
+void GridSDL::showEvent(QShowEvent* event) {
+    QWidget::showEvent(event);
+
+    QTimer::singleShot(0, this, [this]() {
+        if (!sdl.has_value())
+            initSDL();
+    });
 }
 
 
@@ -20,7 +28,9 @@ void GridSDL::initSDL()
 {
 
     try {
+
         sdl.emplace(SDL_INIT_VIDEO);
+        sdlimage.emplace(IMG_INIT_PNG);
 
         SDL_Window* sdlWindow =
             SDL_CreateWindowFrom((void*)winId());
@@ -39,26 +49,41 @@ void GridSDL::initSDL()
             SDL_RENDERER_ACCELERATED
         );
 
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+        textureMap = std::make_unique<TextureMap>(TextureMap(*renderer));
+        camera = std::make_unique<Camera>(this->width(), this->height());
+        grid = std::make_unique<Grid>(*camera);
+
         timer.start(16); 
 
     } catch (SDL2pp::Exception& e) {
         qDebug() << "Error de SDL2pp:" << e.what();
-    }
+    } 
 }
 
-void GridSDL::handleEvent()
-{
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) 
-    {
-    }
-}
 
 void GridSDL::renderLoop() {
 
-    handleEvent();
-    renderer->SetDrawColor(255, 0, 0, 255);
+    renderer->SetDrawColor(233, 12, 0, 0);
+
     renderer->Clear();
+
+    camera->follow(x, y, 32, 32);
+
+    grid->render(*renderer, *textureMap);
+
     renderer->Present();
 
+}
+
+
+void GridSDL::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+        case Qt::Key_Left:  x -= 2; break;
+        case Qt::Key_Right: x += 2; break;
+        case Qt::Key_Up:    y -= 2; break;
+        case Qt::Key_Down:  y += 2; break;
+        default: break;
+    }
 }
