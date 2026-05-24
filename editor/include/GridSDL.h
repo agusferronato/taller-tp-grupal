@@ -27,7 +27,7 @@ private:
     std::optional<SDL2pp::Renderer> renderer;
     SDL2pp::SDLTTF ttf;
     std::optional<SDL2pp::SDLImage> sdlimage;
-    int x{0}, y{0};
+    int x{0}, y{0}, mouse_x{0}, mouse_y{0};
 
     std::unique_ptr<TextureMap> textureMap;
     std::unique_ptr<Grid> grid;
@@ -50,6 +50,9 @@ protected:
     }
     void keyPressEvent(QKeyEvent* event) override;
     void showEvent(QShowEvent* event) override;
+
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 };
 
 
