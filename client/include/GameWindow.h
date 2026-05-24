@@ -8,9 +8,10 @@
 #include "Camera.h"
 #include "PlayerObserver.h"
 #include "SpriteCalculator.h"
-#include <string>
 
+#include <cstdint>
 #include <memory>
+#include <string>
 #include <unordered_map>
 
 class GameWindow {
@@ -32,7 +33,7 @@ private:
 public:
   GameWindow();
   void setMyPlayerID(uint32_t id);
-  void addPlayer(uint32_t ID, const PlayerObserver &player);
+  void addPlayer(uint32_t ID, const PlayerObserver *player);
   void show(unsigned int it);
 
 private:
@@ -41,7 +42,7 @@ private:
   void initResources();
   std::unique_ptr<SDL2pp::Texture>
   loadPlayerTexture(SDL2pp::Renderer &renderer, const std::string &texturePath);
-  void renderPlayer(const PlayerObserver &player, unsigned int it);
+  void renderPlayer(const PlayerObserver *player, unsigned int it);
 };
 
 #endif

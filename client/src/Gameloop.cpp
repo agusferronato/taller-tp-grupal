@@ -10,7 +10,7 @@ Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
                    Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
                    ShutdownEvent &shutdownEvent, const ClientData &clientData)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
-      shutdownEvent(shutdownEvent), controller(EventHandler(sendingQueue)),
+      shutdownEvent(shutdownEvent), controller(sendingQueue),
       clientData(clientData) {
   view = std::make_unique<GameWindow>();
 }
@@ -65,7 +65,10 @@ void Gameloop::registerPlayer() {
     myPlayerId = resp->getPlayerId();
     this->myPlayer = std::make_unique<Player>(myPlayerId, 0, 0);
     view->setMyPlayerID(myPlayerId);
-    view->addPlayer(myPlayerId, myPlayer->getObserver());
+    {
+      const PlayerObserver *obs = myPlayer->getObserver();
+      view->addPlayer(myPlayerId, obs);
+    }
   }
 
   cmd = receptionQueue.pop();
@@ -76,8 +79,10 @@ void Gameloop::registerPlayer() {
         continue;
       auto player = std::make_unique<Player>(info.player_id, info.x, info.y);
       otherPlayers[info.player_id] = std::move(player);
-      view->addPlayer(info.player_id,
-                      otherPlayers[info.player_id]->getObserver());
+      {
+        const PlayerObserver *obs = otherPlayers[info.player_id]->getObserver();
+        view->addPlayer(info.player_id, obs);
+      }
     }
   }
 }
@@ -164,5 +169,8 @@ void Gameloop::playerAppeared(std::unique_ptr<CommandDTO> &cmd) {
       std::make_unique<Player>(pid, appeared->getX(), appeared->getY());
 
   otherPlayers[pid] = std::move(player);
-  view->addPlayer(pid, otherPlayers[pid]->getObserver());
+  {
+    const PlayerObserver *obs = otherPlayers[pid]->getObserver();
+    view->addPlayer(pid, obs);
+  }
 }

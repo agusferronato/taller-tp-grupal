@@ -4,7 +4,6 @@
 #include "Direction.h"
 #include <cstdint>
 #include <memory>
-#include <string>
 
 #include "PlayerObserver.h"
 
@@ -17,13 +16,13 @@ private:
 
   int x, y;
 
-  PlayerObserver observer;
+  std::unique_ptr<PlayerObserver> observer;
 
 public:
   Player(uint32_t id, int xOrigin, int yOrigin);
 
   uint32_t getID() const;
-  const PlayerObserver &getObserver() const { return observer; }
+  const PlayerObserver *getObserver() const { return observer.get(); }
   void setCoordinates(int x, int y);
   void updateCoordinates(int x, int y, Direction direction);
   void stopMoving();
