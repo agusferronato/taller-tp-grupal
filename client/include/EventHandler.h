@@ -16,9 +16,10 @@ private:
 
 public:
   explicit EventHandler(Queue<std::unique_ptr<CommandDTO>> &sendingQueue);
-  void handleEvent(const SDL_Event &event, uint32_t playerID);
+  void update(uint32_t playerID);
 
 private:
+  void handleEvent(const SDL_Event &event, uint32_t playerID);
   void handleKeyDown(const SDL_Keycode &key, uint32_t playerID);
   void handleKeyUp(const SDL_Keycode &key, uint32_t playerID);
   std::optional<Direction> getDirectionFromKey(const SDL_Keycode &key) const;

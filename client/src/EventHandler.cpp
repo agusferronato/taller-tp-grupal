@@ -7,6 +7,13 @@
 EventHandler::EventHandler(Queue<std::unique_ptr<CommandDTO>> &sendingQueue)
     : sendingQueue(sendingQueue) {}
 
+void EventHandler::update(uint32_t playerID) {
+  SDL_Event event;
+  while (SDL_PollEvent(&event)) {
+    this->handleEvent(event, playerID);
+  }
+}
+
 void EventHandler::handleEvent(const SDL_Event &event, uint32_t playerID) {
   switch (event.type) {
   case SDL_QUIT:
