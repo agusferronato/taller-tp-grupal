@@ -31,6 +31,8 @@ private:
     int size{MAX_SIZE};
     std::vector<std::vector<GridItem>> grid;
     Camera& camera;
+    int item_hover_i, item_hover_j;
+    bool hover_init{false};
 
 public:
 
@@ -40,9 +42,9 @@ public:
 
     void render(SDL2pp::Renderer &renderer, TextureMap &textureMap);
 
+    void setMousePosition(int x, int y);
+
 };
-
-
 
 
 #endif

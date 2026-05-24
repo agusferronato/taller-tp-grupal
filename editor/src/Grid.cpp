@@ -49,11 +49,30 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap& textureMap)
                 tile.x_end,
                 tile.y_end
             );
+            
             renderer.Copy(textureMap.getTexture(tile.texture_id), srcRect, dstRect);
+
+            if (hover_init && i == item_hover_i && j == item_hover_j) {
+                SDL_SetRenderDrawBlendMode(renderer.Get(), SDL_BLENDMODE_BLEND);
+                renderer.SetDrawColor(255, 0, 0, 100); 
+                renderer.FillRect(dstRect);
+            }
+
         }
 
     }
 
 }
 
+void Grid::setMousePosition(int x, int y)
+{
+    hover_init = true;
+    int worldX = camera.get_x() + x;
+    int worldY = camera.get_y() + y;
 
+    item_hover_i = (int)std::floor((float)worldX / GRID_SIZE_PX) + MAX_SIZE / 2;
+    item_hover_j = (int)std::floor((float)worldY / GRID_SIZE_PX) + MAX_SIZE / 2;
+
+    item_hover_i = std::clamp(item_hover_i, 0, MAX_SIZE - 1);
+    item_hover_j = std::clamp(item_hover_j, 0, MAX_SIZE - 1);
+}

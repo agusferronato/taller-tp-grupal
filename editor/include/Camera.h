@@ -24,6 +24,10 @@ public:
         w, h
     );
   }
+
+  int get_x() { return x; }
+  int get_y() { return y; }
+
 };
 
 #endif

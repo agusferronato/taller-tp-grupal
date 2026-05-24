@@ -9,6 +9,7 @@ GridSDL::GridSDL(QWidget *parent) :
     setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_NativeWindow);
     setFocusPolicy(Qt::StrongFocus);
+    setMouseTracking(true);
 
     connect(&timer, &QTimer::timeout, this, &GridSDL::renderLoop);
 
@@ -68,8 +69,9 @@ void GridSDL::renderLoop() {
 
     renderer->Clear();
 
-    camera->follow(x, y, 32, 32);
+    camera->follow(x, y, 1, 1);
 
+    grid->setMousePosition(mouse_x, mouse_y);
     grid->render(*renderer, *textureMap);
 
     renderer->Present();
@@ -85,5 +87,17 @@ void GridSDL::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Up:    y -= 2; break;
         case Qt::Key_Down:  y += 2; break;
         default: break;
+    }
+}
+
+
+void GridSDL::mouseMoveEvent(QMouseEvent *event) {
+    mouse_x = event->pos().x();
+    mouse_y = event->pos().y();
+}
+
+void GridSDL::mousePressEvent(QMouseEvent *event) {
+    if (event->button() == Qt::LeftButton) {
+        qDebug() << "Click en:" << mouse_x << mouse_y;
     }
 }
