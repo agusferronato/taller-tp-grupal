@@ -16,10 +16,6 @@ inline uint8_t get_server_event_code(const ServerEventDTO &dto) {
         if constexpr (std::is_same_v<T, ChatMessageEventDTO>) {
           return static_cast<uint8_t>(ServerOpcode::ChatMessage);
 
-          // if constexpr (std::is_same_v<T, NpcRespawnedEventDTO>) {
-          //   return static_cast<uint8_t>(ServerOpcode::NPCRespawned);
-          // }
-
         } else if constexpr (std::is_same_v<T, NpcDefeatedEventDTO>) {
           return static_cast<uint8_t>(ServerOpcode::NPCDefeated);
 
@@ -34,6 +30,9 @@ inline uint8_t get_server_event_code(const ServerEventDTO &dto) {
 
         } else if constexpr (std::is_same_v<T, PlayerListDTO>) {
           return static_cast<uint8_t>(ServerOpcode::PlayerList);
+
+        } else if constexpr (std::is_same_v<T, PlayerRemovedEventDTO>) {
+          return static_cast<uint8_t>(ServerOpcode::PlayerRemoved);
 
         } else {
           return static_cast<uint8_t>(ServerOpcode::PlayerStopped);

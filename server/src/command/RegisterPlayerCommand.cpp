@@ -2,4 +2,9 @@
 
 #include "Game.h"
 
-void RegisterPlayerCommand::execute(Game &game) { game.registerPlayer(); }
+RegisterPlayerCommand::RegisterPlayerCommand(std::string name)
+    : name(std::move(name)) {}
+
+void RegisterPlayerCommand::execute(Game &game) {
+  game.registerPlayer(name);
+}

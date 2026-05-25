@@ -1,6 +1,7 @@
 #ifndef RECEIVER_H
 #define RECEIVER_H
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
@@ -19,6 +20,7 @@ private:
   Queue<ClientRequestDTO> &gameloopQueue;
   Protocol protocol;
   bool keepRunning = true;
+  uint32_t lastPlayerId{0};
 
 public:
   Receiver(Socket &peer, Queue<ClientRequestDTO> &gameloopQueue);

@@ -8,12 +8,14 @@
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerListDTO.h"
 #include "PlayerMovedEventDTO.h"
+#include "PlayerRemovedEventDTO.h"
 #include "PlayerStoppedDTO.h"
 #include "RegisterPlayerResponseDTO.h"
 
 using ServerEventDTO =
     std::variant<ChatMessageEventDTO, NpcDefeatedEventDTO, PlayerMovedEventDTO,
                  RegisterPlayerResponseDTO, PlayerListDTO,
-                 PlayerAppearedEventDTO, PlayerStoppedDTO>;
+                 PlayerAppearedEventDTO, PlayerStoppedDTO,
+                 PlayerRemovedEventDTO>;
 
 #endif // EVENT_DTO_H

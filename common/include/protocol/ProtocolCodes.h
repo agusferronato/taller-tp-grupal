@@ -30,6 +30,7 @@ enum class ServerOpcode : uint8_t {
   PlayerList,
   PlayerAppeared,
   PlayerStopped,
+  PlayerRemoved,
 };
 
 #endif // PROTOCOL_CODES_H

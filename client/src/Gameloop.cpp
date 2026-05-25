@@ -2,6 +2,7 @@
 #include "LoginPlayerDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerMovedEventDTO.h"
+#include "PlayerRemovedEventDTO.h"
 #include "PlayerStoppedDTO.h"
 #include "RegisterPlayerDTO.h"
 #include "protocol/ProtocolCodes.h"
@@ -18,6 +19,14 @@ void Gameloop::run() {
 
   initSDL();
   registerPlayer();
+
+  if (!myPlayer) {
+    window.reset();
+    renderer.reset();
+    backgroundTexture.reset();
+    shutdownEvent.put(ShutdownReason::ConnectionClosed);
+    return;
+  }
 
   unsigned int it = 0;
 
@@ -56,7 +65,7 @@ void Gameloop::run() {
 
 void Gameloop::registerPlayer() {
   if (clientData.is_new_character) {
-    sendingQueue.push(RegisterPlayerDTO{clientData.character_name});
+    sendingQueue.push(RegisterPlayerDTO{clientData.username});
   } else {
     sendingQueue.push(LoginPlayerDTO{clientData.username});
   }
@@ -64,12 +73,18 @@ void Gameloop::registerPlayer() {
   ServerEventDTO event = receptionQueue.pop();
 
   auto *resp = std::get_if<RegisterPlayerResponseDTO>(&event);
-  if (resp && resp->status == 0) {
-    myPlayerId = resp->playerId;
-
-    myPlayer = std::make_unique<Player>(*renderer, myPlayerId,
-                                        "assets/11402.png", 0, 0);
+  if (!resp || resp->status != 0) {
+    std::cerr << "Error: usuario o contrasena incorrectos" << std::endl;
+    return;
   }
+
+  myPlayerId = resp->playerId;
+
+  std::string race =
+      clientData.race.empty() ? "humano" : clientData.race;
+  myPlayer = std::make_unique<Player>(*renderer, myPlayerId,
+                                       "assets/11402.png", 0, 0,
+                                       race);
 
   event = receptionQueue.pop();
 
@@ -81,7 +96,8 @@ void Gameloop::registerPlayer() {
       }
 
       auto player = std::make_unique<Player>(
-          *renderer, info.player_id, "assets/11402.png", info.x, info.y);
+          *renderer, info.player_id, "assets/11402.png", info.x, info.y,
+          "humano");
 
       otherPlayers[info.player_id] = std::move(player);
     }
@@ -117,6 +133,10 @@ void Gameloop::updateStateFromServer() {
       playerStopped(event);
       break;
 
+    case ServerOpcode::PlayerRemoved:
+      playerRemoved(event);
+      break;
+
     default:
       break;
     }
@@ -148,25 +168,11 @@ void Gameloop::updateAnimationFrames(unsigned int it) {
 void Gameloop::render() {
 
   camera.follow(myPlayer->getX(), myPlayer->getY(), 32, 32);
-  SDL2pp::Rect screenRect =
-      camera.toScreen(myPlayer->getX(), myPlayer->getY(), 32, 32);
-  SpriteFrame &src = myPlayer->getFrame();
-  renderer->Copy(myPlayer->getTexture(),
-                 SDL2pp::Rect(src.x, src.y, src.w, src.h), screenRect);
+  myPlayer->render(*renderer, camera);
 
   for (auto &[_, player] : otherPlayers) {
-    SDL2pp::Rect r = camera.toScreen(player->getX(), player->getY(), 32, 32);
-    SpriteFrame &psrc = player->getFrame();
-    renderer->Copy(player->getTexture(),
-                   SDL2pp::Rect(psrc.x, psrc.y, psrc.w, psrc.h), r);
+    player->render(*renderer, camera);
   }
-
-  std::cout << "frame: " << src.x << " " << src.y << " " << src.w << " "
-            << src.h << std::endl;
-  std::cout << "screenRect: " << screenRect.x << " " << screenRect.y << " "
-            << screenRect.w << " " << screenRect.h << std::endl;
-  std::cout << "texture size: " << myPlayer->getTexture().GetWidth() << "x"
-            << myPlayer->getTexture().GetHeight() << std::endl;
 
   renderer->Present();
 }
@@ -212,6 +218,15 @@ void Gameloop::playerStopped(const ServerEventDTO &event) {
   }
 }
 
+void Gameloop::playerRemoved(const ServerEventDTO &event) {
+  const auto *removed = std::get_if<PlayerRemovedEventDTO>(&event);
+  if (!removed) {
+    return;
+  }
+
+  otherPlayers.erase(removed->playerId);
+}
+
 void Gameloop::playerAppeared(const ServerEventDTO &event) {
   const auto *appeared = std::get_if<PlayerAppearedEventDTO>(&event);
   if (!appeared) {
@@ -224,7 +239,7 @@ void Gameloop::playerAppeared(const ServerEventDTO &event) {
   }
 
   auto player = std::make_unique<Player>(*renderer, pid, "assets/11402.png",
-                                         appeared->x, appeared->y);
+                                          appeared->x, appeared->y, "humano");
 
   otherPlayers[pid] = std::move(player);
 }
