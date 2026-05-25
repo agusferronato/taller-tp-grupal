@@ -19,11 +19,12 @@ void Game::run() {
   unsigned int it = 0;
 
   while (keepRunning) {
+    ClientCommandDTO dto;
 
-    auto dto = gameloopQueue.pop();
-    auto command = factory.create(std::move(dto));
-
-    command->execute(*this);
+    if (gameloopQueue.try_pop(dto)) {
+      auto command = factory.create(std::move(dto));
+      command->execute(*this);
+    }
 
     sendMessages();
 
