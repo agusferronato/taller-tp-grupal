@@ -16,9 +16,9 @@
 
 class GameWindow {
 private:
-  SDL2pp::SDL sdl{SDL2pp::SDL(SDL_INIT_VIDEO)};
-  SDL2pp::SDLTTF ttf;
+  SDL2pp::SDL sdl{SDL_INIT_VIDEO};
   SDL2pp::SDLImage sdlimage{IMG_INIT_PNG};
+  SDL2pp::SDLTTF ttf;
 
   std::unique_ptr<SDL2pp::Window> window;
   std::unique_ptr<SDL2pp::Renderer> renderer;
@@ -37,7 +37,6 @@ public:
   void show(unsigned int it);
 
 private:
-  void clearDisplay();
   void render(unsigned int it);
   void initResources();
   std::unique_ptr<SDL2pp::Texture>
