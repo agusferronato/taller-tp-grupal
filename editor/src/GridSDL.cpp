@@ -97,7 +97,9 @@ void GridSDL::mouseMoveEvent(QMouseEvent *event) {
 }
 
 void GridSDL::mousePressEvent(QMouseEvent *event) {
+    
     if (event->button() == Qt::LeftButton) {
-        qDebug() << "Click en:" << mouse_x << mouse_y;
+        grid->setGridTexture(*textureMap, 1);
     }
+
 }
