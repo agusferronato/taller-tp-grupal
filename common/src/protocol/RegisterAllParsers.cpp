@@ -10,6 +10,7 @@
 #include "parser/Events/PlayerAppearedEventParser.h"
 #include "parser/Events/PlayerListEventParser.h"
 #include "parser/Events/PlayerMovedEventParser.h"
+#include "parser/Events/PlayerRemovedEventParser.h"
 #include "parser/Events/PlayerStoppedParser.h"
 #include "parser/Events/RegisterPlayerResponseParser.h"
 #include "protocol/Protocol.h"
@@ -61,4 +62,8 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerEventParser(
       static_cast<uint8_t>(ServerOpcode::PlayerStopped),
       std::make_unique<PlayerStoppedEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(ServerOpcode::PlayerRemoved),
+      std::make_unique<PlayerRemovedEventParser>());
 }

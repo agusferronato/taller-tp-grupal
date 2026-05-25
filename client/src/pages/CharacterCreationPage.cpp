@@ -77,15 +77,6 @@ CharacterCreationPage::CharacterCreationPage(QWidget *parent)
                               darkInputFocusStyle + "}");
   formLayout->addRow(passwordEdit);
 
-  nameEdit = new QLineEdit(this);
-  nameEdit->setPlaceholderText("Nombre del personaje");
-  nameEdit->setObjectName("charNameEdit");
-  nameEdit->setStyleSheet("QLineEdit {" + darkInputStyle +
-                          "}"
-                          "QLineEdit:focus {" +
-                          darkInputFocusStyle + "}");
-  formLayout->addRow(nameEdit);
-
   raceGroup = new QButtonGroup(this);
   raceGroup->setExclusive(true);
 
@@ -211,9 +202,8 @@ CharacterCreationPage::CharacterCreationPage(QWidget *parent)
 void CharacterCreationPage::onCreateClicked() {
   QString username = usernameEdit->text();
   QString password = passwordEdit->text();
-  QString name = nameEdit->text();
   QString race = selectedRace;
   QString playerClass = classCombo->currentText();
 
-  emit characterCreated(username, password, name, race, playerClass);
+  emit characterCreated(username, password, race, playerClass);
 }

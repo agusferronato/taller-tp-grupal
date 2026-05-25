@@ -67,6 +67,7 @@ private:
   void playerAppeared(const ServerEventDTO &event);
   void playerMovedHandler(const ServerEventDTO &event);
   void playerStopped(const ServerEventDTO &event);
+  void playerRemoved(const ServerEventDTO &event);
 };
 
 #endif

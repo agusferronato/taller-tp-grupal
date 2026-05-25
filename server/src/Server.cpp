@@ -1,4 +1,5 @@
 #include "Server.h"
+#include "PlayerRepository.h"
 
 Server::Server(const char *port) : socket(Socket(port)) {}
 
@@ -6,11 +7,12 @@ void Server::run() {
 
   Queue<ClientRequestDTO> gameloopQueue(GAMELOOP_QUEUE_SIZE);
   SenderQueueMonitor senderQueueMonitor;
+  PlayerRepository repository("data");
 
   Acceptor acceptor(socket, gameloopQueue, senderQueueMonitor);
   acceptor.start();
 
-  Game game(gameloopQueue, senderQueueMonitor);
+  Game game(gameloopQueue, senderQueueMonitor, repository);
   game.start();
 
   std::string input;

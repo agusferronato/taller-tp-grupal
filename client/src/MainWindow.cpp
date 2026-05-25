@@ -64,12 +64,12 @@ void MainWindow::onStartGame(const QString &username, const QString &password) {
 
 void MainWindow::onCharacterCreated(const QString &username,
                                     const QString &password,
-                                    const QString &name, const QString &race,
+                                    const QString &race,
                                     const QString &playerClass) {
   ClientData data;
   data.username = username.toStdString();
   data.password = password.toStdString();
-  data.character_name = name.toStdString();
+  data.character_name = username.toStdString();
   data.race = race.toStdString();
   data.player_class = playerClass.toStdString();
   data.is_new_character = true;
