@@ -14,7 +14,7 @@ void PlayerListEventParser::serialize(std::vector<uint8_t> &bytes,
   utils.appendBytes(static_cast<uint16_t>(event.players.size()), bytes);
 
   for (const auto &player : event.players) {
-    utils.appendBytes(player.player_id, bytes);
+    utils.appendBytes(player.playerId, bytes);
     utils.appendBytes(player.x, bytes);
     utils.appendBytes(player.y, bytes);
     utils.appendBytes(static_cast<uint8_t>(player.direction), bytes);

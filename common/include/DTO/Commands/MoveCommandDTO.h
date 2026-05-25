@@ -13,7 +13,7 @@ private:
 public:
   ClientCommandOpCode getCode() const { return opCode; }
 
-  uint32_t player_id;
+  uint32_t playerId;
   Direction direction;
 };
 

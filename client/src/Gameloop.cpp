@@ -76,14 +76,14 @@ void Gameloop::registerPlayer() {
   auto *list = std::get_if<PlayerListEventDTO>(&event);
   if (list) {
     for (const auto &info : list->players) {
-      if (info.player_id == myPlayerId) {
+      if (info.playerId == myPlayerId) {
         continue;
       }
 
       auto player = std::make_unique<Player>(
-          *renderer, info.player_id, "assets/11402.png", info.x, info.y);
+          *renderer, info.playerId, "assets/11402.png", info.x, info.y);
 
-      otherPlayers[info.player_id] = std::move(player);
+      otherPlayers[info.playerId] = std::move(player);
     }
   }
 }
@@ -199,7 +199,7 @@ void Gameloop::playerStopped(const ServerEventDTO &event) {
     return;
   }
 
-  uint32_t pid = stopped->player_id;
+  uint32_t pid = stopped->playerId;
 
   if (pid == myPlayerId) {
     myPlayer->stopMoving();

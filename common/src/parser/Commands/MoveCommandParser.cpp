@@ -13,7 +13,7 @@ void MoveCommandParser::serialize(std::vector<uint8_t> &bytes,
   utils.appendBytes(static_cast<uint8_t>(ClientCommandOpCode::MoveCommand),
                     bytes);
 
-  utils.appendBytes(request.player_id, bytes);
+  utils.appendBytes(request.playerId, bytes);
 
   utils.appendBytes(static_cast<uint8_t>(request.direction), bytes);
 }
