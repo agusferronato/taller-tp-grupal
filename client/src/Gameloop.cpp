@@ -104,7 +104,7 @@ void Gameloop::updateStateFromServer() {
   ServerEventDTO event;
 
   while (receptionQueue.try_pop(event)) {
-    switch (static_cast<ServerOpcode>(get_server_event_code(event))) {
+    switch (static_cast<ServerOpcode>(getCode(event))) {
     case ServerOpcode::PlayerMoved:
       playerMovedHandler(event);
       break;

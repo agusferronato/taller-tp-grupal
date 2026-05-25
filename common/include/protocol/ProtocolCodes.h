@@ -28,6 +28,7 @@ enum class ServerOpcode : uint8_t {
   PlayerMoved,
   RegisterResponse,
   PlayerList,
+  PlayerInfo,
   PlayerAppeared,
   PlayerStopped,
 };
