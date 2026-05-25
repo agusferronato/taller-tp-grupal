@@ -1,6 +1,6 @@
 #include "parser/Events/PlayerListEventParser.h"
 
-#include "PlayerListDTO.h"
+#include "PlayerListEventDTO.h"
 #include "protocol/Protocol.h"
 #include "protocol/ProtocolCodes.h"
 
@@ -8,9 +8,9 @@
 
 void PlayerListEventParser::serialize(std::vector<uint8_t> &bytes,
                                       const ServerEventDTO &dto) {
-  const auto &event = std::get<PlayerListDTO>(dto);
+  const auto &event = std::get<PlayerListEventDTO>(dto);
 
-  utils.appendToSend(static_cast<uint8_t>(ServerOpcode::PlayerList), bytes);
+  utils.appendToSend(static_cast<uint8_t>(EventOpcode::PlayerListEvent), bytes);
   utils.appendToSend(static_cast<uint16_t>(event.players.size()), bytes);
 
   for (const auto &player : event.players) {
@@ -35,5 +35,5 @@ ServerEventDTO PlayerListEventParser::deserialize(Protocol &protocol) {
     players.push_back(PlayerInfoDTO{playerId, x, y, direction});
   }
 
-  return PlayerListDTO{std::move(players)};
+  return PlayerListEventDTO{std::move(players)};
 }

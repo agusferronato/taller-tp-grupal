@@ -1,15 +1,15 @@
 #ifndef MOVE_COMMAND_PARSER_H
 #define MOVE_COMMAND_PARSER_H
 
-#include "ClientRequestParser.h"
+#include "ClientCommandParser.h"
 #include <vector>
 
-class MoveCommandParser : public ClientRequestParser {
+class MoveCommandParser : public ClientCommandParser {
 public:
   void serialize(std::vector<uint8_t> &bytes,
-                 const ClientRequestDTO &dto) override;
+                 const ClientCommandDTO &dto) override;
 
-  ClientRequestDTO deserialize(Protocol &protocol) override;
+  ClientCommandDTO deserialize(Protocol &protocol) override;
 };
 
 #endif

@@ -1,7 +1,6 @@
 #ifndef CHAT_MESSAGE_EVENT_PARSER_H
 #define CHAT_MESSAGE_EVENT_PARSER_H
 
-#include "DTO/Events/EventDTO.h"
 #include "parser/Events/ServerEventParser.h"
 #include <vector>
 

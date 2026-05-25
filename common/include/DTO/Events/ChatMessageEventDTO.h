@@ -6,10 +6,10 @@
 
 struct ChatMessageEventDTO {
 private:
-  static constexpr ServerOpcode opCode = ServerOpcode::ChatMessage;
+  static constexpr EventOpcode opCode = EventOpcode::ChatMessageEvent;
 
 public:
-  ServerOpcode getCode() const { return opCode; }
+  EventOpcode getCode() const { return opCode; }
   std::string sender;
   std::string message;
 };

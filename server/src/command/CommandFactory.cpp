@@ -1,15 +1,15 @@
 #include "command/CommandFactory.h"
 
 #include "MoveCommandDTO.h"
-#include "PlayerStoppedDTO.h"
-#include "RegisterPlayerDTO.h"
+#include "PlayerStopCommandDTO.h"
+#include "RegisterPlayerCommandDTO.h"
 #include "command/MovePlayerCommand.h"
 #include "command/PlayerStoppedCommand.h"
 #include "command/RegisterPlayerCommand.h"
 
-std::unique_ptr<Command> CommandFactory::create(const ClientRequestDTO &dto) {
+std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
   if ([[maybe_unused]] const auto *request =
-          std::get_if<RegisterPlayerDTO>(&dto)) {
+          std::get_if<RegisterPlayerCommandDTO>(&dto)) {
     return std::make_unique<RegisterPlayerCommand>();
   }
 
@@ -18,7 +18,7 @@ std::unique_ptr<Command> CommandFactory::create(const ClientRequestDTO &dto) {
                                                request->direction);
   }
 
-  if (const auto *request = std::get_if<PlayerStopDTO>(&dto)) {
+  if (const auto *request = std::get_if<PlayerStopCommandDTO>(&dto)) {
     return std::make_unique<PlayerStoppedCommand>(request->player_id);
   }
 

@@ -1,14 +1,14 @@
 #include "Game.h"
 #include "MoveCommandDTO.h"
 #include "PlayerAppearedEventDTO.h"
-#include "PlayerListDTO.h"
+#include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
-#include "PlayerStoppedDTO.h"
-#include "RegisterPlayerDTO.h"
-#include "RegisterPlayerResponseDTO.h"
+#include "PlayerStoppedEventDTO.h"
+#include "RegisterPlayerCommandDTO.h"
+#include "RegisterPlayerEventDTO.h"
 #include "command/CommandFactory.h"
 
-Game::Game(Queue<ClientRequestDTO> &gameloopQueue,
+Game::Game(Queue<ClientCommandDTO> &gameloopQueue,
            SenderQueueMonitor &senderQueueMonitor)
     : gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor) {}
 
@@ -45,7 +45,7 @@ void Game::registerPlayer() {
 
   players[newId] = PlayerInfo{0, 0, Direction::Down};
 
-  messagesToSend.push_back(RegisterPlayerResponseDTO{newId, 0});
+  messagesToSend.push_back(RegisterPlayerEventDTO{newId, 0});
 
   std::vector<PlayerInfoDTO> playerList;
 
@@ -54,7 +54,7 @@ void Game::registerPlayer() {
                           static_cast<int16_t>(info.y), info.direction});
   }
 
-  messagesToSend.push_back(PlayerListDTO{std::move(playerList)});
+  messagesToSend.push_back(PlayerListEventDTO{std::move(playerList)});
 
   messagesToSend.push_back(
       PlayerAppearedEventDTO{newId, 0, 0, Direction::Down});
@@ -98,5 +98,5 @@ void Game::movePlayer(uint32_t playerId, Direction direction) {
 }
 
 void Game::stopPlayer(uint32_t playerId) {
-  messagesToSend.push_back(PlayerStoppedDTO{playerId});
+  messagesToSend.push_back(PlayerStoppedEventDTO{playerId});
 }

@@ -11,7 +11,8 @@ void ChatMessageEventParser::serialize(std::vector<uint8_t> &bytes,
                                        const ServerEventDTO &dto) {
   const auto &eventDTO = std::get<ChatMessageEventDTO>(dto);
 
-  utils.appendToSend(static_cast<uint8_t>(ServerOpcode::ChatMessage), bytes);
+  utils.appendToSend(static_cast<uint8_t>(EventOpcode::ChatMessageEvent),
+                     bytes);
   utils.appendToSend(eventDTO.sender, bytes);
   utils.appendToSend(eventDTO.message, bytes);
 }

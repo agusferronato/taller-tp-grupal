@@ -8,10 +8,10 @@
 
 struct PlayerAppearedEventDTO {
 private:
-  static constexpr ServerOpcode opCode = ServerOpcode::PlayerAppeared;
+  static constexpr EventOpcode opCode = EventOpcode::PlayerAppearedEvent;
 
 public:
-  ServerOpcode getCode() const { return opCode; }
+  EventOpcode getCode() const { return opCode; }
   uint32_t playerId;
   int16_t x;
   int16_t y;

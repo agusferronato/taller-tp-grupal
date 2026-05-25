@@ -1,15 +1,15 @@
-#ifndef MEDITATE_PARSER_H
-#define MEDITATE_PARSER_H
+#ifndef MEDITATE_COMMAND_PARSER_H
+#define MEDITATE_COMMAND_PARSER_H
 
-#include "ClientRequestParser.h"
+#include "ClientCommandParser.h"
 #include <vector>
 
-class MeditateParser : public ClientRequestParser {
+class MeditateParser : public ClientCommandParser {
 public:
   void serialize(std::vector<uint8_t> &bytes,
-                 const ClientRequestDTO &dto) override;
+                 const ClientCommandDTO &dto) override;
 
-  ClientRequestDTO deserialize(Protocol &protocol) override;
+  ClientCommandDTO deserialize(Protocol &protocol) override;
 };
 
 #endif

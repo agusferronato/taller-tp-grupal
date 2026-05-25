@@ -6,10 +6,10 @@
 
 struct NpcDefeatedEventDTO {
 private:
-  static constexpr ServerOpcode opCode = ServerOpcode::NPCDefeated;
+  static constexpr EventOpcode opCode = EventOpcode::NPCDefeatedEvent;
 
 public:
-  ServerOpcode getCode() const { return opCode; }
+  EventOpcode getCode() const { return opCode; }
   uint8_t npcId;
 };
 
