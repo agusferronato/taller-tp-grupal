@@ -14,12 +14,12 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
   }
 
   if (const auto *request = std::get_if<MoveCommandDTO>(&dto)) {
-    return std::make_unique<MovePlayerCommand>(request->player_id,
+    return std::make_unique<MovePlayerCommand>(request->playerId,
                                                request->direction);
   }
 
   if (const auto *request = std::get_if<PlayerStopCommandDTO>(&dto)) {
-    return std::make_unique<PlayerStoppedCommand>(request->player_id);
+    return std::make_unique<PlayerStoppedCommand>(request->playerId);
   }
 
   throw std::runtime_error("Unknown client request DTO type");

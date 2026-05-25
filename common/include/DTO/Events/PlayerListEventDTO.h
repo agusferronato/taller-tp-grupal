@@ -13,7 +13,7 @@ struct PlayerInfoDTO {
 
   // public:
   //   EventOpcode getCode() const { return opCode; }
-  uint32_t player_id;
+  uint32_t playerId;
   int16_t x;
   int16_t y;
   Direction direction;

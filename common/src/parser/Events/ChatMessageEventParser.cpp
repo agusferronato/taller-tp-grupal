@@ -9,11 +9,11 @@
 
 void ChatMessageEventParser::serialize(std::vector<uint8_t> &bytes,
                                        const ServerEventDTO &dto) {
-  const auto &eventDTO = std::get<ChatMessageEventDTO>(dto);
+  const auto &event = std::get<ChatMessageEventDTO>(dto);
 
   utils.appendBytes(static_cast<uint8_t>(EventOpcode::ChatMessageEvent), bytes);
-  utils.appendBytes(eventDTO.sender, bytes);
-  utils.appendBytes(eventDTO.message, bytes);
+  utils.appendBytes(event.sender, bytes);
+  utils.appendBytes(event.message, bytes);
 }
 
 ServerEventDTO ChatMessageEventParser::deserialize(Protocol &protocol) {

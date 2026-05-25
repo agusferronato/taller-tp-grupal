@@ -8,11 +8,11 @@
 
 void PlayerStopCommandParser::serialize(std::vector<uint8_t> &bytes,
                                         const ClientCommandDTO &dto) {
-  const auto &event = std::get<PlayerStopCommandDTO>(dto);
+  const auto &request = std::get<PlayerStopCommandDTO>(dto);
 
   utils.appendBytes(
       static_cast<uint8_t>(ClientCommandOpCode::PlayerStopCommand), bytes);
-  utils.appendBytes(event.player_id, bytes);
+  utils.appendBytes(request.playerId, bytes);
 }
 
 ClientCommandDTO PlayerStopCommandParser::deserialize(Protocol &protocol) {

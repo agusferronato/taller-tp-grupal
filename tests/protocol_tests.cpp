@@ -196,7 +196,7 @@ TEST_F(ProtocolTest, SendsAndReceivesMoveCommand) {
   auto *dto = std::get_if<MoveCommandDTO>(&received);
 
   ASSERT_NE(dto, nullptr);
-  EXPECT_EQ(dto->player_id, 42);
+  EXPECT_EQ(dto->playerId, 42);
   EXPECT_EQ(dto->direction, Direction::Up);
 }
 
@@ -217,7 +217,7 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerStopCommand) {
   auto *dto = std::get_if<PlayerStopCommandDTO>(&received);
 
   ASSERT_NE(dto, nullptr);
-  EXPECT_EQ(dto->player_id, 42);
+  EXPECT_EQ(dto->playerId, 42);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesExitCommand) {
@@ -319,7 +319,7 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerStoppedEvent) {
   auto *dto = std::get_if<PlayerStoppedEventDTO>(&received);
 
   ASSERT_NE(dto, nullptr);
-  EXPECT_EQ(dto->player_id, 42);
+  EXPECT_EQ(dto->playerId, 42);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerResponse) {
@@ -368,17 +368,17 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
   ASSERT_NE(dto, nullptr);
   ASSERT_EQ(dto->players.size(), 3);
 
-  EXPECT_EQ(dto->players[0].player_id, 1);
+  EXPECT_EQ(dto->players[0].playerId, 1);
   EXPECT_EQ(dto->players[0].x, 100);
   EXPECT_EQ(dto->players[0].y, 200);
   EXPECT_EQ(dto->players[0].direction, Direction::Down);
 
-  EXPECT_EQ(dto->players[1].player_id, 2);
+  EXPECT_EQ(dto->players[1].playerId, 2);
   EXPECT_EQ(dto->players[1].x, 300);
   EXPECT_EQ(dto->players[1].y, 400);
   EXPECT_EQ(dto->players[1].direction, Direction::Up);
 
-  EXPECT_EQ(dto->players[2].player_id, 3);
+  EXPECT_EQ(dto->players[2].playerId, 3);
   EXPECT_EQ(dto->players[2].x, 500);
   EXPECT_EQ(dto->players[2].y, 600);
   EXPECT_EQ(dto->players[2].direction, Direction::Left);
