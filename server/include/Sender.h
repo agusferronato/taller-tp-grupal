@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "CommunicationEnded.h"
-#include "DTO/Commands/ClientRequestDTO.h"
+#include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "Queue.h"
 #include "SenderQueueMonitor.h"

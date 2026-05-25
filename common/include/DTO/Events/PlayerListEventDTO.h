@@ -9,22 +9,22 @@
 // Struct auxiliar
 struct PlayerInfoDTO {
   // private:
-  //   static constexpr ServerOpcode opCode = ServerOpcode::PlayerInfo;
+  //   static constexpr EventOpcode opCode = EventOpcode::PlayerInfo;
 
   // public:
-  //   ServerOpcode getCode() const { return opCode; }
+  //   EventOpcode getCode() const { return opCode; }
   uint32_t player_id;
   int16_t x;
   int16_t y;
   Direction direction;
 };
 
-struct PlayerListDTO {
+struct PlayerListEventDTO {
 private:
-  static constexpr ServerOpcode opCode = ServerOpcode::PlayerList;
+  static constexpr EventOpcode opCode = EventOpcode::PlayerListEvent;
 
 public:
-  ServerOpcode getCode() const { return opCode; }
+  EventOpcode getCode() const { return opCode; }
   std::vector<PlayerInfoDTO> players;
 };
 

@@ -1,6 +1,6 @@
-#include "parser/Events/PlayerStoppedParser.h"
+#include "parser/Events/PlayerStoppedEventParser.h"
 
-#include "PlayerStoppedDTO.h"
+#include "PlayerStoppedEventDTO.h"
 #include "protocol/Protocol.h"
 #include "protocol/ProtocolCodes.h"
 
@@ -8,14 +8,15 @@
 
 void PlayerStoppedEventParser::serialize(std::vector<uint8_t> &bytes,
                                          const ServerEventDTO &dto) {
-  const auto &event = std::get<PlayerStoppedDTO>(dto);
+  const auto &event = std::get<PlayerStoppedEventDTO>(dto);
 
-  utils.appendToSend(static_cast<uint8_t>(ServerOpcode::PlayerStopped), bytes);
+  utils.appendToSend(static_cast<uint8_t>(EventOpcode::PlayerStoppedEvent),
+                     bytes);
   utils.appendToSend(event.player_id, bytes);
 }
 
 ServerEventDTO PlayerStoppedEventParser::deserialize(Protocol &protocol) {
   uint32_t playerId = protocol.getUint32();
 
-  return PlayerStoppedDTO{playerId};
+  return PlayerStoppedEventDTO{playerId};
 }

@@ -2,13 +2,13 @@
 
 #include "CommunicationEnded.h"
 #include "ProtocolError.h"
-#include "protocol/ClientRequestCodes.h"
+#include "protocol/ClientCommandCodes.h"
 #include "protocol/ServerEventCodes.h"
 
 Protocol::Protocol(Socket &socket) : socket(socket) {}
 
 void Protocol::registerCommandParser(
-    uint8_t code, std::unique_ptr<ClientRequestParser> parser) {
+    uint8_t code, std::unique_ptr<ClientCommandParser> parser) {
   commandParsers[code] = std::move(parser);
 }
 
@@ -17,7 +17,7 @@ void Protocol::registerEventParser(uint8_t code,
   eventParsers[code] = std::move(parser);
 }
 
-void Protocol::sendCommand(const ClientRequestDTO &command) {
+void Protocol::sendCommand(const ClientCommandDTO &command) {
   std::vector<uint8_t> bytes;
 
   uint8_t code = static_cast<uint8_t>(getCode(command));
@@ -38,7 +38,7 @@ void Protocol::sendCommand(const ClientRequestDTO &command) {
   }
 }
 
-ClientRequestDTO Protocol::receiveCommand() {
+ClientCommandDTO Protocol::receiveCommand() {
   uint8_t code = utils.receive_uint8(socket);
 
   if (socket.is_stream_recv_closed()) {

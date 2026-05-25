@@ -2,7 +2,7 @@
 #include "protocol/RegisterAllParsers.h"
 
 ClientSender::ClientSender(Socket &socket,
-                           Queue<ClientRequestDTO> &sendingQueue,
+                           Queue<ClientCommandDTO> &sendingQueue,
                            ShutdownEvent &shutdownEvent)
     : socket(socket), sendingQueue(sendingQueue), shutdownEvent(shutdownEvent),
       protocol(Protocol(socket)) {

@@ -1,14 +1,14 @@
 #include "Gameloop.h"
-#include "LoginPlayerDTO.h"
+#include "LoginPlayerCommandDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerMovedEventDTO.h"
-#include "PlayerStoppedDTO.h"
-#include "RegisterPlayerDTO.h"
+#include "PlayerStoppedEventDTO.h"
+#include "RegisterPlayerCommandDTO.h"
 #include "protocol/ProtocolCodes.h"
 #include "protocol/ServerEventCodes.h"
 
 Gameloop::Gameloop(Queue<ServerEventDTO> &receptionQueue,
-                   Queue<ClientRequestDTO> &sendingQueue,
+                   Queue<ClientCommandDTO> &sendingQueue,
                    ShutdownEvent &shutdownEvent, const ClientData &clientData)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
       shutdownEvent(shutdownEvent), camera(Camera(720, 410)),
@@ -56,14 +56,14 @@ void Gameloop::run() {
 
 void Gameloop::registerPlayer() {
   if (clientData.is_new_character) {
-    sendingQueue.push(RegisterPlayerDTO{clientData.character_name});
+    sendingQueue.push(RegisterPlayerCommandDTO{clientData.character_name});
   } else {
-    sendingQueue.push(LoginPlayerDTO{clientData.username});
+    sendingQueue.push(LoginPlayerCommandDTO{clientData.username});
   }
 
   ServerEventDTO event = receptionQueue.pop();
 
-  auto *resp = std::get_if<RegisterPlayerResponseDTO>(&event);
+  auto *resp = std::get_if<RegisterPlayerEventDTO>(&event);
   if (resp && resp->status == 0) {
     myPlayerId = resp->playerId;
 
@@ -73,7 +73,7 @@ void Gameloop::registerPlayer() {
 
   event = receptionQueue.pop();
 
-  auto *list = std::get_if<PlayerListDTO>(&event);
+  auto *list = std::get_if<PlayerListEventDTO>(&event);
   if (list) {
     for (const auto &info : list->players) {
       if (info.player_id == myPlayerId) {
@@ -104,16 +104,16 @@ void Gameloop::updateStateFromServer() {
   ServerEventDTO event;
 
   while (receptionQueue.try_pop(event)) {
-    switch (static_cast<ServerOpcode>(getCode(event))) {
-    case ServerOpcode::PlayerMoved:
+    switch (static_cast<EventOpcode>(getCode(event))) {
+    case EventOpcode::PlayerMovedEvent:
       playerMovedHandler(event);
       break;
 
-    case ServerOpcode::PlayerAppeared:
+    case EventOpcode::PlayerAppearedEvent:
       playerAppeared(event);
       break;
 
-    case ServerOpcode::PlayerStopped:
+    case EventOpcode::PlayerStoppedEvent:
       playerStopped(event);
       break;
 
@@ -194,7 +194,7 @@ void Gameloop::playerMovedHandler(const ServerEventDTO &event) {
 }
 
 void Gameloop::playerStopped(const ServerEventDTO &event) {
-  const auto *stopped = std::get_if<PlayerStoppedDTO>(&event);
+  const auto *stopped = std::get_if<PlayerStoppedEventDTO>(&event);
   if (!stopped) {
     return;
   }

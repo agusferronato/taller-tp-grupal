@@ -1,20 +1,17 @@
-#ifndef MOVE_COMMAND_DTO_H
-#define MOVE_COMMAND_DTO_H
+#ifndef PLAYER_STOP_DTO_H
+#define PLAYER_STOP_DTO_H
 
-#include "Direction.h"
 #include "protocol/ProtocolCodes.h"
 #include <cstdint>
 
-struct MoveCommandDTO {
+struct PlayerStopCommandDTO {
 private:
   static constexpr ClientCommandOpCode opCode =
-      ClientCommandOpCode::MoveCommand;
+      ClientCommandOpCode::PlayerStopCommand;
 
 public:
   ClientCommandOpCode getCode() const { return opCode; }
-
   uint32_t player_id;
-  Direction direction;
 };
 
 #endif

@@ -1,10 +1,10 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-#include "DTO/Commands/ClientRequestDTO.h"
+#include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 
-#include "parser/Commands/ClientRequestParser.h"
+#include "parser/Commands/ClientCommandParser.h"
 #include "parser/Events/ServerEventParser.h"
 
 #include "Socket.h"
@@ -21,7 +21,7 @@ private:
   Socket &socket;
   NetworkUtils utils;
 
-  std::unordered_map<uint8_t, std::unique_ptr<ClientRequestParser>>
+  std::unordered_map<uint8_t, std::unique_ptr<ClientCommandParser>>
       commandParsers;
   std::unordered_map<uint8_t, std::unique_ptr<ServerEventParser>> eventParsers;
 
@@ -29,13 +29,13 @@ public:
   explicit Protocol(Socket &socket);
 
   void registerCommandParser(uint8_t code,
-                             std::unique_ptr<ClientRequestParser> parser);
+                             std::unique_ptr<ClientCommandParser> parser);
 
   void registerEventParser(uint8_t code,
                            std::unique_ptr<ServerEventParser> parser);
 
-  void sendCommand(const ClientRequestDTO &command);
-  ClientRequestDTO receiveCommand();
+  void sendCommand(const ClientCommandDTO &command);
+  ClientCommandDTO receiveCommand();
 
   void sendEvent(const ServerEventDTO &event);
   ServerEventDTO receiveEvent();

@@ -1,5 +1,5 @@
 #include "Client.h"
-#include "DTO/Commands/ClientRequestDTO.h"
+#include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 
 Client::Client(const char *hostname, const char *port, const ClientData &data)
@@ -7,7 +7,7 @@ Client::Client(const char *hostname, const char *port, const ClientData &data)
       clientData(data) {}
 
 void Client::run() {
-  Queue<ClientRequestDTO> sendingQueue;
+  Queue<ClientCommandDTO> sendingQueue;
   Queue<ServerEventDTO> receptionQueue;
   ClientReceiver receiver(socket, receptionQueue, shutdownEvent);
   ClientSender sender(socket, sendingQueue, shutdownEvent);

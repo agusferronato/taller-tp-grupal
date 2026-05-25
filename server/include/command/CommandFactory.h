@@ -10,13 +10,13 @@
 */
 
 #include "Command.h"
-#include "DTO/Commands/ClientRequestDTO.h"
+#include "DTO/Commands/ClientCommandDTO.h"
 
 #include <memory>
 
 class CommandFactory {
 public:
-  std::unique_ptr<Command> create(const ClientRequestDTO &dto);
+  std::unique_ptr<Command> create(const ClientCommandDTO &dto);
 };
 
 #endif // COMMAND_FACTORY_H

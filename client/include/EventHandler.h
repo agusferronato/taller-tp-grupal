@@ -1,9 +1,9 @@
 #ifndef EVENT_HANDLER_H
 #define EVENT_HANDLER_H
 
-#include "DTO/Commands/ClientRequestDTO.h"
+#include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Commands/MoveCommandDTO.h"
-#include "DTO/Commands/PlayerStopDTO.h"
+#include "DTO/Commands/PlayerStopCommandDTO.h"
 #include "Queue.h"
 #include "WindowClosed.h"
 #include <SDL2pp/SDL2pp.hh>
@@ -12,10 +12,10 @@
 class EventHandler {
 
 private:
-  Queue<ClientRequestDTO> &sendingQueue;
+  Queue<ClientCommandDTO> &sendingQueue;
 
 public:
-  explicit EventHandler(Queue<ClientRequestDTO> &sendingQueue)
+  explicit EventHandler(Queue<ClientCommandDTO> &sendingQueue)
       : sendingQueue(sendingQueue) {}
 
   void handleEvent(const SDL_Event &event, uint32_t playerID) {
@@ -63,7 +63,7 @@ private:
     case SDLK_RIGHT:
     case SDLK_UP:
     case SDLK_DOWN:
-      sendingQueue.push(PlayerStopDTO{playerID});
+      sendingQueue.push(PlayerStopCommandDTO{playerID});
       break;
 
     default:

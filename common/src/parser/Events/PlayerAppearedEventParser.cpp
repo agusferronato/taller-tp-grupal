@@ -10,7 +10,8 @@ void PlayerAppearedEventParser::serialize(std::vector<uint8_t> &bytes,
                                           const ServerEventDTO &dto) {
   const auto &event = std::get<PlayerAppearedEventDTO>(dto);
 
-  utils.appendToSend(static_cast<uint8_t>(ServerOpcode::PlayerAppeared), bytes);
+  utils.appendToSend(static_cast<uint8_t>(EventOpcode::PlayerAppearedEvent),
+                     bytes);
   utils.appendToSend(event.playerId, bytes);
   utils.appendToSend(event.x, bytes);
   utils.appendToSend(event.y, bytes);

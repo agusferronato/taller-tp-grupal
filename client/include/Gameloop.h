@@ -10,14 +10,14 @@
 #include "Camera.h"
 #include "ClientData.h"
 #include "ConstantRateLoop.h"
-#include "DTO/Commands/ClientRequestDTO.h"
+#include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "EventHandler.h"
 #include "Player.h"
-#include "PlayerListDTO.h"
+#include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "Queue.h"
-#include "RegisterPlayerResponseDTO.h"
+#include "RegisterPlayerEventDTO.h"
 #include "ShutdownEvent.h"
 #include "Thread.h"
 #include "WindowClosed.h"
@@ -30,7 +30,7 @@ private:
   SDL2pp::SDLImage sdlimage{IMG_INIT_PNG};
 
   Queue<ServerEventDTO> &receptionQueue;
-  Queue<ClientRequestDTO> &sendingQueue;
+  Queue<ClientCommandDTO> &sendingQueue;
   ShutdownEvent &shutdownEvent;
   Camera camera;
   EventHandler handler;
@@ -46,7 +46,7 @@ private:
 
 public:
   Gameloop(Queue<ServerEventDTO> &receptionQueue,
-           Queue<ClientRequestDTO> &sendingQueue, ShutdownEvent &shutdownEvent,
+           Queue<ClientCommandDTO> &sendingQueue, ShutdownEvent &shutdownEvent,
            const ClientData &clientData);
 
   virtual void run() override;

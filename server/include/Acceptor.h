@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "ClientConnection.h"
-#include "DTO/Commands/ClientRequestDTO.h"
+#include "DTO/Commands/ClientCommandDTO.h"
 #include "SenderQueueMonitor.h"
 #include "Socket.h"
 #include "Thread.h"
@@ -17,12 +17,12 @@ class Acceptor : public Thread {
 
 private:
   Socket &acceptor;
-  Queue<ClientRequestDTO> &gameloopQueue;
+  Queue<ClientCommandDTO> &gameloopQueue;
   SenderQueueMonitor &senderQueueMonitor;
   bool keepRunning = true;
 
 public:
-  Acceptor(Socket &socket, Queue<ClientRequestDTO> &gameloopQueue,
+  Acceptor(Socket &socket, Queue<ClientCommandDTO> &gameloopQueue,
            SenderQueueMonitor &senderQueueMonitor);
 
   Acceptor(const Acceptor &) = delete;
