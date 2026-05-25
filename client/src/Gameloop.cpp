@@ -1,16 +1,14 @@
 #include "Gameloop.h"
-#include "GameWindow.h"
-#include "LoginPlayerDTO.h"
-#include "PlayerAppearedEventDTO.h"
-#include "PlayerMovedEventDTO.h"
-#include "PlayerStoppedDTO.h"
-#include "RegisterPlayerDTO.h"
+
+#include "LoginPlayerCommandDTO.h"
+#include "RegisterPlayerCommandDTO.h"
+
 #include <iostream>
 #include <stdexcept>
 #include <string>
 
-Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
-                   Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
+Gameloop::Gameloop(Queue<ServerEventDTO> &receptionQueue,
+                   Queue<ClientCommandDTO> &sendingQueue,
                    ShutdownEvent &shutdownEvent, const ClientData &clientData)
     : shutdownEvent(shutdownEvent), clientData(clientData) {
   makeGame(receptionQueue, sendingQueue, clientData);
@@ -49,32 +47,31 @@ void Gameloop::run() {
   }
 }
 
-void Gameloop::makeGame(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
-                        Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
+void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
+                        Queue<ClientCommandDTO> &sendingQueue,
                         const ClientData &clientData) {
   if (clientData.is_new_character) {
-    sendingQueue.push(
-        std::make_unique<RegisterPlayerDTO>(clientData.character_name));
+    sendingQueue.push(RegisterPlayerCommandDTO{clientData.character_name});
   } else {
-    sendingQueue.push(std::make_unique<LoginPlayerDTO>(clientData.username));
+    sendingQueue.push(LoginPlayerCommandDTO{clientData.username});
   }
 
-  std::unique_ptr<CommandDTO> cmd;
-  cmd = receptionQueue.pop();
+  ServerEventDTO event = receptionQueue.pop();
   // si se cierra el socket el hilo reciver cierra y lanza ClosedQueue
   // debloquenado este pop
-  auto *resp = dynamic_cast<RegisterPlayerResponseDTO *>(cmd.get());
+
+  auto *resp = std::get_if<RegisterPlayerEventDTO>(&event);
   if (!resp) {
     throw std::runtime_error("RegisterPlayerResponseDTO is null");
   }
-  if (resp->getStatus() != 0) {
+  if (resp->status != 0) {
     throw std::runtime_error("Player registration failed");
   }
 
-  uint32_t myPlayerId = resp->getPlayerId();
+  uint32_t myPlayerId = resp->playerId;
 
   gameView = std::make_unique<GameWindow>(myPlayerId);
   gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
                                           receptionQueue, sendingQueue);
-  gameController = std::make_unique<EventHandler>(gameModel.get(), myPlayerId);
+  gameController = std::make_unique<GameController>(gameModel.get());
 }

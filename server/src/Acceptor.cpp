@@ -1,7 +1,6 @@
 #include "Acceptor.h"
 
-Acceptor::Acceptor(Socket &socket,
-                   Queue<std::unique_ptr<CommandDTO>> &gameloopQueue,
+Acceptor::Acceptor(Socket &socket, Queue<ClientCommandDTO> &gameloopQueue,
                    SenderQueueMonitor &senderQueueMonitor)
     : acceptor(socket), gameloopQueue(gameloopQueue),
       senderQueueMonitor(senderQueueMonitor) {}
