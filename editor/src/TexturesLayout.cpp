@@ -15,13 +15,14 @@ void TexturesLayout::loadTextures() {
         if (auto texTable = tbl["textures"].as_table()) {
             for (auto& [key, value] : *texTable) {
                 auto& entry = *value.as_table();
-                TextureInfo info;
+                TextureData info;
                 info.key = std::string(key);
                 info.id = entry["id"].value_or(0);
                 info.name = entry["name"].value_or("");
                 info.path = entry["path"].value_or("");
                 info.collidable = entry["collidable"].value_or(false);
                 info.transparent = entry["transparent"].value_or(false);
+                info.priority = entry["priority"].value_or(0);
                 textures.push_back(info);
             }
         }
@@ -102,7 +103,7 @@ void TexturesLayout::initTexturesLayout() {
     layout->addWidget(listWidget);
 }
 
-QWidget* TexturesLayout::createTextureItem(const TextureInfo& info) {
+QWidget* TexturesLayout::createTextureItem(const TextureData& info) {
     auto *container = new QWidget(this);
     container->setStyleSheet("QWidget { border: none; background: transparent; }");
 

@@ -9,22 +9,26 @@ TextureMap::TextureMap(SDL2pp::Renderer& renderer) {
         if (auto texTable = tbl["textures"].as_table()) {
             for (auto& [key, value] : *texTable) {
                 auto& entry = *value.as_table();
-                int id = entry["id"].value_or(0);
-                std::string path = entry["path"].value_or("");
-                bool transparent = entry["transparent"].value_or(false);
+                TextureData data;
+                data.key = std::string(key);
+                data.id = entry["id"].value_or(0);
+                data.name = entry["name"].value_or("");
+                data.path = entry["path"].value_or("");
+                data.collidable = entry["collidable"].value_or(false);
+                data.transparent = entry["transparent"].value_or(false);
+                data.priority = entry["priority"].value_or(0);
 
-                SDL2pp::Surface surface(path);
-                if (transparent) {
+                SDL2pp::Surface surface(data.path);
+                if (data.transparent) {
                     surface.SetColorKey(true,
                         SDL_MapRGB(surface.Get()->format, 0, 0, 0));
                 }
 
+                std::cout << "prio:" << data.priority << std::endl;
+
                 this->textures.insert({
-                    id,
-                    {
-                        SDL2pp::Texture(renderer, surface),
-                        priority 
-                    }
+                    data.id,
+                    TextureInMap{data, SDL2pp::Texture(renderer, surface)}
                 });
             }
         }
