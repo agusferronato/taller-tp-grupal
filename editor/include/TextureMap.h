@@ -10,19 +10,26 @@
 #include <map>
 
 
+
+struct TextureInMap {
+    SDL2pp::Texture txt;
+    int priority;
+};
+
+
 class TextureMap {
 
 
 private:
 
-    std::map<int, SDL2pp::Texture> textures;
+    std::map<int, TextureInMap> textures;
 
 
 public:
 
     TextureMap(SDL2pp::Renderer &renderer);
 
-    SDL2pp::Texture &getTexture(int texture_id);
+    TextureInMap& TextureMap::getTexture(int texture_id);
 };
 
 

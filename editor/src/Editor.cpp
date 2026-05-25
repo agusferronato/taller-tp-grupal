@@ -2,7 +2,7 @@
 
 Editor::Editor(QWidget *parent) : QMainWindow(parent) {
     setWindowTitle("Editor");
-    resize(900, 600);
+    resize(1280, 900);
     initEditor();
 }
 

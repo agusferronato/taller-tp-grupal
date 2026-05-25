@@ -2,6 +2,9 @@
 #define GRID_H
 
 #include <vector>
+#include <array>
+#include <map>
+#include <tuple>
 #include <SDL2pp/SDL2pp.hh>
 #include "Camera.h"
 #include "TextureMap.h"
@@ -32,6 +35,12 @@ private:
 
     int size{MAX_SIZE};
     std::vector<std::vector<GridItem>> grid;
+
+    std::map<
+        std::tuple<int, int>,
+        std::array<std::optional<GridItem>, 2>
+    > txtMap;
+
     Camera& camera;
     int item_hover_i, item_hover_j;
     bool hover_init{false};
@@ -42,7 +51,13 @@ public:
 
     void setGridTexture(TextureMap &textureMap, int texture_id);
 
+    bool thereAreAssignedTextures(TextureMap &textureMap, int texture_id);
+
     void render(SDL2pp::Renderer &renderer, TextureMap &textureMap);
+
+    void renderHover(SDL2pp::Renderer &renderer, SDL2pp::Rect dstRect);
+
+    void renderGrass(SDL2pp::Renderer &renderer, TextureMap &textureMap, int i, int j);
 
     void setMousePosition(int x, int y);
 

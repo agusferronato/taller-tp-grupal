@@ -21,7 +21,10 @@ TextureMap::TextureMap(SDL2pp::Renderer& renderer) {
 
                 this->textures.insert({
                     id,
-                    SDL2pp::Texture(renderer, surface)
+                    {
+                        SDL2pp::Texture(renderer, surface),
+                        priority 
+                    }
                 });
             }
         }
@@ -30,6 +33,6 @@ TextureMap::TextureMap(SDL2pp::Renderer& renderer) {
     }
 }
 
-SDL2pp::Texture& TextureMap::getTexture(int texture_id) {
+TextureInMap& TextureMap::getTexture(int texture_id) {
     return textures.at(texture_id);
 }
