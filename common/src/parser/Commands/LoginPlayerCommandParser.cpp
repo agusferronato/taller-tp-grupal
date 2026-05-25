@@ -10,10 +10,10 @@ void LoginPlayerParser::serialize(std::vector<uint8_t> &bytes,
                                   const ClientCommandDTO &dto) {
   const auto &request = std::get<LoginPlayerCommandDTO>(dto);
 
-  utils.appendToSend(
+  utils.appendBytes(
       static_cast<uint8_t>(ClientCommandOpCode::LoginPlayerCommand), bytes);
 
-  utils.appendToSend(request.name, bytes);
+  utils.appendBytes(request.name, bytes);
 }
 
 ClientCommandDTO LoginPlayerParser::deserialize(Protocol &protocol) {

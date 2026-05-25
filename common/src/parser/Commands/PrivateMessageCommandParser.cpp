@@ -10,11 +10,11 @@ void PrivateMessageParser::serialize(std::vector<uint8_t> &bytes,
                                      const ClientCommandDTO &dto) {
   const auto &request = std::get<PrivateMessageCommandDTO>(dto);
 
-  utils.appendToSend(
+  utils.appendBytes(
       static_cast<uint8_t>(ClientCommandOpCode::PrivateMessageCommand), bytes);
 
-  utils.appendToSend(request.target, bytes);
-  utils.appendToSend(request.message, bytes);
+  utils.appendBytes(request.target, bytes);
+  utils.appendBytes(request.message, bytes);
 }
 
 ClientCommandDTO PrivateMessageParser::deserialize(Protocol &protocol) {

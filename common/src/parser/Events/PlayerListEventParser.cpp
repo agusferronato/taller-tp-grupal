@@ -10,14 +10,14 @@ void PlayerListEventParser::serialize(std::vector<uint8_t> &bytes,
                                       const ServerEventDTO &dto) {
   const auto &event = std::get<PlayerListEventDTO>(dto);
 
-  utils.appendToSend(static_cast<uint8_t>(EventOpcode::PlayerListEvent), bytes);
-  utils.appendToSend(static_cast<uint16_t>(event.players.size()), bytes);
+  utils.appendBytes(static_cast<uint8_t>(EventOpcode::PlayerListEvent), bytes);
+  utils.appendBytes(static_cast<uint16_t>(event.players.size()), bytes);
 
   for (const auto &player : event.players) {
-    utils.appendToSend(player.player_id, bytes);
-    utils.appendToSend(player.x, bytes);
-    utils.appendToSend(player.y, bytes);
-    utils.appendToSend(static_cast<uint8_t>(player.direction), bytes);
+    utils.appendBytes(player.player_id, bytes);
+    utils.appendBytes(player.x, bytes);
+    utils.appendBytes(player.y, bytes);
+    utils.appendBytes(static_cast<uint8_t>(player.direction), bytes);
   }
 }
 

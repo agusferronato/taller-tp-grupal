@@ -1,11 +1,11 @@
 #include "protocol/NetworkUtils.h"
 
-void NetworkUtils::appendToSend(uint8_t command, std::vector<uint8_t> &bytes) {
+void NetworkUtils::appendBytes(uint8_t command, std::vector<uint8_t> &bytes) {
   bytes.push_back(command);
 }
 
-void NetworkUtils::appendToSend(const std::string &str,
-                                std::vector<uint8_t> &bytes) {
+void NetworkUtils::appendBytes(const std::string &str,
+                               std::vector<uint8_t> &bytes) {
   uint16_t len = htons(static_cast<uint16_t>(str.size()));
   uint8_t buf[2];
   memcpy(buf, &len, sizeof(buf));
@@ -13,18 +13,18 @@ void NetworkUtils::appendToSend(const std::string &str,
   bytes.insert(bytes.end(), str.begin(), str.end());
 }
 
-void NetworkUtils::appendToSend(uint16_t value, std::vector<uint8_t> &bytes) {
+void NetworkUtils::appendBytes(uint16_t value, std::vector<uint8_t> &bytes) {
   uint16_t net = htons(value);
   uint8_t buf[2];
   memcpy(buf, &net, sizeof(buf));
   bytes.insert(bytes.end(), buf, buf + sizeof(buf));
 }
 
-void NetworkUtils::appendToSend(int16_t value, std::vector<uint8_t> &bytes) {
-  appendToSend(static_cast<uint16_t>(value), bytes);
+void NetworkUtils::appendBytes(int16_t value, std::vector<uint8_t> &bytes) {
+  appendBytes(static_cast<uint16_t>(value), bytes);
 }
 
-void NetworkUtils::appendToSend(uint32_t value, std::vector<uint8_t> &bytes) {
+void NetworkUtils::appendBytes(uint32_t value, std::vector<uint8_t> &bytes) {
   uint32_t net = htonl(value);
   uint8_t buf[4];
   memcpy(buf, &net, sizeof(buf));
