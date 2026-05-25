@@ -8,34 +8,10 @@
 #include <type_traits>
 #include <variant>
 
-inline uint8_t get_client_request_code(const ClientRequestDTO &dto) {
+inline CommandOpCode getCode(const ClientRequestDTO &command) {
   return std::visit(
-      [](const auto &value) -> uint8_t {
-        using T = std::decay_t<decltype(value)>;
-
-        if constexpr (std::is_same_v<T, RegisterPlayerDTO>) {
-          return static_cast<uint8_t>(CommandOpCode::RegisterPlayer);
-
-        } else if constexpr (std::is_same_v<T, LoginPlayerDTO>) {
-          return static_cast<uint8_t>(CommandOpCode::LoginPlayer);
-
-        } else if constexpr (std::is_same_v<T, MeditateDTO>) {
-          return static_cast<uint8_t>(CommandOpCode::Meditate);
-
-        } else if constexpr (std::is_same_v<T, PrivateMessageDTO>) {
-          return static_cast<uint8_t>(CommandOpCode::PrivateMessage);
-
-        } else if constexpr (std::is_same_v<T, MoveCommandDTO>) {
-          return static_cast<uint8_t>(CommandOpCode::MoveCommand);
-
-        } else if constexpr (std::is_same_v<T, PlayerStopDTO>) {
-          return static_cast<uint8_t>(CommandOpCode::PlayerStop);
-
-        } else {
-          return static_cast<uint8_t>(CommandOpCode::Exit);
-        }
-      },
-      dto);
+      [](const auto &concreteCommand) { return concreteCommand.getCode(); },
+      command);
 }
 
 #endif

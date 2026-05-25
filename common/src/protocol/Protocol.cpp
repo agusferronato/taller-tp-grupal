@@ -20,7 +20,7 @@ void Protocol::registerEventParser(uint8_t code,
 void Protocol::sendCommand(const ClientRequestDTO &command) {
   std::vector<uint8_t> bytes;
 
-  uint8_t code = get_client_request_code(command);
+  uint8_t code = static_cast<uint8_t>(getCode(command));
 
   auto it = commandParsers.find(code);
   if (it == commandParsers.end()) {
@@ -56,7 +56,7 @@ ClientRequestDTO Protocol::receiveCommand() {
 void Protocol::sendEvent(const ServerEventDTO &event) {
   std::vector<uint8_t> bytes;
 
-  uint8_t code = get_server_event_code(event);
+  uint8_t code = static_cast<uint8_t>(getCode(event));
 
   auto it = eventParsers.find(code);
   if (it == eventParsers.end()) {
