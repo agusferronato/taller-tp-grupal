@@ -21,3 +21,147 @@ path = "assets/background/decoration/11.png"
 collidable = true
 transparent = true
 priority = 1
+
+[textures.camino_tierra_1]
+id = 3
+name = "Camino de tierra 1"
+path = "assets/background/ground/118.png"
+collidable = false
+transparent = false
+priority = 0
+
+[textures.camino_tierra_2]
+id = 4
+name = "Camino de tierra 2"
+path = "assets/background/ground/119.png"
+collidable = false
+transparent = false
+priority = 0
+
+[textures.camino_tierra_3]
+id = 5
+name = "Camino de tierra 3"
+path = "assets/background/ground/120.png"
+collidable = false
+transparent = false
+priority = 0
+
+[textures.camino_tierra_4]
+id = 6
+name = "Camino de tierra 4"
+path = "assets/background/ground/121.png"
+collidable = false
+transparent = false
+priority = 0
+
+[textures.camino_tierra_5]
+id = 7
+name = "Camino de tierra 5"
+path = "assets/background/ground/122.png"
+collidable = false
+transparent = false
+priority = 0
+
+[textures.camino_tierra_6]
+id = 8
+name = "Camino de tierra 6"
+path = "assets/background/ground/123.png"
+collidable = false
+transparent = false
+priority = 0
+
+[textures.camino_tierra_7]
+id = 9
+name = "Camino de tierra 7"
+path = "assets/background/ground/124.png"
+collidable = false
+transparent = false
+priority = 0
+
+[textures.camino_tierra_8]
+id = 10
+name = "Camino de tierra 8"
+path = "assets/background/ground/125.png"
+collidable = false
+transparent = false
+priority = 0
+
+[textures.camino_tierra_9]
+id = 11
+name = "Camino de tierra 9"
+path = "assets/background/ground/126.png"
+collidable = false
+transparent = false
+priority = 0
+
+[textures.camino_tierra_10]
+id = 12
+name = "Camino de tierra 10"
+path = "assets/background/ground/127.png"
+collidable = false
+transparent = false
+priority = 0
+
+[textures.camino_tierra_11]
+id = 13
+name = "Camino de tierra 11"
+path = "assets/background/ground/128.png"
+collidable = false
+transparent = false
+priority = 0
+
+[textures.camino_tierra_12]
+id = 14
+name = "Camino de tierra 12"
+path = "assets/background/ground/129.png"
+collidable = false
+transparent = false
+priority = 0
+
+[textures.camino_tierra_13]
+id = 15
+name = "Camino de tierra 13"
+path = "assets/background/ground/130.png"
+collidable = false
+transparent = false
+priority = 0
+
+[textures.camino_tierra_14]
+id = 16
+name = "Camino de tierra 14"
+path = "assets/background/ground/131.png"
+collidable = false
+transparent = false
+priority = 0
+
+[textures.camino_tierra_15]
+id = 17
+name = "Camino de tierra 15"
+path = "assets/background/ground/132.png"
+collidable = false
+transparent = false
+priority = 0
+
+[textures.banco]
+id = 18
+name = "Banco"
+path = "assets/background/decoration/80.png"
+collidable = true 
+transparent = true 
+priority = 1
+
+[textures.cartel]
+id = 19
+name = "Cartel"
+path = "assets/background/decoration/81.png"
+collidable = true 
+transparent = true 
+priority = 1
+
+[textures.piedra]
+id = 20
+name = "Piedra"
+path = "assets/background/decoration/82.png"
+collidable = true 
+transparent = true 
+priority = 1
