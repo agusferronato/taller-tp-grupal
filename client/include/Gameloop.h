@@ -18,7 +18,7 @@
 #include "Thread.h"
 #include "WindowClosed.h"
 
-class Gameloop : public Thread {
+class Gameloop {
 
 private:
   Queue<std::unique_ptr<CommandDTO>> &receptionQueue;
@@ -36,7 +36,7 @@ public:
            Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
            ShutdownEvent &shutdownEvent, const ClientData &clientData);
 
-  virtual void run() override;
+  void run();
 
 private:
   void registerPlayer();
