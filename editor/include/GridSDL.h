@@ -33,6 +33,7 @@ private:
     std::unique_ptr<Grid> grid;
     std::unique_ptr<Camera> camera;
 
+    int texture_id{0};
 
 public: 
     explicit GridSDL(QWidget* parent = nullptr);
@@ -42,6 +43,9 @@ public:
 
 private slots:
     void renderLoop();
+
+public slots:
+    void setTextureID(int texture_id);
 
 
 protected:

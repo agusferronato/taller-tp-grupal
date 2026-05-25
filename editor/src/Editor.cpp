@@ -31,4 +31,7 @@ void Editor::initEditor() {
  
 
     connect(toolBar, &ToolBar::saveMap, this, &Editor::onSaveMapButtonClick);
+
+    connect(texturesPanel, &TexturesLayout::setTextureID, gridSDL, &GridSDL::setTextureID);
+
 }
