@@ -9,8 +9,8 @@ void MeditateParser::serialize(std::vector<uint8_t> &bytes,
                                const ClientCommandDTO &dto) {
   std::get<MeditateCommandDTO>(dto);
 
-  utils.appendToSend(static_cast<uint8_t>(ClientCommandOpCode::MeditateCommand),
-                     bytes);
+  utils.appendBytes(static_cast<uint8_t>(ClientCommandOpCode::MeditateCommand),
+                    bytes);
 }
 
 ClientCommandDTO MeditateParser::deserialize(Protocol &) {

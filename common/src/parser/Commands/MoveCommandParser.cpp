@@ -10,12 +10,12 @@ void MoveCommandParser::serialize(std::vector<uint8_t> &bytes,
                                   const ClientCommandDTO &dto) {
   const auto &request = std::get<MoveCommandDTO>(dto);
 
-  utils.appendToSend(static_cast<uint8_t>(ClientCommandOpCode::MoveCommand),
-                     bytes);
+  utils.appendBytes(static_cast<uint8_t>(ClientCommandOpCode::MoveCommand),
+                    bytes);
 
-  utils.appendToSend(request.player_id, bytes);
+  utils.appendBytes(request.player_id, bytes);
 
-  utils.appendToSend(static_cast<uint8_t>(request.direction), bytes);
+  utils.appendBytes(static_cast<uint8_t>(request.direction), bytes);
 }
 
 ClientCommandDTO MoveCommandParser::deserialize(Protocol &protocol) {

@@ -10,9 +10,9 @@ void PlayerStoppedEventParser::serialize(std::vector<uint8_t> &bytes,
                                          const ServerEventDTO &dto) {
   const auto &event = std::get<PlayerStoppedEventDTO>(dto);
 
-  utils.appendToSend(static_cast<uint8_t>(EventOpcode::PlayerStoppedEvent),
-                     bytes);
-  utils.appendToSend(event.player_id, bytes);
+  utils.appendBytes(static_cast<uint8_t>(EventOpcode::PlayerStoppedEvent),
+                    bytes);
+  utils.appendBytes(event.player_id, bytes);
 }
 
 ServerEventDTO PlayerStoppedEventParser::deserialize(Protocol &protocol) {

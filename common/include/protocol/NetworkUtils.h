@@ -9,15 +9,15 @@
 
 class NetworkUtils {
 public:
-  void appendToSend(uint8_t command, std::vector<uint8_t> &bytes);
+  void appendBytes(uint8_t command, std::vector<uint8_t> &bytes);
 
-  void appendToSend(const std::string &str, std::vector<uint8_t> &bytes);
+  void appendBytes(const std::string &str, std::vector<uint8_t> &bytes);
 
-  void appendToSend(uint16_t value, std::vector<uint8_t> &bytes);
+  void appendBytes(uint16_t value, std::vector<uint8_t> &bytes);
 
-  void appendToSend(int16_t value, std::vector<uint8_t> &bytes);
+  void appendBytes(int16_t value, std::vector<uint8_t> &bytes);
 
-  void appendToSend(uint32_t value, std::vector<uint8_t> &bytes);
+  void appendBytes(uint32_t value, std::vector<uint8_t> &bytes);
 
   uint8_t receive_uint8(Socket &socket);
 
