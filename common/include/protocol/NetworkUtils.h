@@ -19,15 +19,15 @@ public:
 
   void appendBytes(uint32_t value, std::vector<uint8_t> &bytes);
 
-  uint8_t receive_uint8(Socket &socket);
+  uint8_t receiveUint8(Socket &socket);
 
-  uint16_t receive_uint16(Socket &socket);
+  uint16_t receiveUint16(Socket &socket);
 
-  int16_t receive_int16(Socket &socket);
+  int16_t receiveInt16(Socket &socket);
 
-  uint32_t receive_uint32(Socket &socket);
+  uint32_t receiveInt32(Socket &socket);
 
-  void recv_string(Socket &socket, std::string &str);
+  void receiveString(Socket &socket, std::string &str);
 };
 
 #endif /* NETWORK_UTILS_H */

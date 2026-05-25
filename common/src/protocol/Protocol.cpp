@@ -39,7 +39,7 @@ void Protocol::sendCommand(const ClientCommandDTO &command) {
 }
 
 ClientCommandDTO Protocol::receiveCommand() {
-  uint8_t code = utils.receive_uint8(socket);
+  uint8_t code = utils.receiveUint8(socket);
 
   if (socket.is_stream_recv_closed()) {
     throw CommunicationEnded("Connection closed by peer");
@@ -75,7 +75,7 @@ void Protocol::sendEvent(const ServerEventDTO &event) {
 }
 
 ServerEventDTO Protocol::receiveEvent() {
-  uint8_t code = utils.receive_uint8(socket);
+  uint8_t code = utils.receiveUint8(socket);
 
   if (socket.is_stream_recv_closed()) {
     throw CommunicationEnded("Connection closed by peer");
@@ -91,14 +91,14 @@ ServerEventDTO Protocol::receiveEvent() {
 
 std::string Protocol::getStringData() {
   std::string str;
-  utils.recv_string(socket, str);
+  utils.receiveString(socket, str);
   return str;
 }
 
-uint8_t Protocol::getUint8() { return utils.receive_uint8(socket); }
+uint8_t Protocol::getUint8() { return utils.receiveUint8(socket); }
 
-uint16_t Protocol::getUint16() { return utils.receive_uint16(socket); }
+uint16_t Protocol::getUint16() { return utils.receiveUint16(socket); }
 
-int16_t Protocol::getInt16() { return utils.receive_int16(socket); }
+int16_t Protocol::getInt16() { return utils.receiveInt16(socket); }
 
-uint32_t Protocol::getUint32() { return utils.receive_uint32(socket); }
+uint32_t Protocol::getUint32() { return utils.receiveInt32(socket); }
