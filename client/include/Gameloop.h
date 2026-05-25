@@ -8,6 +8,7 @@
 #include "CommandDTO.h"
 #include "ConstantRateLoop.h"
 #include "EventHandler.h"
+#include "GameModel.h"
 #include "GameWindow.h"
 #include "Player.h"
 #include "PlayerListDTO.h"
@@ -21,15 +22,11 @@
 class Gameloop {
 
 private:
-  Queue<std::unique_ptr<CommandDTO>> &receptionQueue;
-  Queue<std::unique_ptr<CommandDTO>> &sendingQueue;
   ShutdownEvent &shutdownEvent;
-  EventHandler controller;
+  std::unique_ptr<EventHandler> gameController;
   ClientData clientData;
-  std::unique_ptr<GameWindow> view;
-  uint32_t myPlayerId{0};
-  std::unique_ptr<Player> myPlayer;
-  std::unordered_map<uint32_t, std::unique_ptr<Player>> otherPlayers;
+  std::unique_ptr<GameWindow> gameView;
+  std::unique_ptr<GameModel> gameModel;
 
 public:
   Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
@@ -39,14 +36,9 @@ public:
   void run();
 
 private:
-  void registerPlayer();
-  void updateStateFromServer();
-
-private:
-  /* Event handlers */
-  void playerAppeared(std::unique_ptr<CommandDTO> &cmd);
-  void playerMovedHandler(std::unique_ptr<CommandDTO> &cmd);
-  void playerStopped(std::unique_ptr<CommandDTO> &cmd);
+  void makeGame(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
+                Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
+                const ClientData &clientData);
 };
 
 #endif
