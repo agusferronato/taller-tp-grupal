@@ -12,7 +12,7 @@ void Client::run() {
 
   receiver.start();
   sender.start();
-  gameloop.start();
+  gameloop.run();
 
   shutdownEvent.wait();
 
@@ -31,7 +31,7 @@ void Client::run() {
     break;
   }
 
-  gameloop.join();
+  // gameloop.join();
   receiver.join();
   sender.join();
 }
