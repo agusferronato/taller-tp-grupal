@@ -5,16 +5,17 @@
 #include <unordered_map>
 
 #include "ClientData.h"
-#include "CommandDTO.h"
 #include "ConstantRateLoop.h"
-#include "EventHandler.h"
+#include "DTO/Commands/ClientCommandDTO.h"
+#include "DTO/Events/EventDTO.h"
+#include "GameController.h"
 #include "GameModel.h"
 #include "GameWindow.h"
 #include "Player.h"
-#include "PlayerListDTO.h"
+#include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "Queue.h"
-#include "RegisterPlayerResponseDTO.h"
+#include "RegisterPlayerEventDTO.h"
 #include "ShutdownEvent.h"
 #include "Thread.h"
 #include "WindowClosed.h"
@@ -23,21 +24,22 @@ class Gameloop {
 
 private:
   ShutdownEvent &shutdownEvent;
-  std::unique_ptr<EventHandler> gameController;
   ClientData clientData;
+
+  std::unique_ptr<GameController> gameController;
   std::unique_ptr<GameWindow> gameView;
   std::unique_ptr<GameModel> gameModel;
 
 public:
-  Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
-           Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
-           ShutdownEvent &shutdownEvent, const ClientData &clientData);
+  Gameloop(Queue<ServerEventDTO> &receptionQueue,
+           Queue<ClientCommandDTO> &sendingQueue, ShutdownEvent &shutdownEvent,
+           const ClientData &clientData);
 
   void run();
 
 private:
-  void makeGame(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
-                Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
+  void makeGame(Queue<ServerEventDTO> &receptionQueue,
+                Queue<ClientCommandDTO> &sendingQueue,
                 const ClientData &clientData);
 };
 
