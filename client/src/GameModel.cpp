@@ -94,20 +94,25 @@ void GameModel::playerAppeared(std::unique_ptr<CommandDTO> &cmd) {
   if (pid == myPlayerID)
     return;
 
-  auto player =
-      std::make_unique<Player>(pid, appeared->getX(), appeared->getY());
+  auto player = std::make_unique<Player>(pid, 0, 0);
+  player->updateCoordinates(appeared->getX(), appeared->getY(),
+                            appeared->getDirection());
   players[pid] = std::move(player);
   gameView->addPlayer(pid, players[pid]->getObserver());
 }
 
 void GameModel::registerPlayers() {
   auto cmd = receptionQueue.pop();
+  // si se cierra el socket el hilo reciver cierra y lanza ClosedQueue
+  // debloquenado este pop
   auto *list = dynamic_cast<PlayerListDTO *>(cmd.get());
   if (list) {
     for (const auto &info : list->getPlayers()) {
       if (info.player_id == myPlayerID)
         continue;
-      auto player = std::make_unique<Player>(info.player_id, info.x, info.y);
+      auto player = std::make_unique<Player>(info.player_id, 0, 0);
+      player->updateCoordinates(info.x, info.y, info.direction);
+      player->stopMoving();
       players[info.player_id] = std::move(player);
       gameView->addPlayer(info.player_id,
                           players[info.player_id]->getObserver());

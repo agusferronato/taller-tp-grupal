@@ -7,6 +7,7 @@
 #include "RegisterPlayerDTO.h"
 #include <iostream>
 #include <stdexcept>
+#include <string>
 
 Gameloop::Gameloop(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
                    Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
@@ -60,6 +61,8 @@ void Gameloop::makeGame(Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
 
   std::unique_ptr<CommandDTO> cmd;
   cmd = receptionQueue.pop();
+  // si se cierra el socket el hilo reciver cierra y lanza ClosedQueue
+  // debloquenado este pop
   auto *resp = dynamic_cast<RegisterPlayerResponseDTO *>(cmd.get());
   if (!resp) {
     throw std::runtime_error("RegisterPlayerResponseDTO is null");
