@@ -31,30 +31,30 @@ void NetworkUtils::appendBytes(uint32_t value, std::vector<uint8_t> &bytes) {
   bytes.insert(bytes.end(), buf, buf + sizeof(buf));
 }
 
-uint8_t NetworkUtils::receive_uint8(Socket &socket) {
+uint8_t NetworkUtils::receiveUint8(Socket &socket) {
   uint8_t value;
   socket.recvall(&value, sizeof(value));
   return value;
 }
 
-uint16_t NetworkUtils::receive_uint16(Socket &socket) {
+uint16_t NetworkUtils::receiveUint16(Socket &socket) {
   uint16_t net_value;
   socket.recvall(&net_value, sizeof(net_value));
   return ntohs(net_value);
 }
 
-int16_t NetworkUtils::receive_int16(Socket &socket) {
-  return static_cast<int16_t>(receive_uint16(socket));
+int16_t NetworkUtils::receiveInt16(Socket &socket) {
+  return static_cast<int16_t>(receiveUint16(socket));
 }
 
-uint32_t NetworkUtils::receive_uint32(Socket &socket) {
+uint32_t NetworkUtils::receiveInt32(Socket &socket) {
   uint32_t net_value;
   socket.recvall(&net_value, sizeof(net_value));
   return ntohl(net_value);
 }
 
-void NetworkUtils::recv_string(Socket &socket, std::string &str) {
-  uint16_t size = receive_uint16(socket);
+void NetworkUtils::receiveString(Socket &socket, std::string &str) {
+  uint16_t size = receiveUint16(socket);
   std::string value(size, '\0');
   if (size > 0) {
     socket.recvall(value.data(), size);
