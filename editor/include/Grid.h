@@ -18,6 +18,8 @@ struct GridItem {
 
     int x_end{GRID_SIZE_PX};
     int y_end{GRID_SIZE_PX};
+    int x_start{0};
+    int y_start{0};
 
     bool isCollidable{false};
 
@@ -38,7 +40,7 @@ public:
 
     Grid(Camera &camera);
 
-    void setGridTexture(int texture_id, int x, int y);
+    void setGridTexture(TextureMap &textureMap, int texture_id);
 
     void render(SDL2pp::Renderer &renderer, TextureMap &textureMap);
 
