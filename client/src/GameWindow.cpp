@@ -14,11 +14,11 @@ GameWindow::loadPlayerTexture(SDL2pp::Renderer &renderer,
 }
 
 GameWindow::GameWindow() : camera(Camera(720, 410)) {
-  this->window = std::make_unique<SDL2pp::Window>(
-      SDL2pp::Window("Argentum Online", SDL_WINDOWPOS_UNDEFINED,
-                     SDL_WINDOWPOS_UNDEFINED, 720, 410, SDL_WINDOW_SHOWN));
-  this->renderer = std::make_unique<SDL2pp::Renderer>(
-      SDL2pp::Renderer(*window, -1, SDL_RENDERER_ACCELERATED));
+  window = std::make_unique<SDL2pp::Window>(
+      "Argentum Online", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 720,
+      410, SDL_WINDOW_SHOWN);
+  renderer =
+      std::make_unique<SDL2pp::Renderer>(*window, -1, SDL_RENDERER_ACCELERATED);
   initResources();
 }
 
@@ -29,8 +29,24 @@ void GameWindow::initResources() {
 }
 
 void GameWindow::show(unsigned int it) {
-  clearDisplay();
+  SDL_ClearError();
+  renderer->Clear();
+  const char *err = SDL_GetError();
+  if (err && strlen(err) > 0) {
+    std::cerr << "SDL Error after Clear: " << err << std::endl;
+  }
+  renderer->Copy(*backgroundTexture, SDL2pp::Rect(0, 0, 400, 400),
+                 SDL2pp::Rect(0, 0, 720, 410));
+  err = SDL_GetError();
+  if (err && strlen(err) > 0) {
+    std::cerr << "SDL Error after Copy: " << err << std::endl;
+  }
   render(it);
+  renderer->Present();
+  err = SDL_GetError();
+  if (err && strlen(err) > 0) {
+    std::cerr << "SDL Error after Present: " << err << std::endl;
+  }
 }
 
 void GameWindow::render(unsigned int it) {
@@ -47,13 +63,6 @@ void GameWindow::render(unsigned int it) {
       renderPlayer(entry.second, it);
     }
   }
-
-  renderer->Present();
-}
-
-void GameWindow::clearDisplay() {
-  renderer->Copy(*backgroundTexture, SDL2pp::Rect(0, 0, 400, 400),
-                 SDL2pp::Rect(0, 0, 720, 410));
 }
 
 void GameWindow::setMyPlayerID(uint32_t id) { this->myPlayerID = id; }
@@ -69,4 +78,8 @@ void GameWindow::renderPlayer(const PlayerObserver *player, unsigned int it) {
   SDL2pp::Rect r = camera.toScreen(player->getX(), player->getY(), 32, 32);
   renderer->Copy(*defaultPlayerTexture,
                  SDL2pp::Rect(src.x, src.y, src.w, src.h), r);
+  const char *err = SDL_GetError();
+  if (err && strlen(err) > 0) {
+    std::cerr << "SDL Error after Copy: " << err << std::endl;
+  }
 }
