@@ -8,10 +8,10 @@ void Client::run() {
   Queue<std::unique_ptr<CommandDTO>> sendingQueue, receptionQueue;
   ClientReceiver receiver(socket, receptionQueue, shutdownEvent);
   ClientSender sender(socket, sendingQueue, shutdownEvent);
-  Gameloop gameloop(receptionQueue, sendingQueue, shutdownEvent, clientData);
 
   receiver.start();
   sender.start();
+  Gameloop gameloop(receptionQueue, sendingQueue, shutdownEvent, clientData);
   gameloop.run();
 
   shutdownEvent.wait();
@@ -31,7 +31,6 @@ void Client::run() {
     break;
   }
 
-  // gameloop.join();
   receiver.join();
   sender.join();
 }

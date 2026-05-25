@@ -13,7 +13,8 @@ GameWindow::loadPlayerTexture(SDL2pp::Renderer &renderer,
   return texture;
 }
 
-GameWindow::GameWindow() : camera(Camera(720, 410)) {
+GameWindow::GameWindow(uint32_t myPlayerID)
+    : camera(Camera(720, 410)), myPlayerID(myPlayerID) {
   window = std::make_unique<SDL2pp::Window>(
       "Argentum Online", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 720,
       410, SDL_WINDOW_SHOWN);
@@ -64,8 +65,6 @@ void GameWindow::render(unsigned int it) {
     }
   }
 }
-
-void GameWindow::setMyPlayerID(uint32_t id) { this->myPlayerID = id; }
 
 void GameWindow::addPlayer(uint32_t ID, const PlayerObserver *player) {
   players[ID] = player;

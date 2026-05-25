@@ -31,8 +31,7 @@ private:
   std::unordered_map<uint32_t, const PlayerObserver *> players;
 
 public:
-  GameWindow();
-  void setMyPlayerID(uint32_t id);
+  explicit GameWindow(uint32_t myPlayerID);
   void addPlayer(uint32_t ID, const PlayerObserver *player);
   void show(unsigned int it);
 
