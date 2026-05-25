@@ -1,0 +1,20 @@
+[textures.tierra]
+id = 0
+name = "Tierra"
+path = "assets/background/ground/114.png"
+collidable = false
+transparent = false
+
+[textures.agua]
+id = 1
+name = "Agua"
+path = "assets/background/ground/111.png"
+collidable = true
+transparent = false
+
+[textures.arbol]
+id = 2
+name = "Arbol"
+path = "assets/background/decoration/11.png"
+collidable = true
+transparent = true

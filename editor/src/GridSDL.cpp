@@ -62,6 +62,10 @@ void GridSDL::initSDL()
     } 
 }
 
+void GridSDL::setTextureID(int texture_id)
+{
+    this->texture_id = texture_id;
+}
 
 void GridSDL::renderLoop() {
 
@@ -82,10 +86,10 @@ void GridSDL::renderLoop() {
 void GridSDL::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
-        case Qt::Key_Left:  x -= 2; break;
-        case Qt::Key_Right: x += 2; break;
-        case Qt::Key_Up:    y -= 2; break;
-        case Qt::Key_Down:  y += 2; break;
+        case Qt::Key_Left:  x -= 4; break;
+        case Qt::Key_Right: x += 4; break;
+        case Qt::Key_Up:    y -= 4; break;
+        case Qt::Key_Down:  y += 4; break;
         default: break;
     }
 }
@@ -96,10 +100,12 @@ void GridSDL::mouseMoveEvent(QMouseEvent *event) {
     mouse_y = event->pos().y();
 }
 
+
+
 void GridSDL::mousePressEvent(QMouseEvent *event) {
     
     if (event->button() == Qt::LeftButton) {
-        grid->setGridTexture(*textureMap, 1);
+        grid->setGridTexture(*textureMap, texture_id);
     }
 
 }

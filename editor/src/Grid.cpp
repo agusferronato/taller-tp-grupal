@@ -86,6 +86,8 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap& textureMap)
 
 }
 
+
+
 void Grid::setMousePosition(int x, int y)
 {
     hover_init = true;
