@@ -12,8 +12,8 @@
 
 
 struct TextureInMap {
+    TextureData data;
     SDL2pp::Texture txt;
-    int priority;
 };
 
 
@@ -29,7 +29,7 @@ public:
 
     TextureMap(SDL2pp::Renderer &renderer);
 
-    TextureInMap& TextureMap::getTexture(int texture_id);
+    TextureInMap& getTexture(int texture_id);
 };
 
 

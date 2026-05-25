@@ -5,17 +5,8 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QListWidget>
-#include <string>
 #include <vector>
-
-struct TextureInfo {
-    std::string key;
-    int id;
-    std::string name;
-    std::string path;
-    bool collidable;
-    bool transparent;
-};
+#include "Info.h"
 
 class TexturesLayout : public QWidget {
     Q_OBJECT
@@ -23,11 +14,11 @@ class TexturesLayout : public QWidget {
 private:
     QVBoxLayout *layout;
     QListWidget *listWidget;
-    std::vector<TextureInfo> textures;
+    std::vector<TextureData> textures;
 
     void initTexturesLayout();
     void loadTextures();
-    QWidget* createTextureItem(const TextureInfo& info);
+    QWidget* createTextureItem(const TextureData& info);
 
 public:
     explicit TexturesLayout(QWidget *parent = nullptr);

@@ -42,19 +42,18 @@ void Grid::setGridTexture(TextureMap& textureMap, int texture_id)
             tile.y_end = tile.y_start + std::min(GRID_SIZE_PX, spare_y);
             spare_y -= GRID_SIZE_PX;
 
-
             auto it = txtMap.find({i, j});
 
             if (it == txtMap.end()) {
 
                 std::array<std::optional<GridItem>, 2> layers{};
 
-                layers[txtInMap.priority] = std::move(tile);
+                layers[txtInMap.data.priority] = std::move(tile);
                 txtMap[{i, j}] = std::move(layers);
 
             } else {
 
-                it->second[txtInMap.priority] = std::move(tile);
+                it->second[txtInMap.data.priority] = std::move(tile);
             }
 
             
@@ -63,9 +62,6 @@ void Grid::setGridTexture(TextureMap& textureMap, int texture_id)
 
     }
 }
-
-
-
 
 
 
@@ -83,15 +79,17 @@ bool Grid::thereAreAssignedTextures(TextureMap& textureMap, int texture_id) {
 
             auto it = txtMap.find({i, j});
             if (it == txtMap.end())
-                break;
+                continue;
 
-            if (it->second[txtInMap.priority].has_value())
+            if (it->second[txtInMap.data.priority].has_value())
                 return true;
 
         }
-
     }
+
+    return false;
 }
+
 
 
 
@@ -102,24 +100,8 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap& textureMap)
 
         for (int j = 0; j < MAX_SIZE; j++) {
 
-            GridItem& tile = grid[i][j];
-
             renderGrass(renderer, textureMap, i , j);
 
-            /*
-
-            SDL2pp::Rect srcRect = { tile.x_start, tile.y_start, tile.x_end - tile.x_start, tile.y_end - tile.y_start };
-            SDL2pp::Rect dstRect = camera.toScreen(
-                (i - MAX_SIZE / 2) * GRID_SIZE_PX, 
-                (j - MAX_SIZE / 2) * GRID_SIZE_PX,
-                GRID_SIZE_PX,
-                GRID_SIZE_PX
-            );
-            
-            renderer.Copy(textureMap.getTexture(tile.texture_id).txt, srcRect, dstRect);
-
-            */
-
             SDL2pp::Rect dstRect = camera.toScreen(
                 (i - MAX_SIZE / 2) * GRID_SIZE_PX, 
                 (j - MAX_SIZE / 2) * GRID_SIZE_PX,
@@ -127,8 +109,7 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap& textureMap)
                 GRID_SIZE_PX
             );
 
-
-            auto it = txtMap.find({(i - MAX_SIZE / 2) * GRID_SIZE_PX, (j - MAX_SIZE / 2) * GRID_SIZE_PX});
+            auto it = txtMap.find({i, j});
 
             if (it != txtMap.end()) {
 
@@ -147,10 +128,10 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap& textureMap)
             }
 
         }
-
     }
-
 }
+
+
 
 
 
