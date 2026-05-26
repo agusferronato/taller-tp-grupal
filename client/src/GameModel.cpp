@@ -3,6 +3,7 @@
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
+#include "PlayerRemovedEventDTO.h"
 #include "PlayerStoppedEventDTO.h"
 #include "RegisterPlayerEventDTO.h"
 #include <iostream>
@@ -38,6 +39,10 @@ void GameModel::updateStateFromServer() {
 
     case EventOpcode::PlayerStoppedEvent:
       playerStopped(event);
+      break;
+
+    case EventOpcode::PlayerRemovedEvent:
+      playerRemoved(event);
       break;
 
     default:
@@ -96,7 +101,17 @@ void GameModel::playerAppeared(const ServerEventDTO &event) {
   }
 
   auto player = std::make_unique<Player>(pid, appeared->x, appeared->y);
+  auto *obs = player->getObserver();
   players[pid] = std::move(player);
+  gameView->addPlayer(pid, obs);
+}
+
+void GameModel::playerRemoved(const ServerEventDTO &event) {
+  const auto *removed = std::get_if<PlayerRemovedEventDTO>(&event);
+  if (!removed) {
+    return;
+  }
+  players.erase(removed->playerId);
 }
 
 void GameModel::registerPlayers() {

@@ -29,6 +29,11 @@ private:
   SpriteFrameCalculator spriteFrameCalculator;
   uint32_t myPlayerID{0};
   std::unordered_map<uint32_t, const PlayerObserver *> players;
+  std::unordered_map<uint32_t, std::unique_ptr<SDL2pp::Texture>> headTextures;
+
+  static SpriteFrame headFrameForDirection(Direction dir);
+  static int headCenteringOffset(Direction dir);
+  std::string headPathForRace(const std::string &race) const;
 
 public:
   explicit GameWindow(uint32_t myPlayerID);
@@ -40,7 +45,7 @@ private:
   void initResources();
   std::unique_ptr<SDL2pp::Texture>
   loadPlayerTexture(SDL2pp::Renderer &renderer, const std::string &texturePath);
-  void renderPlayer(const PlayerObserver *player, unsigned int it);
+  void renderPlayer(uint32_t playerId, const PlayerObserver *player, unsigned int it);
 };
 
 #endif

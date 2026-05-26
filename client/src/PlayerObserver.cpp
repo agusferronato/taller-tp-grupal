@@ -19,3 +19,7 @@ void PlayerObserver::updatePosition(int newX, int newY) {
   x = newX;
   y = newY;
 }
+
+const std::string &PlayerObserver::getRace() const { return race; }
+
+void PlayerObserver::setRace(const std::string &newRace) { race = newRace; }
