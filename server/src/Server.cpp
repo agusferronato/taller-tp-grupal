@@ -5,7 +5,7 @@ Server::Server(const char *port) : socket(Socket(port)) {}
 
 void Server::run() {
 
-  Queue<ClientRequestDTO> gameloopQueue(GAMELOOP_QUEUE_SIZE);
+  Queue<ClientCommandDTO> gameloopQueue(GAMELOOP_QUEUE_SIZE);
   SenderQueueMonitor senderQueueMonitor;
   PlayerRepository repository("data");
 

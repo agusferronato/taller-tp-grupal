@@ -8,7 +8,7 @@
 #include "ClientReceiver.h"
 #include "ClientSender.h"
 #include "ClosedQueue.h"
-#include "DTO/Commands/ClientRequestDTO.h"
+#include "DTO/Commands/ClientCommandDTO.h"
 #include "Gameloop.h"
 #include "Queue.h"
 #include "ShutdownEvent.h"

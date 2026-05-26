@@ -5,7 +5,7 @@
 #include "DTO/Commands/PlayerStopDTO.h"
 #include "protocol/RegisterAllParsers.h"
 
-Receiver::Receiver(Socket &peer, Queue<ClientRequestDTO> &gameloopQueue)
+Receiver::Receiver(Socket &peer, Queue<ClientCommandDTO> &gameloopQueue)
     : peer(peer), gameloopQueue(gameloopQueue), protocol(peer) {
   registerAllParsers(protocol);
 }

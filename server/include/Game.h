@@ -13,7 +13,7 @@
 #include "Colisionable.h"
 #include "ConstantRateLoop.h"
 #include "Constants.h"
-#include "DTO/Commands/ClientRequestDTO.h"
+#include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "Direction.h"
 #include "PlayerData.h"
@@ -30,6 +30,7 @@ public:
   uint32_t id;
   int x{0}, y{0};
   Direction direction{Direction::Down};
+  bool moving{false};
 
   std::string name;
   std::string password;
@@ -56,7 +57,7 @@ public:
 class Game : public Thread {
 
 private:
-  Queue<ClientRequestDTO> &gameloopQueue;
+  Queue<ClientCommandDTO> &gameloopQueue;
   SenderQueueMonitor &senderQueueMonitor;
   PlayerRepository &repository;
 
@@ -68,7 +69,7 @@ private:
   std::vector<Colisionable*> colisionables;
 
 public:
-  Game(Queue<ClientRequestDTO> &gameloopQueue,
+  Game(Queue<ClientCommandDTO> &gameloopQueue,
        SenderQueueMonitor &senderQueueMonitor,
        PlayerRepository &repository);
 
@@ -86,8 +87,9 @@ public:
   void exitPlayer(uint32_t playerId);
 
 private:
-  void execute(ClientRequestDTO clientMessage);
+  void execute(ClientCommandDTO clientMessage);
   void sendMessages();
+  void movePlayers();
   void saveAllPlayers();
 };
 

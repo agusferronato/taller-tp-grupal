@@ -1,15 +1,15 @@
-#ifndef PRIVATE_MESSAGE_PARSER_H
-#define PRIVATE_MESSAGE_PARSER_H
+#ifndef PRIVATE_MESSAGE_COMMAND_PARSER_H
+#define PRIVATE_MESSAGE_COMMAND_PARSER_H
 
-#include "ClientRequestParser.h"
+#include "ClientCommandParser.h"
 #include <vector>
 
-class PrivateMessageParser : public ClientRequestParser {
+class PrivateMessageParser : public ClientCommandParser {
 public:
   void serialize(std::vector<uint8_t> &bytes,
-                 const ClientRequestDTO &dto) override;
+                 const ClientCommandDTO &dto) override;
 
-  ClientRequestDTO deserialize(Protocol &protocol) override;
+  ClientCommandDTO deserialize(Protocol &protocol) override;
 };
 
 #endif

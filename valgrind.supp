@@ -1,0 +1,51 @@
+{
+   SDL_GL_TLS_leak
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:realloc
+   fun:real_realloc
+   fun:SDL_realloc_REAL
+   fun:SDL_TLSSet_REAL
+   fun:SDL_GL_CreateContext_REAL
+   fun:GL_CreateRenderer
+   fun:SDL_CreateRenderer_REAL
+}
+
+{
+   SDL_DBus_all
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect,possible
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libdbus-1.so*
+   ...
+   fun:SDL_DBus_Init_Spinlocked
+   ...
+}
+
+{
+   SDL_IBus_all
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect,possible
+   ...
+   fun:IBus_SetupConnection
+   ...
+}
+
+{
+   DBus_auth_indirect_leftover
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:realloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libdbus-1.so*
+   ...
+}
+
+{
+   Qt_XCB_writev_uninitialised
+   Memcheck:Param
+   writev(vector[0])
+   fun:__writev
+   fun:writev
+   obj:/usr/lib/x86_64-linux-gnu/libxcb.so*
+}
