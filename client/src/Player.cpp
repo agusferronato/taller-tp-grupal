@@ -21,6 +21,8 @@ void Player::stopMoving() {
   observer->updateDirection(direction, isMoving);
 }
 
+void Player::setRace(const std::string &race) { observer->setRace(race); }
+
 void Player::updateCoordinates(int x, int y, Direction direction) {
   setCoordinates(x, y);
   isMoving = true;

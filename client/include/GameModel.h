@@ -20,7 +20,8 @@ private:
 public:
   GameModel(uint32_t myPlayerID, GameWindow *gameView,
             Queue<ServerEventDTO> &receptionQueue,
-            Queue<ClientCommandDTO> &sendingQueue);
+            Queue<ClientCommandDTO> &sendingQueue,
+            const std::string &race = "humano");
   void updateStateFromServer();
 
 public:

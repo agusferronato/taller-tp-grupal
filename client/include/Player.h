@@ -26,6 +26,7 @@ public:
   void setCoordinates(int x, int y);
   void updateCoordinates(int x, int y, Direction direction);
   void stopMoving();
+  void setRace(const std::string &race);
 };
 
 #endif
