@@ -18,7 +18,7 @@ GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
       myPlayerID(myPlayerID), gameView(gameView) {
   auto myPlayer = std::make_unique<Player>(this->myPlayerID, 0, 0);
   players[myPlayerID] = std::move(myPlayer);
-  gameView->addPlayer(myPlayerID, players[myPlayerID]->getObserver());
+  gameView->addPlayer(myPlayerID, players[myPlayerID].get());
   registerPlayers();
 }
 
@@ -112,7 +112,7 @@ void GameModel::registerPlayers() {
       }
       auto player = std::make_unique<Player>(info.playerId, 0, 0);
       players[info.playerId] = std::move(player);
-      gameView->addPlayer(info.playerId, players[info.playerId]->getObserver());
+      gameView->addPlayer(info.playerId, players[info.playerId].get());
     }
   }
 }
