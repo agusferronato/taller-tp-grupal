@@ -21,7 +21,7 @@ GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
   auto myPlayer = std::make_unique<Player>(this->myPlayerID, 0, 0);
   myPlayer->setRace(race);
   players[myPlayerID] = std::move(myPlayer);
-  gameView->addPlayer(myPlayerID, players[myPlayerID]->getObserver());
+  gameView->addPlayer(myPlayerID, players[myPlayerID].get());
   registerPlayers();
 }
 
@@ -105,9 +105,8 @@ void GameModel::playerAppeared(const ServerEventDTO &event) {
   }
 
   auto player = std::make_unique<Player>(pid, appeared->x, appeared->y);
-  auto *obs = player->getObserver();
   players[pid] = std::move(player);
-  gameView->addPlayer(pid, obs);
+  gameView->addPlayer(pid, players[pid].get());
 }
 
 void GameModel::playerRemoved(const ServerEventDTO &event) {
@@ -131,7 +130,7 @@ void GameModel::registerPlayers() {
       }
       auto player = std::make_unique<Player>(info.playerId, info.x, info.y);
       players[info.playerId] = std::move(player);
-      gameView->addPlayer(info.playerId, players[info.playerId]->getObserver());
+      gameView->addPlayer(info.playerId, players[info.playerId].get());
     }
   }
 }

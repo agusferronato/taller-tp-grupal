@@ -4,8 +4,7 @@
 #include "Direction.h"
 #include <cstdint>
 #include <memory>
-
-#include "PlayerObserver.h"
+#include <string>
 
 class Player {
 
@@ -15,18 +14,22 @@ private:
   Direction direction{Direction::Down};
 
   int x, y;
-
-  std::unique_ptr<PlayerObserver> observer;
+  std::string race;
 
 public:
   Player(uint32_t id, int xOrigin, int yOrigin);
 
   uint32_t getID() const;
-  const PlayerObserver *getObserver() const { return observer.get(); }
   void setCoordinates(int x, int y);
   void updateCoordinates(int x, int y, Direction direction);
   void stopMoving();
   void setRace(const std::string &race);
+
+  bool getIsMoving() const { return isMoving; }
+  Direction getDirection() const { return direction; }
+  int getX() const { return x; }
+  int getY() const { return y; }
+  const std::string &getRace() const { return race; }
 };
 
 #endif

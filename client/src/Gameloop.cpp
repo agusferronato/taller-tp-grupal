@@ -23,8 +23,8 @@ void Gameloop::run() {
   while (!shutdownEvent.finished()) {
 
     try {
-      gameModel->updateStateFromServer();
       gameController->update();
+      gameModel->updateStateFromServer();
       gameView->show(it);
 
     } catch (const ClosedQueue &e) {

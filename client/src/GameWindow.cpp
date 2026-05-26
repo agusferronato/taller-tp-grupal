@@ -48,7 +48,7 @@ void GameWindow::render(unsigned int it) {
     throw std::runtime_error("My player not found in map");
   }
 
-  const PlayerObserver &myPlayer = *itMy->second;
+  const Player &myPlayer = *itMy->second;
   camera.follow(myPlayer.getX(), myPlayer.getY(), 32, 32);
 
   for (auto &entry : players) {
@@ -58,13 +58,13 @@ void GameWindow::render(unsigned int it) {
   }
 }
 
-void GameWindow::addPlayer(uint32_t ID, const PlayerObserver *player) {
+void GameWindow::addPlayer(uint32_t ID, const Player *player) {
   players[ID] = player;
   auto texture = loadPlayerTexture(*renderer, headPathForRace(player->getRace()));
   headTextures[ID] = std::move(texture);
 }
 
-void GameWindow::renderPlayer(uint32_t playerId, const PlayerObserver *player, unsigned int it) {
+void GameWindow::renderPlayer(uint32_t playerId, const Player *player, unsigned int it) {
   const int animationIt = player->getIsMoving() ? static_cast<int>(it) : 0;
   SpriteFrame src =
       spriteFrameCalculator.getSprite(player->getDirection(), animationIt);
