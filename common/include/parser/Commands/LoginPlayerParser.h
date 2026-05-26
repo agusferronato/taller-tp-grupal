@@ -1,15 +1,15 @@
-#ifndef LOGIN_PLAYER_PARSER_H
-#define LOGIN_PLAYER_PARSER_H
+#ifndef LOGIN_PLAYER_COMMAND_PARSER_H
+#define LOGIN_PLAYER_COMMAND_PARSER_H
 
-#include "ClientRequestParser.h"
+#include "ClientCommandParser.h"
 #include <vector>
 
-class LoginPlayerParser : public ClientRequestParser {
+class LoginPlayerParser : public ClientCommandParser {
 public:
   void serialize(std::vector<uint8_t> &bytes,
-                 const ClientRequestDTO &dto) override;
+                 const ClientCommandDTO &dto) override;
 
-  ClientRequestDTO deserialize(Protocol &protocol) override;
+  ClientCommandDTO deserialize(Protocol &protocol) override;
 };
 
 #endif

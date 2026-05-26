@@ -7,7 +7,7 @@
 #include <utility>
 
 #include "CommunicationEnded.h"
-#include "DTO/Commands/ClientRequestDTO.h"
+#include "DTO/Commands/ClientCommandDTO.h"
 #include "Queue.h"
 #include "Socket.h"
 #include "Thread.h"
@@ -17,13 +17,13 @@ class Receiver : public Thread {
 
 private:
   Socket &peer;
-  Queue<ClientRequestDTO> &gameloopQueue;
+  Queue<ClientCommandDTO> &gameloopQueue;
   Protocol protocol;
   bool keepRunning = true;
   uint32_t lastPlayerId{0};
 
 public:
-  Receiver(Socket &peer, Queue<ClientRequestDTO> &gameloopQueue);
+  Receiver(Socket &peer, Queue<ClientCommandDTO> &gameloopQueue);
 
   Receiver(const Receiver &) = delete;
   Receiver &operator=(const Receiver &) = delete;

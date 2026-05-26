@@ -10,60 +10,61 @@
 #include "parser/Events/PlayerAppearedEventParser.h"
 #include "parser/Events/PlayerListEventParser.h"
 #include "parser/Events/PlayerMovedEventParser.h"
-#include "parser/Events/PlayerRemovedEventParser.h"
-#include "parser/Events/PlayerStoppedParser.h"
-#include "parser/Events/RegisterPlayerResponseParser.h"
+#include "parser/Events/PlayerStoppedEventParser.h"
+#include "parser/Events/RegisterPlayerEventParser.h"
 #include "protocol/Protocol.h"
 #include "protocol/ProtocolCodes.h"
 
 void registerAllParsers(Protocol &protocol) {
   protocol.registerCommandParser(
-      static_cast<uint8_t>(CommandOpCode::RegisterPlayer),
+      static_cast<uint8_t>(ClientCommandOpCode::RegisterPlayerCommand),
       std::make_unique<RegisterPlayerParser>());
 
   protocol.registerCommandParser(
-      static_cast<uint8_t>(CommandOpCode::LoginPlayer),
+      static_cast<uint8_t>(ClientCommandOpCode::LoginPlayerCommand),
       std::make_unique<LoginPlayerParser>());
 
-  protocol.registerCommandParser(static_cast<uint8_t>(CommandOpCode::Meditate),
-                                 std::make_unique<MeditateParser>());
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::MeditateCommand),
+      std::make_unique<MeditateParser>());
 
   protocol.registerCommandParser(
-      static_cast<uint8_t>(CommandOpCode::PlayerStop),
+      static_cast<uint8_t>(ClientCommandOpCode::PlayerStopCommand),
       std::make_unique<PlayerStopCommandParser>());
 
   protocol.registerCommandParser(
-      static_cast<uint8_t>(CommandOpCode::MoveCommand),
+      static_cast<uint8_t>(ClientCommandOpCode::MoveCommand),
       std::make_unique<MoveCommandParser>());
 
-  protocol.registerCommandParser(static_cast<uint8_t>(CommandOpCode::Exit),
-                                 std::make_unique<ExitParser>());
-
-  protocol.registerEventParser(static_cast<uint8_t>(ServerOpcode::ChatMessage),
-                               std::make_unique<ChatMessageEventParser>());
-
-  protocol.registerEventParser(static_cast<uint8_t>(ServerOpcode::NPCDefeated),
-                               std::make_unique<NpcDefeatedEventParser>());
-
-  protocol.registerEventParser(static_cast<uint8_t>(ServerOpcode::PlayerMoved),
-                               std::make_unique<PlayerMovedEventParser>());
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::ExitCommand),
+      std::make_unique<ExitParser>());
 
   protocol.registerEventParser(
-      static_cast<uint8_t>(ServerOpcode::PlayerAppeared),
+      static_cast<uint8_t>(EventOpcode::ChatMessageEvent),
+      std::make_unique<ChatMessageEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::NPCDefeatedEvent),
+      std::make_unique<NpcDefeatedEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::PlayerMovedEvent),
+      std::make_unique<PlayerMovedEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::PlayerAppearedEvent),
       std::make_unique<PlayerAppearedEventParser>());
 
   protocol.registerEventParser(
-      static_cast<uint8_t>(ServerOpcode::RegisterResponse),
-      std::make_unique<RegisterPlayerResponseParser>());
-
-  protocol.registerEventParser(static_cast<uint8_t>(ServerOpcode::PlayerList),
-                               std::make_unique<PlayerListEventParser>());
+      static_cast<uint8_t>(EventOpcode::RegisterPlayerEvent),
+      std::make_unique<RegisterPlayerEventParser>());
 
   protocol.registerEventParser(
-      static_cast<uint8_t>(ServerOpcode::PlayerStopped),
+      static_cast<uint8_t>(EventOpcode::PlayerListEvent),
+      std::make_unique<PlayerListEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::PlayerStoppedEvent),
       std::make_unique<PlayerStoppedEventParser>());
-
-  protocol.registerEventParser(
-      static_cast<uint8_t>(ServerOpcode::PlayerRemoved),
-      std::make_unique<PlayerRemovedEventParser>());
 }
