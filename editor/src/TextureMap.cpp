@@ -24,8 +24,6 @@ TextureMap::TextureMap(SDL2pp::Renderer& renderer) {
                         SDL_MapRGB(surface.Get()->format, 0, 0, 0));
                 }
 
-                std::cout << "prio:" << data.priority << std::endl;
-
                 this->textures.insert({
                     data.id,
                     TextureInMap{data, SDL2pp::Texture(renderer, surface)}

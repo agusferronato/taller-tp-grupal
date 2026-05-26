@@ -165,3 +165,19 @@ path = "assets/background/decoration/82.png"
 collidable = true 
 transparent = true 
 priority = 1
+ 
+[textures.arbol_2]
+id = 21
+name = "Arbol 2"
+path = "assets/background/decoration/172.png"
+collidable = true 
+transparent = true 
+priority = 1
+
+[textures.klein]
+id = 22
+name = "Klein"
+path = "assets/background/decoration/115.png"
+collidable = true 
+transparent = true 
+priority = 1
