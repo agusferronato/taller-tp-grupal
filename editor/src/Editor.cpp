@@ -34,4 +34,22 @@ void Editor::initEditor() {
 
     connect(texturesPanel, &TexturesLayout::setTextureID, gridSDL, &GridSDL::setTextureID);
 
+    connect(gridSDL, &GridSDL::mapSavedSuccesfully, this, &Editor::onSavedMapSuccesfully);
+
 }
+
+void Editor::onSaveMapButtonClick() {
+
+
+    this->gridSDL->saveMap();
+
+}
+
+void Editor::onSavedMapSuccesfully(const std::string& path) {
+
+    auto *modal = new SaveSuccessModal(QString::fromStdString(path), this);
+    modal->setGeometry(this->rect());
+    modal->exec();
+    modal->deleteLater();
+}
+

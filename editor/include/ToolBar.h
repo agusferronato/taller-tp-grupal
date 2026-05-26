@@ -6,7 +6,6 @@
 #include <QObject>
 #include <QVBoxLayout>
 #include <QPushButton>
-
 class ToolBar : public QWidget {
     Q_OBJECT
 
@@ -15,14 +14,15 @@ private:
     QHBoxLayout * layout;
     QPushButton * saveButton;
 
-
-
 public:
-    explicit ToolBar(QWidget * parent = nullptr);
+    explicit ToolBar(
+        QWidget * parent = nullptr
+    );
 
 
 private:
     void initToolBar();
+    
 
 
 signals:

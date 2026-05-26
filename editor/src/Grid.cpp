@@ -2,7 +2,7 @@
 
 
 
-Grid::Grid(Camera& camera) : camera(camera) {
+Grid::Grid(Camera& camera) : camera(camera), downloader("map.toml") {
 
     grid = std::vector<std::vector<GridItem>>(
         MAX_SIZE, 
@@ -25,6 +25,14 @@ void Grid::setGridTexture(TextureMap& textureMap, int texture_id)
     int columns = std::ceil((float)txt.GetWidth() / GRID_SIZE_PX);
 
     int spare_y = txt.GetHeight();   
+
+    txtOrigins.push_back({
+        txtInMap.data.priority, texture_id, item_hover_i, item_hover_j
+    });
+
+    if (txtInMap.data.collidable)
+        collidableCells.push_back({item_hover_i, item_hover_j});
+
 
     for (int j = item_hover_j; j < item_hover_j + rows; j++) {
 
@@ -49,8 +57,9 @@ void Grid::setGridTexture(TextureMap& textureMap, int texture_id)
                 std::array<std::optional<GridItem>, 2> layers{};
 
                 layers[txtInMap.data.priority] = std::move(tile);
+                
                 txtMap[{i, j}] = std::move(layers);
-
+                
             } else {
 
                 it->second[txtInMap.data.priority] = std::move(tile);
@@ -172,3 +181,6 @@ void Grid::setMousePosition(int x, int y)
     item_hover_j = std::clamp(item_hover_j, 0, MAX_SIZE - 1);
 }
 
+void Grid::saveMap(GridSDL& gridSDL) {
+    this->downloader.saveMap(gridSDL, txtOrigins, collidableCells);
+}
