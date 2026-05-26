@@ -98,7 +98,9 @@ void GameModel::playerAppeared(const ServerEventDTO &event) {
   }
 
   uint32_t pid = appeared->playerId;
+
   if (pid == myPlayerID) {
+    players[pid]->setCoordinates(appeared->x, appeared->y);
     return;
   }
 
@@ -127,7 +129,7 @@ void GameModel::registerPlayers() {
       if (info.playerId == myPlayerID) {
         continue;
       }
-      auto player = std::make_unique<Player>(info.playerId, 0, 0);
+      auto player = std::make_unique<Player>(info.playerId, info.x, info.y);
       players[info.playerId] = std::move(player);
       gameView->addPlayer(info.playerId, players[info.playerId]->getObserver());
     }
