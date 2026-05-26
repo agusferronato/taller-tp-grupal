@@ -10,10 +10,13 @@
 #include <QPaintEngine>
 #include "Camera.h"
 #include "TextureMap.h"
-#include "Grid.h"
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QResizeEvent>
+
+
+class Grid;
+
 
 class GridSDL : public QWidget {
     Q_OBJECT
@@ -37,8 +40,15 @@ private:
 
 public: 
     explicit GridSDL(QWidget* parent = nullptr);
+    ~GridSDL() override;
 
     void initSDL();
+
+    void saveMap();
+
+
+signals:
+    void mapSavedSuccesfully(const std::string& path);
 
 
 private slots:

@@ -8,6 +8,7 @@
 #include "ToolBar.h"
 #include "GridSDL.h"
 #include "TexturesLayout.h"
+#include "SaveSuccessModal.h"
 
 
 class Editor : public QMainWindow {
@@ -37,7 +38,8 @@ private:
 
 private slots:
 
-    void onSaveMapButtonClick() { }
+    void onSaveMapButtonClick();
+    void onSavedMapSuccesfully(const std::string &path);
 
 
 

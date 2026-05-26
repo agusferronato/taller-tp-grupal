@@ -1,5 +1,8 @@
 #include "GridSDL.h"
+#include "Grid.h"
 
+
+GridSDL::~GridSDL() = default;
 
 GridSDL::GridSDL(QWidget *parent) : 
     QWidget(parent), timer(QTimer(this)) {
@@ -62,8 +65,11 @@ void GridSDL::initSDL()
     } 
 }
 
-void GridSDL::setTextureID(int texture_id)
-{
+void GridSDL::saveMap() {
+    grid->saveMap(*this);
+}
+
+void GridSDL::setTextureID(int texture_id) {
     this->texture_id = texture_id;
 }
 

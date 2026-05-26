@@ -3,17 +3,20 @@
 
 #include <vector>
 #include <array>
+#include <list>
 #include <map>
 #include <tuple>
 #include <SDL2pp/SDL2pp.hh>
 #include "Camera.h"
 #include "TextureMap.h"
+#include "MapDownloader.h"
 
 
 #define MAX_SIZE 100
 #define GRID_SIZE_PX 32
 #include "Info.h"
 
+class GridSDL;
 
 struct GridItem {
 
@@ -29,6 +32,14 @@ struct GridItem {
 };
 
 
+struct TileOrigin {
+    int priority;
+    int texture_id;
+    int x;
+    int y;
+};
+
+
 class Grid {
 
 private:
@@ -41,7 +52,12 @@ private:
         std::array<std::optional<GridItem>, 2>
     > txtMap;
 
+    std::list<TileOrigin> txtOrigins;
+
+    std::list<std::tuple<int, int>> collidableCells;
+
     Camera& camera;
+    MapDownloader downloader;
     int item_hover_i, item_hover_j;
     bool hover_init{false};
 
@@ -51,17 +67,20 @@ public:
 
     void setGridTexture(TextureMap &textureMap, int texture_id);
 
-    bool thereAreAssignedTextures(TextureMap &textureMap, int texture_id);
 
     void render(SDL2pp::Renderer &renderer, TextureMap &textureMap);
+
+    void setMousePosition(int x, int y);
+
+    void saveMap(GridSDL& gridSDL);
+
+
+private:
+    bool thereAreAssignedTextures(TextureMap &textureMap, int texture_id);
 
     void renderHover(SDL2pp::Renderer &renderer, SDL2pp::Rect dstRect);
 
     void renderGrass(SDL2pp::Renderer &renderer, TextureMap &textureMap, int i, int j);
-
-    void setMousePosition(int x, int y);
-
-
 
 };
 
