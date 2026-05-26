@@ -1,8 +1,8 @@
 #include "Receiver.h"
 
-#include "DTO/Commands/ExitDTO.h"
+#include "DTO/Commands/ExitCommandDTO.h"
 #include "DTO/Commands/MoveCommandDTO.h"
-#include "DTO/Commands/PlayerStopDTO.h"
+#include "DTO/Commands/PlayerStopCommandDTO.h"
 #include "protocol/RegisterAllParsers.h"
 
 Receiver::Receiver(Socket &peer, Queue<ClientCommandDTO> &gameloopQueue)
@@ -21,13 +21,13 @@ void Receiver::run() {
 
       auto *move = std::get_if<MoveCommandDTO>(&command);
       if (move) {
-        lastPlayerId = move->player_id;
+        lastPlayerId = move->playerId;
       }
-      auto *stop = std::get_if<PlayerStopDTO>(&command);
+      auto *stop = std::get_if<PlayerStopCommandDTO>(&command);
       if (stop) {
-        lastPlayerId = stop->player_id;
+        lastPlayerId = stop->playerId;
       }
-      auto *exit = std::get_if<ExitDTO>(&command);
+      auto *exit = std::get_if<ExitCommandDTO>(&command);
       if (exit) {
         lastPlayerId = exit->playerId;
       }
@@ -36,7 +36,7 @@ void Receiver::run() {
 
     } catch (const CommunicationEnded &e) {
       if (keepRunning && lastPlayerId > 0) {
-        gameloopQueue.push(ExitDTO{lastPlayerId});
+        gameloopQueue.push(ExitCommandDTO{lastPlayerId});
       }
       break;
 
