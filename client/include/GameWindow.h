@@ -6,7 +6,7 @@
 #include <SDL2pp/SDL2pp.hh>
 
 #include "Camera.h"
-#include "PlayerObserver.h"
+#include "Player.h"
 #include "SpriteCalculator.h"
 
 #include <cstdint>
@@ -28,7 +28,7 @@ private:
   Camera camera;
   SpriteFrameCalculator spriteFrameCalculator;
   uint32_t myPlayerID{0};
-  std::unordered_map<uint32_t, const PlayerObserver *> players;
+  std::unordered_map<uint32_t, const Player *> players;
   std::unordered_map<uint32_t, std::unique_ptr<SDL2pp::Texture>> headTextures;
 
   static SpriteFrame headFrameForDirection(Direction dir);
@@ -37,7 +37,7 @@ private:
 
 public:
   explicit GameWindow(uint32_t myPlayerID);
-  void addPlayer(uint32_t ID, const PlayerObserver *player);
+  void addPlayer(uint32_t ID, const Player *player);
   void show(unsigned int it);
 
 private:
@@ -45,7 +45,7 @@ private:
   void initResources();
   std::unique_ptr<SDL2pp::Texture>
   loadPlayerTexture(SDL2pp::Renderer &renderer, const std::string &texturePath);
-  void renderPlayer(uint32_t playerId, const PlayerObserver *player, unsigned int it);
+  void renderPlayer(uint32_t playerId, const Player *player, unsigned int it);
 };
 
 #endif
