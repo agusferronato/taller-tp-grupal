@@ -259,20 +259,38 @@ void Game::movePlayers() {
     if (!info->moving)
       continue;
 
+    int targetX = info->x;
+    int targetY = info->y;
     switch (info->direction) {
     case Direction::Up:
-      info->y -= 1;
+      targetY -= 1;
       break;
     case Direction::Down:
-      info->y += 1;
+      targetY += 1;
       break;
     case Direction::Left:
-      info->x -= 1;
+      targetX -= 1;
       break;
     case Direction::Right:
-      info->x += 1;
+      targetX += 1;
       break;
     }
+
+    bool blocked = false;
+    for (auto &col : colisionables) {
+      if (col == info.get())
+        continue;
+      if (col->colisionaCon(targetX, targetY, info->getAncho(),
+                             info->getAlto())) {
+        blocked = true;
+        break;
+      }
+    }
+    if (blocked)
+      continue;
+
+    info->x = targetX;
+    info->y = targetY;
 
     messagesToSend.push_back(
         PlayerMovedEventDTO{playerID, static_cast<int16_t>(info->x),

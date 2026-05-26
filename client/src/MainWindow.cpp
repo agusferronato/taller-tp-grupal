@@ -56,6 +56,7 @@ void MainWindow::onStartGame(const QString &username, const QString &password) {
   ClientData data;
   data.username = username.toStdString();
   data.password = password.toStdString();
+  data.race = "humano";
   data.is_new_character = false;
 
   emit gameStartRequested(data);
