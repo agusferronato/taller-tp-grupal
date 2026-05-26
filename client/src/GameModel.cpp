@@ -97,6 +97,7 @@ void GameModel::playerAppeared(const ServerEventDTO &event) {
 
   auto player = std::make_unique<Player>(pid, appeared->x, appeared->y);
   players[pid] = std::move(player);
+  gameView->addPlayer(pid, players[pid].get());
 }
 
 void GameModel::registerPlayers() {
@@ -110,7 +111,7 @@ void GameModel::registerPlayers() {
       if (info.playerId == myPlayerID) {
         continue;
       }
-      auto player = std::make_unique<Player>(info.playerId, 0, 0);
+      auto player = std::make_unique<Player>(info.playerId, info.x, info.y);
       players[info.playerId] = std::move(player);
       gameView->addPlayer(info.playerId, players[info.playerId].get());
     }
