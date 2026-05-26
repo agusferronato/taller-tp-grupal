@@ -101,10 +101,13 @@ void GameModel::playerAppeared(const ServerEventDTO &event) {
 
   if (pid == myPlayerID) {
     players[pid]->setCoordinates(appeared->x, appeared->y);
+    players[pid]->setRace(appeared->race);
+    gameView->addPlayer(pid, players[pid].get());
     return;
   }
 
   auto player = std::make_unique<Player>(pid, appeared->x, appeared->y);
+  player->setRace(appeared->race);
   players[pid] = std::move(player);
   gameView->addPlayer(pid, players[pid].get());
 }
@@ -129,6 +132,7 @@ void GameModel::registerPlayers() {
         continue;
       }
       auto player = std::make_unique<Player>(info.playerId, info.x, info.y);
+      player->setRace(info.race);
       players[info.playerId] = std::move(player);
       gameView->addPlayer(info.playerId, players[info.playerId].get());
     }

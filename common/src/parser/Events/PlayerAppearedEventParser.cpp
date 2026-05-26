@@ -16,6 +16,7 @@ void PlayerAppearedEventParser::serialize(std::vector<uint8_t> &bytes,
   utils.appendBytes(event.x, bytes);
   utils.appendBytes(event.y, bytes);
   utils.appendBytes(static_cast<uint8_t>(event.direction), bytes);
+  utils.appendBytes(event.race, bytes);
 }
 
 ServerEventDTO PlayerAppearedEventParser::deserialize(Protocol &protocol) {
@@ -24,5 +25,7 @@ ServerEventDTO PlayerAppearedEventParser::deserialize(Protocol &protocol) {
   int16_t y = protocol.getInt16();
   Direction direction = static_cast<Direction>(protocol.getUint8());
 
-  return PlayerAppearedEventDTO{playerId, x, y, direction};
+  std::string race = protocol.getStringData();
+
+  return PlayerAppearedEventDTO{playerId, x, y, direction, std::move(race)};
 }

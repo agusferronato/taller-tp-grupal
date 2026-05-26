@@ -103,7 +103,7 @@ void Game::run() {
 
 void Game::kill() { keepRunning = false; }
 
-void Game::registerPlayer(const std::string &name) {
+void Game::registerPlayer(const std::string &name, const std::string &race) {
 
   if (repository.exists(name)) {
     messagesToSend.push_back(RegisterPlayerEventDTO{0, 1});
@@ -118,6 +118,7 @@ void Game::registerPlayer(const std::string &name) {
   auto player =
       std::make_unique<PlayerInfo>(newId, spawnX, spawnY, Direction::Down);
   player->name = name;
+  player->race = race;
 
   repository.create(player->toPlayerData());
 
@@ -129,14 +130,16 @@ void Game::registerPlayer(const std::string &name) {
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
     playerList.push_back({pid, static_cast<int16_t>(info->x),
-                          static_cast<int16_t>(info->y), info->direction});
+                          static_cast<int16_t>(info->y), info->direction,
+                          info->race});
   }
 
   messagesToSend.push_back(PlayerListEventDTO{std::move(playerList)});
 
   messagesToSend.push_back(
       PlayerAppearedEventDTO{newId, static_cast<int16_t>(spawnX),
-                             static_cast<int16_t>(spawnY), Direction::Down});
+                             static_cast<int16_t>(spawnY), Direction::Down,
+                             race});
 }
 
 void Game::loginPlayer(const std::string &name) {
@@ -171,14 +174,16 @@ void Game::loginPlayer(const std::string &name) {
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
     playerList.push_back({pid, static_cast<int16_t>(info->x),
-                          static_cast<int16_t>(info->y), info->direction});
+                          static_cast<int16_t>(info->y), info->direction,
+                          info->race});
   }
   messagesToSend.push_back(PlayerListEventDTO{std::move(playerList)});
 
   messagesToSend.push_back(
       PlayerAppearedEventDTO{newId, static_cast<int16_t>(data.x),
                              static_cast<int16_t>(data.y),
-                             static_cast<Direction>(data.direction)});
+                             static_cast<Direction>(data.direction),
+                             players[newId]->race});
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {

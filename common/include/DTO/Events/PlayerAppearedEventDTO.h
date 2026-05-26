@@ -2,6 +2,7 @@
 #define PLAYER_APPEARED_EVENT_DTO_H
 
 #include <cstdint>
+#include <string>
 
 #include "Direction.h"
 #include "protocol/ProtocolCodes.h"
@@ -16,6 +17,7 @@ public:
   int16_t x;
   int16_t y;
   Direction direction;
+  std::string race;
 };
 
 #endif // PLAYER_APPEARED_EVENT_DTO_H

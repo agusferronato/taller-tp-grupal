@@ -80,7 +80,7 @@ public:
   Game(const Game &) = delete;
   Game &operator=(const Game &) = delete;
 
-  void registerPlayer(const std::string &name);
+  void registerPlayer(const std::string &name, const std::string &race);
   void loginPlayer(const std::string &name);
   void movePlayer(uint32_t playerId, Direction direction);
   void stopPlayer(uint32_t playerId);
