@@ -4,19 +4,16 @@
 #include "Direction.h"
 #include "protocol/ProtocolCodes.h"
 #include <cstdint>
+#include <string>
 #include <vector>
 
 // Struct auxiliar
 struct PlayerInfoDTO {
-  // private:
-  //   static constexpr EventOpcode opCode = EventOpcode::PlayerInfo;
-
-  // public:
-  //   EventOpcode getCode() const { return opCode; }
   uint32_t playerId;
   int16_t x;
   int16_t y;
   Direction direction;
+  std::string race;
 };
 
 struct PlayerListEventDTO {

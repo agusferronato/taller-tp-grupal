@@ -109,7 +109,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerCommand) {
   registerAllParsers(client);
   registerAllParsers(server);
 
-  ClientCommandDTO original = RegisterPlayerCommandDTO{"L0rd"};
+  ClientCommandDTO original = RegisterPlayerCommandDTO{"L0rd", "elfo"};
 
   client.sendCommand(original);
 
@@ -118,6 +118,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerCommand) {
 
   ASSERT_NE(dto, nullptr);
   EXPECT_EQ(dto->name, "L0rd");
+  EXPECT_EQ(dto->race, "elfo");
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesLoginPlayerCommand) {
@@ -353,9 +354,9 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
   registerAllParsers(client);
 
   std::vector<PlayerInfoDTO> players = {
-      {1, 100, 200, Direction::Down},
-      {2, 300, 400, Direction::Up},
-      {3, 500, 600, Direction::Left},
+      {1, 100, 200, Direction::Down, "humano"},
+      {2, 300, 400, Direction::Up, "elfo"},
+      {3, 500, 600, Direction::Left, "enano"},
   };
 
   ServerEventDTO original = PlayerListEventDTO{players};
@@ -372,14 +373,17 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
   EXPECT_EQ(dto->players[0].x, 100);
   EXPECT_EQ(dto->players[0].y, 200);
   EXPECT_EQ(dto->players[0].direction, Direction::Down);
+  EXPECT_EQ(dto->players[0].race, "humano");
 
   EXPECT_EQ(dto->players[1].playerId, 2);
   EXPECT_EQ(dto->players[1].x, 300);
   EXPECT_EQ(dto->players[1].y, 400);
   EXPECT_EQ(dto->players[1].direction, Direction::Up);
+  EXPECT_EQ(dto->players[1].race, "elfo");
 
   EXPECT_EQ(dto->players[2].playerId, 3);
   EXPECT_EQ(dto->players[2].x, 500);
   EXPECT_EQ(dto->players[2].y, 600);
   EXPECT_EQ(dto->players[2].direction, Direction::Left);
+  EXPECT_EQ(dto->players[2].race, "enano");
 }
