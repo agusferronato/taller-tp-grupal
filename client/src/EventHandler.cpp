@@ -4,39 +4,47 @@
 #include "PlayerStoppedDTO.h"
 #include "WindowClosed.h"
 
-EventHandler::EventHandler(Queue<std::unique_ptr<CommandDTO>> &sendingQueue)
-    : sendingQueue(sendingQueue) {}
+EventHandler::EventHandler(GameModel *gameModel, uint32_t playerID)
+    : gameModel(gameModel), playerID(playerID) {}
 
-void EventHandler::handleEvent(const SDL_Event &event, uint32_t playerID) {
+void EventHandler::update() {
+  SDL_Event event;
+  while (SDL_PollEvent(&event)) {
+    this->handleEvent(event);
+  }
+}
+
+void EventHandler::handleEvent(const SDL_Event &event) {
   switch (event.type) {
   case SDL_QUIT:
     throw WindowClosed("Window was closed by the user");
 
   case SDL_KEYDOWN:
     if (event.key.repeat == 0) {
-      handleKeyDown(event.key.keysym.sym, playerID);
+      handleKeyDown(event.key.keysym.sym);
     }
     break;
 
   case SDL_KEYUP:
-    handleKeyUp(event.key.keysym.sym, playerID);
+    handleKeyUp(event.key.keysym.sym);
     break;
   }
 }
 
-void EventHandler::handleKeyDown(const SDL_Keycode &key, uint32_t playerID) {
+void EventHandler::handleKeyDown(const SDL_Keycode &key) {
   auto direction = getDirectionFromKey(key);
   if (direction.has_value()) {
     pressedLastMovementKey = key;
-    sendingQueue.push(
+    gameModel->updateStateFromController(
         std::make_unique<MoveCommandDTO>(playerID, direction.value()));
   }
 }
 
-void EventHandler::handleKeyUp(const SDL_Keycode &key, uint32_t playerID) {
+void EventHandler::handleKeyUp(const SDL_Keycode &key) {
   if (key == pressedLastMovementKey) {
     pressedLastMovementKey = SDLK_UNKNOWN;
-    sendingQueue.push(std::make_unique<PlayerStoppedDTO>(playerID));
+    gameModel->updateStateFromController(
+        std::make_unique<PlayerStoppedDTO>(playerID));
   }
 }
 

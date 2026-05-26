@@ -20,6 +20,7 @@ void ClientSender::run() {
     } catch (const CommunicationEnded &e) {
 
       shutdownEvent.put(ShutdownReason::ConnectionClosed);
+      sendingQueue.close();
       return;
 
     } catch (const ClosedQueue &e) {
