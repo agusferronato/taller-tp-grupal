@@ -191,6 +191,7 @@ void Game::movePlayer(uint32_t playerId, Direction direction) {
 
   PlayerInfo &player = *it->second;
   player.direction = direction;
+  player.moving = true;
 
   int targetX = player.x;
   int targetY = player.y;

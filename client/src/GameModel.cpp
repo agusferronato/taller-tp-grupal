@@ -14,10 +14,12 @@
 
 GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
                      Queue<ServerEventDTO> &receptionQueue,
-                     Queue<ClientCommandDTO> &sendingQueue)
+                     Queue<ClientCommandDTO> &sendingQueue,
+                     const std::string &race)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
       myPlayerID(myPlayerID), gameView(gameView) {
   auto myPlayer = std::make_unique<Player>(this->myPlayerID, 0, 0);
+  myPlayer->setRace(race);
   players[myPlayerID] = std::move(myPlayer);
   gameView->addPlayer(myPlayerID, players[myPlayerID]->getObserver());
   registerPlayers();
