@@ -1,5 +1,9 @@
 #include "GameWindow.h"
+
+#include <algorithm>
+#include <cctype>
 #include <stdexcept>
+#include <string>
 
 std::unique_ptr<SDL2pp::Texture>
 GameWindow::loadPlayerTexture(SDL2pp::Renderer &renderer,
@@ -49,20 +53,78 @@ void GameWindow::render(unsigned int it) {
 
   for (auto &entry : players) {
     if (entry.second) {
-      renderPlayer(entry.second, it);
+      renderPlayer(entry.first, entry.second, it);
     }
   }
 }
 
 void GameWindow::addPlayer(uint32_t ID, const PlayerObserver *player) {
   players[ID] = player;
+  auto texture = loadPlayerTexture(*renderer, headPathForRace(player->getRace()));
+  headTextures[ID] = std::move(texture);
 }
 
-void GameWindow::renderPlayer(const PlayerObserver *player, unsigned int it) {
+void GameWindow::renderPlayer(uint32_t playerId, const PlayerObserver *player, unsigned int it) {
   const int animationIt = player->getIsMoving() ? static_cast<int>(it) : 0;
   SpriteFrame src =
       spriteFrameCalculator.getSprite(player->getDirection(), animationIt);
   SDL2pp::Rect r = camera.toScreen(player->getX(), player->getY(), 32, 32);
   renderer->Copy(*defaultPlayerTexture,
                  SDL2pp::Rect(src.x, src.y, src.w, src.h), r);
+
+  auto headIt = headTextures.find(playerId);
+  if (headIt == headTextures.end()) {
+    return;
+  }
+  SpriteFrame headSrc = headFrameForDirection(player->getDirection());
+  int headDestW = 24;
+  int headDestH = 24;
+  int headX =
+      r.x + (r.w - headDestW) / 2 + headCenteringOffset(player->getDirection());
+  int headY = r.y - headDestH + 4;
+  SDL2pp::Rect headDest{headX, headY, headDestW, headDestH};
+  renderer->Copy(*headIt->second,
+                 SDL2pp::Rect(headSrc.x, headSrc.y, headSrc.w, headSrc.h),
+                 headDest);
+}
+
+std::string GameWindow::headPathForRace(const std::string &race) const {
+  std::string path = "assets/cabezas/";
+  for (unsigned char c : race)
+    path += std::tolower(c);
+  path += ".png";
+  return path;
+}
+
+SpriteFrame GameWindow::headFrameForDirection(Direction dir) {
+  int x = 0;
+  switch (dir) {
+  case Direction::Down:
+    x = 0;
+    break;
+  case Direction::Right:
+    x = 17;
+    break;
+  case Direction::Left:
+    x = 34;
+    break;
+  case Direction::Up:
+    x = 51;
+    break;
+  }
+  return {x, 0, 16, 16};
+}
+
+int GameWindow::headCenteringOffset(Direction dir) {
+  switch (dir) {
+  case Direction::Down:
+    return 0;
+  case Direction::Right:
+    return 0;
+  case Direction::Left:
+    return -1;
+  case Direction::Up:
+    return 0;
+  }
+  return 0;
 }
