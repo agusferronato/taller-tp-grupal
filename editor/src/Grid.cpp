@@ -24,23 +24,23 @@ void Grid::setGridTexture(TextureMap& textureMap, int texture_id)
     int rows = std::ceil((float)txt.GetHeight() / GRID_SIZE_PX);
     int columns = std::ceil((float)txt.GetWidth() / GRID_SIZE_PX);
 
-    int spare_x = txt.GetWidth();   
+    int spare_y = txt.GetHeight();   
 
-    for (int i = item_hover_i; i < item_hover_i + rows; i++) {
+    for (int j = item_hover_j; j < item_hover_j + rows; j++) {
 
-        int spare_y = txt.GetHeight();  
+        int spare_x = txt.GetWidth();
 
-        for (int j = item_hover_j; j < item_hover_j + columns; j++) {
+        for (int i = item_hover_i; i < item_hover_i + columns; i++) {
 
             GridItem tile;
 
             tile.texture_id = texture_id;
+
             tile.x_start = (i - item_hover_i) * GRID_SIZE_PX;
             tile.y_start = (j - item_hover_j) * GRID_SIZE_PX;
 
             tile.x_end = tile.x_start + std::min(GRID_SIZE_PX, spare_x);
             tile.y_end = tile.y_start + std::min(GRID_SIZE_PX, spare_y);
-            spare_y -= GRID_SIZE_PX;
 
             auto it = txtMap.find({i, j});
 
@@ -55,11 +55,7 @@ void Grid::setGridTexture(TextureMap& textureMap, int texture_id)
 
                 it->second[txtInMap.data.priority] = std::move(tile);
             }
-
-            
         }
-        spare_x -= GRID_SIZE_PX;
-
     }
 }
 
