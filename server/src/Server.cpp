@@ -4,7 +4,7 @@ Server::Server(const char *port) : socket(Socket(port)) {}
 
 void Server::run() {
 
-  Queue<std::unique_ptr<CommandDTO>> gameloopQueue(GAMELOOP_QUEUE_SIZE);
+  Queue<ClientCommandDTO> gameloopQueue(GAMELOOP_QUEUE_SIZE);
   SenderQueueMonitor senderQueueMonitor;
 
   Acceptor acceptor(socket, gameloopQueue, senderQueueMonitor);
