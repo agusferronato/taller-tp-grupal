@@ -1,47 +1,44 @@
 #include "GameModel.h"
 #include "GameWindow.h"
-#include "LoginPlayerDTO.h"
 #include "PlayerAppearedEventDTO.h"
-#include "PlayerListDTO.h"
+#include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
-#include "PlayerStoppedDTO.h"
-#include "RegisterPlayerDTO.h"
+#include "PlayerStoppedEventDTO.h"
+#include "RegisterPlayerEventDTO.h"
 #include <iostream>
 #include <stdexcept>
 
+#include "protocol/ProtocolCodes.h"
+#include "protocol/ServerEventCodes.h"
+
 GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
-                     Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
-                     Queue<std::unique_ptr<CommandDTO>> &sendingQueue)
+                     Queue<ServerEventDTO> &receptionQueue,
+                     Queue<ClientCommandDTO> &sendingQueue)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
       myPlayerID(myPlayerID), gameView(gameView) {
   auto myPlayer = std::make_unique<Player>(this->myPlayerID, 0, 0);
   players[myPlayerID] = std::move(myPlayer);
-  gameView->addPlayer(myPlayerID, players[myPlayerID]->getObserver());
+  gameView->addPlayer(myPlayerID, players[myPlayerID].get());
   registerPlayers();
 }
 
 void GameModel::updateStateFromServer() {
 
-  std::unique_ptr<CommandDTO> cmd;
+  ServerEventDTO event;
 
-  while (receptionQueue.try_pop(cmd)) {
-
-    switch (static_cast<ServerOpcode>(cmd->getCode())) {
-
-    case ServerOpcode::PlayerMoved: {
-      playerMovedHandler(cmd);
+  while (receptionQueue.try_pop(event)) {
+    switch (static_cast<EventOpcode>(getCode(event))) {
+    case EventOpcode::PlayerMovedEvent:
+      playerMovedHandler(event);
       break;
-    }
 
-    case ServerOpcode::PlayerAppeared: {
-      playerAppeared(cmd);
+    case EventOpcode::PlayerAppearedEvent:
+      playerAppeared(event);
       break;
-    }
 
-    case ServerOpcode::PlayerStopped: {
-      playerStopped(cmd);
+    case EventOpcode::PlayerStoppedEvent:
+      playerStopped(event);
       break;
-    }
 
     default:
       break;
@@ -49,20 +46,25 @@ void GameModel::updateStateFromServer() {
   }
 }
 
-void GameModel::updateStateFromController(std::unique_ptr<CommandDTO> cmdDTO) {
-  sendingQueue.push(std::move(cmdDTO));
+void GameModel::moveMyPlayer(Direction direction) {
+  sendingQueue.push(MoveCommandDTO{myPlayerID, direction});
 }
 
-void GameModel::playerMovedHandler(std::unique_ptr<CommandDTO> &cmd) {
+void GameModel::stopMyPlayer() {
+  sendingQueue.push(PlayerStopCommandDTO{myPlayerID});
+}
 
-  auto *moved = dynamic_cast<PlayerMovedEventDTO *>(cmd.get());
-  if (!moved)
+void GameModel::playerMovedHandler(const ServerEventDTO &event) {
+
+  const auto *moved = std::get_if<PlayerMovedEventDTO>(&event);
+  if (!moved) {
     return;
+  }
 
-  uint32_t pid = moved->getPlayerId();
-  int16_t x = moved->getX();
-  int16_t y = moved->getY();
-  Direction dir = moved->getDirection();
+  uint32_t pid = moved->playerId;
+  int16_t x = moved->x;
+  int16_t y = moved->y;
+  Direction dir = moved->direction;
 
   auto it = players.find(pid);
   if (it != players.end()) {
@@ -70,52 +72,48 @@ void GameModel::playerMovedHandler(std::unique_ptr<CommandDTO> &cmd) {
   }
 }
 
-void GameModel::playerStopped(std::unique_ptr<CommandDTO> &cmd) {
-
-  auto *stopped = dynamic_cast<PlayerStoppedDTO *>(cmd.get());
-  if (!stopped)
+void GameModel::playerStopped(const ServerEventDTO &event) {
+  const auto *stopped = std::get_if<PlayerStoppedEventDTO>(&event);
+  if (!stopped) {
     return;
+  }
 
-  uint32_t pid = stopped->getPlayerID();
-
-  auto it = players.find(pid);
+  auto it = players.find(stopped->playerId);
   if (it != players.end()) {
     it->second->stopMoving();
   }
 }
 
-void GameModel::playerAppeared(std::unique_ptr<CommandDTO> &cmd) {
-
-  auto *appeared = dynamic_cast<PlayerAppearedEventDTO *>(cmd.get());
-  if (!appeared)
+void GameModel::playerAppeared(const ServerEventDTO &event) {
+  const auto *appeared = std::get_if<PlayerAppearedEventDTO>(&event);
+  if (!appeared) {
     return;
+  }
 
-  uint32_t pid = appeared->getPlayerId();
-  if (pid == myPlayerID)
+  uint32_t pid = appeared->playerId;
+  if (pid == myPlayerID) {
     return;
+  }
 
-  auto player = std::make_unique<Player>(pid, 0, 0);
-  player->updateCoordinates(appeared->getX(), appeared->getY(),
-                            appeared->getDirection());
+  auto player = std::make_unique<Player>(pid, appeared->x, appeared->y);
   players[pid] = std::move(player);
-  gameView->addPlayer(pid, players[pid]->getObserver());
+  gameView->addPlayer(pid, players[pid].get());
 }
 
 void GameModel::registerPlayers() {
-  auto cmd = receptionQueue.pop();
+  auto event = receptionQueue.pop();
   // si se cierra el socket el hilo reciver cierra y lanza ClosedQueue
   // debloquenado este pop
-  auto *list = dynamic_cast<PlayerListDTO *>(cmd.get());
+
+  auto *list = std::get_if<PlayerListEventDTO>(&event);
   if (list) {
-    for (const auto &info : list->getPlayers()) {
-      if (info.player_id == myPlayerID)
+    for (const auto &info : list->players) {
+      if (info.playerId == myPlayerID) {
         continue;
-      auto player = std::make_unique<Player>(info.player_id, 0, 0);
-      player->updateCoordinates(info.x, info.y, info.direction);
-      player->stopMoving();
-      players[info.player_id] = std::move(player);
-      gameView->addPlayer(info.player_id,
-                          players[info.player_id]->getObserver());
+      }
+      auto player = std::make_unique<Player>(info.playerId, info.x, info.y);
+      players[info.playerId] = std::move(player);
+      gameView->addPlayer(info.playerId, players[info.playerId].get());
     }
   }
 }

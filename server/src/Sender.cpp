@@ -1,5 +1,5 @@
 #include "Sender.h"
-#include "RegisterAllParsers.h"
+#include "protocol/RegisterAllParsers.h"
 
 Sender::Sender(SenderQueueMonitor &senderQueueMonitor, Socket &peer)
     : senderQueueMonitor(senderQueueMonitor), peer(peer),
@@ -19,7 +19,7 @@ void Sender::run() {
     try {
 
       auto serverMessage = senderQueue->pop();
-      protocol.send(*serverMessage);
+      protocol.sendEvent(serverMessage);
 
     } catch (const ClosedQueue &e) {
       delete senderQueue;

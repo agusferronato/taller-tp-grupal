@@ -5,8 +5,6 @@
 #include <cstdint>
 #include <memory>
 
-#include "PlayerObserver.h"
-
 class Player {
 
 private:
@@ -16,16 +14,21 @@ private:
 
   int x, y;
 
-  std::unique_ptr<PlayerObserver> observer;
-
 public:
   Player(uint32_t id, int xOrigin, int yOrigin);
 
+  /* Model, el unico que puede modificar Player */
   uint32_t getID() const;
-  const PlayerObserver *getObserver() const { return observer.get(); }
   void setCoordinates(int x, int y);
   void updateCoordinates(int x, int y, Direction direction);
   void stopMoving();
+
+  /* View, tiene que ser const el metodo, nunca pasar una referncia solo por
+   * copia */
+  bool getIsMoving() const { return isMoving; }
+  Direction getDirection() const { return direction; }
+  int getX() const { return x; }
+  int getY() const { return y; }
 };
 
 #endif

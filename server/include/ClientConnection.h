@@ -4,7 +4,7 @@
 #include <memory>
 #include <utility>
 
-#include "CommandDTO.h"
+#include "DTO/Commands/ClientCommandDTO.h"
 #include "Receiver.h"
 #include "Sender.h"
 #include "SenderQueueMonitor.h"
@@ -20,8 +20,7 @@ private:
   Sender sender;
 
 public:
-  ClientConnection(Socket &&peer,
-                   Queue<std::unique_ptr<CommandDTO>> &gameloopQueue,
+  ClientConnection(Socket &&peer, Queue<ClientCommandDTO> &gameloopQueue,
                    SenderQueueMonitor &senderQueueMonitor);
 
   ClientConnection(const ClientConnection &) = delete;
