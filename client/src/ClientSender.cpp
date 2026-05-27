@@ -1,8 +1,8 @@
 #include "ClientSender.h"
-#include "RegisterAllParsers.h"
+#include "protocol/RegisterAllParsers.h"
 
 ClientSender::ClientSender(Socket &socket,
-                           Queue<std::unique_ptr<CommandDTO>> &sendingQueue,
+                           Queue<ClientCommandDTO> &sendingQueue,
                            ShutdownEvent &shutdownEvent)
     : socket(socket), sendingQueue(sendingQueue), shutdownEvent(shutdownEvent),
       protocol(Protocol(socket)) {
@@ -15,11 +15,12 @@ void ClientSender::run() {
 
     try {
       auto command = sendingQueue.pop();
-      protocol.send(*command);
+      protocol.sendCommand(command);
 
     } catch (const CommunicationEnded &e) {
 
       shutdownEvent.put(ShutdownReason::ConnectionClosed);
+      sendingQueue.close();
       return;
 
     } catch (const ClosedQueue &e) {
