@@ -27,6 +27,8 @@ struct GridItem {
     int x_start{0};
     int y_start{0};
 
+    int i, j;
+
     bool isCollidable{false};
 
 };
@@ -45,16 +47,15 @@ class Grid {
 private:
 
     int size{MAX_SIZE};
-    std::vector<std::vector<GridItem>> grid;
-
-    std::map<
-        std::tuple<int, int>,
-        std::array<std::optional<GridItem>, 2>
-    > txtMap;
 
     std::list<TileOrigin> txtOrigins;
 
     std::list<std::tuple<int, int>> collidableCells;
+
+    std::vector<
+        std::map<std::pair<int,int>, std::vector<GridItem>>
+    > tilesToRender;
+
 
     Camera& camera;
     MapDownloader downloader;
@@ -67,7 +68,6 @@ public:
 
     void setGridTexture(TextureMap &textureMap, int texture_id);
 
-
     void render(SDL2pp::Renderer &renderer, TextureMap &textureMap);
 
     void setMousePosition(int x, int y);
@@ -78,9 +78,10 @@ public:
 private:
     bool thereAreAssignedTextures(TextureMap &textureMap, int texture_id);
 
-    void renderHover(SDL2pp::Renderer &renderer, SDL2pp::Rect dstRect);
+    void renderHover(SDL2pp::Renderer &renderer);
+    void renderCommonGround(SDL2pp::Renderer &renderer, TextureMap &textureMap);
 
-    void renderGrass(SDL2pp::Renderer &renderer, TextureMap &textureMap, int i, int j);
+
 
 };
 
