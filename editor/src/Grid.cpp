@@ -14,8 +14,12 @@ Grid::Grid(Camera& camera) :
 void Grid::setGridTexture(TextureMap& textureMap, int texture_id)
 {
 
+    if (thereAreAssignedTextures(textureMap, texture_id))
+        return;
+
     TextureInMap& txtInMap = textureMap.getTexture(texture_id);
     SDL2pp::Texture& txt = txtInMap.txt;
+
 
     int rows = std::ceil((float)txt.GetHeight() / GRID_SIZE_PX);
     int columns = std::ceil((float)txt.GetWidth() / GRID_SIZE_PX);
@@ -84,8 +88,24 @@ void Grid::setGridTexture(TextureMap& textureMap, int texture_id)
 
 
 bool Grid::thereAreAssignedTextures(TextureMap& textureMap, int texture_id) {
-    (void)texture_id;
-    (void)textureMap;
+
+    TextureInMap& txtInMap = textureMap.getTexture(texture_id);
+    SDL2pp::Texture& txt = txtInMap.txt;
+
+    int rows = std::ceil((float)txt.GetHeight() / GRID_SIZE_PX);
+    int columns = std::ceil((float)txt.GetWidth() / GRID_SIZE_PX);
+
+    for (int j = item_hover_j; j < item_hover_j + rows; j++) {
+
+        for (int i = item_hover_i; i < item_hover_i + columns; i++) {
+
+            if (collidableCells.find({i, j}) != collidableCells.end())
+                return true;
+
+        }
+
+    }
+
     return false;
 }
 

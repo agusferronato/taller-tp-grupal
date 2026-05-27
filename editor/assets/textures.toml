@@ -23,7 +23,7 @@ path = "assets/background/decoration/11.png"
 collidable = true
 transparent = true
 priority = 1
-collidable_percentage = 0.25
+collidable_percentage = 0.2
 
 [textures.camino_tierra_1]
 id = 3
@@ -194,7 +194,7 @@ path = "assets/background/decoration/172.png"
 collidable = true 
 transparent = true 
 priority = 1
-collidable_percentage = 0.25
+collidable_percentage = 0.2
 
 [textures.klein]
 id = 22
@@ -203,4 +203,4 @@ path = "assets/background/decoration/115.png"
 collidable = true 
 transparent = true 
 priority = 1
-collidable_percentage = 1.0
+collidable_percentage = 0.25
