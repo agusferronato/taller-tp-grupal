@@ -17,6 +17,7 @@ TextureMap::TextureMap(SDL2pp::Renderer& renderer) {
                 data.collidable = entry["collidable"].value_or(false);
                 data.transparent = entry["transparent"].value_or(false);
                 data.priority = entry["priority"].value_or(0);
+                data.collidablePercentage = entry["collidable_percentage"].value_or(1.0f);
 
                 SDL2pp::Surface surface(data.path);
                 if (data.transparent) {
@@ -26,7 +27,7 @@ TextureMap::TextureMap(SDL2pp::Renderer& renderer) {
 
                 this->textures.insert({
                     data.id,
-                    TextureInMap{data, SDL2pp::Texture(renderer, surface)}
+                    TextureInMap{data, SDL2pp::Texture(renderer, surface), std::move(surface)}
                 });
             }
         }

@@ -26,9 +26,9 @@ void Grid::setGridTexture(TextureMap& textureMap, int texture_id)
         txtInMap.data.priority, texture_id, item_hover_i, item_hover_j
     });
 
-    if (txtInMap.data.collidable)
-        collidableCells.push_back({item_hover_i, item_hover_j});
 
+    float collidablePercentage = txtInMap.data.collidablePercentage;
+    int offset = std::floor((1 - collidablePercentage) * rows);
 
     std::vector<GridItem> gridItemList;
 
@@ -55,9 +55,20 @@ void Grid::setGridTexture(TextureMap& textureMap, int texture_id)
             tile.j = j;
 
             gridItemList.push_back(std::move(tile));
+
+
+            SDL2pp::Rect rect = {
+                tile.x_start,
+                tile.y_start,
+                tile.x_end - tile.x_start,
+                tile.y_end - tile.y_start
+            };
+
+            if (j >= item_hover_j + offset && getAlphaChannelWeight(txtInMap.surface, rect) > 0.15) {
+                collidableCells.insert({i, j});
+            }
             
             max_col = i;
-            
             spare_x -= GRID_SIZE_PX;
         }
         
@@ -76,6 +87,35 @@ bool Grid::thereAreAssignedTextures(TextureMap& textureMap, int texture_id) {
     (void)texture_id;
     (void)textureMap;
     return false;
+}
+
+
+
+float Grid::getAlphaChannelWeight(SDL2pp::Surface& surface, SDL2pp::Rect region) {
+
+    SDL2pp::Surface converted = surface.Convert(SDL_PIXELFORMAT_RGBA8888);
+
+    SDL2pp::Surface::LockHandle lock = converted.Lock();
+
+    long long totalPixels = region.w * region.h;
+    long long alpha = 0;
+
+    int pitch = converted.Get()->pitch / sizeof(Uint32);
+    Uint32* pixels = static_cast<Uint32*>(converted.Get()->pixels);
+
+    for (int y = region.y; y < region.y + region.h; y++) {
+        for (int x = region.x; x < region.x + region.w; x++) {
+            
+            Uint32 pixel = pixels[y * pitch + x];
+
+            Uint8 r, g, b, a;
+            SDL_GetRGBA(pixel, converted.Get()->format, &r, &g, &b, &a);
+
+            alpha += a;
+        }
+    }
+
+    return static_cast<float>(alpha) / (totalPixels * 255.0f);
 }
 
 
@@ -110,11 +150,30 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap& textureMap)
         }
     }
 
+    renderCollidableCells(renderer);
+
     renderHover(renderer);
 
 }
 
+void Grid::renderCollidableCells(SDL2pp::Renderer& renderer) {
 
+    for (auto& [i, j] : collidableCells) {
+
+        SDL2pp::Rect dstRect = camera.toScreen(
+            (i - MAX_SIZE / 2) * GRID_SIZE_PX, 
+            (j - MAX_SIZE / 2) * GRID_SIZE_PX,
+            GRID_SIZE_PX,
+            GRID_SIZE_PX
+        );
+
+        SDL_SetRenderDrawBlendMode(renderer.Get(), SDL_BLENDMODE_BLEND);
+        renderer.SetDrawColor(0, 0, 255, 50); 
+        renderer.FillRect(dstRect);
+    }
+
+
+}
 
 void Grid::renderCommonGround(SDL2pp::Renderer& renderer, TextureMap& textureMap) {
 

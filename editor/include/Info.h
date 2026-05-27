@@ -13,6 +13,7 @@ struct TextureData {
     bool collidable;
     bool transparent;
     int priority;
+    float collidablePercentage{1.0f};
 };
 
 #endif
