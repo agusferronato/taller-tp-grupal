@@ -3,23 +3,18 @@
 
 #include <list>
 #include <map>
-#include <memory>
 #include <mutex>
 #include <queue>
-#include <thread>
-#include <utility>
 
-#include "CommandDTO.h"
 #include "Constants.h"
+#include "DTO/Events/EventDTO.h"
 #include "Queue.h"
 
 class SenderQueueMonitor {
-
 private:
   std::mutex mutex;
-  std::list<Queue<std::unique_ptr<CommandDTO>> *> senderQueues;
-  std::map<Queue<std::unique_ptr<CommandDTO>> *,
-           std::queue<std::unique_ptr<CommandDTO>>>
+  std::list<Queue<ServerEventDTO> *> senderQueues;
+  std::map<Queue<ServerEventDTO> *, std::queue<ServerEventDTO>>
       queuesPendingMessages;
 
 public:
@@ -28,14 +23,14 @@ public:
   SenderQueueMonitor(const SenderQueueMonitor &) = delete;
   SenderQueueMonitor &operator=(const SenderQueueMonitor &) = delete;
 
-  Queue<std::unique_ptr<CommandDTO>> *getNewSenderQueue();
-  void deleteSenderQueue(Queue<std::unique_ptr<CommandDTO>> &senderQueue);
+  Queue<ServerEventDTO> *getNewSenderQueue();
+  void deleteSenderQueue(Queue<ServerEventDTO> &senderQueue);
 
-  void broadCast(std::list<std::unique_ptr<CommandDTO>> &pendingMessages);
+  void broadCast(std::list<ServerEventDTO> &pendingMessages);
 
 private:
-  void pushMessageToTheSenderQueues(std::unique_ptr<CommandDTO> message);
-  void clearPendingMessages(Queue<std::unique_ptr<CommandDTO>> &queue);
+  void pushMessageToTheSenderQueues(const ServerEventDTO &message);
+  void clearPendingMessages(Queue<ServerEventDTO> &queue);
 };
 
 #endif

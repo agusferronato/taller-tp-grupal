@@ -1,18 +1,21 @@
 #include "Client.h"
+#include "DTO/Commands/ClientCommandDTO.h"
+#include "DTO/Events/EventDTO.h"
 
 Client::Client(const char *hostname, const char *port, const ClientData &data)
     : socket(Socket(hostname, port)), shutdownEvent(ShutdownEvent()),
       clientData(data) {}
 
 void Client::run() {
-  Queue<std::unique_ptr<CommandDTO>> sendingQueue, receptionQueue;
+  Queue<ClientCommandDTO> sendingQueue;
+  Queue<ServerEventDTO> receptionQueue;
   ClientReceiver receiver(socket, receptionQueue, shutdownEvent);
   ClientSender sender(socket, sendingQueue, shutdownEvent);
-  Gameloop gameloop(receptionQueue, sendingQueue, shutdownEvent, clientData);
 
   receiver.start();
   sender.start();
-  gameloop.start();
+  Gameloop gameloop(receptionQueue, sendingQueue, shutdownEvent, clientData);
+  gameloop.run();
 
   shutdownEvent.wait();
 
@@ -31,7 +34,6 @@ void Client::run() {
     break;
   }
 
-  gameloop.join();
   receiver.join();
   sender.join();
 }

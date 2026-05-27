@@ -1,9 +1,9 @@
 #include "ClientReceiver.h"
-#include "RegisterAllParsers.h"
+#include "protocol/RegisterAllParsers.h"
 
-ClientReceiver::ClientReceiver(
-    Socket &socket, Queue<std::unique_ptr<CommandDTO>> &receptionQueue,
-    ShutdownEvent &shutdownEvent)
+ClientReceiver::ClientReceiver(Socket &socket,
+                               Queue<ServerEventDTO> &receptionQueue,
+                               ShutdownEvent &shutdownEvent)
     : socket(socket), receptionQueue(receptionQueue),
       shutdownEvent(shutdownEvent), protocol(Protocol(socket)) {
   registerAllParsers(protocol);
@@ -15,12 +15,13 @@ void ClientReceiver::run() {
 
     try {
 
-      auto command = protocol.receive();
-      receptionQueue.push(std::move(command));
+      auto event = protocol.receiveEvent();
+      receptionQueue.push(std::move(event));
 
     } catch (const CommunicationEnded &e) {
 
       shutdownEvent.put(ShutdownReason::ConnectionClosed);
+      receptionQueue.close();
       return;
 
     } catch (const ClosedQueue &e) {

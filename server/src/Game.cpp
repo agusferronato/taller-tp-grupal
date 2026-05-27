@@ -1,29 +1,29 @@
 #include "Game.h"
 #include "MoveCommandDTO.h"
 #include "PlayerAppearedEventDTO.h"
-#include "PlayerListDTO.h"
+#include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
-#include "PlayerStoppedDTO.h"
-#include "RegisterPlayerDTO.h"
-#include "RegisterPlayerResponseDTO.h"
+#include "PlayerStoppedEventDTO.h"
+#include "RegisterPlayerCommandDTO.h"
+#include "RegisterPlayerEventDTO.h"
+#include "command/CommandFactory.h"
 
-Game::Game(Queue<std::unique_ptr<CommandDTO>> &gameloopQueue,
+Game::Game(Queue<ClientCommandDTO> &gameloopQueue,
            SenderQueueMonitor &senderQueueMonitor)
     : gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor) {}
 
 void Game::run() {
 
   ConstantRateLoop rateloop(FPS_SERVER);
+  CommandFactory factory;
   unsigned int it = 0;
 
   while (keepRunning) {
+    ClientCommandDTO dto;
 
-    std::unique_ptr<CommandDTO> command;
-    // Es un try_pop: aunque nadie mande nada, los mobs se siguen moviendo y
-    // atacando, por lo que no se debería bloquear la lógica. Solo se bloquea
-    // con el sleep del rateloop.
-    while (gameloopQueue.try_pop(command)) {
-      execute(std::move(command));
+    if (gameloopQueue.try_pop(dto)) {
+      auto command = factory.create(std::move(dto));
+      command->execute(*this);
     }
     movePlayers();
     sendMessages();
@@ -33,56 +33,6 @@ void Game::run() {
 }
 
 void Game::kill() { keepRunning = false; }
-
-void Game::execute(std::unique_ptr<CommandDTO> clientMessage) {
-  uint8_t code = clientMessage->getCode();
-
-  if (code == static_cast<uint8_t>(CommandOpCode::RegisterPlayer)) {
-    uint32_t newId = nextPlayerId++;
-    players[newId] = PlayerInfo{0, 0, Direction::Down};
-
-    messagesToSend.push_back(
-        std::make_unique<RegisterPlayerResponseDTO>(newId, 0));
-
-    std::vector<PlayerInfoDTO> playerList;
-    for (auto &[pid, info] : players) {
-      playerList.push_back({pid, static_cast<int16_t>(info.x),
-                            static_cast<int16_t>(info.y), info.direction});
-    }
-    messagesToSend.push_back(
-        std::make_unique<PlayerListDTO>(std::move(playerList)));
-
-    messagesToSend.push_back(
-        std::make_unique<PlayerAppearedEventDTO>(newId, 0, 0, Direction::Down));
-
-  } else if (code == static_cast<uint8_t>(CommandOpCode::MoveCommand)) {
-
-    auto &moveCmd = dynamic_cast<MoveCommandDTO &>(*clientMessage);
-    uint32_t pid = moveCmd.getPlayerId();
-    Direction dir = moveCmd.getDirection();
-
-    auto it = players.find(pid);
-    if (it == players.end())
-      return;
-
-    PlayerInfo &player = it->second;
-    player.direction = dir;
-    player.moving = true;
-
-  } else if (code == static_cast<uint8_t>(ServerOpcode::PlayerStopped)) {
-
-    auto &stoppedCmd = dynamic_cast<PlayerStoppedDTO &>(*clientMessage);
-    uint32_t playerID = stoppedCmd.getPlayerID();
-
-    auto it = players.find(playerID);
-    if (it == players.end())
-      return;
-
-    PlayerInfo &player = it->second;
-    player.moving = false;
-    messagesToSend.push_back(std::make_unique<PlayerStoppedDTO>(stoppedCmd));
-  }
-}
 
 void Game::sendMessages() {
   if (messagesToSend.empty())
@@ -114,8 +64,52 @@ void Game::movePlayers() {
     std::cout << "player: " << playerID << "moved to x: " << info.x
               << " y: " << info.y << std::endl;
 
-    messagesToSend.push_back(std::make_unique<PlayerMovedEventDTO>(
-        playerID, static_cast<int16_t>(info.x), static_cast<int16_t>(info.y),
-        info.direction));
+    messagesToSend.push_back(
+        PlayerMovedEventDTO{playerID, static_cast<int16_t>(info.x),
+                            static_cast<int16_t>(info.y), info.direction});
   }
+}
+
+void Game::registerPlayer() {
+  uint32_t newId = nextPlayerId++;
+
+  players[newId] = PlayerInfo{0, 0, Direction::Down};
+
+  messagesToSend.push_back(RegisterPlayerEventDTO{newId, 0});
+
+  std::vector<PlayerInfoDTO> playerList;
+
+  for (auto &[pid, info] : players) {
+    playerList.push_back({pid, static_cast<int16_t>(info.x),
+                          static_cast<int16_t>(info.y), info.direction});
+  }
+
+  messagesToSend.push_back(PlayerListEventDTO{std::move(playerList)});
+
+  messagesToSend.push_back(
+      PlayerAppearedEventDTO{newId, 0, 0, Direction::Down});
+}
+
+void Game::movePlayer(uint32_t playerId, Direction direction) {
+  auto it = players.find(playerId);
+
+  if (it == players.end()) {
+    return;
+  }
+
+  PlayerInfo &player = it->second;
+
+  player.direction = direction;
+
+  player.moving = true;
+}
+
+void Game::stopPlayer(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end()) {
+    return;
+  }
+  PlayerInfo &player = it->second;
+  player.moving = false;
+  messagesToSend.push_back(PlayerStoppedEventDTO{playerId});
 }
