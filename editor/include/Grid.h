@@ -5,6 +5,7 @@
 #include <array>
 #include <list>
 #include <map>
+#include <set>
 #include <tuple>
 #include <SDL2pp/SDL2pp.hh>
 #include "Camera.h"
@@ -50,7 +51,7 @@ private:
 
     std::list<TileOrigin> txtOrigins;
 
-    std::list<std::tuple<int, int>> collidableCells;
+    std::set<std::tuple<int, int>> collidableCells;
 
     std::vector<
         std::map<std::pair<int,int>, std::vector<GridItem>>
@@ -70,6 +71,7 @@ public:
 
     void render(SDL2pp::Renderer &renderer, TextureMap &textureMap);
 
+
     void setMousePosition(int x, int y);
 
     void saveMap(GridSDL& gridSDL);
@@ -77,6 +79,10 @@ public:
 
 private:
     bool thereAreAssignedTextures(TextureMap &textureMap, int texture_id);
+
+    void renderCollidableCells(SDL2pp::Renderer& renderer);
+
+    float getAlphaChannelWeight(SDL2pp::Surface &surface, SDL2pp::Rect region);
 
     void renderHover(SDL2pp::Renderer &renderer);
     void renderCommonGround(SDL2pp::Renderer &renderer, TextureMap &textureMap);

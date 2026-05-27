@@ -6,6 +6,8 @@
 #include <tuple>
 #include <map>
 #include <list>
+#include <set>
+
 class GridSDL;
 
 struct TileOrigin;
@@ -23,7 +25,7 @@ public:
     void saveMap(
         GridSDL& gridSDL,
         std::list<TileOrigin>& txtOrigins,
-        std::list<std::tuple<int, int>>& collidableCells
+        std::set<std::tuple<int, int>>& collidableCells
     ); 
 
 };

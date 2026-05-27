@@ -14,6 +14,7 @@
 struct TextureInMap {
     TextureData data;
     SDL2pp::Texture txt;
+    SDL2pp::Surface surface;
 };
 
 
