@@ -51,7 +51,7 @@ private:
 
     std::list<TileOrigin> txtOrigins;
 
-    std::set<std::tuple<int, int>> collidableCells;
+    std::set<std::tuple<int, int, int>> collidableCells;
 
     std::vector<
         std::map<std::pair<int,int>, std::vector<GridItem>>
