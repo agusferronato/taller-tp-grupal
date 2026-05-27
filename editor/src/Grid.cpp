@@ -69,7 +69,7 @@ void Grid::setGridTexture(TextureMap& textureMap, int texture_id)
             };
 
             if (j >= item_hover_j + offset && getAlphaChannelWeight(txtInMap.surface, rect) > 0.15) {
-                collidableCells.insert({i, j});
+                collidableCells.insert({i, j, txtInMap.data.priority});
             }
             
             max_col = i;
@@ -99,7 +99,7 @@ bool Grid::thereAreAssignedTextures(TextureMap& textureMap, int texture_id) {
 
         for (int i = item_hover_i; i < item_hover_i + columns; i++) {
 
-            if (collidableCells.find({i, j}) != collidableCells.end())
+            if (collidableCells.find({i, j, txtInMap.data.priority}) != collidableCells.end())
                 return true;
 
         }
@@ -178,7 +178,7 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap& textureMap)
 
 void Grid::renderCollidableCells(SDL2pp::Renderer& renderer) {
 
-    for (auto& [i, j] : collidableCells) {
+    for (auto& [i, j, _] : collidableCells) {
 
         SDL2pp::Rect dstRect = camera.toScreen(
             (i - MAX_SIZE / 2) * GRID_SIZE_PX, 

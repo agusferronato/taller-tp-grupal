@@ -11,7 +11,7 @@ MapDownloader::MapDownloader(const std::string &path) : path(path) { }
 void MapDownloader::saveMap(
     GridSDL& gridSDL,
     std::list<TileOrigin>& txtOrigins,
-    std::set<std::tuple<int, int>>& collidableCells) {
+    std::set<std::tuple<int, int, int>>& collidableCells) {
 
     toml::table tbl;
 
@@ -34,7 +34,7 @@ void MapDownloader::saveMap(
 
     toml::array coll_arr;
     for (auto& cell : collidableCells) {
-        auto [i, j] = cell;
+        auto [i, j, _] = cell;
         toml::table cell_tbl;
         cell_tbl.emplace("i", i);
         cell_tbl.emplace("j", j);

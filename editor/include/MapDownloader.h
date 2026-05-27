@@ -25,7 +25,7 @@ public:
     void saveMap(
         GridSDL& gridSDL,
         std::list<TileOrigin>& txtOrigins,
-        std::set<std::tuple<int, int>>& collidableCells
+        std::set<std::tuple<int, int, int>>& collidableCells
     ); 
 
 };
