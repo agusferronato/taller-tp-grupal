@@ -139,6 +139,8 @@ if(TALLER_CLIENT)
 
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/client/assets
         DESTINATION ${CMAKE_BINARY_DIR})
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/editor/assets
+        DESTINATION ${CMAKE_BINARY_DIR})
 endif()
 
 if(TALLER_SERVER)

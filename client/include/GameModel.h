@@ -36,6 +36,7 @@ private:
   void playerAppeared(const ServerEventDTO &event);
   void playerMovedHandler(const ServerEventDTO &event);
   void playerStopped(const ServerEventDTO &event);
+  void handleTextureInfo(const ServerEventDTO &event);
 };
 
 #endif
