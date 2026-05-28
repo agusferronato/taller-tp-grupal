@@ -7,7 +7,7 @@ void Server::run() {
 
   Queue<ClientCommandDTO> gameloopQueue(GAMELOOP_QUEUE_SIZE);
   SenderQueueMonitor senderQueueMonitor;
-  PlayerRepository repository("data");
+  PlayerRepository repository(DATA_DIR);
 
   Acceptor acceptor(socket, gameloopQueue, senderQueueMonitor);
   acceptor.start();

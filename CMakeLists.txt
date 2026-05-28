@@ -147,6 +147,11 @@ if(TALLER_SERVER)
     set_project_warnings(taller_server_lib ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
     set_project_warnings(taller_server ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
 
+    target_compile_definitions(taller_server_lib PRIVATE
+        DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data")
+    target_compile_definitions(taller_server PRIVATE
+        DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data")
+
     target_link_libraries(taller_server_lib taller_common)
     target_link_libraries(taller_server taller_server_lib)
 endif()
