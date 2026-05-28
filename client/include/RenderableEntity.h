@@ -19,12 +19,18 @@ public:
 
     virtual int get_x() = 0;
     virtual int get_y() = 0;
+    virtual int get_h() = 0;
 
     virtual bool rendered() = 0;
 
     inline bool hasPriority(int priority) {
         return this->priority == priority;
     };
+
+    inline void clear() {
+        wasRendered = false;        
+    };
+
 
     virtual ~RenderableEntity() = default;
 };

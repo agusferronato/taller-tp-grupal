@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "MapLoader.h"
 #include "MoveCommandDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerListEventDTO.h"
@@ -6,6 +7,7 @@
 #include "PlayerStoppedEventDTO.h"
 #include "RegisterPlayerCommandDTO.h"
 #include "RegisterPlayerEventDTO.h"
+#include "TextureInfoEventDTO.h"
 #include "command/CommandFactory.h"
 
 Game::Game(Queue<ClientMessage> &gameloopQueue,
@@ -13,15 +15,11 @@ Game::Game(Queue<ClientMessage> &gameloopQueue,
     : gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor) {}
 
 void Game::run() {
-
-  /*
-
-  Cargar archivo mapa
-
-  std::list<tuple<int, int>> collidableCells = mapLoader.GetCollidableCells();
-  std::list<TileOrigin> = mapLoader.GetTextures();
-
-  */
+  MapLoader mapLoader("map.toml");
+  maxSize = mapLoader.GetMaxSize();
+  gridSize = mapLoader.GetGridSize();
+  commonGroundTextureId = mapLoader.GetCommonGroundTextureId();
+  textureOrigins = mapLoader.GetTextureOrigins();
 
   ConstantRateLoop rateloop(FPS_SERVER);
   CommandFactory factory;
@@ -82,6 +80,24 @@ void Game::registerPlayer(uint32_t connectionId) {
 
   senderQueueMonitor.sendToClient(connectionId,
                                   RegisterPlayerEventDTO{connectionId, 0});
+
+  {
+    std::vector<TextureOriginDTO> origins;
+    origins.reserve(textureOrigins.size());
+    for (const auto &o : textureOrigins) {
+      origins.push_back(
+          {static_cast<uint8_t>(o.priority),
+           static_cast<uint8_t>(o.texture_id),
+           static_cast<uint16_t>(o.x),
+           static_cast<uint16_t>(o.y)});
+    }
+    senderQueueMonitor.sendToClient(
+        connectionId,
+        TextureInfoEventDTO{static_cast<uint16_t>(maxSize),
+                            static_cast<uint16_t>(gridSize),
+                            static_cast<uint8_t>(commonGroundTextureId),
+                            std::move(origins)});
+  }
 
   std::vector<PlayerInfoDTO> playerList;
 

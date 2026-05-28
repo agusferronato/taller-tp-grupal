@@ -14,6 +14,7 @@
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "Direction.h"
+#include "MapData.h"
 #include "Queue.h"
 #include "SenderQueueMonitor.h"
 #include "Thread.h"
@@ -33,6 +34,11 @@ private:
   std::list<ServerEventDTO> messagesToSend;
   bool keepRunning = true;
   std::unordered_map<uint32_t, PlayerInfo> players;
+
+  int maxSize;
+  int gridSize;
+  int commonGroundTextureId;
+  std::list<TileOrigin> textureOrigins;
 
 public:
   Game(Queue<ClientMessage> &gameloopQueue,
