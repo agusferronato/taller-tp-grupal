@@ -48,6 +48,10 @@ TEST(PersistenceTest, LoadAfterCreate) {
   data.maxMana = 80;
   data.experience = 1500;
   data.gold = 300;
+  data.strength = 18;
+  data.agility = 15;
+  data.constitution = 20;
+  data.intelligence = 12;
 
   repo.create(data);
 
@@ -65,6 +69,10 @@ TEST(PersistenceTest, LoadAfterCreate) {
   EXPECT_EQ(loaded.maxMana, 80u);
   EXPECT_EQ(loaded.experience, 1500u);
   EXPECT_EQ(loaded.gold, 300u);
+  EXPECT_EQ(loaded.strength, 18u);
+  EXPECT_EQ(loaded.agility, 15u);
+  EXPECT_EQ(loaded.constitution, 20u);
+  EXPECT_EQ(loaded.intelligence, 12u);
 }
 
 TEST(PersistenceTest, SaveUpdatesExisting) {
@@ -125,6 +133,10 @@ TEST(PersistenceTest, PlayerDataToFromRoundTrip) {
   player.maxMana = 60;
   player.experience = 500;
   player.gold = 200;
+  player.strength = 18;
+  player.agility = 15;
+  player.constitution = 20;
+  player.intelligence = 12;
 
   auto data = player.toPlayerData();
   PlayerInfo restored(0, 0, 0, Direction::Down);
@@ -144,6 +156,10 @@ TEST(PersistenceTest, PlayerDataToFromRoundTrip) {
   EXPECT_EQ(restored.maxMana, 60);
   EXPECT_EQ(restored.experience, 500);
   EXPECT_EQ(restored.gold, 200);
+  EXPECT_EQ(restored.strength, 18);
+  EXPECT_EQ(restored.agility, 15);
+  EXPECT_EQ(restored.constitution, 20);
+  EXPECT_EQ(restored.intelligence, 12);
 }
 
 TEST(PersistenceTest, DataSurvivesRepoRecreation) {

@@ -109,7 +109,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerCommand) {
   registerAllParsers(client);
   registerAllParsers(server);
 
-  ClientCommandDTO original = RegisterPlayerCommandDTO{"L0rd", "elfo"};
+  ClientCommandDTO original = RegisterPlayerCommandDTO{"L0rd", "elfo", "Mago"};
 
   client.sendCommand(original);
 
@@ -119,6 +119,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerCommand) {
   ASSERT_NE(dto, nullptr);
   EXPECT_EQ(dto->name, "L0rd");
   EXPECT_EQ(dto->race, "elfo");
+  EXPECT_EQ(dto->playerClass, "Mago");
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesLoginPlayerCommand) {
@@ -354,9 +355,12 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
   registerAllParsers(client);
 
   std::vector<PlayerInfoDTO> players = {
-      {1, 100, 200, Direction::Down, "humano"},
-      {2, 300, 400, Direction::Up, "elfo"},
-      {3, 500, 600, Direction::Left, "enano"},
+      {1,    100,  200,  Direction::Down, "humano", "jug1", 100, 100, 50,
+       100,  500,  5,    2000},
+      {2,    300,  400,  Direction::Up,   "elfo",   "jug2", 80,  80,  100,
+       150,  300,  3,    800},
+      {3,    500,  600,  Direction::Left, "enano",  "jug3", 120, 120, 0,
+       0,    1000, 8,    7000},
   };
 
   ServerEventDTO original = PlayerListEventDTO{players};

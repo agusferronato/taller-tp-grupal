@@ -1,6 +1,8 @@
 #include "GameModel.h"
 #include "GameWindow.h"
+#include "InventoryUpdateEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
+#include "PlayerInfoEventDTO.h"
 #include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "PlayerRemovedEventDTO.h"
@@ -45,6 +47,14 @@ void GameModel::updateStateFromServer() {
 
     case EventOpcode::PlayerRemovedEvent:
       playerRemoved(event);
+      break;
+
+    case EventOpcode::PlayerInfoEvent:
+      playerInfoUpdated(event);
+      break;
+
+    case EventOpcode::InventoryUpdateEvent:
+      playerInventoryUpdated(event);
       break;
 
     default:
@@ -99,15 +109,28 @@ void GameModel::playerAppeared(const ServerEventDTO &event) {
 
   uint32_t pid = appeared->playerId;
 
+  auto applyStats = [&](Player *p) {
+    p->setName(appeared->playerName);
+    p->setHp(appeared->hp);
+    p->setMaxHp(appeared->maxHp);
+    p->setMana(appeared->mana);
+    p->setMaxMana(appeared->maxMana);
+    p->setGold(appeared->gold);
+    p->setLevel(appeared->level);
+    p->setExperience(appeared->experience);
+  };
+
   if (pid == myPlayerID) {
     players[pid]->setCoordinates(appeared->x, appeared->y);
     players[pid]->setRace(appeared->race);
+    applyStats(players[pid].get());
     gameView->addPlayer(pid, players[pid].get());
     return;
   }
 
   auto player = std::make_unique<Player>(pid, appeared->x, appeared->y);
   player->setRace(appeared->race);
+  applyStats(player.get());
   players[pid] = std::move(player);
   gameView->addPlayer(pid, players[pid].get());
 }
@@ -118,6 +141,24 @@ void GameModel::playerRemoved(const ServerEventDTO &event) {
     return;
   }
   players.erase(removed->playerId);
+}
+
+void GameModel::playerInfoUpdated(const ServerEventDTO &event) {
+  const auto *info = std::get_if<PlayerInfoEventDTO>(&event);
+  if (!info) {
+    return;
+  }
+  auto it = players.find(info->playerId);
+  if (it == players.end()) {
+    return;
+  }
+  it->second->setHp(info->hp);
+  it->second->setMaxHp(info->maxHp);
+  it->second->setMana(info->mana);
+  it->second->setMaxMana(info->maxMana);
+  it->second->setGold(info->gold);
+  it->second->setLevel(info->level);
+  it->second->setExperience(info->experience);
 }
 
 void GameModel::registerPlayers() {
@@ -133,8 +174,32 @@ void GameModel::registerPlayers() {
       }
       auto player = std::make_unique<Player>(info.playerId, info.x, info.y);
       player->setRace(info.race);
+      player->setName(info.playerName);
+      player->setHp(info.hp);
+      player->setMaxHp(info.maxHp);
+      player->setMana(info.mana);
+      player->setMaxMana(info.maxMana);
+      player->setGold(info.gold);
+      player->setLevel(info.level);
+      player->setExperience(info.experience);
       players[info.playerId] = std::move(player);
       gameView->addPlayer(info.playerId, players[info.playerId].get());
     }
   }
+}
+
+void GameModel::playerInventoryUpdated(const ServerEventDTO &event) {
+  const auto *inv = std::get_if<InventoryUpdateEventDTO>(&event);
+  if (!inv)
+    return;
+  if (inv->playerId != myPlayerID)
+    return;
+  auto it = players.find(inv->playerId);
+  if (it == players.end())
+    return;
+  it->second->setInventory(inv->items);
+  it->second->setEquippedWeapon(inv->equippedWeapon);
+  it->second->setEquippedArmor(inv->equippedArmor);
+  it->second->setEquippedHelmet(inv->equippedHelmet);
+  it->second->setEquippedShield(inv->equippedShield);
 }
