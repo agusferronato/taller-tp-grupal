@@ -16,6 +16,8 @@
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "Direction.h"
+#include "Inventory.h"
+#include "ItemDef.h"
 #include "PlayerData.h"
 #include "PlayerRepository.h"
 #include "Queue.h"
@@ -41,6 +43,11 @@ public:
   uint32_t mana{0}, maxMana{0};
   uint32_t experience{0};
   uint32_t gold{0};
+  uint32_t strength{};
+  uint32_t agility{};
+  uint32_t constitution{};
+  uint32_t intelligence{};
+  Inventory inventory;
 
   PlayerInfo(uint32_t id, int x, int y, Direction dir);
 
@@ -80,11 +87,15 @@ public:
   Game(const Game &) = delete;
   Game &operator=(const Game &) = delete;
 
-  void registerPlayer(const std::string &name, const std::string &race);
+  void registerPlayer(const std::string &name, const std::string &race, const std::string &playerClass);
   void loginPlayer(const std::string &name);
   void movePlayer(uint32_t playerId, Direction direction);
   void stopPlayer(uint32_t playerId);
   void exitPlayer(uint32_t playerId);
+  void equipItem(uint32_t playerId, uint8_t inventorySlot);
+  void unequipSlot(uint32_t playerId, uint8_t equipSlot);
+  void dropItem(uint32_t playerId, uint8_t inventorySlot);
+  void takeItem(uint32_t playerId);
 
 private:
   void execute(ClientCommandDTO clientMessage);

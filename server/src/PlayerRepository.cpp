@@ -35,6 +35,20 @@ static void writeData(std::ostream &file, const PlayerData &data) {
   file.write(reinterpret_cast<const char *>(&data.maxMana), sizeof(data.maxMana));
   file.write(reinterpret_cast<const char *>(&data.experience), sizeof(data.experience));
   file.write(reinterpret_cast<const char *>(&data.gold), sizeof(data.gold));
+  file.write(reinterpret_cast<const char *>(&data.strength), sizeof(data.strength));
+  file.write(reinterpret_cast<const char *>(&data.agility), sizeof(data.agility));
+  file.write(reinterpret_cast<const char *>(&data.constitution), sizeof(data.constitution));
+  file.write(reinterpret_cast<const char *>(&data.intelligence), sizeof(data.intelligence));
+  file.write(reinterpret_cast<const char *>(data.inventory.data()),
+             data.inventory.size());
+  file.write(reinterpret_cast<const char *>(&data.equippedWeapon),
+             sizeof(data.equippedWeapon));
+  file.write(reinterpret_cast<const char *>(&data.equippedArmor),
+             sizeof(data.equippedArmor));
+  file.write(reinterpret_cast<const char *>(&data.equippedHelmet),
+             sizeof(data.equippedHelmet));
+  file.write(reinterpret_cast<const char *>(&data.equippedShield),
+             sizeof(data.equippedShield));
 }
 
 static void readData(std::ifstream &file, PlayerData &data) {
@@ -58,6 +72,20 @@ static void readData(std::ifstream &file, PlayerData &data) {
   file.read(reinterpret_cast<char *>(&data.maxMana), sizeof(data.maxMana));
   file.read(reinterpret_cast<char *>(&data.experience), sizeof(data.experience));
   file.read(reinterpret_cast<char *>(&data.gold), sizeof(data.gold));
+  file.read(reinterpret_cast<char *>(&data.strength), sizeof(data.strength));
+  file.read(reinterpret_cast<char *>(&data.agility), sizeof(data.agility));
+  file.read(reinterpret_cast<char *>(&data.constitution), sizeof(data.constitution));
+  file.read(reinterpret_cast<char *>(&data.intelligence), sizeof(data.intelligence));
+  file.read(reinterpret_cast<char *>(data.inventory.data()),
+           data.inventory.size() * sizeof(uint8_t));
+  file.read(reinterpret_cast<char *>(&data.equippedWeapon),
+            sizeof(data.equippedWeapon));
+  file.read(reinterpret_cast<char *>(&data.equippedArmor),
+            sizeof(data.equippedArmor));
+  file.read(reinterpret_cast<char *>(&data.equippedHelmet),
+            sizeof(data.equippedHelmet));
+  file.read(reinterpret_cast<char *>(&data.equippedShield),
+            sizeof(data.equippedShield));
 }
 
 PlayerRepository::PlayerRepository(const std::string &dataDir)

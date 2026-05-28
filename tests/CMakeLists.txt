@@ -5,4 +5,5 @@ target_sources(taller_tests
         protocol_tests.cpp
         collision_tests.cpp
         persistence_tests.cpp
+        formulas_tests.cpp
 )

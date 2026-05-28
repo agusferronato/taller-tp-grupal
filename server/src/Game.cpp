@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cctype>
 
 #include "Game.h"
 #include "MoveCommandDTO.h"
@@ -9,8 +10,10 @@
 #include "PlayerStopCommandDTO.h"
 #include "PlayerStoppedEventDTO.h"
 #include "RegisterPlayerCommandDTO.h"
+#include "PlayerInfoEventDTO.h"
 #include "RegisterPlayerEventDTO.h"
 #include "command/CommandFactory.h"
+#include "Formulas.h"
 
 PlayerInfo::PlayerInfo(uint32_t id, int x, int y, Direction dir)
     : id(id), x(x), y(y), direction(dir) {}
@@ -31,6 +34,15 @@ PlayerData PlayerInfo::toPlayerData() const {
   data.maxMana = maxMana;
   data.experience = experience;
   data.gold = gold;
+  data.strength = strength;
+  data.agility = agility;
+  data.constitution = constitution;
+  data.intelligence = intelligence;
+  data.inventory = inventory.getItems();
+  data.equippedWeapon = inventory.getWeapon();
+  data.equippedArmor = inventory.getArmor();
+  data.equippedHelmet = inventory.getHelmet();
+  data.equippedShield = inventory.getShield();
   return data;
 }
 
@@ -49,6 +61,52 @@ void PlayerInfo::fromPlayerData(const PlayerData &data) {
   maxMana = data.maxMana;
   experience = data.experience;
   gold = data.gold;
+  strength = data.strength;
+  agility = data.agility;
+  constitution = data.constitution;
+  intelligence = data.intelligence;
+  inventory.setItems(data.inventory);
+  inventory.setWeapon(data.equippedWeapon);
+  inventory.setArmor(data.equippedArmor);
+  inventory.setHelmet(data.equippedHelmet);
+  inventory.setShield(data.equippedShield);
+}
+
+static std::string lowercase(const std::string &s) {
+  std::string r = s;
+  for (auto &c : r)
+    c = std::tolower(static_cast<unsigned char>(c));
+  return r;
+}
+
+static void initPlayerStats(PlayerInfo &player, const std::string &race,
+                             const std::string &playerClass) {
+  struct BaseStats {
+    uint32_t strength, agility, constitution, intelligence;
+  };
+
+  auto getRaceStats = [](const std::string &r) -> BaseStats {
+    std::string lr = lowercase(r);
+    if (lr == "elfo")   return {6, 13, 5, 16};
+    if (lr == "enano")  return {13, 4, 16, 7};
+    if (lr == "gnomo")  return {7, 6, 14, 13};
+    return {10, 10, 10, 10};
+  };
+
+  auto getClassStats = [](const std::string &c) -> BaseStats {
+    std::string lc = lowercase(c);
+    if (lc == "mago")     return {3, 5, 5, 15};
+    if (lc == "clerigo")  return {7, 7, 9, 10};
+    if (lc == "paladin")  return {10, 6, 10, 8};
+    return {10, 8, 10, 3};
+  };
+
+  auto raceStats = getRaceStats(race);
+  auto classStats = getClassStats(playerClass);
+  player.strength = raceStats.strength + classStats.strength;
+  player.agility = raceStats.agility + classStats.agility;
+  player.constitution = raceStats.constitution + classStats.constitution;
+  player.intelligence = raceStats.intelligence + classStats.intelligence;
 }
 
 bool PlayerInfo::colisionaCon(int targetX, int targetY, int ancho,
@@ -95,6 +153,14 @@ void Game::run() {
       saveCounter = 0;
     }
 
+    if (it % 60 == 0) {
+      for (auto &[pid, p] : players) {
+        messagesToSend.push_back(
+            PlayerInfoEventDTO{pid, p->hp, p->maxHp, p->mana, p->maxMana,
+                               p->gold, p->level, p->experience});
+      }
+    }
+
     rateloop.updateTimer(it);
   }
 
@@ -103,7 +169,7 @@ void Game::run() {
 
 void Game::kill() { keepRunning = false; }
 
-void Game::registerPlayer(const std::string &name, const std::string &race) {
+void Game::registerPlayer(const std::string &name, const std::string &race, const std::string &playerClass) {
 
   if (repository.exists(name)) {
     messagesToSend.push_back(RegisterPlayerEventDTO{0, 1});
@@ -119,6 +185,16 @@ void Game::registerPlayer(const std::string &name, const std::string &race) {
       std::make_unique<PlayerInfo>(newId, spawnX, spawnY, Direction::Down);
   player->name = name;
   player->race = race;
+  player->playerClass = playerClass;
+
+  initPlayerStats(*player, race, playerClass);
+
+  player->maxHp = Formulas::calcularVidaMax(player->constitution, race,
+                                             playerClass, player->level);
+  player->hp = player->maxHp;
+  player->maxMana = Formulas::calcularManaMax(player->intelligence, race,
+                                               playerClass, player->level);
+  player->mana = player->maxMana;
 
   repository.create(player->toPlayerData());
 
@@ -131,7 +207,9 @@ void Game::registerPlayer(const std::string &name, const std::string &race) {
   for (auto &[pid, info] : players) {
     playerList.push_back({pid, static_cast<int16_t>(info->x),
                           static_cast<int16_t>(info->y), info->direction,
-                          info->race});
+                          info->race, info->name, info->hp, info->maxHp,
+                          info->mana, info->maxMana, info->gold, info->level,
+                          info->experience});
   }
 
   messagesToSend.push_back(PlayerListEventDTO{std::move(playerList)});
@@ -139,7 +217,11 @@ void Game::registerPlayer(const std::string &name, const std::string &race) {
   messagesToSend.push_back(
       PlayerAppearedEventDTO{newId, static_cast<int16_t>(spawnX),
                              static_cast<int16_t>(spawnY), Direction::Down,
-                             race});
+                             race, name, players[newId]->hp,
+                             players[newId]->maxHp, players[newId]->mana,
+                             players[newId]->maxMana, players[newId]->gold,
+                             players[newId]->level,
+                             players[newId]->experience});
 }
 
 void Game::loginPlayer(const std::string &name) {
@@ -175,7 +257,9 @@ void Game::loginPlayer(const std::string &name) {
   for (auto &[pid, info] : players) {
     playerList.push_back({pid, static_cast<int16_t>(info->x),
                           static_cast<int16_t>(info->y), info->direction,
-                          info->race});
+                          info->race, info->name, info->hp, info->maxHp,
+                          info->mana, info->maxMana, info->gold, info->level,
+                          info->experience});
   }
   messagesToSend.push_back(PlayerListEventDTO{std::move(playerList)});
 
@@ -183,7 +267,11 @@ void Game::loginPlayer(const std::string &name) {
       PlayerAppearedEventDTO{newId, static_cast<int16_t>(data.x),
                              static_cast<int16_t>(data.y),
                              static_cast<Direction>(data.direction),
-                             players[newId]->race});
+                             players[newId]->race, players[newId]->name,
+                             players[newId]->hp, players[newId]->maxHp,
+                             players[newId]->mana, players[newId]->maxMana,
+                             players[newId]->gold, players[newId]->level,
+                             players[newId]->experience});
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {
@@ -257,6 +345,33 @@ void Game::exitPlayer(uint32_t playerId) {
   messagesToSend.push_back(PlayerRemovedEventDTO{playerId});
 
   players.erase(it);
+}
+
+void Game::equipItem(uint32_t playerId, uint8_t inventorySlot) {
+  auto it = players.find(playerId);
+  if (it == players.end())
+    return;
+  it->second->inventory.equipItem(inventorySlot);
+}
+
+void Game::unequipSlot(uint32_t playerId, uint8_t equipSlot) {
+  auto it = players.find(playerId);
+  if (it == players.end())
+    return;
+  it->second->inventory.unequipSlot(static_cast<EquipSlot>(equipSlot));
+}
+
+void Game::dropItem(uint32_t playerId, uint8_t inventorySlot) {
+  auto it = players.find(playerId);
+  if (it == players.end())
+    return;
+  it->second->inventory.removeItem(inventorySlot);
+}
+
+void Game::takeItem(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end())
+    return;
 }
 
 void Game::movePlayers() {

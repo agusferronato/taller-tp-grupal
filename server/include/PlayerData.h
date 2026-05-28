@@ -1,9 +1,12 @@
 #ifndef PLAYER_DATA_H
 #define PLAYER_DATA_H
 
+#include <array>
 #include <cstdint>
 #include <cstring>
 #include <string>
+
+#include "ItemDef.h"
 
 #define PLAYER_NAME_MAX 32
 #define PLAYER_PASS_MAX 32
@@ -22,6 +25,15 @@ struct PlayerData {
   uint32_t mana, maxMana;
   uint32_t experience;
   uint32_t gold;
+  uint32_t strength;
+  uint32_t agility;
+  uint32_t constitution;
+  uint32_t intelligence;
+  std::array<uint8_t, MAX_INVENTORY_SLOTS> inventory{};
+  uint8_t equippedWeapon{0};
+  uint8_t equippedArmor{0};
+  uint8_t equippedHelmet{0};
+  uint8_t equippedShield{0};
 
   void setName(const std::string &s) { std::strncpy(name, s.c_str(), PLAYER_NAME_MAX - 1); name[PLAYER_NAME_MAX - 1] = '\0'; }
   void setPassword(const std::string &s) { std::strncpy(password, s.c_str(), PLAYER_PASS_MAX - 1); password[PLAYER_PASS_MAX - 1] = '\0'; }

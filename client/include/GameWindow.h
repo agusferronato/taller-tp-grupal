@@ -24,6 +24,7 @@ private:
   std::unique_ptr<SDL2pp::Renderer> renderer;
   std::unique_ptr<SDL2pp::Texture> backgroundTexture;
   std::unique_ptr<SDL2pp::Texture> defaultPlayerTexture;
+  std::unique_ptr<SDL2pp::Font> font;
 
   Camera camera;
   SpriteFrameCalculator spriteFrameCalculator;
@@ -34,6 +35,8 @@ private:
   static SpriteFrame headFrameForDirection(Direction dir);
   static int headCenteringOffset(Direction dir);
   std::string headPathForRace(const std::string &race) const;
+
+  void renderHUD();
 
 public:
   explicit GameWindow(uint32_t myPlayerID);

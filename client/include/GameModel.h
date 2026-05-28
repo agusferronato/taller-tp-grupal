@@ -38,6 +38,8 @@ private:
   void playerMovedHandler(const ServerEventDTO &event);
   void playerStopped(const ServerEventDTO &event);
   void playerRemoved(const ServerEventDTO &event);
+  void playerInfoUpdated(const ServerEventDTO &event);
+  void playerInventoryUpdated(const ServerEventDTO &event);
 };
 
 #endif

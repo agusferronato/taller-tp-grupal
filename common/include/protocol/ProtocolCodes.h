@@ -18,6 +18,10 @@ enum class ClientCommandOpCode : uint8_t {
   MoveCommand,
   ExitCommand,
   PlayerStopCommand,
+  EquipCommand,
+  UnequipCommand,
+  DropItemCommand,
+  TakeItemCommand,
 };
 
 // Opcodes para eventos enviados por el servidor a los clientes
@@ -32,6 +36,7 @@ enum class EventOpcode : uint8_t {
   PlayerAppearedEvent,
   PlayerStoppedEvent,
   PlayerRemovedEvent,
+  InventoryUpdateEvent,
 };
 
 #endif // PROTOCOL_CODES_H

@@ -138,7 +138,7 @@ CharacterCreationPage::CharacterCreationPage(QWidget *parent)
   panelLayout->addLayout(formLayout);
 
   classCombo = new QComboBox(this);
-  classCombo->addItems({"Guerrero", "Mago", "Arquero", "Paladin"});
+  classCombo->addItems({"Guerrero", "Mago", "Clerigo", "Paladin"});
   classCombo->setObjectName("classCombo");
   classCombo->setStyleSheet(
       "QComboBox {"
