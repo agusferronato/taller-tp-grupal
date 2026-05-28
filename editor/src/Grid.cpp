@@ -21,7 +21,7 @@ void Grid::setGridTexture(TextureMap& textureMap, int texture_id)
     SDL2pp::Texture& txt = txtInMap.txt;
 
 
-    int rows = std::ceil((float)txt.GetHeight() / GRID_SIZE_PX);
+    int rows = std::ceil((float)txt.GetHeight() / GRID_SIZE_PX); 
     int columns = std::ceil((float)txt.GetWidth() / GRID_SIZE_PX);
 
     int spare_y = txt.GetHeight();   
@@ -149,6 +149,26 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap& textureMap)
     for (auto& priority : tilesToRender) {
 
         for (auto& [_, items] : priority) {
+
+            /*
+
+            PSEUDO CODIGO - ENTIDADES
+
+            Si la entidad antecede al y maximo de representacion del item a renderizar, se renderiza antes.
+
+            int max_row = pair[0];
+            int y_max = (max_row - MAX_SIZE / 2 + 1) * GRID_SIZE_PX;
+
+            for (auto& entity : entities) {
+
+                if (!entity.rendered() && entity.y + entity.h < y_max && entity.hasPriority(priority)) {
+                    entity.draw();
+                }
+            
+            }
+            */
+
+
             for (auto& item : items) {
 
                 SDL2pp::Rect dstRect = camera.toScreen(
@@ -168,6 +188,18 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap& textureMap)
                 renderer.Copy(textureMap.getTexture(item.texture_id).txt, srcRect, dstRect);
             }
         }
+
+        /*
+
+        PSEUDO CODIGO - ENTIDADES
+
+        for (auto& entity : entities) {
+            if (!entity.rendered() && entity.hasPriority(priority)) {
+                entity.draw();
+            }
+        }
+        */
+
     }
 
     renderCollidableCells(renderer);

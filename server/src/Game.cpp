@@ -14,6 +14,15 @@ Game::Game(Queue<ClientCommandDTO> &gameloopQueue,
 
 void Game::run() {
 
+  /*
+  
+  Cargar archivo mapa
+
+  std::list<tuple<int, int>> collidableCells = mapLoader.GetCollidableCells();
+  std::list<TileOrigin> = mapLoader.GetTextures();
+  
+  */
+
   ConstantRateLoop rateloop(FPS_SERVER);
   CommandFactory factory;
   unsigned int it = 0;
