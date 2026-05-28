@@ -2,10 +2,15 @@
 #define PLAYER_H
 
 #include "Direction.h"
+#include "RenderableEntity.h"
+#include "Camera.h"
 #include <cstdint>
 #include <memory>
+#include <SpriteCalculator.h>
+#include <SDL2pp/SDL2pp.hh>
 
-class Player {
+
+class Player : public RenderableEntity {
 
 private:
   uint32_t id;
@@ -23,12 +28,22 @@ public:
   void updateCoordinates(int x, int y, Direction direction);
   void stopMoving();
 
+
+  /* View */
+
+  void render(SDL2pp::Renderer& renderer, Camera& camera, unsigned int it) override;
+
+  int get_x() override;
+  int get_y() override;
+
+  bool rendered() override;
+
+
   /* View, tiene que ser const el metodo, nunca pasar una referncia solo por
    * copia */
   bool getIsMoving() const { return isMoving; }
   Direction getDirection() const { return direction; }
-  int getX() const { return x; }
-  int getY() const { return y; }
+  
 };
 
 #endif

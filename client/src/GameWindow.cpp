@@ -34,7 +34,6 @@ void GameWindow::initResources() {
       *renderer, SDL2pp::Surface("assets/10119.png"));
   defaultPlayerTexture = loadPlayerTexture(*renderer, "assets/11402.png");
 
-    
   /*
   
   Texture Mapper toma las texturas del TOML y las carga en memoria
@@ -45,7 +44,6 @@ void GameWindow::initResources() {
   > tilesToRender = maper.GetTexturesMapToRender();
 
   */
-
 
 }
 
@@ -60,25 +58,27 @@ void GameWindow::show(unsigned int it) {
 }
 
 
-
 void GameWindow::render(unsigned int it) {
 
-  /*
-  render like editor...
+  auto itMy = players.find(myPlayerID);
+  if (itMy == players.end()) {
+    throw std::runtime_error("My player not found in map");
+  }
+
+  Player &myPlayer = *itMy->second;
+  camera.follow(myPlayer.get_x(), myPlayer.get_y(), 32, 32);
 
   renderCommonGround(renderer, textureMap);
 
     for (auto& priority : tilesToRender) {
-        for (auto& [_, items] : priority) {
-
-            Si la entidad antecede al y maximo de representacion del item a renderizar, se renderiza antes.
+        for (auto& [pair, items] : priority) {
 
             int max_row = pair[0];
             int y_max = (max_row - MAX_SIZE / 2 + 1) * GRID_SIZE_PX;
 
             for (auto& entity : entities) {
                 if (!entity.rendered() && entity.y + entity.h < y_max && entity.hasPriority(priority)) {
-                    entity.draw();
+                    entity.render(*renderer, camera, it);
                 }
             }
             for (auto& item : items) {
@@ -95,56 +95,22 @@ void GameWindow::render(unsigned int it) {
                     item.x_end - item.x_start, 
                     item.y_end - item.y_start 
                 };
-                renderer.Copy(textureMap.getTexture(item.texture_id).txt, srcRect, dstRect);
+                renderer->Copy(textureMap.getTexture(item.texture_id).txt, srcRect, dstRect);
             }
         }
 
         for (auto& entity : entities) {
             if (!entity.rendered() && entity.hasPriority(priority)) {
-                entity.draw();
+                entity.render(*renderer, camera, it);
             }
         }
 
     }
-  
-  
-  */
-
-
-
-
-
-  auto itMy = players.find(myPlayerID);
-  if (itMy == players.end()) {
-    throw std::runtime_error("My player not found in map");
-  }
-
-  const Player &myPlayer = *itMy->second;
-  camera.follow(myPlayer.getX(), myPlayer.getY(), 32, 32);
-
-  for (auto &entry : players) {
-    if (entry.second) {
-      renderPlayer(entry.second, it);
-    }
-  }
-
 }
 
 
-
-void GameWindow::addPlayer(uint32_t ID, const Player *player) {
+void GameWindow::addPlayer(uint32_t ID, Player *player) {
   players[ID] = player;
+  entities.push_back(*player);
 }
 
-
-
-void GameWindow::renderPlayer(const Player *player, unsigned int it) {
-  const int animationIt = player->getIsMoving() ? static_cast<int>(it) : 0;
-  SpriteFrame src =
-      spriteFrameCalculator.getSprite(player->getDirection(), animationIt);
-
-  SDL2pp::Rect r = camera.toScreen(player->getX(), player->getY(), 32, 32);
-  renderer->Copy(*defaultPlayerTexture,
-                 SDL2pp::Rect(src.x, src.y, src.w, src.h), r);
-
-}
