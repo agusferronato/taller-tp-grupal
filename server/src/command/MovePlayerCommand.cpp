@@ -5,6 +5,6 @@
 MovePlayerCommand::MovePlayerCommand(uint32_t playerId, Direction direction)
     : playerId(playerId), direction(direction) {}
 
-void MovePlayerCommand::execute(Game &game) {
+void MovePlayerCommand::execute(Game &game, uint32_t) {
   game.movePlayer(playerId, direction);
 }

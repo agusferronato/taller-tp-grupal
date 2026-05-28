@@ -13,7 +13,7 @@ private:
 public:
   explicit PlayerStoppedCommand(uint32_t playerId);
 
-  void execute(Game &game) override;
+  void execute(Game &game, uint32_t connectionId) override;
 };
 
 #endif // PLAYER_STOPPED_COMMAND_H

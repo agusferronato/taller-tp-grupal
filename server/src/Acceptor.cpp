@@ -1,6 +1,6 @@
 #include "Acceptor.h"
 
-Acceptor::Acceptor(Socket &socket, Queue<ClientCommandDTO> &gameloopQueue,
+Acceptor::Acceptor(Socket &socket, Queue<ClientMessage> &gameloopQueue,
                    SenderQueueMonitor &senderQueueMonitor)
     : acceptor(socket), gameloopQueue(gameloopQueue),
       senderQueueMonitor(senderQueueMonitor) {}
@@ -14,8 +14,9 @@ void Acceptor::run() {
     try {
       Socket peer = acceptor.accept();
 
-      ClientConnection *connection = new ClientConnection(
-          std::move(peer), gameloopQueue, senderQueueMonitor);
+      uint32_t clientId = nextClientId++;
+      auto *connection = new ClientConnection(
+          std::move(peer), gameloopQueue, senderQueueMonitor, clientId);
 
       reap(connections);
       connections.push_back(connection);

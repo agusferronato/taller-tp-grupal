@@ -1,6 +1,8 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
+#include <cstdint>
+
 class Game;
 
 /*
@@ -13,7 +15,7 @@ class Game;
 class Command {
 public:
   virtual ~Command() = default;
-  virtual void execute(Game &game) = 0;
+  virtual void execute(Game &game, uint32_t connectionId) = 0;
 };
 
 #endif // COMMAND_H
