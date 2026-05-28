@@ -35,7 +35,7 @@ struct GridItem {
 };
 
 
-struct TileOrigin {
+struct TileOrigin { 
     int priority;
     int texture_id;
     int x;

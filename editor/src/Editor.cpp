@@ -27,7 +27,7 @@ void Editor::initEditor() {
     contentLayout->addWidget(gridSDL, 2);
     contentLayout->addWidget(texturesPanel, 1);
  
-    mainLayout->addLayout(contentLayout, 1);
+    mainLayout->addLayout(contentLayout, 1); 
  
 
     connect(toolBar, &ToolBar::saveMap, this, &Editor::onSaveMapButtonClick);
