@@ -8,19 +8,19 @@
 #include "RegisterPlayerEventDTO.h"
 #include "command/CommandFactory.h"
 
-Game::Game(Queue<ClientCommandDTO> &gameloopQueue,
+Game::Game(Queue<ClientMessage> &gameloopQueue,
            SenderQueueMonitor &senderQueueMonitor)
     : gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor) {}
 
 void Game::run() {
 
   /*
-  
+
   Cargar archivo mapa
 
   std::list<tuple<int, int>> collidableCells = mapLoader.GetCollidableCells();
   std::list<TileOrigin> = mapLoader.GetTextures();
-  
+
   */
 
   ConstantRateLoop rateloop(FPS_SERVER);
@@ -28,11 +28,11 @@ void Game::run() {
   unsigned int it = 0;
 
   while (keepRunning) {
-    ClientCommandDTO dto;
+    ClientMessage msg;
 
-    if (gameloopQueue.try_pop(dto)) {
-      auto command = factory.create(std::move(dto));
-      command->execute(*this);
+    if (gameloopQueue.try_pop(msg)) {
+      auto command = factory.create(msg.dto);
+      command->execute(*this, msg.connectionId);
     }
     movePlayers();
     sendMessages();
@@ -70,21 +70,18 @@ void Game::movePlayers() {
       break;
     }
 
-    std::cout << "player: " << playerID << "moved to x: " << info.x
-              << " y: " << info.y << std::endl;
-
     messagesToSend.push_back(
         PlayerMovedEventDTO{playerID, static_cast<int16_t>(info.x),
                             static_cast<int16_t>(info.y), info.direction});
   }
 }
 
-void Game::registerPlayer() {
-  uint32_t newId = nextPlayerId++;
+void Game::registerPlayer(uint32_t connectionId) {
 
-  players[newId] = PlayerInfo{0, 0, Direction::Down};
+  players[connectionId] = PlayerInfo{0, 0, Direction::Down};
 
-  messagesToSend.push_back(RegisterPlayerEventDTO{newId, 0});
+  senderQueueMonitor.sendToClient(connectionId,
+                                  RegisterPlayerEventDTO{connectionId, 0});
 
   std::vector<PlayerInfoDTO> playerList;
 
@@ -93,10 +90,11 @@ void Game::registerPlayer() {
                           static_cast<int16_t>(info.y), info.direction});
   }
 
-  messagesToSend.push_back(PlayerListEventDTO{std::move(playerList)});
+  senderQueueMonitor.sendToClient(connectionId,
+                                  PlayerListEventDTO{std::move(playerList)});
 
   messagesToSend.push_back(
-      PlayerAppearedEventDTO{newId, 0, 0, Direction::Down});
+      PlayerAppearedEventDTO{connectionId, 0, 0, Direction::Down});
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {
