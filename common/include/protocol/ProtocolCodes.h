@@ -32,6 +32,7 @@ enum class EventOpcode : uint8_t {
   PlayerAppearedEvent,
   PlayerStoppedEvent,
   TextureInfoEvent,
+  PrivateMessageEvent,
 };
 
 #endif // PROTOCOL_CODES_H
