@@ -46,6 +46,12 @@ target_include_directories(taller_common PUBLIC .)
 
 target_link_libraries(taller_common PUBLIC tomlplusplus::tomlplusplus)
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/map.toml
+  ${CMAKE_CURRENT_BINARY_DIR}/map.toml
+  COPYONLY
+)
+
 # HEY!! TODO XXX: you need to install some runtime and dev libraries *before*
 # compiling the client/editor code.
 #
