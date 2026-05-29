@@ -11,7 +11,7 @@ private:
 
 public:
   ClientCommandOpCode getCode() const { return opCode; }
-  std::string target;
+  std::string targetName;
   std::string message;
 };
 

@@ -13,13 +13,13 @@ void PrivateMessageParser::serialize(std::vector<uint8_t> &bytes,
   utils.appendBytes(
       static_cast<uint8_t>(ClientCommandOpCode::PrivateMessageCommand), bytes);
 
-  utils.appendBytes(request.target, bytes);
+  utils.appendBytes(request.targetName, bytes);
   utils.appendBytes(request.message, bytes);
 }
 
 ClientCommandDTO PrivateMessageParser::deserialize(Protocol &protocol) {
-  std::string target = protocol.getStringData();
+  std::string targetName = protocol.getStringData();
   std::string message = protocol.getStringData();
 
-  return PrivateMessageCommandDTO{std::move(target), std::move(message)};
+  return PrivateMessageCommandDTO{std::move(targetName), std::move(message)};
 }
