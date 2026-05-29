@@ -27,15 +27,43 @@ void GameWindow::initResources() {
   backgroundTexture = std::make_unique<SDL2pp::Texture>(
       *renderer, SDL2pp::Surface("assets/10119.png"));
   defaultPlayerTexture = loadPlayerTexture(*renderer, "assets/11402.png");
+  Player::setPlayerTexture(defaultPlayerTexture.get());
+
+  textureMapper = std::make_unique<TextureMapper>(*renderer);
+  textureMapper->loadFromToml("assets/textures.toml");
+}
+
+void GameWindow::setMapData(int maxSize_, int gridSize_,
+                            int commonGroundTextureId_,
+                            const std::list<TileOrigin> &origins) {
+  maxSize = maxSize_;
+  gridSize = gridSize_;
+  commonGroundTextureId = commonGroundTextureId_;
+  textureMapper->buildRenderGrid(origins, gridSize);
+  tilesToRender = textureMapper->getTilesToRender();
 }
 
 void GameWindow::show(unsigned int it) {
   SDL_ClearError();
-  renderer->Clear();
+  clear();
   renderer->Copy(*backgroundTexture, SDL2pp::Rect(0, 0, 400, 400),
                  SDL2pp::Rect(0, 0, 720, 410));
   render(it);
   renderer->Present();
+}
+
+void GameWindow::renderCommonGround() {
+  for (int i = 0; i < maxSize; i++) {
+    for (int j = 0; j < maxSize; j++) {
+      SDL2pp::Rect dstRect = camera.toScreen(
+          (i - maxSize / 2) * gridSize, (j - maxSize / 2) * gridSize,
+          gridSize, gridSize);
+
+      SDL2pp::Rect srcRect = {0, 0, gridSize, gridSize};
+      renderer->Copy(textureMapper->getTexture(commonGroundTextureId),
+                     srcRect, dstRect);
+    }
+  }
 }
 
 void GameWindow::render(unsigned int it) {
@@ -44,25 +72,56 @@ void GameWindow::render(unsigned int it) {
     throw std::runtime_error("My player not found in map");
   }
 
-  const Player &myPlayer = *itMy->second;
-  camera.follow(myPlayer.getX(), myPlayer.getY(), 32, 32);
+  Player &myPlayer = *itMy->second;
+  camera.follow(myPlayer.get_x(), myPlayer.get_y(), 32, 32);
 
-  for (auto &entry : players) {
-    if (entry.second) {
-      renderPlayer(entry.second, it);
+  renderCommonGround();
+
+  for (size_t i = 0; i < tilesToRender.size(); i++) {
+    auto& priority = tilesToRender[i];
+
+    for (auto &[pair, items] : priority) {
+
+      int max_row = pair.first;
+      int y_max = (max_row - maxSize / 2 + 1) * gridSize;
+
+      for (auto& entity : entities) {
+          if (!entity->rendered() && entity->get_y() + 1.25 * entity->get_h() < y_max && entity->hasPriority(i)) {
+              entity->render(*renderer, camera, it);
+          }
+      }
+
+      for (auto &item : items) {
+        SDL2pp::Rect dstRect = camera.toScreen(
+            (item.i - maxSize / 2) * gridSize,
+            (item.j - maxSize / 2) * gridSize, gridSize, gridSize);
+
+        SDL2pp::Rect srcRect = {item.x_start, item.y_start,
+                                item.x_end - item.x_start,
+                                item.y_end - item.y_start};
+        renderer->Copy(textureMapper->getTexture(item.texture_id), srcRect,
+                       dstRect);
+      }
+    }
+    for (auto& entity : entities) {
+      if (!entity->rendered() && entity->hasPriority(i)) {
+        entity->render(*renderer, camera, it);
+      }
     }
   }
+  
 }
 
-void GameWindow::addPlayer(uint32_t ID, const Player *player) {
+void GameWindow::clear()
+{
+  for (auto& entity : entities) {
+    entity->clear();
+  }
+  renderer->Clear();
+}
+
+void GameWindow::addPlayer(uint32_t ID, Player *player) {
   players[ID] = player;
+  entities.push_back(player);
 }
 
-void GameWindow::renderPlayer(const Player *player, unsigned int it) {
-  const int animationIt = player->getIsMoving() ? static_cast<int>(it) : 0;
-  SpriteFrame src =
-      spriteFrameCalculator.getSprite(player->getDirection(), animationIt);
-  SDL2pp::Rect r = camera.toScreen(player->getX(), player->getY(), 32, 32);
-  renderer->Copy(*defaultPlayerTexture,
-                 SDL2pp::Rect(src.x, src.y, src.w, src.h), r);
-}

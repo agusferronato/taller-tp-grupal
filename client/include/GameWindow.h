@@ -4,10 +4,15 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2pp/SDL2pp.hh>
+#include <list>
+#include <map>
+#include <vector>
 
 #include "Camera.h"
+#include "MapData.h"
 #include "Player.h"
 #include "SpriteCalculator.h"
+#include "TextureMapper.h"
 
 #include <cstdint>
 #include <memory>
@@ -28,19 +33,30 @@ private:
   Camera camera;
   SpriteFrameCalculator spriteFrameCalculator;
   uint32_t myPlayerID{0};
-  std::unordered_map<uint32_t, const Player *> players;
+  std::unordered_map<uint32_t, Player *> players;
+  std::list<RenderableEntity *> entities;
+
+  std::unique_ptr<TextureMapper> textureMapper;
+  int maxSize{100};
+  int gridSize{32};
+  int commonGroundTextureId{0};
+  std::vector<std::map<std::pair<int, int>, std::vector<GridItem>>>
+      tilesToRender;
 
 public:
   explicit GameWindow(uint32_t myPlayerID);
-  void addPlayer(uint32_t ID, const Player *player);
+  void addPlayer(uint32_t ID, Player *player);
   void show(unsigned int it);
+  void setMapData(int maxSize, int gridSize, int commonGroundTextureId,
+                  const std::list<TileOrigin> &origins);
 
 private:
   void render(unsigned int it);
+  void clear();
   void initResources();
+  void renderCommonGround();
   std::unique_ptr<SDL2pp::Texture>
   loadPlayerTexture(SDL2pp::Renderer &renderer, const std::string &texturePath);
-  void renderPlayer(const Player *player, unsigned int it);
 };
 
 #endif

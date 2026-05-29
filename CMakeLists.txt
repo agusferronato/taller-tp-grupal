@@ -44,6 +44,8 @@ set_project_warnings(taller_common ${TALLER_MAKE_WARNINGS_AS_ERRORS} FALSE)
 # location (so our dependants will not have to explicitly request this)
 target_include_directories(taller_common PUBLIC .)
 
+target_link_libraries(taller_common PUBLIC tomlplusplus::tomlplusplus)
+
 # HEY!! TODO XXX: you need to install some runtime and dev libraries *before*
 # compiling the client/editor code.
 #
@@ -99,6 +101,15 @@ if(TALLER_CLIENT OR TALLER_EDITOR)
         URL https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
     )
 
+    FetchContent_Declare(
+        tomlplusplus
+        GIT_REPOSITORY https://github.com/marzer/tomlplusplus.git
+        GIT_TAG        v3.4.0
+        GIT_SHALLOW    TRUE
+        GIT_PROGRESS   TRUE
+    )
+    FetchContent_MakeAvailable(tomlplusplus)
+
     set(SDL2PP_WITH_IMAGE ON CACHE BOOL "" FORCE)
     set(SDL2PP_WITH_TTF   ON CACHE BOOL "" FORCE)
 
@@ -126,13 +137,10 @@ if(TALLER_CLIENT)
     # Link the taller_common lib target
     target_link_libraries(taller_client taller_common SDL2pp::SDL2pp SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf Qt6::Widgets)
 
-    add_custom_command(TARGET taller_client POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_CURRENT_SOURCE_DIR}/client/assets
-            $<TARGET_FILE_DIR:taller_client>/assets
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_CURRENT_SOURCE_DIR}/client/fonts
-            $<TARGET_FILE_DIR:taller_client>/fonts)
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/client/assets
+        DESTINATION ${CMAKE_BINARY_DIR})
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/editor/assets
+        DESTINATION ${CMAKE_BINARY_DIR})
 endif()
 
 if(TALLER_SERVER)
@@ -156,6 +164,8 @@ if(TALLER_EDITOR)
     # HEY!! TODO XXX: Change the name of the executable to the one you like!
     add_executable(taller_editor)
 
+    set_target_properties(taller_editor PROPERTIES AUTOMOC ON)
+
     # Make them depend on taller_common lib
     add_dependencies(taller_editor taller_common SDL2pp::SDL2pp)
 
@@ -169,7 +179,12 @@ if(TALLER_EDITOR)
     target_include_directories(taller_editor PRIVATE ${libSDL2pp_SOURCE_DIR})
 
     # Link the taller_common lib target
-    target_link_libraries(taller_editor taller_common SDL2pp::SDL2pp)
+    target_link_libraries(taller_editor taller_common SDL2pp::SDL2pp Qt6::Widgets)
+
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/client/assets
+        DESTINATION ${CMAKE_BINARY_DIR})
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/editor/assets
+        DESTINATION ${CMAKE_BINARY_DIR})
 endif()
 
 

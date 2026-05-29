@@ -1,15 +1,17 @@
 #include "Sender.h"
 #include "protocol/RegisterAllParsers.h"
 
-Sender::Sender(SenderQueueMonitor &senderQueueMonitor, Socket &peer)
-    : senderQueueMonitor(senderQueueMonitor), peer(peer),
-      senderQueue(senderQueueMonitor.getNewSenderQueue()), protocol(peer) {
+Sender::Sender(SenderQueueMonitor &senderQueueMonitor, Socket &peer,
+               uint32_t clientId)
+    : senderQueueMonitor(senderQueueMonitor), peer(peer), clientId(clientId),
+      senderQueue(senderQueueMonitor.getNewSenderQueue(clientId)),
+      protocol(peer) {
   registerAllParsers(protocol);
 }
 
 void Sender::kill() {
   keepRunning = false;
-  senderQueueMonitor.deleteSenderQueue(*senderQueue);
+  senderQueueMonitor.deleteSenderQueue(clientId);
 }
 
 void Sender::run() {
@@ -27,7 +29,7 @@ void Sender::run() {
 
     } catch (const CommunicationEnded &e) {
 
-      senderQueueMonitor.deleteSenderQueue(*this->senderQueue);
+      senderQueueMonitor.deleteSenderQueue(this->clientId);
       delete senderQueue;
       break;
 

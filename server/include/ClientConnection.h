@@ -1,10 +1,11 @@
 #ifndef CLIENT_CONNECTION_H
 #define CLIENT_CONNECTION_H
 
+#include <cstdint>
 #include <memory>
 #include <utility>
 
-#include "DTO/Commands/ClientCommandDTO.h"
+#include "ClientMessage.h"
 #include "Receiver.h"
 #include "Sender.h"
 #include "SenderQueueMonitor.h"
@@ -18,13 +19,17 @@ private:
   Socket peer;
   Receiver receiver;
   Sender sender;
+  uint32_t connectionId;
 
 public:
-  ClientConnection(Socket &&peer, Queue<ClientCommandDTO> &gameloopQueue,
-                   SenderQueueMonitor &senderQueueMonitor);
+  ClientConnection(Socket &&peer, Queue<ClientMessage> &gameloopQueue,
+                   SenderQueueMonitor &senderQueueMonitor,
+                   uint32_t connectionId);
 
   ClientConnection(const ClientConnection &) = delete;
   ClientConnection &operator=(const ClientConnection &) = delete;
+
+  uint32_t getId() const;
 
   void kill();
 

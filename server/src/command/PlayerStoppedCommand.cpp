@@ -5,4 +5,6 @@
 PlayerStoppedCommand::PlayerStoppedCommand(uint32_t playerId)
     : playerId(playerId) {}
 
-void PlayerStoppedCommand::execute(Game &game) { game.stopPlayer(playerId); }
+void PlayerStoppedCommand::execute(Game &game, uint32_t) {
+  game.stopPlayer(playerId);
+}
