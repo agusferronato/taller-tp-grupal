@@ -11,9 +11,11 @@
 #include <vector>
 
 #include "ClientMessage.h"
+#include <set>
+#include <tuple>
+
 #include "Colisionable.h"
-#include "ConstantRateLoop.h"
-#include "Constants.h"
+#include "Direction.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "Direction.h"
@@ -81,6 +83,7 @@ private:
   int gridSize;
   int commonGroundTextureId;
   std::list<TileOrigin> textureOrigins;
+  std::set<std::tuple<int, int, int>> collidableCells;
 
 public:
   Game(Queue<ClientMessage> &gameloopQueue,

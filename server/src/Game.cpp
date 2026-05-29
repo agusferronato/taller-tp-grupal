@@ -15,7 +15,12 @@
 #include "RegisterPlayerEventDTO.h"
 #include "TextureInfoEventDTO.h"
 #include "command/CommandFactory.h"
+#include "ConstantRateLoop.h"
 #include "Formulas.h"
+
+static int floorDiv(int a, int b) {
+  return (a >= 0) ? a / b : (a - b + 1) / b;
+}
 
 PlayerInfo::PlayerInfo(uint32_t id, int x, int y, Direction dir)
     : id(id), x(x), y(y), direction(dir) {}
@@ -137,6 +142,7 @@ void Game::run() {
   gridSize = mapLoader.GetGridSize();
   commonGroundTextureId = mapLoader.GetCommonGroundTextureId();
   textureOrigins = mapLoader.GetTextureOrigins();
+  collidableCells = mapLoader.GetCollidableCells();
 
   ConstantRateLoop rateloop(FPS_SERVER);
   CommandFactory factory;
@@ -337,6 +343,20 @@ void Game::movePlayer(uint32_t playerId, Direction direction) {
     }
   }
 
+  {
+    int start_i = floorDiv(targetX, gridSize) + maxSize / 2;
+    int end_i = floorDiv(targetX + player.getAncho() - 1, gridSize) + maxSize / 2;
+    int start_j = floorDiv(targetY, gridSize) + maxSize / 2;
+    int end_j = floorDiv(targetY + player.getAlto() - 1, gridSize) + maxSize / 2;
+    for (int i = start_i; i <= end_i; i++) {
+      for (int j = start_j; j <= end_j; j++) {
+        if (collidableCells.count({i, j, 0})) {
+          return;
+        }
+      }
+    }
+  }
+
   player.x = targetX;
   player.y = targetY;
 
@@ -427,6 +447,26 @@ void Game::movePlayers() {
     }
     if (blocked)
       continue;
+
+    {
+      int start_i = floorDiv(targetX, gridSize) + maxSize / 2;
+      int end_i = floorDiv(targetX + info->getAncho() - 1, gridSize) + maxSize / 2;
+      int start_j = floorDiv(targetY, gridSize) + maxSize / 2;
+      int end_j = floorDiv(targetY + info->getAlto() - 1, gridSize) + maxSize / 2;
+      bool tileBlocked = false;
+      for (int i = start_i; i <= end_i; i++) {
+        for (int j = start_j; j <= end_j; j++) {
+          if (collidableCells.count({i, j, 0})) {
+            tileBlocked = true;
+            break;
+          }
+        }
+        if (tileBlocked)
+          break;
+      }
+      if (tileBlocked)
+        continue;
+    }
 
     info->x = targetX;
     info->y = targetY;
