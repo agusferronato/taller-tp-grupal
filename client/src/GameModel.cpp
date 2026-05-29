@@ -8,6 +8,7 @@
 #include "PlayerRemovedEventDTO.h"
 #include "PlayerStoppedEventDTO.h"
 #include "RegisterPlayerEventDTO.h"
+#include "TextureInfoEventDTO.h"
 #include <iostream>
 #include <stdexcept>
 
@@ -28,7 +29,6 @@ GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
 }
 
 void GameModel::updateStateFromServer() {
-
   ServerEventDTO event;
 
   while (receptionQueue.try_pop(event)) {
@@ -55,6 +55,10 @@ void GameModel::updateStateFromServer() {
 
     case EventOpcode::InventoryUpdateEvent:
       playerInventoryUpdated(event);
+      break;
+
+    case EventOpcode::TextureInfoEvent:
+      handleTextureInfo(event);
       break;
 
     default:
@@ -140,6 +144,7 @@ void GameModel::playerRemoved(const ServerEventDTO &event) {
   if (!removed) {
     return;
   }
+  gameView->removePlayer(removed->playerId);
   players.erase(removed->playerId);
 }
 
@@ -161,29 +166,54 @@ void GameModel::playerInfoUpdated(const ServerEventDTO &event) {
   it->second->setExperience(info->experience);
 }
 
-void GameModel::registerPlayers() {
-  auto event = receptionQueue.pop();
-  // si se cierra el socket el hilo reciver cierra y lanza ClosedQueue
-  // debloquenado este pop
+void GameModel::handleTextureInfo(const ServerEventDTO &event) {
+  const auto *texInfo = std::get_if<TextureInfoEventDTO>(&event);
+  if (!texInfo) {
+    return;
+  }
 
-  auto *list = std::get_if<PlayerListEventDTO>(&event);
-  if (list) {
-    for (const auto &info : list->players) {
-      if (info.playerId == myPlayerID) {
-        continue;
+  std::list<TileOrigin> origins;
+  for (const auto &o : texInfo->origins) {
+    origins.push_back({o.priority, o.texture_id, static_cast<int>(o.i),
+                       static_cast<int>(o.j)});
+  }
+  gameView->setMapData(texInfo->maxSize, texInfo->gridSize,
+                       texInfo->commonGroundTextureId, origins);
+}
+
+void GameModel::registerPlayers() {
+  while (true) {
+    auto event = receptionQueue.pop();
+
+    if (auto *list = std::get_if<PlayerListEventDTO>(&event)) {
+      for (const auto &info : list->players) {
+        if (info.playerId == myPlayerID) {
+          continue;
+        }
+        auto player = std::make_unique<Player>(info.playerId, info.x, info.y);
+        player->setRace(info.race);
+        player->setName(info.playerName);
+        player->setHp(info.hp);
+        player->setMaxHp(info.maxHp);
+        player->setMana(info.mana);
+        player->setMaxMana(info.maxMana);
+        player->setGold(info.gold);
+        player->setLevel(info.level);
+        player->setExperience(info.experience);
+        players[info.playerId] = std::move(player);
+        gameView->addPlayer(info.playerId, players[info.playerId].get());
       }
-      auto player = std::make_unique<Player>(info.playerId, info.x, info.y);
-      player->setRace(info.race);
-      player->setName(info.playerName);
-      player->setHp(info.hp);
-      player->setMaxHp(info.maxHp);
-      player->setMana(info.mana);
-      player->setMaxMana(info.maxMana);
-      player->setGold(info.gold);
-      player->setLevel(info.level);
-      player->setExperience(info.experience);
-      players[info.playerId] = std::move(player);
-      gameView->addPlayer(info.playerId, players[info.playerId].get());
+      break;
+
+    } else if (auto *texInfo = std::get_if<TextureInfoEventDTO>(&event)) {
+      std::list<TileOrigin> origins;
+      for (const auto &o : texInfo->origins) {
+        origins.push_back(
+            {o.priority, o.texture_id, static_cast<int>(o.i),
+             static_cast<int>(o.j)});
+      }
+      gameView->setMapData(texInfo->maxSize, texInfo->gridSize,
+                           texInfo->commonGroundTextureId, origins);
     }
   }
 }

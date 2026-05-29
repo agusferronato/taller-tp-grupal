@@ -2,6 +2,7 @@
 #include <cctype>
 
 #include "Game.h"
+#include "MapLoader.h"
 #include "MoveCommandDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerListEventDTO.h"
@@ -12,6 +13,7 @@
 #include "RegisterPlayerCommandDTO.h"
 #include "PlayerInfoEventDTO.h"
 #include "RegisterPlayerEventDTO.h"
+#include "TextureInfoEventDTO.h"
 #include "command/CommandFactory.h"
 #include "Formulas.h"
 
@@ -123,13 +125,18 @@ int PlayerInfo::getAncho() const { return ANCHO; }
 
 int PlayerInfo::getAlto() const { return ALTO; }
 
-Game::Game(Queue<ClientCommandDTO> &gameloopQueue,
+Game::Game(Queue<ClientMessage> &gameloopQueue,
            SenderQueueMonitor &senderQueueMonitor,
            PlayerRepository &repository)
     : gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor),
       repository(repository) {}
 
 void Game::run() {
+  MapLoader mapLoader("map.toml");
+  maxSize = mapLoader.GetMaxSize();
+  gridSize = mapLoader.GetGridSize();
+  commonGroundTextureId = mapLoader.GetCommonGroundTextureId();
+  textureOrigins = mapLoader.GetTextureOrigins();
 
   ConstantRateLoop rateloop(FPS_SERVER);
   CommandFactory factory;
@@ -137,11 +144,11 @@ void Game::run() {
   unsigned int saveCounter = 0;
 
   while (keepRunning) {
-    ClientCommandDTO dto;
+    ClientMessage msg;
 
-    if (gameloopQueue.try_pop(dto)) {
-      auto command = factory.create(std::move(dto));
-      command->execute(*this);
+    if (gameloopQueue.try_pop(msg)) {
+      auto command = factory.create(msg.dto);
+      command->execute(*this, msg.connectionId);
     }
     movePlayers();
     sendMessages();
@@ -169,10 +176,10 @@ void Game::run() {
 
 void Game::kill() { keepRunning = false; }
 
-void Game::registerPlayer(const std::string &name, const std::string &race, const std::string &playerClass) {
+void Game::registerPlayer(const std::string &name, const std::string &race, const std::string &playerClass, uint32_t connectionId) {
 
   if (repository.exists(name)) {
-    messagesToSend.push_back(RegisterPlayerEventDTO{0, 1});
+    senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{0, 1});
     return;
   }
 
@@ -201,7 +208,25 @@ void Game::registerPlayer(const std::string &name, const std::string &race, cons
   colisionables.push_back(player.get());
   players[newId] = std::move(player);
 
-  messagesToSend.push_back(RegisterPlayerEventDTO{newId, 0});
+  senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{newId, 0});
+
+  {
+    std::vector<TextureOriginDTO> origins;
+    origins.reserve(textureOrigins.size());
+    for (const auto &o : textureOrigins) {
+      origins.push_back(
+          {static_cast<uint8_t>(o.priority),
+           static_cast<uint8_t>(o.texture_id),
+           static_cast<uint16_t>(o.x),
+           static_cast<uint16_t>(o.y)});
+    }
+    senderQueueMonitor.sendToClient(
+        connectionId,
+        TextureInfoEventDTO{static_cast<uint16_t>(maxSize),
+                            static_cast<uint16_t>(gridSize),
+                            static_cast<uint8_t>(commonGroundTextureId),
+                            std::move(origins)});
+  }
 
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
@@ -212,7 +237,7 @@ void Game::registerPlayer(const std::string &name, const std::string &race, cons
                           info->experience});
   }
 
-  messagesToSend.push_back(PlayerListEventDTO{std::move(playerList)});
+  senderQueueMonitor.sendToClient(connectionId, PlayerListEventDTO{std::move(playerList)});
 
   messagesToSend.push_back(
       PlayerAppearedEventDTO{newId, static_cast<int16_t>(spawnX),
@@ -368,12 +393,6 @@ void Game::dropItem(uint32_t playerId, uint8_t inventorySlot) {
   it->second->inventory.removeItem(inventorySlot);
 }
 
-void Game::takeItem(uint32_t playerId) {
-  auto it = players.find(playerId);
-  if (it == players.end())
-    return;
-}
-
 void Game::movePlayers() {
   for (auto &[playerID, info] : players) {
     if (!info->moving)
@@ -416,12 +435,6 @@ void Game::movePlayers() {
         PlayerMovedEventDTO{playerID, static_cast<int16_t>(info->x),
                             static_cast<int16_t>(info->y), info->direction});
   }
-}
-
-void Game::execute(ClientCommandDTO clientMessage) {
-  CommandFactory factory;
-  auto command = factory.create(std::move(clientMessage));
-  command->execute(*this);
 }
 
 void Game::sendMessages() {

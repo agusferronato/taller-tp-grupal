@@ -1,6 +1,7 @@
 #ifndef SENDER_QUEUE_MONITOR_H
 #define SENDER_QUEUE_MONITOR_H
 
+#include <cstdint>
 #include <list>
 #include <map>
 #include <mutex>
@@ -13,9 +14,8 @@
 class SenderQueueMonitor {
 private:
   std::mutex mutex;
-  std::list<Queue<ServerEventDTO> *> senderQueues;
-  std::map<Queue<ServerEventDTO> *, std::queue<ServerEventDTO>>
-      queuesPendingMessages;
+  std::map<uint32_t, Queue<ServerEventDTO> *> senderQueues;
+  std::map<uint32_t, std::queue<ServerEventDTO>> queuesPendingMessages;
 
 public:
   SenderQueueMonitor();
@@ -23,14 +23,16 @@ public:
   SenderQueueMonitor(const SenderQueueMonitor &) = delete;
   SenderQueueMonitor &operator=(const SenderQueueMonitor &) = delete;
 
-  Queue<ServerEventDTO> *getNewSenderQueue();
-  void deleteSenderQueue(Queue<ServerEventDTO> &senderQueue);
+  Queue<ServerEventDTO> *getNewSenderQueue(uint32_t clientId);
+  void deleteSenderQueue(uint32_t clientId);
 
   void broadCast(std::list<ServerEventDTO> &pendingMessages);
+  void sendToClient(uint32_t clientId, const ServerEventDTO &message);
+  void sendToClient(uint32_t clientId, std::list<ServerEventDTO> &messages);
 
 private:
   void pushMessageToTheSenderQueues(const ServerEventDTO &message);
-  void clearPendingMessages(Queue<ServerEventDTO> &queue);
+  void clearPendingMessages(uint32_t clientId);
 };
 
 #endif

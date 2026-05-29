@@ -1,6 +1,7 @@
 #ifndef REGISTER_PLAYER_COMMAND_H
 #define REGISTER_PLAYER_COMMAND_H
 
+#include <cstdint>
 #include <string>
 
 #include "Command.h"
@@ -14,7 +15,7 @@ private:
 public:
   RegisterPlayerCommand(std::string name, std::string race, std::string playerClass);
 
-  void execute(Game &game) override;
+  void execute(Game &game, uint32_t connectionId) override;
 };
 
 #endif // REGISTER_PLAYER_COMMAND_H

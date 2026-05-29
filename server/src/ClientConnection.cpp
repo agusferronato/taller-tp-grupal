@@ -1,10 +1,14 @@
 #include "ClientConnection.h"
 
 ClientConnection::ClientConnection(Socket &&peer,
-                                   Queue<ClientCommandDTO> &gameloopQueue,
-                                   SenderQueueMonitor &senderQueueMonitor)
-    : peer(std::move(peer)), receiver(this->peer, gameloopQueue),
-      sender(senderQueueMonitor, this->peer) {}
+                                   Queue<ClientMessage> &gameloopQueue,
+                                   SenderQueueMonitor &senderQueueMonitor,
+                                   uint32_t connectionId)
+    : peer(std::move(peer)), receiver(this->peer, gameloopQueue, connectionId),
+      sender(senderQueueMonitor, this->peer, connectionId),
+      connectionId(connectionId) {}
+
+uint32_t ClientConnection::getId() const { return connectionId; }
 
 bool ClientConnection::isDead() {
   return !receiver.is_alive() && !sender.is_alive();

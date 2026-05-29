@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "ClientMessage.h"
 #include "Colisionable.h"
 #include "ConstantRateLoop.h"
 #include "Constants.h"
@@ -18,6 +19,7 @@
 #include "Direction.h"
 #include "Inventory.h"
 #include "ItemDef.h"
+#include "MapData.h"
 #include "PlayerData.h"
 #include "PlayerRepository.h"
 #include "Queue.h"
@@ -64,7 +66,7 @@ public:
 class Game : public Thread {
 
 private:
-  Queue<ClientCommandDTO> &gameloopQueue;
+  Queue<ClientMessage> &gameloopQueue;
   SenderQueueMonitor &senderQueueMonitor;
   PlayerRepository &repository;
 
@@ -75,8 +77,13 @@ private:
   std::unordered_map<uint32_t, std::unique_ptr<PlayerInfo>> players;
   std::vector<Colisionable*> colisionables;
 
+  int maxSize;
+  int gridSize;
+  int commonGroundTextureId;
+  std::list<TileOrigin> textureOrigins;
+
 public:
-  Game(Queue<ClientCommandDTO> &gameloopQueue,
+  Game(Queue<ClientMessage> &gameloopQueue,
        SenderQueueMonitor &senderQueueMonitor,
        PlayerRepository &repository);
 
@@ -87,7 +94,7 @@ public:
   Game(const Game &) = delete;
   Game &operator=(const Game &) = delete;
 
-  void registerPlayer(const std::string &name, const std::string &race, const std::string &playerClass);
+  void registerPlayer(const std::string &name, const std::string &race, const std::string &playerClass, uint32_t connectionId);
   void loginPlayer(const std::string &name);
   void movePlayer(uint32_t playerId, Direction direction);
   void stopPlayer(uint32_t playerId);
@@ -95,10 +102,10 @@ public:
   void equipItem(uint32_t playerId, uint8_t inventorySlot);
   void unequipSlot(uint32_t playerId, uint8_t equipSlot);
   void dropItem(uint32_t playerId, uint8_t inventorySlot);
-  void takeItem(uint32_t playerId);
+
 
 private:
-  void execute(ClientCommandDTO clientMessage);
+  void execute(ClientMessage clientMessage);
   void sendMessages();
   void movePlayers();
   void saveAllPlayers();

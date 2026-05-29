@@ -12,7 +12,7 @@ private:
 public:
   explicit LoginPlayerCommand(std::string name);
 
-  void execute(Game &game) override;
+  void execute(Game &game, uint32_t connectionId) override;
 };
 
 #endif // LOGIN_PLAYER_COMMAND_H

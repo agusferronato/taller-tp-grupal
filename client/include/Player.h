@@ -3,12 +3,16 @@
 
 #include "Direction.h"
 #include "InventoryConstants.h"
+#include "RenderableEntity.h"
+#include "Camera.h"
 #include <array>
 #include <cstdint>
 #include <memory>
+#include <SpriteCalculator.h>
 #include <string>
+#include <SDL2pp/SDL2pp.hh>
 
-class Player {
+class Player : public RenderableEntity {
 
 private:
   uint32_t id;
@@ -31,9 +35,15 @@ private:
   uint32_t level{1};
   uint32_t experience{0};
 
+  static SDL2pp::Texture *playerTexture;
+  static SpriteFrameCalculator spriteFrameCalculator;
+
 public:
   Player(uint32_t id, int xOrigin, int yOrigin);
 
+  static void setPlayerTexture(SDL2pp::Texture *texture);
+
+  /* Model, el unico que puede modificar Player */
   uint32_t getID() const;
   void setCoordinates(int x, int y);
   void updateCoordinates(int x, int y, Direction direction);
@@ -61,6 +71,15 @@ public:
   void setGold(uint32_t v) { gold = v; }
   void setLevel(uint32_t v) { level = v; }
   void setExperience(uint32_t v) { experience = v; }
+
+  /* View */
+  void render(SDL2pp::Renderer &renderer, Camera &camera,
+              unsigned int it) override;
+
+  int get_x() override;
+  int get_y() override;
+  int get_h() override;
+  bool rendered() override;
 
   bool getIsMoving() const { return isMoving; }
   Direction getDirection() const { return direction; }

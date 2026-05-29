@@ -13,7 +13,7 @@ private:
 public:
   UnequipCommand(uint32_t playerId, uint8_t equipSlot);
 
-  void execute(Game &game) override;
+  void execute(Game &game, uint32_t connectionId) override;
 };
 
 #endif
