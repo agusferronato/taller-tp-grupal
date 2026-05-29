@@ -12,7 +12,7 @@ private:
 public:
   explicit TakeItemCommand(uint32_t playerId);
 
-  void execute(Game &game) override;
+  void execute(Game &game, uint32_t connectionId) override;
 };
 
 #endif

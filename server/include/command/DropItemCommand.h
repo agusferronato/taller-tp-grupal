@@ -13,7 +13,7 @@ private:
 public:
   DropItemCommand(uint32_t playerId, uint8_t inventorySlot);
 
-  void execute(Game &game) override;
+  void execute(Game &game, uint32_t connectionId) override;
 };
 
 #endif

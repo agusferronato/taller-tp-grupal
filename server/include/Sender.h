@@ -1,6 +1,7 @@
 #ifndef SENDER_H
 #define SENDER_H
 
+#include <cstdint>
 #include <memory>
 
 #include "CommunicationEnded.h"
@@ -17,12 +18,14 @@ class Sender : public Thread {
 private:
   SenderQueueMonitor &senderQueueMonitor;
   Socket &peer;
+  uint32_t clientId;
   Queue<ServerEventDTO> *senderQueue;
   Protocol protocol;
   bool keepRunning = true;
 
 public:
-  Sender(SenderQueueMonitor &senderQueueMonitor, Socket &peer);
+  Sender(SenderQueueMonitor &senderQueueMonitor, Socket &peer,
+         uint32_t clientId);
 
   Sender(const Sender &) = delete;
   Sender &operator=(const Sender &) = delete;

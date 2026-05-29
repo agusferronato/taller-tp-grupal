@@ -2,24 +2,28 @@
 
 SenderQueueMonitor::SenderQueueMonitor() {}
 
-Queue<ServerEventDTO> *SenderQueueMonitor::getNewSenderQueue() {
+Queue<ServerEventDTO> *SenderQueueMonitor::getNewSenderQueue(
+    uint32_t clientId) {
   std::lock_guard<std::mutex> lock(mutex);
 
   auto senderQueue = new Queue<ServerEventDTO>(SENDER_QUEUE_SIZE);
-  std::queue<ServerEventDTO> pendingMessages;
 
-  senderQueues.push_back(senderQueue);
-  queuesPendingMessages.insert({senderQueue, std::move(pendingMessages)});
+  senderQueues[clientId] = senderQueue;
+  queuesPendingMessages[clientId] = {};
 
   return senderQueue;
 }
 
-void SenderQueueMonitor::deleteSenderQueue(Queue<ServerEventDTO> &senderQueue) {
+void SenderQueueMonitor::deleteSenderQueue(uint32_t clientId) {
   std::lock_guard<std::mutex> lock(mutex);
 
-  senderQueue.close();
-  senderQueues.remove(&senderQueue);
-  queuesPendingMessages.erase(&senderQueue);
+  auto it = senderQueues.find(clientId);
+  if (it == senderQueues.end())
+    return;
+
+  it->second->close();
+  senderQueues.erase(clientId);
+  queuesPendingMessages.erase(clientId);
 }
 
 void SenderQueueMonitor::broadCast(std::list<ServerEventDTO> &messagesToSend) {
@@ -29,16 +33,41 @@ void SenderQueueMonitor::broadCast(std::list<ServerEventDTO> &messagesToSend) {
     pushMessageToTheSenderQueues(message);
   }
 
-  for (auto queue : senderQueues) {
-    clearPendingMessages(*queue);
+  for (const auto &[id, _] : senderQueues) {
+    clearPendingMessages(id);
   }
 }
 
-void SenderQueueMonitor::clearPendingMessages(Queue<ServerEventDTO> &queue) {
-  auto &pending = queuesPendingMessages[&queue];
+void SenderQueueMonitor::sendToClient(uint32_t clientId,
+                                      const ServerEventDTO &message) {
+  std::lock_guard<std::mutex> lock(mutex);
+
+  auto it = senderQueues.find(clientId);
+  if (it == senderQueues.end())
+    return;
+
+  queuesPendingMessages[clientId].push(message);
+}
+
+void SenderQueueMonitor::sendToClient(uint32_t clientId,
+                                      std::list<ServerEventDTO> &messages) {
+  std::lock_guard<std::mutex> lock(mutex);
+
+  auto it = senderQueues.find(clientId);
+  if (it == senderQueues.end())
+    return;
+
+  for (auto &msg : messages) {
+    queuesPendingMessages[clientId].push(std::move(msg));
+  }
+}
+
+void SenderQueueMonitor::clearPendingMessages(uint32_t clientId) {
+  auto &pending = queuesPendingMessages[clientId];
+  auto *queue = senderQueues[clientId];
 
   while (!pending.empty()) {
-    if (!queue.try_push(std::move(pending.front()))) {
+    if (!queue->try_push(std::move(pending.front()))) {
       break;
     }
 
@@ -48,7 +77,7 @@ void SenderQueueMonitor::clearPendingMessages(Queue<ServerEventDTO> &queue) {
 
 void SenderQueueMonitor::pushMessageToTheSenderQueues(
     const ServerEventDTO &message) {
-  for (auto *queue : senderQueues) {
-    queuesPendingMessages[queue].push(message);
+  for (auto &[id, _] : senderQueues) {
+    queuesPendingMessages[id].push(message);
   }
 }

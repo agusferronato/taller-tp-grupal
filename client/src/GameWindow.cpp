@@ -38,6 +38,7 @@ void GameWindow::initResources() {
       *renderer, SDL2pp::Surface(assetPath("assets/10119.png")));
   defaultPlayerTexture = loadPlayerTexture(
       *renderer, assetPath("assets/11402.png"));
+  Player::setPlayerTexture(defaultPlayerTexture.get());
 
   font = nullptr;
   std::ifstream sys("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf");
@@ -48,11 +49,24 @@ void GameWindow::initResources() {
     if (veraf.good())
       font = std::make_unique<SDL2pp::Font>(assetPath("fonts/Vera.ttf"), 14);
   }
+
+  textureMapper = std::make_unique<TextureMapper>(*renderer);
+  textureMapper->loadFromToml("assets/textures.toml");
+}
+
+void GameWindow::setMapData(int maxSize_, int gridSize_,
+                            int commonGroundTextureId_,
+                            const std::list<TileOrigin> &origins) {
+  maxSize = maxSize_;
+  gridSize = gridSize_;
+  commonGroundTextureId = commonGroundTextureId_;
+  textureMapper->buildRenderGrid(origins, gridSize);
+  tilesToRender = textureMapper->getTilesToRender();
 }
 
 void GameWindow::show(unsigned int it) {
   SDL_ClearError();
-  renderer->Clear();
+  clear();
   renderer->Copy(*backgroundTexture, SDL2pp::Rect(0, 0, 400, 400),
                  SDL2pp::Rect(0, 0, 720, 410));
   render(it);
@@ -118,66 +132,125 @@ void GameWindow::renderHUD() {
              SDL_Color{255, 215, 0, 255});
 }
 
+void GameWindow::renderCommonGround() {
+  for (int i = 0; i < maxSize; i++) {
+    for (int j = 0; j < maxSize; j++) {
+      SDL2pp::Rect dstRect = camera.toScreen(
+          (i - maxSize / 2) * gridSize, (j - maxSize / 2) * gridSize,
+          gridSize, gridSize);
+
+      SDL2pp::Rect srcRect = {0, 0, gridSize, gridSize};
+      renderer->Copy(textureMapper->getTexture(commonGroundTextureId),
+                     srcRect, dstRect);
+    }
+  }
+}
+
 void GameWindow::render(unsigned int it) {
   auto itMy = players.find(myPlayerID);
   if (itMy == players.end()) {
     throw std::runtime_error("My player not found in map");
   }
 
-  const Player &myPlayer = *itMy->second;
-  camera.follow(myPlayer.getX(), myPlayer.getY(), 32, 32);
+  Player &myPlayer = *itMy->second;
+  camera.follow(myPlayer.get_x(), myPlayer.get_y(), 32, 32);
 
-  for (auto &entry : players) {
-    if (entry.second) {
-      renderPlayer(entry.first, entry.second, it);
+  renderCommonGround();
+
+  for (size_t i = 0; i < tilesToRender.size(); i++) {
+    auto& priority = tilesToRender[i];
+
+    for (auto &[pair, items] : priority) {
+
+      int max_row = pair.first;
+      int y_max = (max_row - maxSize / 2 + 1) * gridSize;
+
+      for (auto& entity : entities) {
+          if (!entity->rendered() && entity->get_y() + entity->get_h() < y_max && entity->hasPriority(i)) {
+              entity->render(*renderer, camera, it);
+          }
+      }
+
+      for (auto &item : items) {
+        SDL2pp::Rect dstRect = camera.toScreen(
+            (item.i - maxSize / 2) * gridSize,
+            (item.j - maxSize / 2) * gridSize, gridSize, gridSize);
+
+        SDL2pp::Rect srcRect = {item.x_start, item.y_start,
+                                item.x_end - item.x_start,
+                                item.y_end - item.y_start};
+        renderer->Copy(textureMapper->getTexture(item.texture_id), srcRect,
+                       dstRect);
+      }
     }
+    for (auto& entity : entities) {
+      if (!entity->rendered() && entity->hasPriority(i)) {
+        entity->render(*renderer, camera, it);
+      }
+    }
+  }
+
+  for (auto& entity : entities) {
+    if (!entity->rendered()) {
+      entity->render(*renderer, camera, it);
+    }
+  }
+
+  for (auto &[pid, player] : players) {
+    auto headIt = headTextures.find(pid);
+    if (headIt == headTextures.end())
+      continue;
+
+    SDL2pp::Rect r = camera.toScreen(player->getX(), player->getY(), 32, 32);
+    SpriteFrame headSrc = headFrameForDirection(player->getDirection());
+    int headDestW = 24, headDestH = 24;
+    int headX = r.x + (r.w - headDestW) / 2 + headCenteringOffset(player->getDirection());
+    int headY = r.y - headDestH + 4;
+    SDL2pp::Rect headDest{headX, headY, headDestW, headDestH};
+    renderer->Copy(*headIt->second,
+                   SDL2pp::Rect(headSrc.x, headSrc.y, headSrc.w, headSrc.h),
+                   headDest);
+
+    if (!font)
+      continue;
+    const std::string &name = player->getName();
+    if (name.empty())
+      continue;
+    SDL2pp::Surface surf = font->RenderUTF8_Solid(
+        name, SDL_Color{255, 255, 255, 255});
+    SDL2pp::Texture tex(*renderer, surf);
+    int nameX = r.x + (r.w - surf.GetWidth()) / 2;
+    int nameY = headY - surf.GetHeight() - 2;
+    renderer->Copy(tex, SDL2pp::NullOpt,
+                   SDL2pp::Rect(nameX, nameY, surf.GetWidth(), surf.GetHeight()));
   }
 
   renderHUD();
 }
 
-void GameWindow::addPlayer(uint32_t ID, const Player *player) {
+void GameWindow::clear()
+{
+  for (auto& entity : entities) {
+    entity->clear();
+  }
+  renderer->Clear();
+}
+
+void GameWindow::addPlayer(uint32_t ID, Player *player) {
   players[ID] = player;
   auto texture = loadPlayerTexture(*renderer,
                                    assetPath(headPathForRace(player->getRace())));
   headTextures[ID] = std::move(texture);
+  entities.push_back(player);
 }
 
-void GameWindow::renderPlayer(uint32_t playerId, const Player *player, unsigned int it) {
-  const int animationIt = player->getIsMoving() ? static_cast<int>(it) : 0;
-  SpriteFrame src =
-      spriteFrameCalculator.getSprite(player->getDirection(), animationIt);
-  SDL2pp::Rect r = camera.toScreen(player->getX(), player->getY(), 32, 32);
-  renderer->Copy(*defaultPlayerTexture,
-                 SDL2pp::Rect(src.x, src.y, src.w, src.h), r);
-
-  auto headIt = headTextures.find(playerId);
-  if (headIt == headTextures.end()) {
-    return;
+void GameWindow::removePlayer(uint32_t ID) {
+  auto it = players.find(ID);
+  if (it != players.end()) {
+    entities.remove(it->second);
   }
-  SpriteFrame headSrc = headFrameForDirection(player->getDirection());
-  int headDestW = 24;
-  int headDestH = 24;
-  int headX =
-      r.x + (r.w - headDestW) / 2 + headCenteringOffset(player->getDirection());
-  int headY = r.y - headDestH + 4;
-  SDL2pp::Rect headDest{headX, headY, headDestW, headDestH};
-  renderer->Copy(*headIt->second,
-                 SDL2pp::Rect(headSrc.x, headSrc.y, headSrc.w, headSrc.h),
-                 headDest);
-
-  if (!font)
-    return;
-  const std::string &name = player->getName();
-  if (name.empty())
-    return;
-  SDL2pp::Surface surf = font->RenderUTF8_Solid(
-      name, SDL_Color{255, 255, 255, 255});
-  SDL2pp::Texture tex(*renderer, surf);
-  int nameX = r.x + (r.w - surf.GetWidth()) / 2;
-  int nameY = headY - surf.GetHeight() - 2;
-  renderer->Copy(tex, SDL2pp::NullOpt,
-                 SDL2pp::Rect(nameX, nameY, surf.GetWidth(), surf.GetHeight()));
+  players.erase(ID);
+  headTextures.erase(ID);
 }
 
 std::string GameWindow::headPathForRace(const std::string &race) const {

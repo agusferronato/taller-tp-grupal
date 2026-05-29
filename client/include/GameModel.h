@@ -40,6 +40,7 @@ private:
   void playerRemoved(const ServerEventDTO &event);
   void playerInfoUpdated(const ServerEventDTO &event);
   void playerInventoryUpdated(const ServerEventDTO &event);
+  void handleTextureInfo(const ServerEventDTO &event);
 };
 
 #endif
