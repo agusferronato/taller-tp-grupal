@@ -14,7 +14,7 @@ private:
 public:
   MovePlayerCommand(uint32_t playerId, Direction direction);
 
-  void execute(Game &game) override;
+  void execute(Game &game, uint32_t connectionId) override;
 };
 
 #endif // MOVE_PLAYER_COMMAND_H

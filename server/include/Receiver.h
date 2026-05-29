@@ -1,10 +1,12 @@
 #ifndef RECEIVER_H
 #define RECEIVER_H
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <utility>
 
+#include "ClientMessage.h"
 #include "CommunicationEnded.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "Queue.h"
@@ -16,12 +18,14 @@ class Receiver : public Thread {
 
 private:
   Socket &peer;
-  Queue<ClientCommandDTO> &gameloopQueue;
+  Queue<ClientMessage> &gameloopQueue;
+  uint32_t connectionId;
   Protocol protocol;
   bool keepRunning = true;
 
 public:
-  Receiver(Socket &peer, Queue<ClientCommandDTO> &gameloopQueue);
+  Receiver(Socket &peer, Queue<ClientMessage> &gameloopQueue,
+           uint32_t connectionId);
 
   Receiver(const Receiver &) = delete;
   Receiver &operator=(const Receiver &) = delete;

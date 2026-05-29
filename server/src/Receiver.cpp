@@ -1,8 +1,10 @@
 #include "Receiver.h"
 #include "protocol/RegisterAllParsers.h"
 
-Receiver::Receiver(Socket &peer, Queue<ClientCommandDTO> &gameloopQueue)
-    : peer(peer), gameloopQueue(gameloopQueue), protocol(peer) {
+Receiver::Receiver(Socket &peer, Queue<ClientMessage> &gameloopQueue,
+                   uint32_t connectionId)
+    : peer(peer), gameloopQueue(gameloopQueue), connectionId(connectionId),
+      protocol(peer) {
   registerAllParsers(protocol);
 }
 
@@ -14,7 +16,7 @@ void Receiver::run() {
 
     try {
       auto command = protocol.receiveCommand();
-      gameloopQueue.push(std::move(command));
+      gameloopQueue.push(ClientMessage{std::move(command), connectionId});
 
     } catch (const CommunicationEnded &e) {
       break;

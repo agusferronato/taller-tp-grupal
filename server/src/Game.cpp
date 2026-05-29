@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "MapLoader.h"
 #include "MoveCommandDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerListEventDTO.h"
@@ -6,24 +7,30 @@
 #include "PlayerStoppedEventDTO.h"
 #include "RegisterPlayerCommandDTO.h"
 #include "RegisterPlayerEventDTO.h"
+#include "TextureInfoEventDTO.h"
 #include "command/CommandFactory.h"
 
-Game::Game(Queue<ClientCommandDTO> &gameloopQueue,
+Game::Game(Queue<ClientMessage> &gameloopQueue,
            SenderQueueMonitor &senderQueueMonitor)
     : gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor) {}
 
 void Game::run() {
+  MapLoader mapLoader("map.toml");
+  maxSize = mapLoader.GetMaxSize();
+  gridSize = mapLoader.GetGridSize();
+  commonGroundTextureId = mapLoader.GetCommonGroundTextureId();
+  textureOrigins = mapLoader.GetTextureOrigins();
 
   ConstantRateLoop rateloop(FPS_SERVER);
   CommandFactory factory;
   unsigned int it = 0;
 
   while (keepRunning) {
-    ClientCommandDTO dto;
+    ClientMessage msg;
 
-    if (gameloopQueue.try_pop(dto)) {
-      auto command = factory.create(std::move(dto));
-      command->execute(*this);
+    if (gameloopQueue.try_pop(msg)) {
+      auto command = factory.create(msg.dto);
+      command->execute(*this, msg.connectionId);
     }
     movePlayers();
     sendMessages();
@@ -61,21 +68,36 @@ void Game::movePlayers() {
       break;
     }
 
-    std::cout << "player: " << playerID << "moved to x: " << info.x
-              << " y: " << info.y << std::endl;
-
     messagesToSend.push_back(
         PlayerMovedEventDTO{playerID, static_cast<int16_t>(info.x),
                             static_cast<int16_t>(info.y), info.direction});
   }
 }
 
-void Game::registerPlayer() {
-  uint32_t newId = nextPlayerId++;
+void Game::registerPlayer(uint32_t connectionId) {
 
-  players[newId] = PlayerInfo{0, 0, Direction::Down};
+  players[connectionId] = PlayerInfo{0, 0, Direction::Down};
 
-  messagesToSend.push_back(RegisterPlayerEventDTO{newId, 0});
+  senderQueueMonitor.sendToClient(connectionId,
+                                  RegisterPlayerEventDTO{connectionId, 0});
+
+  {
+    std::vector<TextureOriginDTO> origins;
+    origins.reserve(textureOrigins.size());
+    for (const auto &o : textureOrigins) {
+      origins.push_back(
+          {static_cast<uint8_t>(o.priority),
+           static_cast<uint8_t>(o.texture_id),
+           static_cast<uint16_t>(o.x),
+           static_cast<uint16_t>(o.y)});
+    }
+    senderQueueMonitor.sendToClient(
+        connectionId,
+        TextureInfoEventDTO{static_cast<uint16_t>(maxSize),
+                            static_cast<uint16_t>(gridSize),
+                            static_cast<uint8_t>(commonGroundTextureId),
+                            std::move(origins)});
+  }
 
   std::vector<PlayerInfoDTO> playerList;
 
@@ -84,10 +106,11 @@ void Game::registerPlayer() {
                           static_cast<int16_t>(info.y), info.direction});
   }
 
-  messagesToSend.push_back(PlayerListEventDTO{std::move(playerList)});
+  senderQueueMonitor.sendToClient(connectionId,
+                                  PlayerListEventDTO{std::move(playerList)});
 
   messagesToSend.push_back(
-      PlayerAppearedEventDTO{newId, 0, 0, Direction::Down});
+      PlayerAppearedEventDTO{connectionId, 0, 0, Direction::Down});
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {

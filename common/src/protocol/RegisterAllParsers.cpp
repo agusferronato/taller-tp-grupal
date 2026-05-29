@@ -12,6 +12,7 @@
 #include "parser/Events/PlayerMovedEventParser.h"
 #include "parser/Events/PlayerStoppedEventParser.h"
 #include "parser/Events/RegisterPlayerEventParser.h"
+#include "parser/Events/TextureInfoEventParser.h"
 #include "protocol/Protocol.h"
 #include "protocol/ProtocolCodes.h"
 
@@ -67,4 +68,8 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::PlayerStoppedEvent),
       std::make_unique<PlayerStoppedEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::TextureInfoEvent),
+      std::make_unique<TextureInfoEventParser>());
 }
