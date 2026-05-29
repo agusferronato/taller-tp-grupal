@@ -45,7 +45,7 @@ public:
     frames[3][4] = {106, 149, 12, 29};
   }
 
-  SpriteFrame getSprite(Direction direction, int iterator) const {
+  SpriteFrame getSprite(Direction direction, unsigned int iterator) const {
 
     int row = 0;
 
@@ -72,7 +72,7 @@ public:
     }
 
     int count = frameCounts[row];
-    int frame = static_cast<int>(sqrt(iterator + 1) * 0.25) % count;
+    int frame = static_cast<int>(iterator * 0.25) % count;
     return frames[row][frame];
   }
 };

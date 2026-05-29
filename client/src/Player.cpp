@@ -23,7 +23,10 @@ void Player::stopMoving() { isMoving = false; }
 
 void Player::render(SDL2pp::Renderer &renderer, Camera &camera,
                     unsigned int it) {
-  const int animationIt = this->getIsMoving() ? static_cast<int>(it) : 0;
+
+  unsigned int animationIt = this->getIsMoving() ? it : 0;
+
+
   SpriteFrame src = spriteFrameCalculator.getSprite(direction, animationIt);
 
   SDL2pp::Rect r = camera.toScreen(x, y, 32, 32);

@@ -18,11 +18,11 @@ void ConstantRateLoop::updateTimer(unsigned int &it) {
            std::chrono::milliseconds(behind.count() % this->rateInMiliseconds);
     auto lost = behind + rest;
 
-    t1 += lost;
+    t0 += lost;
     it += static_cast<unsigned int>(lost.count() / this->rateInMiliseconds);
   }
 
   std::this_thread::sleep_for(rest);
-  t1 += rateDuration;
+  t0 += rateDuration;
   it += 1;
 }
