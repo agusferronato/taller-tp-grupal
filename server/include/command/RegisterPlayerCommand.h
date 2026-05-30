@@ -9,9 +9,11 @@
 class RegisterPlayerCommand : public Command {
 private:
   std::string playerName;
+  std::string race;
+  std::string playerClass;
 
 public:
-  explicit RegisterPlayerCommand(const std::string &playerName);
+  RegisterPlayerCommand(std::string playerName, std::string race, std::string playerClass);
 
   void execute(Game &game, uint32_t connectionId) override;
 };

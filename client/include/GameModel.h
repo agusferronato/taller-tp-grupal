@@ -20,7 +20,8 @@ private:
 public:
   GameModel(uint32_t myPlayerID, GameWindow *gameView,
             Queue<ServerEventDTO> &receptionQueue,
-            Queue<ClientCommandDTO> &sendingQueue);
+            Queue<ClientCommandDTO> &sendingQueue,
+            const std::string &race = "humano");
   void updateStateFromServer();
 
 public:
@@ -36,6 +37,9 @@ private:
   void playerAppeared(const ServerEventDTO &event);
   void playerMovedHandler(const ServerEventDTO &event);
   void playerStopped(const ServerEventDTO &event);
+  void playerRemoved(const ServerEventDTO &event);
+  void playerInfoUpdated(const ServerEventDTO &event);
+  void playerInventoryUpdated(const ServerEventDTO &event);
   void handleTextureInfo(const ServerEventDTO &event);
 };
 

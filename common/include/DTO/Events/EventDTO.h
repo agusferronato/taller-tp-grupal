@@ -4,10 +4,13 @@
 #include <variant>
 
 #include "ChatMessageEventDTO.h"
+#include "InventoryUpdateEventDTO.h"
 #include "NpcDefeatedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
+#include "PlayerInfoEventDTO.h"
 #include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
+#include "PlayerRemovedEventDTO.h"
 #include "PlayerStoppedEventDTO.h"
 #include "RegisterPlayerEventDTO.h"
 #include "TextureInfoEventDTO.h"
@@ -17,6 +20,8 @@ using ServerEventDTO =
     std::variant<ChatMessageEventDTO, NpcDefeatedEventDTO, PlayerMovedEventDTO,
                  RegisterPlayerEventDTO, PlayerListEventDTO,
                  PlayerAppearedEventDTO, PlayerStoppedEventDTO,
-                 TextureInfoEventDTO, PrivateMessageEventDTO>;
+                 TextureInfoEventDTO, PrivateMessageEventDTO, 
+                 PlayerInfoEventDTO, PlayerRemovedEventDTO, 
+                 InventoryUpdateEventDTO>;
 
 #endif // EVENT_DTO_H
