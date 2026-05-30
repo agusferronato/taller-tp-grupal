@@ -4,21 +4,22 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2pp/SDL2pp.hh>
+#include <cstdint>
 #include <list>
 #include <map>
-#include <vector>
-
-#include "Camera.h"
-#include "MapData.h"
-#include "Player.h"
-#include "PlayerEntity.h"
-#include "SpriteCalculator.h"
-#include "TextureMapper.h"
-
-#include <cstdint>
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <utility>
+#include <vector>
+
+#include "Camera.h"
+#include "EntityType.h"
+#include "MapData.h"
+#include "RenderableEntity.h"
+#include "TextureMapper.h"
+
+class PlayerEntity;
 
 class GameWindow {
 private:
@@ -33,8 +34,9 @@ private:
   Camera camera;
   uint32_t myPlayerID;
 
-  std::unordered_map<uint32_t, Player *> players;
-  std::list<RenderableEntity *> entities;
+  using EntityKey = std::pair<EntityType, uint32_t>;
+  std::map<EntityKey, std::unique_ptr<RenderableEntity>> entities;
+  PlayerEntity* myPlayerEntity{nullptr};
 
   std::unique_ptr<TextureMapper> textureMapper;
 
@@ -47,21 +49,23 @@ private:
 public:
   GameWindow(uint32_t myPlayerID, int windowWidth, int windowHeight);
 
-  void addPlayer(uint32_t ID, Player &player);
+  void addEntity(EntityType type, uint32_t id,
+                 std::unique_ptr<RenderableEntity> entity);
+  void removeEntity(EntityType type, uint32_t id);
+  void setMyPlayer(PlayerEntity* entity);
 
-  void removePlayer(uint32_t ID);
+  SDL2pp::Renderer& getRenderer();
+  SDL2pp::Font& getFont();
   void show(unsigned int it);
   void setMapData(int maxSize, int gridSize, int commonGroundTextureId,
                   const std::list<TileOrigin> &origins);
 
 private:
   void renderHUD();
-
   void render(unsigned int it);
   void clear();
   void initResources();
   void renderCommonGround();
-
 };
 
 #endif

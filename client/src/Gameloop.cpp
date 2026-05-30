@@ -72,8 +72,14 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
   uint32_t myPlayerId = resp->playerId;
 
   gameView = std::make_unique<GameWindow>(myPlayerId, 820, 400);
+
+  textureManager = std::make_unique<TextureManager>(gameView->getRenderer());
+  textureManager->loadLayoutsFromToml("assets/layouts.toml");
+  textureManager->loadTexturesFromToml("assets/sprites.toml");
+
   gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
                                           receptionQueue, sendingQueue,
+                                          *textureManager,
                                           clientData.race);
   gameController = std::make_unique<GameController>(gameModel.get());
 }
