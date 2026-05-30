@@ -45,6 +45,8 @@ private:
   void handle(const ChatMessageEventDTO &event);
   void handle(const NpcDefeatedEventDTO &event);
   void handle(const RegisterPlayerEventDTO &event);
+  void handle(const PrivateMessageEventDTO &event);
+
 };
 
 #endif
