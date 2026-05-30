@@ -36,10 +36,6 @@ GameWindow::GameWindow(uint32_t myPlayerID)
 void GameWindow::initResources() {
   backgroundTexture = std::make_unique<SDL2pp::Texture>(
       *renderer, SDL2pp::Surface(assetPath("assets/10119.png")));
-  defaultPlayerTexture = loadPlayerTexture(
-      *renderer, assetPath("assets/11402.png"));
-  Player::setPlayerTexture(defaultPlayerTexture.get());
-
   font = nullptr;
   std::ifstream sys("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf");
   if (sys.good()) {
@@ -108,8 +104,6 @@ void GameWindow::renderHUD() {
                      std::pow(static_cast<double>(p.getLevel()), 1.5)),
           SDL_Color{60, 200, 60, 255}, SDL_Color{10, 50, 10, 255});
 
-  if (!font)
-    return;
 
   auto renderText = [&](int x, int y, const std::string &text,
                         SDL_Color color) {
@@ -196,35 +190,6 @@ void GameWindow::render(unsigned int it) {
     }
   }
 
-  for (auto &[pid, player] : players) {
-    auto headIt = headTextures.find(pid);
-    if (headIt == headTextures.end())
-      continue;
-
-    SDL2pp::Rect r = camera.toScreen(player->getX(), player->getY(), 32, 32);
-    SpriteFrame headSrc = headFrameForDirection(player->getDirection());
-    int headDestW = 24, headDestH = 24;
-    int headX = r.x + (r.w - headDestW) / 2 + headCenteringOffset(player->getDirection());
-    int headY = r.y - headDestH + 4;
-    SDL2pp::Rect headDest{headX, headY, headDestW, headDestH};
-    renderer->Copy(*headIt->second,
-                   SDL2pp::Rect(headSrc.x, headSrc.y, headSrc.w, headSrc.h),
-                   headDest);
-
-    if (!font)
-      continue;
-    const std::string &name = player->getName();
-    if (name.empty())
-      continue;
-    SDL2pp::Surface surf = font->RenderUTF8_Solid(
-        name, SDL_Color{255, 255, 255, 255});
-    SDL2pp::Texture tex(*renderer, surf);
-    int nameX = r.x + (r.w - surf.GetWidth()) / 2;
-    int nameY = headY - surf.GetHeight() - 2;
-    renderer->Copy(tex, SDL2pp::NullOpt,
-                   SDL2pp::Rect(nameX, nameY, surf.GetWidth(), surf.GetHeight()));
-  }
-
   renderHUD();
 }
 
@@ -238,9 +203,14 @@ void GameWindow::clear()
 
 void GameWindow::addPlayer(uint32_t ID, Player *player) {
   players[ID] = player;
-  auto texture = loadPlayerTexture(*renderer,
-                                   assetPath(headPathForRace(player->getRace())));
-  headTextures[ID] = std::move(texture);
+  auto bodyTexture = loadPlayerTexture(*renderer,
+                                        assetPath("assets/11402.png"));
+  player->setPlayerTexture(std::move(bodyTexture));
+
+  auto headTexture = loadPlayerTexture(*renderer,
+                                       assetPath(headPathForRace(player->getRace())));
+  player->setHeadTexture(std::move(headTexture));
+  player->setNameFont(font.get());
   entities.push_back(player);
 }
 
@@ -250,7 +220,6 @@ void GameWindow::removePlayer(uint32_t ID) {
     entities.remove(it->second);
   }
   players.erase(ID);
-  headTextures.erase(ID);
 }
 
 std::string GameWindow::headPathForRace(const std::string &race) const {
@@ -261,24 +230,6 @@ std::string GameWindow::headPathForRace(const std::string &race) const {
   return path;
 }
 
-SpriteFrame GameWindow::headFrameForDirection(Direction dir) {
-  int x = 0;
-  switch (dir) {
-  case Direction::Down:
-    x = 0;
-    break;
-  case Direction::Right:
-    x = 17;
-    break;
-  case Direction::Left:
-    x = 34;
-    break;
-  case Direction::Up:
-    x = 51;
-    break;
-  }
-  return {x, 0, 16, 16};
-}
 
 int GameWindow::headCenteringOffset(Direction dir) {
   switch (dir) {
