@@ -66,6 +66,8 @@ private:
   void clear();
   void initResources();
   void renderCommonGround();
+
+  void getSortedEntities(std::vector<RenderableEntity*>&);
 };
 
 #endif

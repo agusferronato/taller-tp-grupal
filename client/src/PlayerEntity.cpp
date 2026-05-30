@@ -77,5 +77,5 @@ int PlayerEntity::get_y() {
 }
 
 int PlayerEntity::get_h() {
-    return 0;
+    return Player::Height;
 }

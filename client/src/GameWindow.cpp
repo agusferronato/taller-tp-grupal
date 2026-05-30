@@ -147,6 +147,20 @@ void GameWindow::renderCommonGround() {
   }
 }
 
+void GameWindow::getSortedEntities(std::vector<RenderableEntity *> & sortedEntities)
+{
+  sortedEntities.reserve(entities.size());
+
+  for (auto& [key, entity] : entities) {
+    sortedEntities.push_back(entity.get());
+  }
+  std::sort(sortedEntities.begin(), sortedEntities.end(),
+    [](RenderableEntity* a, RenderableEntity* b) {
+      if (a->get_y() != b->get_y()) return a->get_y() < b->get_y();
+      return a->get_x() < b->get_x();
+    });
+}
+
 void GameWindow::render(unsigned int it) {
   if (myPlayerEntity) {
     camera.follow(myPlayerEntity->get_x(), myPlayerEntity->get_y(),
@@ -155,6 +169,10 @@ void GameWindow::render(unsigned int it) {
 
   renderCommonGround();
 
+  std::vector<RenderableEntity*> sortedEntities;
+  getSortedEntities(sortedEntities);
+
+
   for (size_t i = 0; i < tilesToRender.size(); i++) {
     auto& priority = tilesToRender[i];
 
@@ -162,9 +180,9 @@ void GameWindow::render(unsigned int it) {
       int max_row = pair.first;
       int y_max = (max_row - maxSize / 2 + 1) * gridSize;
 
-      for (auto& [key, entity] : entities) {
+      for (auto* entity : sortedEntities) {
         if (!entity->rendered() && entity->get_y() + 1.25 * entity->get_h() < y_max && entity->hasPriority(i)) {
-            entity->render(*renderer, camera, it);
+          entity->render(*renderer, camera, it);
         }
       }
 
@@ -180,7 +198,7 @@ void GameWindow::render(unsigned int it) {
                        dstRect);
       }
     }
-    for (auto& [key, entity] : entities) {
+    for (auto* entity : sortedEntities) {
       if (!entity->rendered() && entity->hasPriority(i)) {
         entity->render(*renderer, camera, it);
       }
