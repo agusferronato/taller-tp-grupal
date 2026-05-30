@@ -5,6 +5,7 @@
 #include "parser/Commands/MoveCommandParser.h"
 #include "parser/Commands/PlayerStopCommandParser.h"
 #include "parser/Commands/RegisterPlayerParser.h"
+#include "parser/Commands/PrivateMessageCommandParser.h"
 #include "parser/Events/ChatMessageEventParser.h"
 #include "parser/Events/NpcDefeatedEventParser.h"
 #include "parser/Events/PlayerAppearedEventParser.h"
@@ -13,6 +14,7 @@
 #include "parser/Events/PlayerStoppedEventParser.h"
 #include "parser/Events/RegisterPlayerEventParser.h"
 #include "parser/Events/TextureInfoEventParser.h"
+#include "parser/Events/PrivateMessageEventParser.h"
 #include "protocol/Protocol.h"
 #include "protocol/ProtocolCodes.h"
 
@@ -40,6 +42,11 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerCommandParser(
       static_cast<uint8_t>(ClientCommandOpCode::ExitCommand),
       std::make_unique<ExitParser>());
+      
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::PrivateMessageCommand),
+      std::make_unique<PrivateMessageCommandParser>());
+
 
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::ChatMessageEvent),
@@ -72,4 +79,8 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::TextureInfoEvent),
       std::make_unique<TextureInfoEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::PrivateMessageEvent),
+      std::make_unique<PrivateMessageEventParser>());
 }
