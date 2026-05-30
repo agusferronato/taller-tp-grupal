@@ -167,5 +167,6 @@ void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &) {}
 void GameModel::handle(const NpcDefeatedEventDTO &) {}
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
+void GameModel::handle(const PrivateMessageEventDTO &) {}
 
  
