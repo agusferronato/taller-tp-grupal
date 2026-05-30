@@ -43,6 +43,7 @@ void GameModel::stopMyPlayer() {
   sendingQueue.push(PlayerStopCommandDTO{myPlayerID});
 }
 
+
 void GameModel::handle(const PlayerMovedEventDTO &moved) {
   uint32_t pid = moved.playerId;
   int16_t x = moved.x;
@@ -55,12 +56,14 @@ void GameModel::handle(const PlayerMovedEventDTO &moved) {
   }
 }
 
+
 void GameModel::handle(const PlayerStoppedEventDTO &stopped) {
   auto it = players.find(stopped.playerId);
   if (it != players.end()) {
     it->second->stopMoving();
   }
 }
+
 
 void GameModel::handle(const PlayerAppearedEventDTO &appeared) {
   uint32_t pid = appeared.playerId;
@@ -110,6 +113,7 @@ void GameModel::handle(const PlayerInfoEventDTO &info) {
   it->second->setExperience(info.experience);
 }
 
+
 void GameModel::handle(const TextureInfoEventDTO &texInfo) {
   std::list<TileOrigin> origins;
   for (const auto &o : texInfo.origins) {
@@ -119,6 +123,7 @@ void GameModel::handle(const TextureInfoEventDTO &texInfo) {
   gameView->setMapData(texInfo.maxSize, texInfo.gridSize,
                        texInfo.commonGroundTextureId, origins);
 }
+
 
 void GameModel::registerPlayers() {
   while (true) {

@@ -21,7 +21,9 @@ public:
     virtual int get_y() = 0;
     virtual int get_h() = 0;
 
-    virtual bool rendered() = 0;
+    inline bool rendered() {
+        return wasRendered;
+    };
 
     inline bool hasPriority(int priority) {
         return this->priority == priority;

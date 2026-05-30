@@ -12,7 +12,7 @@
 #include <string>
 #include <SDL2pp/SDL2pp.hh>
 
-class Player : public RenderableEntity {
+class Player {
 
 private:
   uint32_t id;
@@ -48,14 +48,10 @@ private:
 public:
   Player(uint32_t id, int xOrigin, int yOrigin);
 
-  void setPlayerTexture(std::unique_ptr<SDL2pp::Texture> texture);
-
   /* Model, el unico que puede modificar Player */
   uint32_t getID() const;
   void setCoordinates(int x, int y);
   void updateCoordinates(int x, int y, Direction direction);
-  void setHeadTexture(std::unique_ptr<SDL2pp::Texture> txt);
-  void setNameFont(SDL2pp::Font* font);
   void stopMoving();
   void setRace(const std::string &race);
 
@@ -81,18 +77,10 @@ public:
   void setExperience(uint32_t v) { experience = v; }
 
   /* View */
-  void render(SDL2pp::Renderer &renderer, Camera &camera,
-              unsigned int it) override;
-
-  int get_x() override;
-  int get_y() override;
-  int get_h() override;
-  bool rendered() override;
-
   bool getIsMoving() const { return isMoving; }
   Direction getDirection() const { return direction; }
-  int getX() const { return x; }
-  int getY() const { return y; }
+  int get_x() const { return x; }
+  int get_y() const { return y; }
   const std::string &getRace() const { return race; }
   uint32_t getHp() const { return hp; }
   uint32_t getMaxHp() const { return maxHp; }

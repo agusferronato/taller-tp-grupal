@@ -13,8 +13,10 @@ class GameModel {
 private:
   Queue<ServerEventDTO> &receptionQueue;
   Queue<ClientCommandDTO> &sendingQueue;
+  
   uint32_t myPlayerID;
   std::unordered_map<uint32_t, std::unique_ptr<Player>> players;
+
   GameWindow *gameView;
 
 public:
