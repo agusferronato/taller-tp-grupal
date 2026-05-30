@@ -117,7 +117,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerCommand) {
   auto *dto = std::get_if<RegisterPlayerCommandDTO>(&received);
 
   ASSERT_NE(dto, nullptr);
-  EXPECT_EQ(dto->name, "L0rd");
+  EXPECT_EQ(dto->playerName, "L0rd");
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesLoginPlayerCommand) {
@@ -175,7 +175,7 @@ TEST_F(ProtocolTest, SendsAndReceivesPrivateMessageCommand) {
   auto *dto = std::get_if<PrivateMessageCommandDTO>(&received);
 
   ASSERT_NE(dto, nullptr);
-  EXPECT_EQ(dto->target, "L0rd");
+  EXPECT_EQ(dto->targetName, "L0rd");
   EXPECT_EQ(dto->message, "Hello");
 }
 
