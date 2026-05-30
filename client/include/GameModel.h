@@ -34,13 +34,17 @@ private:
 
 private:
   /* Event handlers */
-  void playerAppeared(const ServerEventDTO &event);
-  void playerMovedHandler(const ServerEventDTO &event);
-  void playerStopped(const ServerEventDTO &event);
-  void playerRemoved(const ServerEventDTO &event);
-  void playerInfoUpdated(const ServerEventDTO &event);
-  void playerInventoryUpdated(const ServerEventDTO &event);
-  void handleTextureInfo(const ServerEventDTO &event);
+  void handle(const PlayerMovedEventDTO &event);
+  void handle(const PlayerAppearedEventDTO &event);
+  void handle(const PlayerStoppedEventDTO &event);
+  void handle(const PlayerRemovedEventDTO &event);
+  void handle(const PlayerInfoEventDTO &event);
+  void handle(const InventoryUpdateEventDTO &event);
+  void handle(const TextureInfoEventDTO &event);
+  void handle(const PlayerListEventDTO &event);
+  void handle(const ChatMessageEventDTO &event);
+  void handle(const NpcDefeatedEventDTO &event);
+  void handle(const RegisterPlayerEventDTO &event);
 };
 
 #endif
