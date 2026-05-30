@@ -16,21 +16,9 @@
 #include "DTO/Events/PlayerStoppedEventDTO.h"
 #include "DTO/Events/RegisterPlayerEventDTO.h"
 #include "Direction.h"
-#include "parser/Commands/ExitParser.h"
-#include "parser/Commands/LoginPlayerParser.h"
-#include "parser/Commands/MeditateParser.h"
-#include "parser/Commands/MoveCommandParser.h"
-#include "parser/Commands/PlayerStopCommandParser.h"
-#include "parser/Commands/PrivateMessageParser.h"
-#include "parser/Commands/RegisterPlayerParser.h"
-#include "parser/Events/ChatMessageEventParser.h"
-#include "parser/Events/NpcDefeatedEventParser.h"
-#include "parser/Events/PlayerListEventParser.h"
-#include "parser/Events/PlayerMovedEventParser.h"
-#include "parser/Events/PlayerStoppedEventParser.h"
-#include "parser/Events/RegisterPlayerEventParser.h"
 #include "protocol/Protocol.h"
 #include "protocol/ProtocolCodes.h"
+#include "protocol/RegisterAllParsers.h"
 
 class ProtocolTest : public ::testing::Test {
 protected:
@@ -43,60 +31,6 @@ protected:
   void TearDown() override {
     close(fds[0]);
     close(fds[1]);
-  }
-
-  void registerAllParsers(Protocol &protocol) {
-    protocol.registerCommandParser(
-        static_cast<uint8_t>(ClientCommandOpCode::RegisterPlayerCommand),
-        std::make_unique<RegisterPlayerParser>());
-
-    protocol.registerCommandParser(
-        static_cast<uint8_t>(ClientCommandOpCode::LoginPlayerCommand),
-        std::make_unique<LoginPlayerParser>());
-
-    protocol.registerCommandParser(
-        static_cast<uint8_t>(ClientCommandOpCode::MeditateCommand),
-        std::make_unique<MeditateParser>());
-
-    protocol.registerCommandParser(
-        static_cast<uint8_t>(ClientCommandOpCode::PrivateMessageCommand),
-        std::make_unique<PrivateMessageParser>());
-
-    protocol.registerCommandParser(
-        static_cast<uint8_t>(ClientCommandOpCode::MoveCommand),
-        std::make_unique<MoveCommandParser>());
-
-    protocol.registerCommandParser(
-        static_cast<uint8_t>(ClientCommandOpCode::PlayerStopCommand),
-        std::make_unique<PlayerStopCommandParser>());
-
-    protocol.registerCommandParser(
-        static_cast<uint8_t>(ClientCommandOpCode::ExitCommand),
-        std::make_unique<ExitParser>());
-
-    protocol.registerEventParser(
-        static_cast<uint8_t>(EventOpcode::ChatMessageEvent),
-        std::make_unique<ChatMessageEventParser>());
-
-    protocol.registerEventParser(
-        static_cast<uint8_t>(EventOpcode::NPCDefeatedEvent),
-        std::make_unique<NpcDefeatedEventParser>());
-
-    protocol.registerEventParser(
-        static_cast<uint8_t>(EventOpcode::PlayerMovedEvent),
-        std::make_unique<PlayerMovedEventParser>());
-
-    protocol.registerEventParser(
-        static_cast<uint8_t>(EventOpcode::RegisterPlayerEvent),
-        std::make_unique<RegisterPlayerEventParser>());
-
-    protocol.registerEventParser(
-        static_cast<uint8_t>(EventOpcode::PlayerListEvent),
-        std::make_unique<PlayerListEventParser>());
-
-    protocol.registerEventParser(
-        static_cast<uint8_t>(EventOpcode::PlayerStoppedEvent),
-        std::make_unique<PlayerStoppedEventParser>());
   }
 };
 
@@ -382,4 +316,28 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
   EXPECT_EQ(dto->players[2].x, 500);
   EXPECT_EQ(dto->players[2].y, 600);
   EXPECT_EQ(dto->players[2].direction, Direction::Left);
+}
+
+TEST_F(ProtocolTest, SendsAndReceivesPrivateMessageEvent) {
+  Socket clientSocket = Socket::from_fd(fds[0]);
+  Socket serverSocket = Socket::from_fd(fds[1]);
+
+  Protocol client(clientSocket);
+  Protocol server(serverSocket);
+  registerAllParsers(client);
+  registerAllParsers(server);
+
+  ServerEventDTO original =
+      PrivateMessageEventDTO{"SenderPlayer", "TargetPlayer",
+                             "Hola desde el sender"};
+
+  server.sendEvent(original);
+
+  ServerEventDTO received = client.receiveEvent();
+  auto *dto = std::get_if<PrivateMessageEventDTO>(&received);
+
+  ASSERT_NE(dto, nullptr);
+  EXPECT_EQ(dto->senderName, "SenderPlayer");
+  EXPECT_EQ(dto->targetName, "TargetPlayer");
+  EXPECT_EQ(dto->message, "Hola desde el sender");
 }

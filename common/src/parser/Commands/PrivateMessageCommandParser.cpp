@@ -1,4 +1,4 @@
-#include "parser/Commands/PrivateMessageParser.h"
+#include "parser/Commands/PrivateMessageCommandParser.h"
 
 #include "DTO/Commands/PrivateMessageCommandDTO.h"
 #include "protocol/Protocol.h"
@@ -6,7 +6,7 @@
 
 #include <variant>
 
-void PrivateMessageParser::serialize(std::vector<uint8_t> &bytes,
+void PrivateMessageCommandParser::serialize(std::vector<uint8_t> &bytes,
                                      const ClientCommandDTO &dto) {
   const auto &request = std::get<PrivateMessageCommandDTO>(dto);
 
@@ -17,7 +17,7 @@ void PrivateMessageParser::serialize(std::vector<uint8_t> &bytes,
   utils.appendBytes(request.message, bytes);
 }
 
-ClientCommandDTO PrivateMessageParser::deserialize(Protocol &protocol) {
+ClientCommandDTO PrivateMessageCommandParser::deserialize(Protocol &protocol) {
   std::string targetName = protocol.getStringData();
   std::string message = protocol.getStringData();
 

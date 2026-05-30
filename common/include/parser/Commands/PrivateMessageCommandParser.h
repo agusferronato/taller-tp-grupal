@@ -4,7 +4,7 @@
 #include "ClientCommandParser.h"
 #include <vector>
 
-class PrivateMessageParser : public ClientCommandParser {
+class PrivateMessageCommandParser : public ClientCommandParser {
 public:
   void serialize(std::vector<uint8_t> &bytes,
                  const ClientCommandDTO &dto) override;
