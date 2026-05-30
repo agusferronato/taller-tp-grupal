@@ -3,6 +3,8 @@
 
 #include <variant>
 
+#include "DropItemCommandDTO.h"
+#include "EquipCommandDTO.h"
 #include "ExitCommandDTO.h"
 #include "LoginPlayerCommandDTO.h"
 #include "MeditateCommandDTO.h"
@@ -10,10 +12,13 @@
 #include "PlayerStopCommandDTO.h"
 #include "PrivateMessageCommandDTO.h"
 #include "RegisterPlayerCommandDTO.h"
+#include "TakeItemCommandDTO.h"
+#include "UnequipCommandDTO.h"
 
 using ClientCommandDTO =
     std::variant<RegisterPlayerCommandDTO, LoginPlayerCommandDTO,
                  MeditateCommandDTO, PrivateMessageCommandDTO, MoveCommandDTO,
-                 ExitCommandDTO, PlayerStopCommandDTO>;
+                 ExitCommandDTO, PlayerStopCommandDTO, EquipCommandDTO,
+                 UnequipCommandDTO, DropItemCommandDTO, TakeItemCommandDTO>;
 
 #endif

@@ -14,8 +14,18 @@ void Client::run() {
 
   receiver.start();
   sender.start();
-  Gameloop gameloop(receptionQueue, sendingQueue, shutdownEvent, clientData);
-  gameloop.run();
+
+  try {
+    Gameloop gameloop(receptionQueue, sendingQueue, shutdownEvent, clientData);
+    gameloop.run();
+  } catch (...) {
+    shutdownEvent.put(ShutdownReason::ConnectionClosed);
+    sendingQueue.close();
+    receptionQueue.close();
+    receiver.join();
+    sender.join();
+    throw;
+  }
 
   shutdownEvent.wait();
 

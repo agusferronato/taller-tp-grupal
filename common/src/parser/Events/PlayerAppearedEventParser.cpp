@@ -16,6 +16,15 @@ void PlayerAppearedEventParser::serialize(std::vector<uint8_t> &bytes,
   utils.appendBytes(event.x, bytes);
   utils.appendBytes(event.y, bytes);
   utils.appendBytes(static_cast<uint8_t>(event.direction), bytes);
+  utils.appendBytes(event.race, bytes);
+  utils.appendBytes(event.playerName, bytes);
+  utils.appendBytes(event.hp, bytes);
+  utils.appendBytes(event.maxHp, bytes);
+  utils.appendBytes(event.mana, bytes);
+  utils.appendBytes(event.maxMana, bytes);
+  utils.appendBytes(event.gold, bytes);
+  utils.appendBytes(event.level, bytes);
+  utils.appendBytes(event.experience, bytes);
 }
 
 ServerEventDTO PlayerAppearedEventParser::deserialize(Protocol &protocol) {
@@ -24,5 +33,19 @@ ServerEventDTO PlayerAppearedEventParser::deserialize(Protocol &protocol) {
   int16_t y = protocol.getInt16();
   Direction direction = static_cast<Direction>(protocol.getUint8());
 
-  return PlayerAppearedEventDTO{playerId, x, y, direction};
+  std::string race = protocol.getStringData();
+  std::string playerName = protocol.getStringData();
+  uint32_t hp = protocol.getUint32();
+  uint32_t maxHp = protocol.getUint32();
+  uint32_t mana = protocol.getUint32();
+  uint32_t maxMana = protocol.getUint32();
+  uint32_t gold = protocol.getUint32();
+  uint32_t level = protocol.getUint32();
+  uint32_t experience = protocol.getUint32();
+
+  return PlayerAppearedEventDTO{playerId,     x,          y,
+                                 direction,    std::move(race),
+                                 std::move(playerName), hp,
+                                 maxHp,        mana,      maxMana,
+                                 gold,         level,     experience};
 }
