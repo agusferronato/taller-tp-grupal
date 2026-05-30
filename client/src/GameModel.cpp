@@ -11,19 +11,29 @@
 #include "NpcDefeatedEventDTO.h"
 #include "RegisterPlayerEventDTO.h"
 #include "TextureInfoEventDTO.h"
+#include "EntityType.h"
+#include "PlayerEntity.h"
 #include <iostream>
 #include <stdexcept>
 
 GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
                      Queue<ServerEventDTO> &receptionQueue,
                      Queue<ClientCommandDTO> &sendingQueue,
+                     TextureManager &textureManager,
                      const std::string &race)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
-      myPlayerID(myPlayerID), gameView(gameView) {
+      myPlayerID(myPlayerID), gameView(gameView),
+      textureManager(textureManager) {
   auto myPlayer = std::make_unique<Player>(this->myPlayerID, 0, 0);
   myPlayer->setRace(race);
   players[myPlayerID] = std::move(myPlayer);
-  gameView->addPlayer(myPlayerID, players[myPlayerID].get());
+
+  auto entity = std::make_unique<PlayerEntity>(*players[myPlayerID],
+                                               textureManager,
+                                               gameView->getFont());
+  gameView->setMyPlayer(entity.get());
+  gameView->addEntity(EntityType::Player, myPlayerID, std::move(entity));
+
   registerPlayers();
 }
 
@@ -43,7 +53,6 @@ void GameModel::stopMyPlayer() {
   sendingQueue.push(PlayerStopCommandDTO{myPlayerID});
 }
 
-
 void GameModel::handle(const PlayerMovedEventDTO &moved) {
   uint32_t pid = moved.playerId;
   int16_t x = moved.x;
@@ -56,14 +65,12 @@ void GameModel::handle(const PlayerMovedEventDTO &moved) {
   }
 }
 
-
 void GameModel::handle(const PlayerStoppedEventDTO &stopped) {
   auto it = players.find(stopped.playerId);
   if (it != players.end()) {
     it->second->stopMoving();
   }
 }
-
 
 void GameModel::handle(const PlayerAppearedEventDTO &appeared) {
   uint32_t pid = appeared.playerId;
@@ -83,19 +90,21 @@ void GameModel::handle(const PlayerAppearedEventDTO &appeared) {
     players[pid]->setCoordinates(appeared.x, appeared.y);
     players[pid]->setRace(appeared.race);
     applyStats(players[pid].get());
-    gameView->addPlayer(pid, players[pid].get());
     return;
   }
 
   auto player = std::make_unique<Player>(pid, appeared.x, appeared.y);
   player->setRace(appeared.race);
   applyStats(player.get());
+
+  auto entity = std::make_unique<PlayerEntity>(*player, textureManager,
+                                               gameView->getFont());
+  gameView->addEntity(EntityType::Player, pid, std::move(entity));
   players[pid] = std::move(player);
-  gameView->addPlayer(pid, players[pid].get());
 }
 
 void GameModel::handle(const PlayerRemovedEventDTO &removed) {
-  gameView->removePlayer(removed.playerId);
+  gameView->removeEntity(EntityType::Player, removed.playerId);
   players.erase(removed.playerId);
 }
 
@@ -113,7 +122,6 @@ void GameModel::handle(const PlayerInfoEventDTO &info) {
   it->second->setExperience(info.experience);
 }
 
-
 void GameModel::handle(const TextureInfoEventDTO &texInfo) {
   std::list<TileOrigin> origins;
   for (const auto &o : texInfo.origins) {
@@ -123,7 +131,6 @@ void GameModel::handle(const TextureInfoEventDTO &texInfo) {
   gameView->setMapData(texInfo.maxSize, texInfo.gridSize,
                        texInfo.commonGroundTextureId, origins);
 }
-
 
 void GameModel::registerPlayers() {
   while (true) {
@@ -144,8 +151,11 @@ void GameModel::registerPlayers() {
         player->setGold(info.gold);
         player->setLevel(info.level);
         player->setExperience(info.experience);
+
+        auto entity = std::make_unique<PlayerEntity>(*player, textureManager,
+                                                     gameView->getFont());
+        gameView->addEntity(EntityType::Player, info.playerId, std::move(entity));
         players[info.playerId] = std::move(player);
-        gameView->addPlayer(info.playerId, players[info.playerId].get());
       }
       break;
 
@@ -172,5 +182,3 @@ void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &) {}
 void GameModel::handle(const NpcDefeatedEventDTO &) {}
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
-
- 

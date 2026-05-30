@@ -16,7 +16,6 @@ void ClientReceiver::run() {
     try {
 
       auto event = protocol.receiveEvent();
-      std::cout << "llego..." << std::endl;
       receptionQueue.push(std::move(event));
 
     } catch (const CommunicationEnded &e) {

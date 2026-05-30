@@ -1,70 +1,36 @@
 #ifndef TEXTURE_MANAGER_H
-#define TEXTURE_MANANGER_H
+#define TEXTURE_MANAGER_H
 
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include <SDL2pp/SDL2pp.hh>
+
+#include "Direction.h"
+#include "TextureLayout.h"
+#include "TextureLayoutType.h"
+
+struct Sprite {
+    SDL2pp::Texture& txt;
+    int x, y, w, h;
+};
 
 class TextureManager {
-
 private:
+    SDL2pp::Renderer& renderer;
     std::map<int, SDL2pp::Texture> textures;
     std::map<TextureLayoutType, TextureLayout> texturesFrames;
 
 public:
+    explicit TextureManager(SDL2pp::Renderer& renderer);
 
-    TextureManager() {
+    void loadTexturesFromToml(const std::string& path);
+    void loadLayoutsFromToml(const std::string& path);
 
-        /*
-        
-        1)
-        Open TOML file /assets/sprites.toml
-        
-        TOML file format:
-
-        texture:
-
-        texture_id,
-        layout_type // Body, Head, ...
-        array: [ // this is an example
-            direction up: [
-                { x, y, w, h }, // frame1
-                { x, y, w, h },// frame2
-                { x, y, w, h }, // frame3
-                { x, y, w, h }, // frame4
-            ]
-        ]
-
-
-        2) Parsing
-
-        a- Include texture in textures map (with transparency)
-        b- switch (TextureLayoutType) {
-        
-            case TextureLayoutType::Body:
-                ....
-                include vector in layouts map
-
-            case TextureLayoutType::Head:
-                ....
-        
-        
-        }
-
-
-
-        
-        
-        */
-
-
-
-    }
-
-    Sprite getBodySprite();
-    Sprite getHeadSprite();
-    Sprite getSprite();
-
+    Sprite getBodySprite(int bodyId, Direction dir, unsigned int it);
+    Sprite getHeadSprite(int headId, Direction dir);
 };
-
-
-
 
 #endif

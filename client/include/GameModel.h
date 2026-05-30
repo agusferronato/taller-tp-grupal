@@ -3,26 +3,31 @@
 
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
-#include "GameWindow.h"
+#include "Direction.h"
 #include "Player.h"
 #include "Queue.h"
+#include "TextureManager.h"
 #include <memory>
 #include <unordered_map>
+
+class GameWindow;
 
 class GameModel {
 private:
   Queue<ServerEventDTO> &receptionQueue;
   Queue<ClientCommandDTO> &sendingQueue;
-  
+
   uint32_t myPlayerID;
   std::unordered_map<uint32_t, std::unique_ptr<Player>> players;
 
   GameWindow *gameView;
+  TextureManager &textureManager;
 
 public:
   GameModel(uint32_t myPlayerID, GameWindow *gameView,
             Queue<ServerEventDTO> &receptionQueue,
             Queue<ClientCommandDTO> &sendingQueue,
+            TextureManager &textureManager,
             const std::string &race = "humano");
   void updateStateFromServer();
 

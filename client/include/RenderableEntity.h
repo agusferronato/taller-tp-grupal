@@ -1,5 +1,5 @@
-#ifndef RENDERABLE_H
-#define RENEDRABLE_H
+#ifndef RENDERABLE_ENTITY_H
+#define RENDERABLE_ENTITY_H
 
 
 #include <SDL2pp/SDL2pp.hh>
