@@ -166,7 +166,7 @@ void GameWindow::render(unsigned int it) {
       int y_max = (max_row - maxSize / 2 + 1) * gridSize;
 
       for (auto& entity : entities) {
-          if (!entity->rendered() && entity->get_y() + entity->get_h() < y_max && entity->hasPriority(i)) {
+          if (!entity->rendered() && entity->get_y() + 1.25 * entity->get_h() < y_max && entity->hasPriority(i)) {
               entity->render(*renderer, camera, it);
           }
       }
