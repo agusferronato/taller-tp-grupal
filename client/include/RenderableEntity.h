@@ -1,5 +1,5 @@
-#ifndef RENDERABLE_H
-#define RENEDRABLE_H
+#ifndef RENDERABLE_ENTITY_H
+#define RENDERABLE_ENTITY_H
 
 
 #include <SDL2pp/SDL2pp.hh>
@@ -21,7 +21,9 @@ public:
     virtual int get_y() = 0;
     virtual int get_h() = 0;
 
-    virtual bool rendered() = 0;
+    inline bool rendered() {
+        return wasRendered;
+    };
 
     inline bool hasPriority(int priority) {
         return this->priority == priority;
