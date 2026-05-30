@@ -3,16 +3,17 @@
 
 #include "Direction.h"
 #include "InventoryConstants.h"
-#include "RenderableEntity.h"
-#include "Camera.h"
 #include <array>
 #include <cstdint>
-#include <memory>
-#include <SpriteCalculator.h>
 #include <string>
-#include <SDL2pp/SDL2pp.hh>
 
-class Player : public RenderableEntity {
+class Player {
+
+public:
+  static constexpr int Width = 32;
+  static constexpr int Height = 32;
+  static constexpr int HeadWidth = 24;
+  static constexpr int HeadHeight = 24;
 
 private:
   uint32_t id;
@@ -35,27 +36,15 @@ private:
   uint32_t level{1};
   uint32_t experience{0};
 
-  std::unique_ptr<SDL2pp::Texture> playerTexture;
-  SDL2pp::Font* nameFont;
-  SpriteFrameCalculator spriteFrameCalculator;
-  std::unique_ptr<SDL2pp::Texture> headTexture;
-
-private:
-
-  SpriteFrame headFrameForDirection(Direction dir);
-
-
 public:
   Player(uint32_t id, int xOrigin, int yOrigin);
 
-  void setPlayerTexture(std::unique_ptr<SDL2pp::Texture> texture);
-
   /* Model, el unico que puede modificar Player */
   uint32_t getID() const;
+  uint32_t getBodyID() const { return 0; }
+  uint32_t getHeadID() const { return 1; }
   void setCoordinates(int x, int y);
   void updateCoordinates(int x, int y, Direction direction);
-  void setHeadTexture(std::unique_ptr<SDL2pp::Texture> txt);
-  void setNameFont(SDL2pp::Font* font);
   void stopMoving();
   void setRace(const std::string &race);
 
@@ -81,19 +70,12 @@ public:
   void setExperience(uint32_t v) { experience = v; }
 
   /* View */
-  void render(SDL2pp::Renderer &renderer, Camera &camera,
-              unsigned int it) override;
-
-  int get_x() override;
-  int get_y() override;
-  int get_h() override;
-  bool rendered() override;
-
   bool getIsMoving() const { return isMoving; }
   Direction getDirection() const { return direction; }
-  int getX() const { return x; }
-  int getY() const { return y; }
+  int get_x() const { return x; }
+  int get_y() const { return y; }
   const std::string &getRace() const { return race; }
+  const std::string &getName() const { return name; }
   uint32_t getHp() const { return hp; }
   uint32_t getMaxHp() const { return maxHp; }
   uint32_t getMana() const { return mana; }

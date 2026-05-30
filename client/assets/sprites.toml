@@ -1,0 +1,11 @@
+[[sprites]]
+id = 0
+path = "assets/11402.png"
+layout_type = "Body"
+transparent = true
+
+[[sprites]]
+id = 1
+path = "assets/cabezas/elfo.png"
+layout_type = "Head"
+transparent = true
