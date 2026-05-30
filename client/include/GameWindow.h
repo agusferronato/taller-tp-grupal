@@ -29,12 +29,20 @@ private:
   std::unique_ptr<SDL2pp::Renderer> renderer;
   std::unique_ptr<SDL2pp::Texture> backgroundTexture;
   std::unique_ptr<SDL2pp::Texture> defaultPlayerTexture;
+  std::unique_ptr<SDL2pp::Font> font;
 
   Camera camera;
   SpriteFrameCalculator spriteFrameCalculator;
   uint32_t myPlayerID{0};
   std::unordered_map<uint32_t, Player *> players;
+  std::unordered_map<uint32_t, std::unique_ptr<SDL2pp::Texture>> headTextures;
   std::list<RenderableEntity *> entities;
+
+  static SpriteFrame headFrameForDirection(Direction dir);
+  static int headCenteringOffset(Direction dir);
+  std::string headPathForRace(const std::string &race) const;
+
+  void renderHUD();
 
   std::unique_ptr<TextureMapper> textureMapper;
   int maxSize{100};
@@ -46,6 +54,7 @@ private:
 public:
   explicit GameWindow(uint32_t myPlayerID);
   void addPlayer(uint32_t ID, Player *player);
+  void removePlayer(uint32_t ID);
   void show(unsigned int it);
   void setMapData(int maxSize, int gridSize, int commonGroundTextureId,
                   const std::list<TileOrigin> &origins);

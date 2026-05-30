@@ -12,6 +12,8 @@ private:
 public:
   ClientCommandOpCode getCode() const { return opCode; }
   std::string name;
+  std::string race;
+  std::string playerClass;
 };
 
 #endif
