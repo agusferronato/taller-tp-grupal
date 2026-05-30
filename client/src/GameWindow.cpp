@@ -7,55 +7,35 @@
 #include <stdexcept>
 #include <string>
 
-static std::string assetPath(const std::string &relative) {
-  return "../client/" + relative;
-}
 
-std::unique_ptr<SDL2pp::Texture>
-GameWindow::loadPlayerTexture(SDL2pp::Renderer &renderer,
-                              const std::string &texturePath) {
-  SDL2pp::Surface surface(texturePath);
-  Uint32 colorKey = SDL_MapRGB(surface.Get()->format, 0, 0, 0);
-  surface.SetColorKey(true, colorKey);
-
-  auto texture = std::make_unique<SDL2pp::Texture>(renderer, surface);
-  texture->SetBlendMode(SDL_BLENDMODE_BLEND);
-  return texture;
-}
-
-GameWindow::GameWindow(uint32_t myPlayerID)
-    : camera(Camera(720, 410)), myPlayerID(myPlayerID) {
+GameWindow::GameWindow(uint32_t myPlayerID, int windowWidth, int windowHeight)
+    : camera(Camera(windowWidth, windowHeight)), myPlayerID(myPlayerID) {
   window = std::make_unique<SDL2pp::Window>(
-      "Argentum Online", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 720,
-      410, SDL_WINDOW_SHOWN);
+      "Argentum Online", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth,
+      windowHeight, SDL_WINDOW_SHOWN);
   renderer =
       std::make_unique<SDL2pp::Renderer>(*window, -1, SDL_RENDERER_ACCELERATED);
+  
+  this->windowWidth = windowWidth;
+  this->windowHeight = windowHeight;
+  
   initResources();
 }
 
 void GameWindow::initResources() {
-  backgroundTexture = std::make_unique<SDL2pp::Texture>(
-      *renderer, SDL2pp::Surface(assetPath("assets/10119.png")));
-  font = nullptr;
-  std::ifstream sys("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf");
-  if (sys.good()) {
-    font = std::make_unique<SDL2pp::Font>("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 14);
-  } else {
-    std::ifstream veraf(assetPath("fonts/Vera.ttf").c_str());
-    if (veraf.good())
-      font = std::make_unique<SDL2pp::Font>(assetPath("fonts/Vera.ttf"), 14);
-  }
+  
+  font = std::make_unique<SDL2pp::Font>("fonts/Vera.ttf", 12);
 
   textureMapper = std::make_unique<TextureMapper>(*renderer);
   textureMapper->loadFromToml("assets/textures.toml");
 }
 
-void GameWindow::setMapData(int maxSize_, int gridSize_,
-                            int commonGroundTextureId_,
+void GameWindow::setMapData(int maxSize, int gridSize,
+                            int commonGroundTextureId,
                             const std::list<TileOrigin> &origins) {
-  maxSize = maxSize_;
-  gridSize = gridSize_;
-  commonGroundTextureId = commonGroundTextureId_;
+  this->maxSize = maxSize;
+  this->gridSize = gridSize;
+  this->commonGroundTextureId = commonGroundTextureId;
   textureMapper->buildRenderGrid(origins, gridSize);
   tilesToRender = textureMapper->getTilesToRender();
 }
@@ -63,8 +43,10 @@ void GameWindow::setMapData(int maxSize_, int gridSize_,
 void GameWindow::show(unsigned int it) {
   SDL_ClearError();
   clear();
-  renderer->Copy(*backgroundTexture, SDL2pp::Rect(0, 0, 400, 400),
-                 SDL2pp::Rect(0, 0, 720, 410));
+
+  renderer->SetDrawColor(0, 0, 0, 255);  
+  renderer->FillRect(SDL2pp::Rect(0, 0, 720, 410));
+  
   render(it);
   renderer->Present();
 }
@@ -141,10 +123,6 @@ void GameWindow::renderCommonGround() {
 }
 
 void GameWindow::render(unsigned int it) {
-  auto itMy = players.find(myPlayerID);
-  if (itMy == players.end()) {
-    throw std::runtime_error("My player not found in map");
-  }
 
   Player &myPlayer = *itMy->second;
   camera.follow(myPlayer.get_x(), myPlayer.get_y(), 32, 32);
@@ -201,46 +179,23 @@ void GameWindow::clear()
   renderer->Clear();
 }
 
-void GameWindow::addPlayer(uint32_t ID, Player *player) {
-  players[ID] = player;
-  auto bodyTexture = loadPlayerTexture(*renderer,
-                                        assetPath("assets/11402.png"));
-  player->setPlayerTexture(std::move(bodyTexture));
 
-  auto headTexture = loadPlayerTexture(*renderer,
-                                       assetPath(headPathForRace(player->getRace())));
-  player->setHeadTexture(std::move(headTexture));
-  player->setNameFont(font.get());
-  entities.push_back(player);
-}
-
-void GameWindow::removePlayer(uint32_t ID) {
-  auto it = players.find(ID);
-  if (it != players.end()) {
-    entities.remove(it->second);
-  }
-  players.erase(ID);
-}
-
-std::string GameWindow::headPathForRace(const std::string &race) const {
-  std::string path = "assets/cabezas/";
-  for (unsigned char c : race)
-    path += std::tolower(c);
-  path += ".png";
-  return path;
+void GameWindow::setMyPlayer(PlayerEntity* entity) {
+  this->myPlayerEntity = entity;
 }
 
 
-int GameWindow::headCenteringOffset(Direction dir) {
-  switch (dir) {
-  case Direction::Down:
-    return 0;
-  case Direction::Right:
-    return 0;
-  case Direction::Left:
-    return -1;
-  case Direction::Up:
-    return 0;
-  }
-  return 0;
+
+void GameWindow::addEntity(RenderableEntity* entity) {
+  entities.push_back(entity);
 }
+
+void GameWindow::removeEnitity(int id, EntityType type) {
+  /*
+    check by entity ID and type (player, npc, etc) to remove
+  */
+}
+
+
+
+

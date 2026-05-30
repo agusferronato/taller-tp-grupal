@@ -57,6 +57,7 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
   }
 
   ServerEventDTO event = receptionQueue.pop();
+
   // si se cierra el socket el hilo reciver cierra y lanza ClosedQueue
   // debloquenado este pop
 
@@ -70,7 +71,7 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
 
   uint32_t myPlayerId = resp->playerId;
 
-  gameView = std::make_unique<GameWindow>(myPlayerId);
+  gameView = std::make_unique<GameWindow>(myPlayerId, 820, 400);
   gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
                                           receptionQueue, sendingQueue,
                                           clientData.race);
