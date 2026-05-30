@@ -35,23 +35,31 @@ private:
   uint32_t level{1};
   uint32_t experience{0};
 
-  static SDL2pp::Texture *playerTexture;
-  static SpriteFrameCalculator spriteFrameCalculator;
+  std::unique_ptr<SDL2pp::Texture> playerTexture;
+  SDL2pp::Font* nameFont;
+  SpriteFrameCalculator spriteFrameCalculator;
+  std::unique_ptr<SDL2pp::Texture> headTexture;
+
+private:
+
+  SpriteFrame headFrameForDirection(Direction dir);
+
 
 public:
   Player(uint32_t id, int xOrigin, int yOrigin);
 
-  static void setPlayerTexture(SDL2pp::Texture *texture);
+  void setPlayerTexture(std::unique_ptr<SDL2pp::Texture> texture);
 
   /* Model, el unico que puede modificar Player */
   uint32_t getID() const;
   void setCoordinates(int x, int y);
   void updateCoordinates(int x, int y, Direction direction);
+  void setHeadTexture(std::unique_ptr<SDL2pp::Texture> txt);
+  void setNameFont(SDL2pp::Font* font);
   void stopMoving();
   void setRace(const std::string &race);
 
   void setName(const std::string &v) { name = v; }
-  const std::string &getName() const { return name; }
 
   void setHp(uint32_t v) { hp = v; }
   void setMaxHp(uint32_t v) { maxHp = v; }
