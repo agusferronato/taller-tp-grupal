@@ -8,9 +8,9 @@
 #include "command/RegisterPlayerCommand.h"
 
 std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
-  if ([[maybe_unused]] const auto *request =
+  if (const auto *request =
           std::get_if<RegisterPlayerCommandDTO>(&dto)) {
-    return std::make_unique<RegisterPlayerCommand>();
+    return std::make_unique<RegisterPlayerCommand>(request->playerName);
   }
 
   if (const auto *request = std::get_if<MoveCommandDTO>(&dto)) {

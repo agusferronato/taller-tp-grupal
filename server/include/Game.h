@@ -23,6 +23,7 @@ struct PlayerInfo {
   int x{0}, y{0};
   Direction direction{Direction::Down};
   bool moving{false};
+  std::string name;
 };
 
 class Game : public Thread {
@@ -34,6 +35,7 @@ private:
   std::list<ServerEventDTO> messagesToSend;
   bool keepRunning = true;
   std::unordered_map<uint32_t, PlayerInfo> players;
+  std::unordered_map<std::string, uint32_t> playerIdByName;
 
   int maxSize;
   int gridSize;
@@ -51,7 +53,7 @@ public:
   Game(const Game &) = delete;
   Game &operator=(const Game &) = delete;
 
-  void registerPlayer(uint32_t connectionId);
+  void registerPlayer(uint32_t connectionId, const std::string &playerName);
   void movePlayer(uint32_t playerId, Direction direction);
   void stopPlayer(uint32_t playerId);
 

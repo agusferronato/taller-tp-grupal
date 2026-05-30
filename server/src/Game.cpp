@@ -74,9 +74,18 @@ void Game::movePlayers() {
   }
 }
 
-void Game::registerPlayer(uint32_t connectionId) {
+void Game::registerPlayer(uint32_t connectionId, const std::string &playerName) {
 
-  players[connectionId] = PlayerInfo{0, 0, Direction::Down};
+  std::cout << "TESTING Executing RegisterPlayerCommand for player: " << playerName
+          << " with connectionId: " << connectionId << std::endl;
+
+  // if (playerIdByName.find(playerName) != playerIdByName.end()) {
+    // TODO devolver error usuario ya conectado/existente
+  //   return;
+  // }
+
+  players[connectionId] = PlayerInfo{0, 0, Direction::Down, false, playerName};
+  playerIdByName[playerName] = connectionId;
 
   senderQueueMonitor.sendToClient(connectionId,
                                   RegisterPlayerEventDTO{connectionId, 0});

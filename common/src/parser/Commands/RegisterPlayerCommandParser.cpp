@@ -12,11 +12,11 @@ void RegisterPlayerParser::serialize(std::vector<uint8_t> &bytes,
 
   utils.appendBytes(
       static_cast<uint8_t>(ClientCommandOpCode::RegisterPlayerCommand), bytes);
-  utils.appendBytes(request.name, bytes);
+  utils.appendBytes(request.playerName, bytes);
 }
 
 ClientCommandDTO RegisterPlayerParser::deserialize(Protocol &protocol) {
-  std::string name = protocol.getStringData();
+  std::string playerName = protocol.getStringData();
 
-  return RegisterPlayerCommandDTO{std::move(name)};
+  return RegisterPlayerCommandDTO{std::move(playerName)};
 }
