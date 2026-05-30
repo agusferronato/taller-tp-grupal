@@ -21,6 +21,8 @@ uint32_t Player::getID() const { return id; }
 
 void Player::stopMoving() { isMoving = false; }
 
+void Player::setRace(const std::string &newRace) { race = newRace; }
+
 void Player::render(SDL2pp::Renderer &renderer, Camera &camera,
                     unsigned int it) {
 

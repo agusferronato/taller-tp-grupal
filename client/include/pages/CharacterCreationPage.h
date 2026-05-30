@@ -17,8 +17,8 @@ public:
 
 signals:
   void characterCreated(const QString &username, const QString &password,
-                        const QString &name, const QString &race,
-                        const QString &playerClass);
+                         const QString &race,
+                         const QString &playerClass);
   void backToMenuRequested();
 
 private slots:
@@ -28,7 +28,6 @@ private:
   QLabel *titleLabel;
   QLineEdit *usernameEdit;
   QLineEdit *passwordEdit;
-  QLineEdit *nameEdit;
   QButtonGroup *raceGroup;
   QString selectedRace;
   QComboBox *classCombo;

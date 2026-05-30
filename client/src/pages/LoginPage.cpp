@@ -34,7 +34,7 @@ LoginPage::LoginPage(QWidget *parent) : BackgroundPage(parent) {
   formLayout->setSpacing(12);
 
   usernameEdit = new QLineEdit(this);
-  usernameEdit->setPlaceholderText("Usuario");
+  usernameEdit->setPlaceholderText("Nombre del personaje");
   usernameEdit->setObjectName("usernameEdit");
   formLayout->addRow("Usuario:", usernameEdit);
 
