@@ -1,4 +1,5 @@
 #include "pages/CharacterCreationPage.h"
+#include <QApplication>
 #include <QButtonGroup>
 #include <QComboBox>
 #include <QFormLayout>
@@ -6,12 +7,22 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QToolButton>
 #include <QVBoxLayout>
 
-CharacterCreationPage::CharacterCreationPage(QWidget *parent)
-    : BackgroundPage(parent) {
+#include "DTO/Commands/ExitCommandDTO.h"
+#include "DTO/Commands/LoginPlayerCommandDTO.h"
+#include "DTO/Events/RegisterPlayerEventDTO.h"
+#include "protocol/Protocol.h"
+#include "protocol/RegisterAllParsers.h"
+#include "Socket.h"
+
+CharacterCreationPage::CharacterCreationPage(const QString &hostname,
+                                              const QString &port,
+                                              QWidget *parent)
+    : BackgroundPage(parent), hostname(hostname), port(port) {
   auto *mainLayout = new QVBoxLayout(this);
   mainLayout->setAlignment(Qt::AlignCenter);
 
@@ -201,9 +212,53 @@ CharacterCreationPage::CharacterCreationPage(QWidget *parent)
 
 void CharacterCreationPage::onCreateClicked() {
   QString username = usernameEdit->text();
-  QString password = passwordEdit->text();
-  QString race = selectedRace;
-  QString playerClass = classCombo->currentText();
+  if (username.isEmpty()) {
+    QMessageBox::warning(this, "Nombre vacio",
+                         "Ingresa un nombre para el personaje.");
+    return;
+  }
 
-  emit characterCreated(username, password, race, playerClass);
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  try {
+    Socket sock(hostname.toStdString().c_str(),
+                port.toStdString().c_str());
+    Protocol protocol(sock);
+    registerAllParsers(protocol);
+
+    protocol.sendCommand(LoginPlayerCommandDTO{username.toStdString()});
+
+    auto response = protocol.receiveEvent();
+    auto *resp = std::get_if<RegisterPlayerEventDTO>(&response);
+    if (!resp) {
+      QApplication::restoreOverrideCursor();
+      QMessageBox::critical(this, "Error",
+                            "Respuesta inesperada del servidor.");
+      return;
+    }
+
+    if (resp->status == 0) {
+      try {
+        protocol.sendCommand(ExitCommandDTO{resp->playerId});
+        sock.shutdown(1);
+      } catch (...) {
+      }
+      QApplication::restoreOverrideCursor();
+      QMessageBox::warning(this, "Nombre ocupado",
+                           "Ese nombre de personaje ya existe. Elegi otro.");
+      return;
+    }
+
+  } catch (const std::exception &e) {
+    QApplication::restoreOverrideCursor();
+    QMessageBox::critical(this, "Error de conexion",
+                          "No se pudo conectar al servidor: " +
+                              QString(e.what()));
+    return;
+  }
+
+  QApplication::restoreOverrideCursor();
+
+  emit characterCreated(username, passwordEdit->text(), selectedRace,
+                        classCombo->currentText());
 }
