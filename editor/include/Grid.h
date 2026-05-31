@@ -12,10 +12,10 @@
 #include "TextureMap.h"
 #include "MapDownloader.h"
 
-
 #define MAX_SIZE 100
 #define GRID_SIZE_PX 32
 #include "Info.h"
+#include "Biome.h"
 
 class GridSDL;
 
@@ -43,6 +43,24 @@ struct TileOrigin {
 };
 
 
+
+struct BiomeGrid {
+
+    Biome type;     
+
+    int i_start;
+    int j_start;
+
+
+    int i_init;
+    int j_init;
+    int i_end;
+    int j_end;
+};
+
+
+
+
 class Grid {
 
 private:
@@ -58,10 +76,14 @@ private:
     > tilesToRender;
 
 
+    std::vector<BiomeGrid> biomes;
+
+
     Camera& camera;
     MapDownloader downloader;
     int item_hover_i, item_hover_j;
     bool hover_init{false};
+    bool biomeSelected{false};
 
 public:
 
@@ -76,8 +98,15 @@ public:
 
     void saveMap(GridSDL& gridSDL);
 
+    void setInitBiomePosition(Biome biome);
+
+    void releaseBiomeSelection();
 
 private:
+
+    void updateSelectedBiome();
+
+    void renderBiomes(SDL2pp::Renderer &renderer);
     bool thereAreAssignedTextures(TextureMap &textureMap, int texture_id);
 
     void renderCollidableCells(SDL2pp::Renderer& renderer);
