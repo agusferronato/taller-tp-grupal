@@ -5,11 +5,12 @@
 #include <string>
 
 #include "Command.h"
+#include "Race.h"
 
 class RegisterPlayerCommand : public Command {
 private:
   std::string name;
-  std::string race;
+  Race race;
   std::string playerClass;
 
 public:

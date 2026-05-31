@@ -24,6 +24,7 @@
 #include "PlayerData.h"
 #include "PlayerRepository.h"
 #include "Queue.h"
+#include "Race.h"
 #include "SenderQueueMonitor.h"
 #include "Thread.h"
 
@@ -39,7 +40,7 @@ public:
 
   std::string name;
   std::string password;
-  std::string race;
+  Race race;
   std::string playerClass;
   uint32_t level{1};
   uint32_t hp{100}, maxHp{100};
@@ -96,7 +97,7 @@ public:
   Game(const Game &) = delete;
   Game &operator=(const Game &) = delete;
 
-  void registerPlayer(const std::string &name, const std::string &race,
+  void registerPlayer(const std::string &name, const Race race,
                       const std::string &playerClass, uint32_t connectionId);
   void loginPlayer(const std::string &name);
   void movePlayer(uint32_t playerId, Direction direction);
