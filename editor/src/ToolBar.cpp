@@ -41,11 +41,46 @@ void ToolBar::initToolBar() {
     )");
 
     layout->addWidget(saveButton);
+
+    collisionButton = new QPushButton("⬛ Colisiones", this);
+    collisionButton->setFixedHeight(34);
+    collisionButton->setCursor(Qt::PointingHandCursor);
+    collisionButton->setCheckable(true);
+    collisionButton->setChecked(false);
+    collisionButton->setStyleSheet(R"(
+        QPushButton {
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            background: transparent;
+            border: 1.5px dashed #aaa;
+            border-radius: 17px;
+            padding: 0 14px;
+        }
+        QPushButton:hover {
+            background: #f0f0f0;
+            border-color: #888;
+            color: #333;
+        }
+        QPushButton:checked {
+            color: #b03030;
+            background: #fdeaea;
+            border: 1.5px solid #e07070;
+        }
+        QPushButton:checked:hover {
+            background: #fbd5d5;
+            border-color: #c05050;
+        }
+    )");
+    layout->addWidget(collisionButton);
+
+    connect(collisionButton, &QPushButton::toggled, this, &ToolBar::collisionVisibilityChanged);
+
+
     layout->addStretch();
 
     connect(saveButton, &QPushButton::clicked, this, &ToolBar::saveMap);
 
-    // Etiqueta biomas
     QLabel* biomeLabel = new QLabel("Bioma:", this);
     biomeLabel->setStyleSheet("font-size: 12px; font-weight: 600; color: palette(text);");
     layout->addWidget(biomeLabel);
@@ -59,10 +94,10 @@ void ToolBar::initToolBar() {
     };
 
     QList<BiomeInfo> biomes = {
-        { "Bosque", "#dff0d8", "#7dbb5a", "#2d6a1f", "#c8e6b0" },
-        { "Desierto", "#fdf3dc", "#e0b84a", "#7a5c10", "#f5e3a0" },
-        { "Mazmorra", "#e8e0f0", "#8a6bbf", "#3d2270", "#d0c0e8" },
-        { "Ciudad", "#ddeeff", "#5a9fd4", "#1a3f6f", "#b0d4f0" },
+        { "Bosque",   "#22782800", "#dff0d8", "#7dbb5a", "#2d6a1f" },
+        { "Desierto", "#d2b45000", "#fdf3dc", "#e0b84a", "#7a5c10" },
+        { "Mazmorra", "#3c1e5000", "#e8e0f0", "#8a6bbf", "#3d2270" },
+        { "Ciudad",   "#b4b4b400", "#ddeeff", "#5a9fd4", "#1a3f6f" },
     };
 
     QString biomeButtonStyle = R"(

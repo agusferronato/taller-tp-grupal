@@ -60,6 +60,7 @@ private slots:
     void renderLoop();
 
 public slots:
+    void changeCollidableCellsVisibility();
     void setTextureID(int texture_id);
     void setBiome(Biome biome);
 

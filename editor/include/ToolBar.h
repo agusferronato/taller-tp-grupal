@@ -14,6 +14,7 @@ class ToolBar : public QWidget {
     Q_OBJECT
 
 private:
+    QPushButton* collisionButton = nullptr;
     QHBoxLayout * layout;
     QPushButton * saveButton;
     QList<QPushButton*> biomeButtons;
@@ -29,6 +30,7 @@ private:
 signals:
     void saveMap();
     void biomeSelected(Biome biome);
+    void collisionVisibilityChanged();
 };
 
 

@@ -56,7 +56,7 @@ void GridSDL::initSDL()
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
         textureMap = std::make_unique<TextureMap>(TextureMap(*renderer));
         camera = std::make_unique<Camera>(this->width(), this->height());
-        grid = std::make_unique<Grid>(*camera);
+        grid = std::make_unique<Grid>(*camera, *renderer);
 
         timer.start(16); 
 
@@ -88,6 +88,15 @@ void GridSDL::renderLoop() {
     renderer->Present();
 
 }
+
+
+void GridSDL::changeCollidableCellsVisibility() {
+
+    grid->changeCollidableCellsVisibility(); 
+
+}
+
+
 
 void GridSDL::setBiome(Biome biome)
 {
