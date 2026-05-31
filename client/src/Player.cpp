@@ -1,6 +1,7 @@
 #include "Player.h"
 
-Player::Player(uint32_t id, int xOrigin, int yOrigin) : id(id) {
+Player::Player(uint32_t id, int xOrigin, int yOrigin)
+    : id(id), race(Race::Human) {
   x = xOrigin;
   y = yOrigin;
 }
@@ -14,7 +15,7 @@ uint32_t Player::getID() const { return id; }
 
 void Player::stopMoving() { isMoving = false; }
 
-void Player::setRace(const std::string &newRace) { race = newRace; }
+void Player::setRace(const Race newRace) { race = newRace; }
 
 void Player::updateCoordinates(int x, int y, Direction direction) {
   setCoordinates(x, y);

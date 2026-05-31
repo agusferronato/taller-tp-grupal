@@ -17,7 +17,7 @@ void PlayerEntity::renderBody(SDL2pp::Renderer &renderer, Camera &camera,
                               unsigned int it) {
   unsigned int animationIt = player.getIsMoving() ? it : 0;
 
-  Sprite src = textureManager.getBodySprite(player.getBodyID(),
+  Sprite src = textureManager.getBodySprite(player.getRace(),
                                             player.getDirection(), animationIt);
 
   SDL2pp::Rect dst = camera.toScreen(player.get_x(), player.get_y(),
@@ -26,12 +26,18 @@ void PlayerEntity::renderBody(SDL2pp::Renderer &renderer, Camera &camera,
 }
 
 void PlayerEntity::renderName(SDL2pp::Renderer &renderer, Camera &camera) {
+  // No renderizar si el nombre está vacío
+  const std::string &name = player.getName();
+  if (name.empty()) {
+    return;
+  }
+
   int head_y = get_head_y(camera);
   SDL2pp::Rect playerPosition = camera.toScreen(player.get_x(), player.get_y(),
                                                 Player::Width, Player::Height);
 
-  SDL2pp::Surface surf = nameFont.RenderUTF8_Solid(
-      player.getName(), SDL_Color{255, 255, 255, 255});
+  SDL2pp::Surface surf =
+      nameFont.RenderUTF8_Solid(name, SDL_Color{255, 255, 255, 255});
   SDL2pp::Texture tex(renderer, surf);
   int nameX = playerPosition.x + (playerPosition.w - surf.GetWidth()) / 2;
   int nameY = head_y - surf.GetHeight() - 2;
@@ -41,7 +47,7 @@ void PlayerEntity::renderName(SDL2pp::Renderer &renderer, Camera &camera) {
 
 void PlayerEntity::renderHead(SDL2pp::Renderer &renderer, Camera &camera) {
   Sprite src =
-      textureManager.getHeadSprite(player.getHeadID(), player.getDirection());
+      textureManager.getHeadSprite(player.getRace(), player.getDirection());
 
   int head_x = get_head_x(camera);
   int head_y = get_head_y(camera);

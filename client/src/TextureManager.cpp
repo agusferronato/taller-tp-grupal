@@ -75,17 +75,45 @@ void TextureManager::loadLayoutsFromToml(const std::string &path) {
   }
 }
 
-Sprite TextureManager::getBodySprite(int bodyId, Direction dir,
+int TextureManager::getRaceBodyID(Race race) const {
+  // TODO: Agregar texturas para las otras razas
+  // Por ahora todas usan el mismo body (ID 0)
+  switch (race) {
+  case Race::Human:
+  case Race::Elf:
+  case Race::Dwarf:
+  case Race::Gnome:
+    return 0;
+  }
+  return 0;
+}
+
+int TextureManager::getRaceHeadID(Race race) const {
+  // TODO: Agregar texturas para las otras razas
+  // Por ahora todas usan la misma cabeza (ID 1)
+  switch (race) {
+  case Race::Human:
+  case Race::Elf:
+  case Race::Dwarf:
+  case Race::Gnome:
+    return 1;
+  }
+  return 1;
+}
+
+Sprite TextureManager::getBodySprite(Race race, Direction dir,
                                      unsigned int it) {
   auto &layout =
       std::get<BodyLayout>(texturesFrames.at(TextureLayoutType::Body));
   SpriteData frame = layout.getLayout(dir, it);
+  int bodyId = getRaceBodyID(race);
   return Sprite{textures.at(bodyId), frame.x, frame.y, frame.w, frame.h};
 }
 
-Sprite TextureManager::getHeadSprite(int headId, Direction dir) {
+Sprite TextureManager::getHeadSprite(Race race, Direction dir) {
   auto &layout =
       std::get<HeadLayout>(texturesFrames.at(TextureLayoutType::Head));
   SpriteData frame = layout.getLayout(dir);
+  int headId = getRaceHeadID(race);
   return Sprite{textures.at(headId), frame.x, frame.y, frame.w, frame.h};
 }

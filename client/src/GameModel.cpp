@@ -11,6 +11,7 @@
 #include "PlayerMovedEventDTO.h"
 #include "PlayerRemovedEventDTO.h"
 #include "PlayerStoppedEventDTO.h"
+#include "Race.h"
 #include "RegisterPlayerEventDTO.h"
 #include "TextureInfoEventDTO.h"
 #include <iostream>
@@ -24,7 +25,7 @@ GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
       myPlayerID(myPlayerID), gameView(gameView),
       textureManager(textureManager) {
   auto myPlayer = std::make_unique<Player>(this->myPlayerID, 0, 0);
-  myPlayer->setRace(race);
+  myPlayer->setRace(RaceUtils::stringToRace(race));
   players[myPlayerID] = std::move(myPlayer);
 
   auto entity = std::make_unique<PlayerEntity>(
@@ -85,14 +86,11 @@ void GameModel::handle(const PlayerAppearedEventDTO &appeared) {
   };
 
   if (pid == myPlayerID) {
-    players[pid]->setCoordinates(appeared.x, appeared.y);
-    players[pid]->setRace(appeared.race);
-    applyStats(players[pid].get());
     return;
   }
 
   auto player = std::make_unique<Player>(pid, appeared.x, appeared.y);
-  player->setRace(appeared.race);
+  player->setRace(RaceUtils::stringToRace(appeared.race));
   applyStats(player.get());
 
   auto entity = std::make_unique<PlayerEntity>(*player, textureManager,
@@ -140,7 +138,7 @@ void GameModel::registerPlayers() {
           continue;
         }
         auto player = std::make_unique<Player>(info.playerId, info.x, info.y);
-        player->setRace(info.race);
+        player->setRace(RaceUtils::stringToRace(info.race));
         player->setName(info.playerName);
         player->setHp(info.hp);
         player->setMaxHp(info.maxHp);
