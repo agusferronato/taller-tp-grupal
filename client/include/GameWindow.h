@@ -19,6 +19,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <deque> // Double ended queue for chat messages
 
 class GameWindow {
 private:
@@ -31,7 +32,12 @@ private:
   std::unique_ptr<SDL2pp::Texture> backgroundTexture;
   std::unique_ptr<SDL2pp::Texture> defaultPlayerTexture;
   std::unique_ptr<SDL2pp::Font> font;
+
+  //Chat
   std::unique_ptr<GameChatView> chatView;
+  std::deque<std::string> chatMessages;
+  std::string currentChatInput;
+  bool chatActive{false};
 
   Camera camera;
   SpriteFrameCalculator spriteFrameCalculator;
@@ -59,6 +65,9 @@ public:
   void setMapData(int maxSize, int gridSize, int commonGroundTextureId,
                   const std::list<TileOrigin> &origins);
 
+  //Chat
+  void setChatState(const std::deque<std::string>& messages, const std::string& input, bool active);
+  
 private:
   void render(unsigned int it);
   void clear();

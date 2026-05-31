@@ -26,10 +26,41 @@ void GameController::handleEvent(const SDL_Event &event) {
   case SDL_KEYUP:
     handleKeyUp(event.key.keysym.sym);
     break;
+    
+  case SDL_TEXTINPUT:
+    if (gameModel->isChatActive()) {
+      gameModel->appendChatText(event.text.text);
+    }
+    break;
+
   }
 }
 
 void GameController::handleKeyDown(const SDL_Keycode &key) {
+  if (gameModel->isChatActive()) {
+    if (key == SDLK_RETURN) {
+      gameModel->submitChat();
+      return;
+    }
+
+    if (key == SDLK_BACKSPACE) {
+      gameModel->backspaceChat();
+      return;
+    }
+
+    if (key == SDLK_ESCAPE) {
+      gameModel->closeChat();
+      return;
+    }
+
+    return;
+  }
+
+  if (key == SDLK_RETURN) {
+    gameModel->openChat();
+    return;
+  }
+
   auto direction = getDirectionFromKey(key);
   if (direction.has_value()) {
     pressedLastMovementKey = key;
