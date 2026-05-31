@@ -15,8 +15,8 @@ void Acceptor::run() {
       Socket peer = acceptor.accept();
 
       uint32_t clientId = nextClientId++;
-      auto *connection = new ClientConnection(
-          std::move(peer), gameloopQueue, senderQueueMonitor, clientId);
+      auto *connection = new ClientConnection(std::move(peer), gameloopQueue,
+                                              senderQueueMonitor, clientId);
 
       reap(connections);
       connections.push_back(connection);

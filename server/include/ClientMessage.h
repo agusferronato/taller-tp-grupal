@@ -6,8 +6,8 @@
 #include "DTO/Commands/ClientCommandDTO.h"
 
 struct ClientMessage {
-    ClientCommandDTO dto;
-    uint32_t connectionId;
+  ClientCommandDTO dto;
+  uint32_t connectionId;
 };
 
 #endif

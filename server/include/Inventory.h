@@ -19,7 +19,9 @@ public:
   uint8_t getItemId(uint8_t slotIndex) const;
   size_t getItemCount() const;
 
-  const std::array<uint8_t, MAX_INVENTORY_SLOTS> &getItems() const { return items; }
+  const std::array<uint8_t, MAX_INVENTORY_SLOTS> &getItems() const {
+    return items;
+  }
   uint8_t getWeapon() const { return equippedWeapon; }
   uint8_t getArmor() const { return equippedArmor; }
   uint8_t getHelmet() const { return equippedHelmet; }

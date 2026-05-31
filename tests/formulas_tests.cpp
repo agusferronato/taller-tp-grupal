@@ -27,9 +27,7 @@ TEST(FormulasTest, Meditacion) {
   EXPECT_EQ(Formulas::calcularRecuperacionMeditacion("Mago", 31, 10), 465);
 }
 
-TEST(FormulasTest, OroMax) {
-  EXPECT_EQ(Formulas::calcularOroMax(1), 100);
-}
+TEST(FormulasTest, OroMax) { EXPECT_EQ(Formulas::calcularOroMax(1), 100); }
 
 TEST(FormulasTest, OroExcesoSinExceso) {
   EXPECT_EQ(Formulas::calcularOroExceso(100, 1), 0);
@@ -39,9 +37,7 @@ TEST(FormulasTest, OroExcesoConExceso) {
   EXPECT_EQ(Formulas::calcularOroExceso(200, 1), 50);
 }
 
-TEST(FormulasTest, LimiteXP) {
-  EXPECT_EQ(Formulas::calcularLimiteXP(1), 1000);
-}
+TEST(FormulasTest, LimiteXP) { EXPECT_EQ(Formulas::calcularLimiteXP(1), 1000); }
 
 TEST(FormulasTest, Experiencia) {
   EXPECT_EQ(Formulas::calcularExperiencia(10, 1, 5), 140);

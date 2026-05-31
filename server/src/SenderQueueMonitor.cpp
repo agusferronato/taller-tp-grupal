@@ -2,8 +2,8 @@
 
 SenderQueueMonitor::SenderQueueMonitor() {}
 
-Queue<ServerEventDTO> *SenderQueueMonitor::getNewSenderQueue(
-    uint32_t clientId) {
+Queue<ServerEventDTO> *
+SenderQueueMonitor::getNewSenderQueue(uint32_t clientId) {
   std::lock_guard<std::mutex> lock(mutex);
 
   auto senderQueue = new Queue<ServerEventDTO>(SENDER_QUEUE_SIZE);
