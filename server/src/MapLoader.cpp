@@ -39,8 +39,8 @@ int MapLoader::GetCommonGroundTextureId() const {
   return commonGroundTextureId;
 }
 
-const std::set<std::tuple<int, int, int>> &MapLoader::GetCollidableCells()
-    const {
+const std::set<std::tuple<int, int, int>> &
+MapLoader::GetCollidableCells() const {
   return collidableCells;
 }
 
