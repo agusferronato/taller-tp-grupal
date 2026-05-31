@@ -13,8 +13,8 @@
 GameWindow::GameWindow(uint32_t myPlayerID, int windowWidth, int windowHeight)
     : camera(Camera(windowWidth, windowHeight)), myPlayerID(myPlayerID) {
   window = std::make_unique<SDL2pp::Window>(
-      "Argentum Online", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth,
-      windowHeight, SDL_WINDOW_SHOWN);
+      "Argentum Online", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+      windowWidth, windowHeight, SDL_WINDOW_SHOWN);
   renderer =
       std::make_unique<SDL2pp::Renderer>(*window, -1, SDL_RENDERER_ACCELERATED);
 
@@ -45,17 +45,11 @@ void GameWindow::removeEntity(EntityType type, uint32_t id) {
   entities.erase(key);
 }
 
-void GameWindow::setMyPlayer(PlayerEntity* entity) {
-  myPlayerEntity = entity;
-}
+void GameWindow::setMyPlayer(PlayerEntity *entity) { myPlayerEntity = entity; }
 
-SDL2pp::Renderer& GameWindow::getRenderer() {
-  return *renderer;
-}
+SDL2pp::Renderer &GameWindow::getRenderer() { return *renderer; }
 
-SDL2pp::Font& GameWindow::getFont() {
-  return *font;
-}
+SDL2pp::Font &GameWindow::getFont() { return *font; }
 
 void GameWindow::setMapData(int maxSize, int gridSize,
                             int commonGroundTextureId,
@@ -109,7 +103,7 @@ void GameWindow::renderHUD() {
           SDL_Color{40, 80, 220, 255}, SDL_Color{10, 20, 60, 255});
   drawBar(barX, barY + 2 * (barH + 2), barW, barH, p.getExperience(),
           1000 * static_cast<uint32_t>(
-                    std::pow(static_cast<double>(p.getLevel()), 1.5)),
+                     std::pow(static_cast<double>(p.getLevel()), 1.5)),
           SDL_Color{60, 200, 60, 255}, SDL_Color{10, 50, 10, 255});
 
   auto renderText = [&](int x, int y, const std::string &text,
@@ -136,29 +130,30 @@ void GameWindow::renderHUD() {
 void GameWindow::renderCommonGround() {
   for (int i = 0; i < maxSize; i++) {
     for (int j = 0; j < maxSize; j++) {
-      SDL2pp::Rect dstRect = camera.toScreen(
-          (i - maxSize / 2) * gridSize, (j - maxSize / 2) * gridSize,
-          gridSize, gridSize);
+      SDL2pp::Rect dstRect =
+          camera.toScreen((i - maxSize / 2) * gridSize,
+                          (j - maxSize / 2) * gridSize, gridSize, gridSize);
 
       SDL2pp::Rect srcRect = {0, 0, gridSize, gridSize};
-      renderer->Copy(textureMapper->getTexture(commonGroundTextureId),
-                     srcRect, dstRect);
+      renderer->Copy(textureMapper->getTexture(commonGroundTextureId), srcRect,
+                     dstRect);
     }
   }
 }
 
-void GameWindow::getSortedEntities(std::vector<RenderableEntity *> & sortedEntities)
-{
+void GameWindow::getSortedEntities(
+    std::vector<RenderableEntity *> &sortedEntities) {
   sortedEntities.reserve(entities.size());
 
-  for (auto& [key, entity] : entities) {
+  for (auto &[key, entity] : entities) {
     sortedEntities.push_back(entity.get());
   }
   std::sort(sortedEntities.begin(), sortedEntities.end(),
-    [](RenderableEntity* a, RenderableEntity* b) {
-      if (a->get_y() != b->get_y()) return a->get_y() < b->get_y();
-      return a->get_x() < b->get_x();
-    });
+            [](RenderableEntity *a, RenderableEntity *b) {
+              if (a->get_y() != b->get_y())
+                return a->get_y() < b->get_y();
+              return a->get_x() < b->get_x();
+            });
 }
 
 void GameWindow::render(unsigned int it) {
@@ -169,19 +164,20 @@ void GameWindow::render(unsigned int it) {
 
   renderCommonGround();
 
-  std::vector<RenderableEntity*> sortedEntities;
+  std::vector<RenderableEntity *> sortedEntities;
   getSortedEntities(sortedEntities);
 
-
   for (size_t i = 0; i < tilesToRender.size(); i++) {
-    auto& priority = tilesToRender[i];
+    auto &priority = tilesToRender[i];
 
     for (auto &[pair, items] : priority) {
       int max_row = pair.first;
       int y_max = (max_row - maxSize / 2 + 1) * gridSize;
 
-      for (auto* entity : sortedEntities) {
-        if (!entity->rendered() && entity->get_y() + 1.25 * entity->get_h() < y_max && entity->hasPriority(i)) {
+      for (auto *entity : sortedEntities) {
+        if (!entity->rendered() &&
+            entity->get_y() + 1.25 * entity->get_h() < y_max &&
+            entity->hasPriority(i)) {
           entity->render(*renderer, camera, it);
         }
       }
@@ -198,14 +194,14 @@ void GameWindow::render(unsigned int it) {
                        dstRect);
       }
     }
-    for (auto* entity : sortedEntities) {
+    for (auto *entity : sortedEntities) {
       if (!entity->rendered() && entity->hasPriority(i)) {
         entity->render(*renderer, camera, it);
       }
     }
   }
 
-  for (auto& [key, entity] : entities) {
+  for (auto &[key, entity] : entities) {
     if (!entity->rendered()) {
       entity->render(*renderer, camera, it);
     }
@@ -215,7 +211,7 @@ void GameWindow::render(unsigned int it) {
 }
 
 void GameWindow::clear() {
-  for (auto& [key, entity] : entities) {
+  for (auto &[key, entity] : entities) {
     entity->clear();
   }
   renderer->Clear();

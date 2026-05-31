@@ -8,6 +8,7 @@
 #include "Queue.h"
 #include "TextureManager.h"
 #include <memory>
+#include <string>
 #include <unordered_map>
 
 class GameWindow;
@@ -27,8 +28,7 @@ public:
   GameModel(uint32_t myPlayerID, GameWindow *gameView,
             Queue<ServerEventDTO> &receptionQueue,
             Queue<ClientCommandDTO> &sendingQueue,
-            TextureManager &textureManager,
-            const std::string &race = "humano");
+            TextureManager &textureManager, const std::string &race = "humano");
   void updateStateFromServer();
 
 public:

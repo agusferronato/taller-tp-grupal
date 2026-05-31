@@ -10,8 +10,8 @@ void DropItemCommandParser::serialize(std::vector<uint8_t> &bytes,
                                       const ClientCommandDTO &dto) {
   const auto &request = std::get<DropItemCommandDTO>(dto);
 
-  utils.appendBytes(
-      static_cast<uint8_t>(ClientCommandOpCode::DropItemCommand), bytes);
+  utils.appendBytes(static_cast<uint8_t>(ClientCommandOpCode::DropItemCommand),
+                    bytes);
   utils.appendBytes(request.playerId, bytes);
   utils.appendBytes(request.inventorySlot, bytes);
 }
