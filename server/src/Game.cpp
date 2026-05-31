@@ -213,6 +213,10 @@ void Game::registerPlayer(const std::string &name, const std::string &race, cons
 
   colisionables.push_back(player.get());
   players[newId] = std::move(player);
+  connectionToPlayer[connectionId] = newId;
+  playerToConnection[newId] = connectionId;
+
+  senderQueueMonitor.markAsRegistered(connectionId);
 
   senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{newId, 0});
 
@@ -255,10 +259,10 @@ void Game::registerPlayer(const std::string &name, const std::string &race, cons
                              players[newId]->experience});
 }
 
-void Game::loginPlayer(const std::string &name) {
+void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   if (!repository.exists(name)) {
-    messagesToSend.push_back(RegisterPlayerEventDTO{0, 1});
+    senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{0, 1});
     return;
   }
 
@@ -267,6 +271,11 @@ void Game::loginPlayer(const std::string &name) {
       colisionables.erase(std::remove(colisionables.begin(),
                                       colisionables.end(), it->second.get()),
                           colisionables.end());
+      auto connIt = playerToConnection.find(it->first);
+      if (connIt != playerToConnection.end()) {
+        connectionToPlayer.erase(connIt->second);
+        playerToConnection.erase(connIt);
+      }
       players.erase(it);
       break;
     }
@@ -281,8 +290,28 @@ void Game::loginPlayer(const std::string &name) {
 
   colisionables.push_back(player.get());
   players[newId] = std::move(player);
+  connectionToPlayer[connectionId] = newId;
+  playerToConnection[newId] = connectionId;
 
-  messagesToSend.push_back(RegisterPlayerEventDTO{newId, 0});
+  senderQueueMonitor.markAsRegistered(connectionId);
+
+  senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{newId, 0});
+
+  std::vector<TextureOriginDTO> origins;
+  origins.reserve(textureOrigins.size());
+  for (const auto &o : textureOrigins) {
+    origins.push_back(
+        {static_cast<uint8_t>(o.priority),
+         static_cast<uint8_t>(o.texture_id),
+         static_cast<uint16_t>(o.x),
+         static_cast<uint16_t>(o.y)});
+  }
+  senderQueueMonitor.sendToClient(
+      connectionId,
+      TextureInfoEventDTO{static_cast<uint16_t>(maxSize),
+                          static_cast<uint16_t>(gridSize),
+                          static_cast<uint8_t>(commonGroundTextureId),
+                          std::move(origins)});
 
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
@@ -292,7 +321,7 @@ void Game::loginPlayer(const std::string &name) {
                           info->mana, info->maxMana, info->gold, info->level,
                           info->experience});
   }
-  messagesToSend.push_back(PlayerListEventDTO{std::move(playerList)});
+  senderQueueMonitor.sendToClient(connectionId, PlayerListEventDTO{std::move(playerList)});
 
   messagesToSend.push_back(
       PlayerAppearedEventDTO{newId, static_cast<int16_t>(data.x),
@@ -384,12 +413,26 @@ void Game::exitPlayer(uint32_t playerId) {
   repository.save(it->second->name, it->second->toPlayerData());
 
   colisionables.erase(std::remove(colisionables.begin(), colisionables.end(),
-                                   it->second.get()),
+                                    it->second.get()),
                       colisionables.end());
 
   messagesToSend.push_back(PlayerRemovedEventDTO{playerId});
 
+  auto connIt = playerToConnection.find(playerId);
+  if (connIt != playerToConnection.end()) {
+    connectionToPlayer.erase(connIt->second);
+    playerToConnection.erase(connIt);
+  }
+
   players.erase(it);
+}
+
+void Game::exitPlayerByConnection(uint32_t connectionId) {
+  auto it = connectionToPlayer.find(connectionId);
+  if (it == connectionToPlayer.end()) {
+    return;
+  }
+  exitPlayer(it->second);
 }
 
 void Game::equipItem(uint32_t playerId, uint8_t inventorySlot) {
@@ -478,8 +521,6 @@ void Game::movePlayers() {
 }
 
 void Game::sendMessages() {
-  if (messagesToSend.empty())
-    return;
   senderQueueMonitor.broadCast(messagesToSend);
   messagesToSend.clear();
 }

@@ -13,7 +13,8 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = nullptr);
+  explicit MainWindow(const QString &hostname, const QString &port,
+                       QWidget *parent = nullptr);
 
 signals:
   void gameStartRequested(const ClientData &data);
@@ -35,6 +36,8 @@ private:
   MainMenuPage *mainMenu;
   LoginPage *loginPage;
   CharacterCreationPage *charCreationPage;
+  QString hostname;
+  QString port;
 };
 
 #endif
