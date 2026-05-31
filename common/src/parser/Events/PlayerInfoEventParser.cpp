@@ -7,7 +7,7 @@
 #include <variant>
 
 void PlayerInfoEventParser::serialize(std::vector<uint8_t> &bytes,
-                                       const ServerEventDTO &dto) {
+                                      const ServerEventDTO &dto) {
   const auto &event = std::get<PlayerInfoEventDTO>(dto);
 
   utils.appendBytes(static_cast<uint8_t>(EventOpcode::PlayerInfoEvent), bytes);
@@ -31,6 +31,6 @@ ServerEventDTO PlayerInfoEventParser::deserialize(Protocol &protocol) {
   uint32_t level = protocol.getUint32();
   uint32_t experience = protocol.getUint32();
 
-  return PlayerInfoEventDTO{playerId, hp,     maxHp, mana,
-                             maxMana,  gold,   level, experience};
+  return PlayerInfoEventDTO{playerId, hp,   maxHp, mana,
+                            maxMana,  gold, level, experience};
 }

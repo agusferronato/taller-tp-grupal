@@ -31,9 +31,9 @@ bool Inventory::removeItem(uint8_t slotIndex) {
   EquipSlot eslot = slotForType(def.type);
   if (isSlotOccupied(eslot)) {
     uint8_t *eq = (eslot == EquipSlot::Weapon)   ? &equippedWeapon
-                  : (eslot == EquipSlot::Armor)   ? &equippedArmor
-                  : (eslot == EquipSlot::Helmet)  ? &equippedHelmet
-                                                  : &equippedShield;
+                  : (eslot == EquipSlot::Armor)  ? &equippedArmor
+                  : (eslot == EquipSlot::Helmet) ? &equippedHelmet
+                                                 : &equippedShield;
     if (*eq == itemId)
       *eq = EMPTY_ITEM;
   }
@@ -86,9 +86,9 @@ bool Inventory::equipItem(uint8_t slotIndex) {
     unequipSlotRaw(eslot);
 
   uint8_t *eq = (eslot == EquipSlot::Weapon)   ? &equippedWeapon
-                : (eslot == EquipSlot::Armor)   ? &equippedArmor
-                : (eslot == EquipSlot::Helmet)  ? &equippedHelmet
-                                                : &equippedShield;
+                : (eslot == EquipSlot::Armor)  ? &equippedArmor
+                : (eslot == EquipSlot::Helmet) ? &equippedHelmet
+                                               : &equippedShield;
   *eq = itemId;
   items[slotIndex] = EMPTY_ITEM;
   return true;
@@ -99,9 +99,9 @@ bool Inventory::unequipSlot(EquipSlot slot) {
     return false;
 
   uint8_t itemId = (slot == EquipSlot::Weapon)   ? equippedWeapon
-                   : (slot == EquipSlot::Armor)   ? equippedArmor
-                   : (slot == EquipSlot::Helmet)  ? equippedHelmet
-                                                  : equippedShield;
+                   : (slot == EquipSlot::Armor)  ? equippedArmor
+                   : (slot == EquipSlot::Helmet) ? equippedHelmet
+                                                 : equippedShield;
 
   if (!addItem(itemId))
     return false;
@@ -125,7 +125,8 @@ size_t Inventory::getItemCount() const {
   return count;
 }
 
-void Inventory::setItems(const std::array<uint8_t, MAX_INVENTORY_SLOTS> &newItems) {
+void Inventory::setItems(
+    const std::array<uint8_t, MAX_INVENTORY_SLOTS> &newItems) {
   items = newItems;
 }
 

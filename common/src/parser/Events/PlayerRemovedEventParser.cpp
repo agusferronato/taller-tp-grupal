@@ -7,7 +7,7 @@
 #include <variant>
 
 void PlayerRemovedEventParser::serialize(std::vector<uint8_t> &bytes,
-                                          const ServerEventDTO &dto) {
+                                         const ServerEventDTO &dto) {
   const auto &event = std::get<PlayerRemovedEventDTO>(dto);
 
   utils.appendBytes(static_cast<uint8_t>(EventOpcode::PlayerRemovedEvent),

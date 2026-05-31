@@ -1,9 +1,8 @@
 #include "Player.h"
 
-Player::Player(uint32_t id, int xOrigin, int yOrigin) : id(id)
-{
-    x = xOrigin;
-    y = yOrigin;
+Player::Player(uint32_t id, int xOrigin, int yOrigin) : id(id) {
+  x = xOrigin;
+  y = yOrigin;
 }
 
 void Player::setCoordinates(int x, int y) {

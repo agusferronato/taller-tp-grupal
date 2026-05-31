@@ -22,5 +22,6 @@ ClientCommandDTO RegisterPlayerParser::deserialize(Protocol &protocol) {
   std::string race = protocol.getStringData();
   std::string playerClass = protocol.getStringData();
 
-  return RegisterPlayerCommandDTO{std::move(name), std::move(race), std::move(playerClass)};
+  return RegisterPlayerCommandDTO{std::move(name), std::move(race),
+                                  std::move(playerClass)};
 }

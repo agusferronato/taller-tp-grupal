@@ -36,7 +36,7 @@ private:
 
   using EntityKey = std::pair<EntityType, uint32_t>;
   std::map<EntityKey, std::unique_ptr<RenderableEntity>> entities;
-  PlayerEntity* myPlayerEntity{nullptr};
+  PlayerEntity *myPlayerEntity{nullptr};
 
   std::unique_ptr<TextureMapper> textureMapper;
 
@@ -52,10 +52,10 @@ public:
   void addEntity(EntityType type, uint32_t id,
                  std::unique_ptr<RenderableEntity> entity);
   void removeEntity(EntityType type, uint32_t id);
-  void setMyPlayer(PlayerEntity* entity);
+  void setMyPlayer(PlayerEntity *entity);
 
-  SDL2pp::Renderer& getRenderer();
-  SDL2pp::Font& getFont();
+  SDL2pp::Renderer &getRenderer();
+  SDL2pp::Font &getFont();
   void show(unsigned int it);
   void setMapData(int maxSize, int gridSize, int commonGroundTextureId,
                   const std::list<TileOrigin> &origins);
@@ -67,7 +67,7 @@ private:
   void initResources();
   void renderCommonGround();
 
-  void getSortedEntities(std::vector<RenderableEntity*>&);
+  void getSortedEntities(std::vector<RenderableEntity *> &);
 };
 
 #endif
