@@ -13,6 +13,7 @@
 #include "Player.h"
 #include "SpriteCalculator.h"
 #include "TextureMapper.h"
+#include "GameChatView.h"
 
 #include <cstdint>
 #include <memory>
@@ -30,6 +31,7 @@ private:
   std::unique_ptr<SDL2pp::Texture> backgroundTexture;
   std::unique_ptr<SDL2pp::Texture> defaultPlayerTexture;
   std::unique_ptr<SDL2pp::Font> font;
+  std::unique_ptr<GameChatView> chatView;
 
   Camera camera;
   SpriteFrameCalculator spriteFrameCalculator;
