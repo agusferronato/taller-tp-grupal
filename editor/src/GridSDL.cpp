@@ -98,6 +98,23 @@ void GridSDL::changeCollidableCellsVisibility() {
 
 
 
+void GridSDL::resizeEvent(QResizeEvent *event) {
+    QWidget::resizeEvent(event);
+
+    if (!renderer.has_value() || !window.has_value() || !camera)
+        return;
+
+    int w = event->size().width();
+    int h = event->size().height();
+
+    SDL_SetWindowSize(window->Get(), w, h);
+    SDL_RenderSetViewport(renderer->Get(), nullptr);
+
+    camera->resize(w, h);
+}
+
+
+
 void GridSDL::setBiome(Biome biome)
 {
     actionToPerform = Action::SelectBiome;
