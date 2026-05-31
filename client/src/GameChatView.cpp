@@ -18,13 +18,21 @@ void GameChatView::render(SDL2pp::Renderer& renderer,
     if (!font)
         return;
 
-    int y = rect.GetY() + 5;
+    int inputAreaHeight = 20;
+    int maxMessagesY = rect.GetY() + rect.GetH() - inputAreaHeight;
 
-    for (const auto& msg : messages) {
+    int y = maxMessagesY;
+
+    for (auto it = messages.rbegin(); it != messages.rend(); ++it) {
         SDL2pp::Surface surf =
-            font->RenderUTF8_Solid(msg, SDL_Color{255,255,255,255});
+            font->RenderUTF8_Solid(*it, SDL_Color{255,255,255,255});
 
         SDL2pp::Texture tex(renderer, surf);
+
+        y -= surf.GetHeight() + 2;
+
+        if (y < rect.GetY() + 5)
+            break;
 
         renderer.Copy(
             tex,
@@ -34,8 +42,6 @@ void GameChatView::render(SDL2pp::Renderer& renderer,
                 y,
                 surf.GetWidth(),
                 surf.GetHeight()));
-
-        y += surf.GetHeight() + 2;
     }
 
     std::string inputLine = active ? "> " + input + "_" : "> " + input;
