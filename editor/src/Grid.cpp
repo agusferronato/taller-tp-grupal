@@ -146,6 +146,9 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap& textureMap)
 
     renderCommonGround(renderer, textureMap);
 
+    updateSelectedBiome();
+    renderBiomes(renderer);
+
     for (auto& priority : tilesToRender) {
 
         for (auto& [_, items] : priority) {
@@ -172,7 +175,10 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap& textureMap)
 
     }
 
-    renderCollidableCells(renderer);
+    /*
+    if (mustShowcollidableCells)
+        renderCollidableCells(renderer);
+    */
 
     renderHover(renderer);
 
@@ -248,4 +254,66 @@ void Grid::setMousePosition(int x, int y)
 
 void Grid::saveMap(GridSDL& gridSDL) {
     this->downloader.saveMap(gridSDL, txtOrigins, collidableCells);
+}
+
+
+void Grid::setInitBiomePosition(Biome biome) {
+
+    biomeSelected = true;
+
+    biomes.push_back(BiomeGrid{
+        biome,
+        item_hover_i,    
+        item_hover_j,
+        item_hover_i,    
+        item_hover_j,    
+        item_hover_i,    
+        item_hover_j,    
+    });
+
+}
+
+void Grid::releaseBiomeSelection() {
+    biomeSelected = false;
+}
+
+
+void Grid::updateSelectedBiome() {
+
+    if (!biomeSelected)
+        return;
+
+    BiomeGrid& biomeSelectedGrid = biomes[biomes.size() - 1];
+
+    biomeSelectedGrid.i_init = std::min(biomeSelectedGrid.i_start, item_hover_i);
+    biomeSelectedGrid.i_end  = std::max(biomeSelectedGrid.i_start, item_hover_i);
+    biomeSelectedGrid.j_init = std::min(biomeSelectedGrid.j_start, item_hover_j);
+    biomeSelectedGrid.j_end  = std::max(biomeSelectedGrid.j_start, item_hover_j);
+}
+    
+
+void Grid::renderBiomes(SDL2pp::Renderer& renderer) {
+
+    for (auto& biome : biomes) {
+
+        for (int i = biome.i_init; i <= biome.i_end; i++) {
+            for (int j = biome.j_init; j <= biome.j_end; j++) {
+
+                SDL2pp::Rect dstRect = camera.toScreen(
+                    (i - MAX_SIZE / 2) * GRID_SIZE_PX, 
+                    (j - MAX_SIZE / 2) * GRID_SIZE_PX,
+                    GRID_SIZE_PX,
+                    GRID_SIZE_PX
+                );
+                
+                SDL_SetRenderDrawBlendMode(renderer.Get(), SDL_BLENDMODE_BLEND);
+                renderer.SetDrawColor(100, 100, 50, 50); 
+                renderer.FillRect(dstRect);
+            }
+
+        }
+
+
+    }
+
 }

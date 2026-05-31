@@ -31,6 +31,7 @@ void Editor::initEditor() {
  
 
     connect(toolBar, &ToolBar::saveMap, this, &Editor::onSaveMapButtonClick);
+    connect(toolBar, &ToolBar::biomeSelected, gridSDL, &GridSDL::setBiome);
 
     connect(texturesPanel, &TexturesLayout::setTextureID, gridSDL, &GridSDL::setTextureID);
 
@@ -39,7 +40,6 @@ void Editor::initEditor() {
 }
 
 void Editor::onSaveMapButtonClick() {
-
 
     this->gridSDL->saveMap();
 

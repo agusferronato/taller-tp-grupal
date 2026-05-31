@@ -70,6 +70,7 @@ void GridSDL::saveMap() {
 }
 
 void GridSDL::setTextureID(int texture_id) {
+    actionToPerform = Action::SelectTexture;
     this->texture_id = texture_id;
 }
 
@@ -88,6 +89,11 @@ void GridSDL::renderLoop() {
 
 }
 
+void GridSDL::setBiome(Biome biome)
+{
+    actionToPerform = Action::SelectBiome;
+    biomeSelected = biome;
+}
 
 void GridSDL::keyPressEvent(QKeyEvent *event)
 {
@@ -102,16 +108,48 @@ void GridSDL::keyPressEvent(QKeyEvent *event)
 
 
 void GridSDL::mouseMoveEvent(QMouseEvent *event) {
+    
     mouse_x = event->pos().x();
     mouse_y = event->pos().y();
+
 }
 
 
 
 void GridSDL::mousePressEvent(QMouseEvent *event) {
-    
-    if (event->button() == Qt::LeftButton) {
-        grid->setGridTexture(*textureMap, texture_id);
+
+    if (event->button() != Qt::LeftButton)
+        return;
+
+    mouseIsBeingPressed = true;
+
+    switch (actionToPerform) {
+
+        case Action::SelectTexture:
+
+            grid->setGridTexture(*textureMap, texture_id);
+            break;
+
+        case Action::SelectBiome:
+            grid->setInitBiomePosition(biomeSelected);
+            break;
+        
+        default:
+            break;
+
+    }
+
+}
+
+void GridSDL::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() != Qt::LeftButton)
+        return;
+
+    mouseIsBeingPressed = false;
+
+    if (actionToPerform == Action::SelectBiome) {
+        grid->releaseBiomeSelection();
     }
 
 }

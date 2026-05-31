@@ -44,4 +44,70 @@ void ToolBar::initToolBar() {
     layout->addStretch();
 
     connect(saveButton, &QPushButton::clicked, this, &ToolBar::saveMap);
+
+    // Etiqueta biomas
+    QLabel* biomeLabel = new QLabel("Bioma:", this);
+    biomeLabel->setStyleSheet("font-size: 12px; font-weight: 600; color: palette(text);");
+    layout->addWidget(biomeLabel);
+
+    struct BiomeInfo {
+        QString name;
+        QString bg;
+        QString border;
+        QString color;
+        QString hoverBg;
+    };
+
+    QList<BiomeInfo> biomes = {
+        { "Bosque", "#dff0d8", "#7dbb5a", "#2d6a1f", "#c8e6b0" },
+        { "Desierto", "#fdf3dc", "#e0b84a", "#7a5c10", "#f5e3a0" },
+        { "Mazmorra", "#e8e0f0", "#8a6bbf", "#3d2270", "#d0c0e8" },
+        { "Ciudad", "#ddeeff", "#5a9fd4", "#1a3f6f", "#b0d4f0" },
+    };
+
+    QString biomeButtonStyle = R"(
+        QPushButton {
+            font-size: 12px;
+            font-weight: 600;
+            color: %3;
+            background: %1;
+            border: 1.5px solid %2;
+            border-radius: 7px;
+            padding: 0 14px;
+        }
+        QPushButton:hover {
+            background: %4;
+            border-color: %2;
+        }
+        QPushButton:pressed {
+            background: %2;
+        }
+        QPushButton:checked {
+            background: %2;
+            color: white;
+        }
+    )";
+
+    for (const BiomeInfo& b : biomes) {
+        QPushButton* btn = new QPushButton(b.name, this);
+        btn->setFixedHeight(34);
+        btn->setCursor(Qt::PointingHandCursor);
+        btn->setCheckable(true);
+        btn->setAutoExclusive(true);
+        btn->setStyleSheet(biomeButtonStyle
+            .arg(b.bg)
+            .arg(b.border)
+            .arg(b.color)
+            .arg(b.hoverBg)
+        );
+        layout->addWidget(btn);
+        biomeButtons.append(btn);
+    }
+
+    connect(saveButton, &QPushButton::clicked, this, &ToolBar::saveMap);
+
+    connect(biomeButtons[0], &QPushButton::clicked, this, [this]() { emit biomeSelected(Biome::Forest); });
+    connect(biomeButtons[1], &QPushButton::clicked, this, [this]() { emit biomeSelected(Biome::Desert); });
+    connect(biomeButtons[2], &QPushButton::clicked, this, [this]() { emit biomeSelected(Biome::Dungeon); });
+    connect(biomeButtons[3], &QPushButton::clicked, this, [this]() { emit biomeSelected(Biome::City); });
 }
