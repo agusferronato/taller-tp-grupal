@@ -2,16 +2,18 @@
 
 
 
-Grid::Grid(Camera& camera) : 
+Grid::Grid(Camera& camera, SDL2pp::Renderer &renderer) : 
     tilesToRender(std::vector<std::map<std::pair<int,int>, std::vector<GridItem>>>(3)),
     camera(camera), 
-    downloader("map.toml")
+    downloader("map.toml"),
+    font("fonts/Timeless.ttf", 16),
+    colissionTexture(renderer, "assets/colision.png")
 {
 
-} 
+}
 
 
-void Grid::setGridTexture(TextureMap& textureMap, int texture_id)
+void Grid::setGridTexture(TextureMap &textureMap, int texture_id)
 {
 
     if (thereAreAssignedTextures(textureMap, texture_id))
@@ -146,9 +148,6 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap& textureMap)
 
     renderCommonGround(renderer, textureMap);
 
-    updateSelectedBiome();
-    renderBiomes(renderer);
-
     for (auto& priority : tilesToRender) {
 
         for (auto& [_, items] : priority) {
@@ -175,16 +174,19 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap& textureMap)
 
     }
 
-    /*
+    updateSelectedBiome();
+    renderBiomes(renderer);
+
     if (mustShowcollidableCells)
         renderCollidableCells(renderer);
-    */
 
     renderHover(renderer);
 
 }
 
 void Grid::renderCollidableCells(SDL2pp::Renderer& renderer) {
+
+    colissionTexture.SetAlphaMod(80);
 
     for (auto& [i, j, _] : collidableCells) {
 
@@ -195,13 +197,18 @@ void Grid::renderCollidableCells(SDL2pp::Renderer& renderer) {
             GRID_SIZE_PX
         );
 
-        SDL_SetRenderDrawBlendMode(renderer.Get(), SDL_BLENDMODE_BLEND);
-        renderer.SetDrawColor(0, 0, 255, 50); 
-        renderer.FillRect(dstRect);
+        SDL2pp::Rect srcRect = { 0, 0, GRID_SIZE_PX, GRID_SIZE_PX };
+        renderer.Copy(colissionTexture, srcRect, dstRect);
     }
 
-
+    colissionTexture.SetAlphaMod(255);
 }
+
+
+void Grid::changeCollidableCellsVisibility() {
+    mustShowcollidableCells = !mustShowcollidableCells;
+}
+
 
 void Grid::renderCommonGround(SDL2pp::Renderer& renderer, TextureMap& textureMap) {
 
@@ -263,6 +270,9 @@ void Grid::setInitBiomePosition(Biome biome) {
 
     biomes.push_back(BiomeGrid{
         biome,
+        biomeParser.getBiomeAsString(biome),
+        biomeParser.getBiomeColor(biome),
+        false, 
         item_hover_i,    
         item_hover_j,
         item_hover_i,    
@@ -275,6 +285,7 @@ void Grid::setInitBiomePosition(Biome biome) {
 
 void Grid::releaseBiomeSelection() {
     biomeSelected = false;
+    biomes[biomes.size() - 1].initialized = true;
 }
 
 
@@ -306,10 +317,38 @@ void Grid::renderBiomes(SDL2pp::Renderer& renderer) {
                     GRID_SIZE_PX
                 );
                 
+                SDL2pp::Color& color = biome.color;
+
                 SDL_SetRenderDrawBlendMode(renderer.Get(), SDL_BLENDMODE_BLEND);
-                renderer.SetDrawColor(100, 100, 50, 50); 
+                renderer.SetDrawColor(color.r, color.g, color.b, color.a); 
                 renderer.FillRect(dstRect);
             }
+
+        }
+
+        if (biome.initialized) {
+
+            SDL2pp::Rect cornerRect = camera.toScreen(
+                (biome.i_init - MAX_SIZE / 2) * GRID_SIZE_PX,
+                (biome.j_end + 1 - MAX_SIZE / 2) * GRID_SIZE_PX,  
+                0, 0  
+            );
+
+            SDL2pp::Surface textSurface(TTF_RenderText_Blended(
+                font.Get(),
+                biome.asString.c_str(),
+                {255, 255, 255, 255}
+            ));
+            SDL2pp::Texture textTexture(renderer, textSurface);
+
+            int tw = textTexture.GetWidth();
+            int th = textTexture.GetHeight();
+
+            renderer.Copy(
+                textTexture,
+                SDL2pp::NullOpt,
+                SDL2pp::Rect(cornerRect.x + 16, cornerRect.y - th + 32, tw, th)
+            );
 
         }
 

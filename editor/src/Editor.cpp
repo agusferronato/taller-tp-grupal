@@ -32,6 +32,7 @@ void Editor::initEditor() {
 
     connect(toolBar, &ToolBar::saveMap, this, &Editor::onSaveMapButtonClick);
     connect(toolBar, &ToolBar::biomeSelected, gridSDL, &GridSDL::setBiome);
+    connect(toolBar, &ToolBar::collisionVisibilityChanged, gridSDL, &GridSDL::changeCollidableCellsVisibility);
 
     connect(texturesPanel, &TexturesLayout::setTextureID, gridSDL, &GridSDL::setTextureID);
 
