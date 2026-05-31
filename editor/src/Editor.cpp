@@ -23,6 +23,9 @@ void Editor::initEditor() {
  
     gridSDL = new GridSDL(centralWidget);
     texturesPanel = new TexturesLayout(centralWidget);
+
+    gridSDL->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    texturesPanel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
  
     contentLayout->addWidget(gridSDL, 2);
     contentLayout->addWidget(texturesPanel, 1);
