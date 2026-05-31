@@ -169,4 +169,57 @@ void GameModel::handle(const NpcDefeatedEventDTO &) {}
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
 void GameModel::handle(const PrivateMessageEventDTO &) {}
 
- 
+void GameModel::updateChatView() {
+  gameView->setChatState(chatMessages, currentChatInput, chatActive);
+}
+
+const std::deque<std::string>& GameModel::getChatMessages() const {
+  return chatMessages;
+}
+
+const std::string& GameModel::getCurrentChatInput() const {
+  return currentChatInput;
+}
+
+bool GameModel::isChatActive() const {
+  return chatActive;
+}
+
+void GameModel::openChat() {
+  chatActive = true;
+  SDL_StartTextInput();
+  updateChatView();
+}
+
+void GameModel::closeChat() {
+  chatActive = false;
+  currentChatInput.clear();
+  SDL_StopTextInput();
+  updateChatView();
+}
+
+void GameModel::appendChatText(const char* text) {
+  currentChatInput += text;
+  updateChatView();
+}
+
+void GameModel::backspaceChat() {
+  if (!currentChatInput.empty()) {
+    currentChatInput.pop_back();
+  }
+  updateChatView();
+}
+
+void GameModel::submitChat() {
+  if (!currentChatInput.empty()) {
+    chatMessages.push_back("> " + currentChatInput);
+
+    while (chatMessages.size() > 6) {
+      chatMessages.pop_front();
+    }
+  }
+
+  currentChatInput.clear();
+  chatActive = false;
+  updateChatView();
+}

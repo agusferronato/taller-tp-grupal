@@ -11,9 +11,6 @@ void GameChatView::render(SDL2pp::Renderer& renderer,
                           const std::string& input,
                           bool active) {
     
-    (void) input; // Currently unused
-    (void) active; // Currently unused
-    
     renderer.SetDrawBlendMode(SDL_BLENDMODE_BLEND);
     renderer.SetDrawColor(0, 0, 0, 180);
     renderer.FillRect(rect);
@@ -40,4 +37,20 @@ void GameChatView::render(SDL2pp::Renderer& renderer,
 
         y += surf.GetHeight() + 2;
     }
+
+    std::string inputLine = active ? "> " + input + "_" : "> " + input;
+
+    SDL2pp::Surface inputSurf =
+        font->RenderUTF8_Solid(inputLine, SDL_Color{255,255,180,255});
+
+    SDL2pp::Texture inputTex(renderer, inputSurf);
+
+    renderer.Copy(
+        inputTex,
+        SDL2pp::NullOpt,
+        SDL2pp::Rect(
+            rect.GetX() + 5,
+            rect.GetY() + rect.GetH() - inputSurf.GetHeight() - 5,
+            inputSurf.GetWidth(),
+            inputSurf.GetHeight()));
 }

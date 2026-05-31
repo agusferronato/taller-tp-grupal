@@ -126,13 +126,16 @@ void GameWindow::renderHUD() {
   renderText(570, 10, "Oro: " + std::to_string(p.getGold()),
              SDL_Color{255, 215, 0, 255});
 
-  chatView->render(
-    *renderer,
-    SDL2pp::Rect(0, 280, 720, 130),
-    std::deque<std::string>{"Hola", "Mensaje de prueba"},
-    "",
-    false
-  );
+  // Render chat
+  if (chatView) {
+    chatView->render(
+        *renderer,
+        SDL2pp::Rect(0, 280, 720, 130),
+        chatMessages,
+        currentChatInput,
+        chatActive
+    );
+  }
 }
 
 void GameWindow::renderCommonGround() {
@@ -252,4 +255,13 @@ int GameWindow::headCenteringOffset(Direction dir) {
     return 0;
   }
   return 0;
+}
+
+//Chat
+void GameWindow::setChatState(const std::deque<std::string>& messages,
+                              const std::string& input,
+                              bool active) {
+  chatMessages = messages;
+  currentChatInput = input;
+  chatActive = active;
 }

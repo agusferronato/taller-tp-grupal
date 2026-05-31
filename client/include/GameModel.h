@@ -48,7 +48,8 @@ public:
 
 private:
   void registerPlayers();
-
+  void updateChatView();
+  
 private:
   /* Event handlers */
   void handle(const PlayerMovedEventDTO &event);
