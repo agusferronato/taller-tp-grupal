@@ -48,6 +48,7 @@ void GameWindow::initResources() {
 
   textureMapper = std::make_unique<TextureMapper>(*renderer);
   textureMapper->loadFromToml("assets/textures.toml");
+  chatView = std::make_unique<GameChatView>(font.get());
 }
 
 void GameWindow::setMapData(int maxSize_, int gridSize_,
@@ -124,6 +125,14 @@ void GameWindow::renderHUD() {
 
   renderText(570, 10, "Oro: " + std::to_string(p.getGold()),
              SDL_Color{255, 215, 0, 255});
+
+  chatView->render(
+    *renderer,
+    SDL2pp::Rect(0, 280, 720, 130),
+    std::deque<std::string>{"Hola", "Mensaje de prueba"},
+    "",
+    false
+  );
 }
 
 void GameWindow::renderCommonGround() {

@@ -8,6 +8,7 @@
 #include "Queue.h"
 #include <memory>
 #include <unordered_map>
+#include <deque> //Double ended queue for chat messages
 
 class GameModel {
 private:
@@ -16,6 +17,10 @@ private:
   uint32_t myPlayerID;
   std::unordered_map<uint32_t, std::unique_ptr<Player>> players;
   GameWindow *gameView;
+
+  std::deque<std::string> chatMessages;
+  std::string currentChatInput;
+  bool chatActive = false;
 
 public:
   GameModel(uint32_t myPlayerID, GameWindow *gameView,
@@ -28,6 +33,18 @@ public:
   /*update State From Controller*/
   void moveMyPlayer(Direction direction);
   void stopMyPlayer();
+
+public:
+  //Chat
+  const std::deque<std::string>& getChatMessages() const;
+  const std::string& getCurrentChatInput() const;
+  bool isChatActive() const;
+
+  void openChat();
+  void closeChat();
+  void appendChatText(const char* text);
+  void backspaceChat();
+  void submitChat();
 
 private:
   void registerPlayers();
