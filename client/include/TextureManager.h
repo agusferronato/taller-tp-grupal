@@ -9,6 +9,7 @@
 #include <SDL2pp/SDL2pp.hh>
 
 #include "Direction.h"
+#include "Race.h"
 #include "TextureLayout.h"
 #include "TextureLayoutType.h"
 
@@ -23,14 +24,17 @@ private:
   std::map<int, SDL2pp::Texture> textures;
   std::map<TextureLayoutType, TextureLayout> texturesFrames;
 
+  int getRaceBodyID(Race race) const;
+  int getRaceHeadID(Race race) const;
+
 public:
   explicit TextureManager(SDL2pp::Renderer &renderer);
 
   void loadTexturesFromToml(const std::string &path);
   void loadLayoutsFromToml(const std::string &path);
 
-  Sprite getBodySprite(int bodyId, Direction dir, unsigned int it);
-  Sprite getHeadSprite(int headId, Direction dir);
+  Sprite getBodySprite(Race race, Direction dir, unsigned int it);
+  Sprite getHeadSprite(Race race, Direction dir);
 };
 
 #endif
