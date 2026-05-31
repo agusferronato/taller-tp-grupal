@@ -23,6 +23,9 @@ void Editor::initEditor() {
  
     gridSDL = new GridSDL(centralWidget);
     texturesPanel = new TexturesLayout(centralWidget);
+
+    gridSDL->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    texturesPanel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
  
     contentLayout->addWidget(gridSDL, 2);
     contentLayout->addWidget(texturesPanel, 1);
@@ -31,6 +34,8 @@ void Editor::initEditor() {
  
 
     connect(toolBar, &ToolBar::saveMap, this, &Editor::onSaveMapButtonClick);
+    connect(toolBar, &ToolBar::biomeSelected, gridSDL, &GridSDL::setBiome);
+    connect(toolBar, &ToolBar::collisionVisibilityChanged, gridSDL, &GridSDL::changeCollidableCellsVisibility);
 
     connect(texturesPanel, &TexturesLayout::setTextureID, gridSDL, &GridSDL::setTextureID);
 
@@ -39,7 +44,6 @@ void Editor::initEditor() {
 }
 
 void Editor::onSaveMapButtonClick() {
-
 
     this->gridSDL->saveMap();
 

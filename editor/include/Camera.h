@@ -25,6 +25,11 @@ public:
     );
   }
 
+  void resize(int w, int h) {
+    this->screenW = w;
+    this->screenH = h;
+  }
+
   int get_x() { return x; }
   int get_y() { return y; }
 

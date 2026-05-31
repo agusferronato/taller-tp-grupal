@@ -12,10 +12,11 @@
 #include "TextureMap.h"
 #include "MapDownloader.h"
 
-
 #define MAX_SIZE 100
 #define GRID_SIZE_PX 32
 #include "Info.h"
+#include "Biome.h"
+#include "BiomeDataParser.h"
 
 class GridSDL;
 
@@ -43,6 +44,27 @@ struct TileOrigin {
 };
 
 
+
+struct BiomeGrid {
+
+    Biome type;
+    std::string asString;     
+    SDL2pp::Color color;
+
+    bool initialized{false};
+
+    int i_start;
+    int j_start;
+
+    int i_init;
+    int j_init;
+    int i_end;
+    int j_end;
+};
+
+
+
+
 class Grid {
 
 private:
@@ -57,15 +79,23 @@ private:
         std::map<std::pair<int,int>, std::vector<GridItem>>
     > tilesToRender;
 
+    std::vector<BiomeGrid> biomes;
 
     Camera& camera;
     MapDownloader downloader;
+    SDL2pp::Font font;
+    SDL2pp::Texture colissionTexture;
+
+    BiomeDataParser biomeParser;
+
     int item_hover_i, item_hover_j;
     bool hover_init{false};
+    bool biomeSelected{false};
+    bool mustShowcollidableCells{false};
 
 public:
 
-    Grid(Camera &camera);
+    Grid(Camera &camera, SDL2pp::Renderer& renderer);
 
     void setGridTexture(TextureMap &textureMap, int texture_id);
 
@@ -76,11 +106,21 @@ public:
 
     void saveMap(GridSDL& gridSDL);
 
+    void setInitBiomePosition(Biome biome);
+
+    void releaseBiomeSelection();
+    void changeCollidableCellsVisibility();
+
 
 private:
+
+    void updateSelectedBiome();
+
+    void renderBiomes(SDL2pp::Renderer &renderer);
     bool thereAreAssignedTextures(TextureMap &textureMap, int texture_id);
 
     void renderCollidableCells(SDL2pp::Renderer& renderer);
+
 
     float getAlphaChannelWeight(SDL2pp::Surface &surface, SDL2pp::Rect region);
 
@@ -93,3 +133,4 @@ private:
 
 
 #endif
+
