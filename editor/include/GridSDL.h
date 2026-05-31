@@ -13,6 +13,8 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QResizeEvent>
+#include "Biome.h"
+#include "Action.h"
 
 
 class Grid;
@@ -31,7 +33,10 @@ private:
     SDL2pp::SDLTTF ttf;
     std::optional<SDL2pp::SDLImage> sdlimage;
     int x{0}, y{0}, mouse_x{0}, mouse_y{0};
+    Action actionToPerform {Action::SelectTexture}; 
+    Biome biomeSelected;
 
+    bool mouseIsBeingPressed{false};
     std::unique_ptr<TextureMap> textureMap;
     std::unique_ptr<Grid> grid;
     std::unique_ptr<Camera> camera;
@@ -55,7 +60,9 @@ private slots:
     void renderLoop();
 
 public slots:
+    void changeCollidableCellsVisibility();
     void setTextureID(int texture_id);
+    void setBiome(Biome biome);
 
 
 protected:
@@ -67,6 +74,8 @@ protected:
 
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 };
 
 
