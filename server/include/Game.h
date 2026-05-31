@@ -108,7 +108,7 @@ public:
   void equipItem(uint32_t playerId, uint8_t inventorySlot);
   void unequipSlot(uint32_t playerId, uint8_t equipSlot);
   void dropItem(uint32_t playerId, uint8_t inventorySlot);
-
+  void sendGlobalChatMessage(uint32_t playerId, const std::string &message);
 
 private:
   void execute(ClientMessage clientMessage);

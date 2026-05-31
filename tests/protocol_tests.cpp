@@ -384,7 +384,7 @@ TEST_F(ProtocolTest, SendsAndReceivesGlobalChatMessageCommand) {
   registerAllParsers(server);
 
   ClientCommandDTO original =
-      GlobalChatMessageCommandDTO{"Hola desde el sender"};
+      GlobalChatMessageCommandDTO{1, "Hola desde el sender"};
 
   server.sendCommand(original);
 
@@ -392,5 +392,6 @@ TEST_F(ProtocolTest, SendsAndReceivesGlobalChatMessageCommand) {
   auto *dto = std::get_if<GlobalChatMessageCommandDTO>(&received);
 
   ASSERT_NE(dto, nullptr);
+  EXPECT_EQ(dto->playerId, 1);
   EXPECT_EQ(dto->message, "Hola desde el sender");
 }

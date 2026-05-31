@@ -227,6 +227,7 @@ void GameModel::submitChat() {
   }
 
   sendingQueue.push(GlobalChatMessageCommandDTO{
+      myPlayerID,
       currentChatInput
   });
 

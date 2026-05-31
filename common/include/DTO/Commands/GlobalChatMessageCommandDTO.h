@@ -11,6 +11,7 @@ private:
 
 public:
   ClientCommandOpCode getCode() const { return opCode; }
+  uint32_t playerId;
   std::string message;
 };
 
