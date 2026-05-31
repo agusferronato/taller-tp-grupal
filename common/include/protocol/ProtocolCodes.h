@@ -22,6 +22,7 @@ enum class ClientCommandOpCode : uint8_t {
   UnequipCommand,
   DropItemCommand,
   TakeItemCommand,
+  GlobalChatMessageCommand,
 };
 
 // Opcodes para eventos enviados por el servidor a los clientes
@@ -39,6 +40,7 @@ enum class EventOpcode : uint8_t {
   InventoryUpdateEvent,
   TextureInfoEvent,
   PrivateMessageEvent,
+  GlobalChatMessageEvent,
 };
 
 #endif // PROTOCOL_CODES_H

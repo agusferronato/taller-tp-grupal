@@ -24,6 +24,8 @@
 #include "parser/Events/PrivateMessageEventParser.h"
 #include "protocol/Protocol.h"
 #include "protocol/ProtocolCodes.h"
+#include <GlobalChatMessageCommandParser.h>
+#include <GlobalChatMessageEventParser.h>
 
 void registerAllParsers(Protocol &protocol) {
   protocol.registerCommandParser(
@@ -70,6 +72,10 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerCommandParser(
       static_cast<uint8_t>(ClientCommandOpCode::TakeItemCommand),
       std::make_unique<TakeItemCommandParser>());
+
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::GlobalChatMessageCommand),
+      std::make_unique<GlobalChatMessageCommandParser>());
 
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::ChatMessageEvent),
@@ -118,4 +124,8 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::PrivateMessageEvent),
       std::make_unique<PrivateMessageEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::GlobalChatMessageEvent),
+      std::make_unique<GlobalChatMessageEventParser>());
 }

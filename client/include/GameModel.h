@@ -49,7 +49,7 @@ public:
 private:
   void registerPlayers();
   void updateChatView();
-  
+
 private:
   /* Event handlers */
   void handle(const PlayerMovedEventDTO &event);
@@ -64,6 +64,7 @@ private:
   void handle(const NpcDefeatedEventDTO &event);
   void handle(const RegisterPlayerEventDTO &event);
   void handle(const PrivateMessageEventDTO &event);
+  void handle(const GlobalChatMessageEventDTO &event);
 
 };
 

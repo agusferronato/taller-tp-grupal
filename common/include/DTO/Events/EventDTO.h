@@ -15,6 +15,7 @@
 #include "RegisterPlayerEventDTO.h"
 #include "TextureInfoEventDTO.h"
 #include "PrivateMessageEventDTO.h"
+#include "GlobalChatMessageEventDTO.h"
 
 using ServerEventDTO =
     std::variant<ChatMessageEventDTO, NpcDefeatedEventDTO, PlayerMovedEventDTO,
@@ -22,6 +23,6 @@ using ServerEventDTO =
                  PlayerAppearedEventDTO, PlayerStoppedEventDTO,
                  TextureInfoEventDTO, PrivateMessageEventDTO, 
                  PlayerInfoEventDTO, PlayerRemovedEventDTO, 
-                 InventoryUpdateEventDTO>;
+                 InventoryUpdateEventDTO, GlobalChatMessageEventDTO>;
 
 #endif // EVENT_DTO_H
