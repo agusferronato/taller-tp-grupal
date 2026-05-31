@@ -9,12 +9,14 @@
 #include "DTO/Commands/PlayerStopCommandDTO.h"
 #include "DTO/Commands/PrivateMessageCommandDTO.h"
 #include "DTO/Commands/RegisterPlayerCommandDTO.h"
+#include "DTO/Commands/GlobalChatMessageCommandDTO.h"
 #include "DTO/Events/ChatMessageEventDTO.h"
 #include "DTO/Events/NpcDefeatedEventDTO.h"
 #include "DTO/Events/PlayerListEventDTO.h"
 #include "DTO/Events/PlayerMovedEventDTO.h"
 #include "DTO/Events/PlayerStoppedEventDTO.h"
 #include "DTO/Events/RegisterPlayerEventDTO.h"
+#include "DTO/Events/GlobalChatMessageEventDTO.h"
 #include "Direction.h"
 #include "protocol/Protocol.h"
 #include "protocol/ProtocolCodes.h"
@@ -347,5 +349,48 @@ TEST_F(ProtocolTest, SendsAndReceivesPrivateMessageEvent) {
   ASSERT_NE(dto, nullptr);
   EXPECT_EQ(dto->senderName, "SenderPlayer");
   EXPECT_EQ(dto->targetName, "TargetPlayer");
+  EXPECT_EQ(dto->message, "Hola desde el sender");
+}
+
+TEST_F(ProtocolTest, SendsAndReceivesGlobalChatMessageEvent) {
+  Socket clientSocket = Socket::from_fd(fds[0]);
+  Socket serverSocket = Socket::from_fd(fds[1]);
+
+  Protocol client(clientSocket);
+  Protocol server(serverSocket);
+  registerAllParsers(client);
+  registerAllParsers(server);
+
+  ServerEventDTO original =
+      GlobalChatMessageEventDTO{"SenderPlayer", "Hola desde el sender"};
+
+  server.sendEvent(original);
+
+  ServerEventDTO received = client.receiveEvent();
+  auto *dto = std::get_if<GlobalChatMessageEventDTO>(&received);
+
+  ASSERT_NE(dto, nullptr);
+  EXPECT_EQ(dto->playerName, "SenderPlayer");
+  EXPECT_EQ(dto->message, "Hola desde el sender");
+}
+
+TEST_F(ProtocolTest, SendsAndReceivesGlobalChatMessageCommand) {
+  Socket clientSocket = Socket::from_fd(fds[0]);
+  Socket serverSocket = Socket::from_fd(fds[1]);
+
+  Protocol client(clientSocket);
+  Protocol server(serverSocket);
+  registerAllParsers(client);
+  registerAllParsers(server);
+
+  ClientCommandDTO original =
+      GlobalChatMessageCommandDTO{"Hola desde el sender"};
+
+  server.sendCommand(original);
+
+  ClientCommandDTO received = client.receiveCommand();
+  auto *dto = std::get_if<GlobalChatMessageCommandDTO>(&received);
+
+  ASSERT_NE(dto, nullptr);
   EXPECT_EQ(dto->message, "Hola desde el sender");
 }

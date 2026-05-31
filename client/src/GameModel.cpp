@@ -169,6 +169,16 @@ void GameModel::handle(const NpcDefeatedEventDTO &) {}
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
 void GameModel::handle(const PrivateMessageEventDTO &) {}
 
+void GameModel::handle(const GlobalChatMessageEventDTO &event) {
+    chatMessages.push_back(event.message);
+
+  while (chatMessages.size() > 100) {
+    chatMessages.pop_front();
+  }
+
+  updateChatView();
+}
+
 void GameModel::updateChatView() {
   gameView->setChatState(chatMessages, currentChatInput, chatActive);
 }
@@ -211,13 +221,14 @@ void GameModel::backspaceChat() {
 }
 
 void GameModel::submitChat() {
-  if (!currentChatInput.empty()) {
-    chatMessages.push_back("> " + currentChatInput);
-
-    while (chatMessages.size() > 6) {
-      chatMessages.pop_front();
-    }
+  if (currentChatInput.empty()) {
+    closeChat();
+    return;
   }
+
+  sendingQueue.push(GlobalChatMessageCommandDTO{
+      currentChatInput
+  });
 
   currentChatInput.clear();
   chatActive = false;
