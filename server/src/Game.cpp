@@ -27,7 +27,7 @@ PlayerData PlayerInfo::toPlayerData() const {
   PlayerData data{};
   data.setName(name);
   data.setPassword(password);
-  data.setRace(race);
+  data.setRace(RaceUtils::raceToString(race));
   data.setPlayerClass(playerClass);
   data.x = x;
   data.y = y;
@@ -54,7 +54,7 @@ PlayerData PlayerInfo::toPlayerData() const {
 void PlayerInfo::fromPlayerData(const PlayerData &data) {
   name = data.name;
   password = data.password;
-  race = data.race;
+  race = RaceUtils::stringToRace(data.race);
   playerClass = data.playerClass;
   x = data.x;
   y = data.y;
@@ -78,27 +78,30 @@ void PlayerInfo::fromPlayerData(const PlayerData &data) {
 }
 
 static std::string lowercase(const std::string &s) {
-  std::string r = s;
-  for (auto &c : r)
-    c = std::tolower(static_cast<unsigned char>(c));
-  return r;
+  std::string result = s;
+  auto toLower = [](unsigned char c) { return std::tolower(c); };
+  std::transform(result.begin(), result.end(), result.begin(), toLower);
+  return result;
 }
 
-static void initPlayerStats(PlayerInfo &player, const std::string &race,
+static void initPlayerStats(PlayerInfo &player, const Race race,
                             const std::string &playerClass) {
   struct BaseStats {
     uint32_t strength, agility, constitution, intelligence;
   };
 
-  auto getRaceStats = [](const std::string &r) -> BaseStats {
-    std::string lr = lowercase(r);
-    if (lr == "elfo")
+  auto getRaceStats = [](const Race &race) -> BaseStats {
+    switch (race) {
+    case Race::Human:
+      return {10, 10, 10, 10};
+    case Race::Elf:
       return {6, 13, 5, 16};
-    if (lr == "enano")
+    case Race::Dwarf:
       return {13, 4, 16, 7};
-    if (lr == "gnomo")
+    case Race::Gnome:
       return {7, 6, 14, 13};
-    return {10, 10, 10, 10};
+    }
+    throw std::invalid_argument("Invalid race");
   };
 
   auto getClassStats = [](const std::string &c) -> BaseStats {
@@ -185,7 +188,7 @@ void Game::run() {
 
 void Game::kill() { keepRunning = false; }
 
-void Game::registerPlayer(const std::string &name, const std::string &race,
+void Game::registerPlayer(const std::string &name, const Race race,
                           const std::string &playerClass,
                           uint32_t connectionId) {
 
@@ -239,9 +242,10 @@ void Game::registerPlayer(const std::string &name, const std::string &race,
 
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
+    std::string strRace = RaceUtils::raceToString(info->race);
     playerList.push_back(
         {pid, static_cast<int16_t>(info->x), static_cast<int16_t>(info->y),
-         info->direction, info->race, info->name, info->hp, info->maxHp,
+         info->direction, strRace, info->name, info->hp, info->maxHp,
          info->mana, info->maxMana, info->gold, info->level, info->experience});
   }
 
@@ -250,9 +254,9 @@ void Game::registerPlayer(const std::string &name, const std::string &race,
 
   messagesToSend.push_back(PlayerAppearedEventDTO{
       newId, static_cast<int16_t>(spawnX), static_cast<int16_t>(spawnY),
-      Direction::Down, race, name, players[newId]->hp, players[newId]->maxHp,
-      players[newId]->mana, players[newId]->maxMana, players[newId]->gold,
-      players[newId]->level, players[newId]->experience});
+      Direction::Down, RaceUtils::raceToString(race), name, players[newId]->hp,
+      players[newId]->maxHp, players[newId]->mana, players[newId]->maxMana,
+      players[newId]->gold, players[newId]->level, players[newId]->experience});
 }
 
 void Game::loginPlayer(const std::string &name) {
@@ -286,19 +290,21 @@ void Game::loginPlayer(const std::string &name) {
 
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
+    std::string strRace = RaceUtils::raceToString(info->race);
     playerList.push_back(
         {pid, static_cast<int16_t>(info->x), static_cast<int16_t>(info->y),
-         info->direction, info->race, info->name, info->hp, info->maxHp,
+         info->direction, strRace, info->name, info->hp, info->maxHp,
          info->mana, info->maxMana, info->gold, info->level, info->experience});
   }
   messagesToSend.push_back(PlayerListEventDTO{std::move(playerList)});
 
   messagesToSend.push_back(PlayerAppearedEventDTO{
       newId, static_cast<int16_t>(data.x), static_cast<int16_t>(data.y),
-      static_cast<Direction>(data.direction), players[newId]->race,
-      players[newId]->name, players[newId]->hp, players[newId]->maxHp,
-      players[newId]->mana, players[newId]->maxMana, players[newId]->gold,
-      players[newId]->level, players[newId]->experience});
+      static_cast<Direction>(data.direction),
+      RaceUtils::raceToString(players[newId]->race), players[newId]->name,
+      players[newId]->hp, players[newId]->maxHp, players[newId]->mana,
+      players[newId]->maxMana, players[newId]->gold, players[newId]->level,
+      players[newId]->experience});
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {
