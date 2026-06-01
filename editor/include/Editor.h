@@ -1,54 +1,39 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-
+#include "GridSDL.h"
+#include "SaveSuccessModal.h"
+#include "TexturesLayout.h"
+#include "ToolBar.h"
 #include <QMainWindow>
 #include <QObject>
 #include <QVBoxLayout>
-#include "ToolBar.h"
-#include "GridSDL.h"
-#include "TexturesLayout.h"
-#include "SaveSuccessModal.h"
-
+#include <string>
 
 class Editor : public QMainWindow {
-    Q_OBJECT
+  Q_OBJECT
 
 private:
+  QWidget *centralWidget;
+  QVBoxLayout *mainLayout;
+  QHBoxLayout *contentLayout;
 
-    QWidget * centralWidget;
-    QVBoxLayout * mainLayout;
-    QHBoxLayout * contentLayout;
- 
-    ToolBar * toolBar;
+  ToolBar *toolBar;
 
-    GridSDL * gridSDL;
+  GridSDL *gridSDL;
 
-    TexturesLayout * texturesPanel;
-
+  TexturesLayout *texturesPanel;
 
 public:
-
-    explicit Editor(QWidget *parent = nullptr);
+  explicit Editor(QWidget *parent = nullptr);
 
 private:
-
-    void initEditor();
-
+  void initEditor();
 
 private slots:
 
-    void onSaveMapButtonClick();
-    void onSavedMapSuccesfully(const std::string &path);
-
-
-
-
+  void onSaveMapButtonClick();
+  void onSavedMapSuccesfully(const std::string &path);
 };
-
-
-
-
-
 
 #endif

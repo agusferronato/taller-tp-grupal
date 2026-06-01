@@ -9,25 +9,27 @@
 
 class PlayerEntity : public RenderableEntity {
 public:
-    PlayerEntity(Player& player, TextureManager& textureManager, SDL2pp::Font& nameFont);
+  PlayerEntity(Player &player, TextureManager &textureManager,
+               SDL2pp::Font &nameFont);
 
-    void render(SDL2pp::Renderer& renderer, Camera& camera, unsigned int it) override;
+  void render(SDL2pp::Renderer &renderer, Camera &camera,
+              unsigned int it) override;
 
-    Player& getPlayer();
-    int get_x() override;
-    int get_y() override;
-    int get_h() override;
+  Player &getPlayer();
+  int get_x() override;
+  int get_y() override;
+  int get_h() override;
 
 private:
-    Player& player;
-    TextureManager& textureManager;
-    SDL2pp::Font& nameFont;
+  Player &player;
+  TextureManager &textureManager;
+  SDL2pp::Font &nameFont;
 
-    void renderBody(SDL2pp::Renderer& renderer, Camera& camera, unsigned int it);
-    void renderHead(SDL2pp::Renderer& renderer, Camera& camera);
-    void renderName(SDL2pp::Renderer& renderer, Camera& camera);
-    int get_head_x(Camera& camera);
-    int get_head_y(Camera& camera);
+  void renderBody(SDL2pp::Renderer &renderer, Camera &camera, unsigned int it);
+  void renderHead(SDL2pp::Renderer &renderer, Camera &camera);
+  void renderName(SDL2pp::Renderer &renderer, Camera &camera);
+  int get_head_x(Camera &camera);
+  int get_head_y(Camera &camera);
 };
 
 #endif

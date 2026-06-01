@@ -1,26 +1,24 @@
 #include <algorithm>
 #include <cctype>
 
+#include "ConstantRateLoop.h"
+#include "Formulas.h"
 #include "Game.h"
 #include "MapLoader.h"
 #include "MoveCommandDTO.h"
 #include "PlayerAppearedEventDTO.h"
+#include "PlayerInfoEventDTO.h"
 #include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "PlayerRemovedEventDTO.h"
 #include "PlayerStopCommandDTO.h"
 #include "PlayerStoppedEventDTO.h"
 #include "RegisterPlayerCommandDTO.h"
-#include "PlayerInfoEventDTO.h"
 #include "RegisterPlayerEventDTO.h"
 #include "TextureInfoEventDTO.h"
 #include "command/CommandFactory.h"
-#include "ConstantRateLoop.h"
-#include "Formulas.h"
 
-static int floorDiv(int a, int b) {
-  return (a >= 0) ? a / b : (a - b + 1) / b;
-}
+static int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
 
 PlayerInfo::PlayerInfo(uint32_t id, int x, int y, Direction dir)
     : id(id), x(x), y(y), direction(dir) {}
@@ -87,24 +85,30 @@ static std::string lowercase(const std::string &s) {
 }
 
 static void initPlayerStats(PlayerInfo &player, const std::string &race,
-                             const std::string &playerClass) {
+                            const std::string &playerClass) {
   struct BaseStats {
     uint32_t strength, agility, constitution, intelligence;
   };
 
   auto getRaceStats = [](const std::string &r) -> BaseStats {
     std::string lr = lowercase(r);
-    if (lr == "elfo")   return {6, 13, 5, 16};
-    if (lr == "enano")  return {13, 4, 16, 7};
-    if (lr == "gnomo")  return {7, 6, 14, 13};
+    if (lr == "elfo")
+      return {6, 13, 5, 16};
+    if (lr == "enano")
+      return {13, 4, 16, 7};
+    if (lr == "gnomo")
+      return {7, 6, 14, 13};
     return {10, 10, 10, 10};
   };
 
   auto getClassStats = [](const std::string &c) -> BaseStats {
     std::string lc = lowercase(c);
-    if (lc == "mago")     return {3, 5, 5, 15};
-    if (lc == "clerigo")  return {7, 7, 9, 10};
-    if (lc == "paladin")  return {10, 6, 10, 8};
+    if (lc == "mago")
+      return {3, 5, 5, 15};
+    if (lc == "clerigo")
+      return {7, 7, 9, 10};
+    if (lc == "paladin")
+      return {10, 6, 10, 8};
     return {10, 8, 10, 3};
   };
 
@@ -117,7 +121,7 @@ static void initPlayerStats(PlayerInfo &player, const std::string &race,
 }
 
 bool PlayerInfo::colisionaCon(int targetX, int targetY, int ancho,
-                               int alto) const {
+                              int alto) const {
   return !(targetX + ancho <= x || targetX >= x + ANCHO ||
            targetY + alto <= y || targetY >= y + ALTO);
 }
@@ -131,8 +135,7 @@ int PlayerInfo::getAncho() const { return ANCHO; }
 int PlayerInfo::getAlto() const { return ALTO; }
 
 Game::Game(Queue<ClientMessage> &gameloopQueue,
-           SenderQueueMonitor &senderQueueMonitor,
-           PlayerRepository &repository)
+           SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository)
     : gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor),
       repository(repository) {}
 
@@ -182,7 +185,9 @@ void Game::run() {
 
 void Game::kill() { keepRunning = false; }
 
-void Game::registerPlayer(const std::string &name, const std::string &race, const std::string &playerClass, uint32_t connectionId) {
+void Game::registerPlayer(const std::string &name, const std::string &race,
+                          const std::string &playerClass,
+                          uint32_t connectionId) {
 
   if (repository.exists(name)) {
     senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{0, 1});
@@ -203,10 +208,10 @@ void Game::registerPlayer(const std::string &name, const std::string &race, cons
   initPlayerStats(*player, race, playerClass);
 
   player->maxHp = Formulas::calcularVidaMax(player->constitution, race,
-                                             playerClass, player->level);
+                                            playerClass, player->level);
   player->hp = player->maxHp;
   player->maxMana = Formulas::calcularManaMax(player->intelligence, race,
-                                               playerClass, player->level);
+                                              playerClass, player->level);
   player->mana = player->maxMana;
 
   repository.create(player->toPlayerData());
@@ -218,45 +223,40 @@ void Game::registerPlayer(const std::string &name, const std::string &race, cons
 
   senderQueueMonitor.markAsRegistered(connectionId);
 
-  senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{newId, 0});
+  senderQueueMonitor.sendToClient(connectionId,
+                                  RegisterPlayerEventDTO{newId, 0});
 
   {
     std::vector<TextureOriginDTO> origins;
     origins.reserve(textureOrigins.size());
     for (const auto &o : textureOrigins) {
       origins.push_back(
-          {static_cast<uint8_t>(o.priority),
-           static_cast<uint8_t>(o.texture_id),
-           static_cast<uint16_t>(o.x),
-           static_cast<uint16_t>(o.y)});
+          {static_cast<uint8_t>(o.priority), static_cast<uint8_t>(o.texture_id),
+           static_cast<uint16_t>(o.x), static_cast<uint16_t>(o.y)});
     }
     senderQueueMonitor.sendToClient(
         connectionId,
-        TextureInfoEventDTO{static_cast<uint16_t>(maxSize),
-                            static_cast<uint16_t>(gridSize),
-                            static_cast<uint8_t>(commonGroundTextureId),
-                            std::move(origins)});
+        TextureInfoEventDTO{
+            static_cast<uint16_t>(maxSize), static_cast<uint16_t>(gridSize),
+            static_cast<uint8_t>(commonGroundTextureId), std::move(origins)});
   }
 
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
-    playerList.push_back({pid, static_cast<int16_t>(info->x),
-                          static_cast<int16_t>(info->y), info->direction,
-                          info->race, info->name, info->hp, info->maxHp,
-                          info->mana, info->maxMana, info->gold, info->level,
-                          info->experience});
+    playerList.push_back(
+        {pid, static_cast<int16_t>(info->x), static_cast<int16_t>(info->y),
+         info->direction, info->race, info->name, info->hp, info->maxHp,
+         info->mana, info->maxMana, info->gold, info->level, info->experience});
   }
 
-  senderQueueMonitor.sendToClient(connectionId, PlayerListEventDTO{std::move(playerList)});
+  senderQueueMonitor.sendToClient(connectionId,
+                                  PlayerListEventDTO{std::move(playerList)});
 
-  messagesToSend.push_back(
-      PlayerAppearedEventDTO{newId, static_cast<int16_t>(spawnX),
-                             static_cast<int16_t>(spawnY), Direction::Down,
-                             race, name, players[newId]->hp,
-                             players[newId]->maxHp, players[newId]->mana,
-                             players[newId]->maxMana, players[newId]->gold,
-                             players[newId]->level,
-                             players[newId]->experience});
+  messagesToSend.push_back(PlayerAppearedEventDTO{
+      newId, static_cast<int16_t>(spawnX), static_cast<int16_t>(spawnY),
+      Direction::Down, race, name, players[newId]->hp, players[newId]->maxHp,
+      players[newId]->mana, players[newId]->maxMana, players[newId]->gold,
+      players[newId]->level, players[newId]->experience});
 }
 
 void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
@@ -307,23 +307,19 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
-    playerList.push_back({pid, static_cast<int16_t>(info->x),
-                          static_cast<int16_t>(info->y), info->direction,
-                          info->race, info->name, info->hp, info->maxHp,
-                          info->mana, info->maxMana, info->gold, info->level,
-                          info->experience});
+    playerList.push_back(
+        {pid, static_cast<int16_t>(info->x), static_cast<int16_t>(info->y),
+         info->direction, info->race, info->name, info->hp, info->maxHp,
+         info->mana, info->maxMana, info->gold, info->level, info->experience});
   }
   senderQueueMonitor.sendToClient(connectionId, PlayerListEventDTO{std::move(playerList)});
 
-  messagesToSend.push_back(
-      PlayerAppearedEventDTO{newId, static_cast<int16_t>(data.x),
-                             static_cast<int16_t>(data.y),
-                             static_cast<Direction>(data.direction),
-                             players[newId]->race, players[newId]->name,
-                             players[newId]->hp, players[newId]->maxHp,
-                             players[newId]->mana, players[newId]->maxMana,
-                             players[newId]->gold, players[newId]->level,
-                             players[newId]->experience});
+  messagesToSend.push_back(PlayerAppearedEventDTO{
+      newId, static_cast<int16_t>(data.x), static_cast<int16_t>(data.y),
+      static_cast<Direction>(data.direction), players[newId]->race,
+      players[newId]->name, players[newId]->hp, players[newId]->maxHp,
+      players[newId]->mana, players[newId]->maxMana, players[newId]->gold,
+      players[newId]->level, players[newId]->experience});
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {
@@ -359,16 +355,18 @@ void Game::movePlayer(uint32_t playerId, Direction direction) {
     if (col == it->second.get())
       continue;
     if (col->colisionaCon(targetX, targetY, player.getAncho(),
-                           player.getAlto())) {
+                          player.getAlto())) {
       return;
     }
   }
 
   {
     int start_i = floorDiv(targetX, gridSize) + maxSize / 2;
-    int end_i = floorDiv(targetX + player.getAncho() - 1, gridSize) + maxSize / 2;
+    int end_i =
+        floorDiv(targetX + player.getAncho() - 1, gridSize) + maxSize / 2;
     int start_j = floorDiv(targetY, gridSize) + maxSize / 2;
-    int end_j = floorDiv(targetY + player.getAlto() - 1, gridSize) + maxSize / 2;
+    int end_j =
+        floorDiv(targetY + player.getAlto() - 1, gridSize) + maxSize / 2;
     for (int i = start_i; i <= end_i; i++) {
       for (int j = start_j; j <= end_j; j++) {
         if (collidableCells.count({i, j, 0})) {
@@ -404,9 +402,9 @@ void Game::exitPlayer(uint32_t playerId) {
 
   repository.save(it->second->name, it->second->toPlayerData());
 
-  colisionables.erase(std::remove(colisionables.begin(), colisionables.end(),
-                                    it->second.get()),
-                      colisionables.end());
+  colisionables.erase(
+      std::remove(colisionables.begin(), colisionables.end(), it->second.get()),
+      colisionables.end());
 
   messagesToSend.push_back(PlayerRemovedEventDTO{playerId});
 
@@ -475,7 +473,7 @@ void Game::movePlayers() {
       if (col == info.get())
         continue;
       if (col->colisionaCon(targetX, targetY, info->getAncho(),
-                             info->getAlto())) {
+                            info->getAlto())) {
         blocked = true;
         break;
       }
@@ -485,9 +483,11 @@ void Game::movePlayers() {
 
     {
       int start_i = floorDiv(targetX, gridSize) + maxSize / 2;
-      int end_i = floorDiv(targetX + info->getAncho() - 1, gridSize) + maxSize / 2;
+      int end_i =
+          floorDiv(targetX + info->getAncho() - 1, gridSize) + maxSize / 2;
       int start_j = floorDiv(targetY, gridSize) + maxSize / 2;
-      int end_j = floorDiv(targetY + info->getAlto() - 1, gridSize) + maxSize / 2;
+      int end_j =
+          floorDiv(targetY + info->getAlto() - 1, gridSize) + maxSize / 2;
       bool tileBlocked = false;
       for (int i = start_i; i <= end_i; i++) {
         for (int j = start_j; j <= end_j; j++) {

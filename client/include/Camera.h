@@ -13,7 +13,7 @@ public:
   Camera(float screenW, float screenH);
 
   void follow(float targetX, float targetY, float targetW, float targetH);
-  
+
   SDL2pp::Rect toScreen(float wx, float wy, int w, int h) const;
 };
 

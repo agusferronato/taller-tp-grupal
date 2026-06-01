@@ -355,12 +355,12 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
   registerAllParsers(client);
 
   std::vector<PlayerInfoDTO> players = {
-      {1,    100,  200,  Direction::Down, "humano", "jug1", 100, 100, 50,
-       100,  500,  5,    2000},
-      {2,    300,  400,  Direction::Up,   "elfo",   "jug2", 80,  80,  100,
-       150,  300,  3,    800},
-      {3,    500,  600,  Direction::Left, "enano",  "jug3", 120, 120, 0,
-       0,    1000, 8,    7000},
+      {1, 100, 200, Direction::Down, "humano", "jug1", 100, 100, 50, 100, 500,
+       5, 2000},
+      {2, 300, 400, Direction::Up, "elfo", "jug2", 80, 80, 100, 150, 300, 3,
+       800},
+      {3, 500, 600, Direction::Left, "enano", "jug3", 120, 120, 0, 0, 1000, 8,
+       7000},
   };
 
   ServerEventDTO original = PlayerListEventDTO{players};

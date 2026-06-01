@@ -18,8 +18,7 @@ void TextureMapper::loadFromToml(const std::string &path) {
 
       SDL2pp::Surface surface(texPath);
       if (transparent) {
-        surface.SetColorKey(
-            true, SDL_MapRGB(surface.Get()->format, 0, 0, 0));
+        surface.SetColorKey(true, SDL_MapRGB(surface.Get()->format, 0, 0, 0));
       }
 
       SDL2pp::Texture txt(renderer, surface);
@@ -81,7 +80,7 @@ SDL2pp::Texture &TextureMapper::getTexture(int id) {
   return textures.at(id).texture;
 }
 
-const std::vector<std::map<std::pair<int, int>, std::vector<GridItem>>>
-    &TextureMapper::getTilesToRender() const {
+const std::vector<std::map<std::pair<int, int>, std::vector<GridItem>>> &
+TextureMapper::getTilesToRender() const {
   return tilesToRender;
 }

@@ -10,8 +10,8 @@ void TakeItemCommandParser::serialize(std::vector<uint8_t> &bytes,
                                       const ClientCommandDTO &dto) {
   const auto &request = std::get<TakeItemCommandDTO>(dto);
 
-  utils.appendBytes(
-      static_cast<uint8_t>(ClientCommandOpCode::TakeItemCommand), bytes);
+  utils.appendBytes(static_cast<uint8_t>(ClientCommandOpCode::TakeItemCommand),
+                    bytes);
   utils.appendBytes(request.playerId, bytes);
 }
 

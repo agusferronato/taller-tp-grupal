@@ -54,7 +54,9 @@ public:
   void setMaxHp(uint32_t v) { maxHp = v; }
   void setMana(uint32_t v) { mana = v; }
   void setMaxMana(uint32_t v) { maxMana = v; }
-  void setInventory(const std::array<uint8_t, MAX_INVENTORY_SLOTS> &v) { inventory = v; }
+  void setInventory(const std::array<uint8_t, MAX_INVENTORY_SLOTS> &v) {
+    inventory = v;
+  }
   void setEquippedWeapon(uint8_t v) { equippedWeapon = v; }
   void setEquippedArmor(uint8_t v) { equippedArmor = v; }
   void setEquippedHelmet(uint8_t v) { equippedHelmet = v; }
@@ -63,7 +65,9 @@ public:
   uint8_t getEquippedArmor() const { return equippedArmor; }
   uint8_t getEquippedHelmet() const { return equippedHelmet; }
   uint8_t getEquippedShield() const { return equippedShield; }
-  const std::array<uint8_t, MAX_INVENTORY_SLOTS> &getInventory() const { return inventory; }
+  const std::array<uint8_t, MAX_INVENTORY_SLOTS> &getInventory() const {
+    return inventory;
+  }
 
   void setGold(uint32_t v) { gold = v; }
   void setLevel(uint32_t v) { level = v; }
