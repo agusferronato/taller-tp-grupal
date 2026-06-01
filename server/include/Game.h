@@ -14,6 +14,7 @@
 #include <set>
 #include <tuple>
 
+#include "Character.h"
 #include "Colisionable.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
@@ -28,44 +29,6 @@
 #include "SenderQueueMonitor.h"
 #include "Thread.h"
 
-class PlayerInfo : public Colisionable {
-public:
-  static constexpr int ANCHO = 32;
-  static constexpr int ALTO = 32;
-
-  uint32_t id;
-  int x{0}, y{0};
-  Direction direction{Direction::Down};
-  bool moving{false};
-
-  std::string name;
-  std::string password;
-  Race race;
-  std::string playerClass;
-  uint32_t level{1};
-  uint32_t hp{100}, maxHp{100};
-  uint32_t mana{0}, maxMana{0};
-  uint32_t experience{0};
-  uint32_t gold{0};
-  uint32_t strength{};
-  uint32_t agility{};
-  uint32_t constitution{};
-  uint32_t intelligence{};
-  Inventory inventory;
-
-  PlayerInfo(uint32_t id, int x, int y, Direction dir);
-
-  PlayerData toPlayerData() const;
-  void fromPlayerData(const PlayerData &data);
-
-  bool colisionaCon(int targetX, int targetY, int ancho,
-                    int alto) const override;
-  int getX() const override;
-  int getY() const override;
-  int getAncho() const override;
-  int getAlto() const override;
-};
-
 class Game : public Thread {
 
 private:
@@ -77,7 +40,7 @@ private:
   bool keepRunning = true;
   uint32_t nextPlayerId{1};
   int nextSpawnX{0};
-  std::unordered_map<uint32_t, std::unique_ptr<PlayerInfo>> players;
+  std::unordered_map<uint32_t, std::unique_ptr<Character>> players;
   std::vector<Colisionable *> colisionables;
 
   int maxSize;

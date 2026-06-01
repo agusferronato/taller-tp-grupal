@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cctype>
 
+#include "Character.h"
 #include "ConstantRateLoop.h"
 #include "Formulas.h"
 #include "Game.h"
@@ -19,123 +20,6 @@
 #include "command/CommandFactory.h"
 
 static int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
-
-PlayerInfo::PlayerInfo(uint32_t id, int x, int y, Direction dir)
-    : id(id), x(x), y(y), direction(dir) {}
-
-PlayerData PlayerInfo::toPlayerData() const {
-  PlayerData data{};
-  data.setName(name);
-  data.setPassword(password);
-  data.setRace(RaceUtils::raceToString(race));
-  data.setPlayerClass(playerClass);
-  data.x = x;
-  data.y = y;
-  data.direction = static_cast<uint8_t>(direction);
-  data.level = level;
-  data.hp = hp;
-  data.maxHp = maxHp;
-  data.mana = mana;
-  data.maxMana = maxMana;
-  data.experience = experience;
-  data.gold = gold;
-  data.strength = strength;
-  data.agility = agility;
-  data.constitution = constitution;
-  data.intelligence = intelligence;
-  data.inventory = inventory.getItems();
-  data.equippedWeapon = inventory.getWeapon();
-  data.equippedArmor = inventory.getArmor();
-  data.equippedHelmet = inventory.getHelmet();
-  data.equippedShield = inventory.getShield();
-  return data;
-}
-
-void PlayerInfo::fromPlayerData(const PlayerData &data) {
-  name = data.name;
-  password = data.password;
-  race = RaceUtils::stringToRace(data.race);
-  playerClass = data.playerClass;
-  x = data.x;
-  y = data.y;
-  direction = static_cast<Direction>(data.direction);
-  level = data.level;
-  hp = data.hp;
-  maxHp = data.maxHp;
-  mana = data.mana;
-  maxMana = data.maxMana;
-  experience = data.experience;
-  gold = data.gold;
-  strength = data.strength;
-  agility = data.agility;
-  constitution = data.constitution;
-  intelligence = data.intelligence;
-  inventory.setItems(data.inventory);
-  inventory.setWeapon(data.equippedWeapon);
-  inventory.setArmor(data.equippedArmor);
-  inventory.setHelmet(data.equippedHelmet);
-  inventory.setShield(data.equippedShield);
-}
-
-static std::string lowercase(const std::string &s) {
-  std::string result = s;
-  auto toLower = [](unsigned char c) { return std::tolower(c); };
-  std::transform(result.begin(), result.end(), result.begin(), toLower);
-  return result;
-}
-
-static void initPlayerStats(PlayerInfo &player, const Race race,
-                            const std::string &playerClass) {
-  struct BaseStats {
-    uint32_t strength, agility, constitution, intelligence;
-  };
-
-  auto getRaceStats = [](const Race &race) -> BaseStats {
-    switch (race) {
-    case Race::Human:
-      return {10, 10, 10, 10};
-    case Race::Elf:
-      return {6, 13, 5, 16};
-    case Race::Dwarf:
-      return {13, 4, 16, 7};
-    case Race::Gnome:
-      return {7, 6, 14, 13};
-    }
-    throw std::invalid_argument("Invalid race");
-  };
-
-  auto getClassStats = [](const std::string &c) -> BaseStats {
-    std::string lc = lowercase(c);
-    if (lc == "mago")
-      return {3, 5, 5, 15};
-    if (lc == "clerigo")
-      return {7, 7, 9, 10};
-    if (lc == "paladin")
-      return {10, 6, 10, 8};
-    return {10, 8, 10, 3};
-  };
-
-  auto raceStats = getRaceStats(race);
-  auto classStats = getClassStats(playerClass);
-  player.strength = raceStats.strength + classStats.strength;
-  player.agility = raceStats.agility + classStats.agility;
-  player.constitution = raceStats.constitution + classStats.constitution;
-  player.intelligence = raceStats.intelligence + classStats.intelligence;
-}
-
-bool PlayerInfo::colisionaCon(int targetX, int targetY, int ancho,
-                              int alto) const {
-  return !(targetX + ancho <= x || targetX >= x + ANCHO ||
-           targetY + alto <= y || targetY >= y + ALTO);
-}
-
-int PlayerInfo::getX() const { return x; }
-
-int PlayerInfo::getY() const { return y; }
-
-int PlayerInfo::getAncho() const { return ANCHO; }
-
-int PlayerInfo::getAlto() const { return ALTO; }
 
 Game::Game(Queue<ClientMessage> &gameloopQueue,
            SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository)
@@ -203,19 +87,12 @@ void Game::registerPlayer(const std::string &name, const Race race,
   nextSpawnX += 64;
 
   auto player =
-      std::make_unique<PlayerInfo>(newId, spawnX, spawnY, Direction::Down);
+      std::make_unique<Character>(newId, spawnX, spawnY, Direction::Down);
   player->name = name;
   player->race = race;
   player->playerClass = playerClass;
 
-  initPlayerStats(*player, race, playerClass);
-
-  player->maxHp = Formulas::calcularVidaMax(player->constitution, race,
-                                            playerClass, player->level);
-  player->hp = player->maxHp;
-  player->maxMana = Formulas::calcularManaMax(player->intelligence, race,
-                                              playerClass, player->level);
-  player->mana = player->maxMana;
+  player->initializeStats(race, playerClass);
 
   repository.create(player->toPlayerData());
 
@@ -278,7 +155,7 @@ void Game::loginPlayer(const std::string &name) {
   PlayerData data = repository.load(name);
   uint32_t newId = nextPlayerId++;
 
-  auto player = std::make_unique<PlayerInfo>(
+  auto player = std::make_unique<Character>(
       newId, data.x, data.y, static_cast<Direction>(data.direction));
   player->fromPlayerData(data);
 
@@ -312,26 +189,11 @@ void Game::movePlayer(uint32_t playerId, Direction direction) {
     return;
   }
 
-  PlayerInfo &player = *it->second;
-  player.direction = direction;
-  player.moving = true;
+  Character &player = *it->second;
+  player.setDirection(direction);
+  player.setMoving(true);
 
-  int targetX = player.x;
-  int targetY = player.y;
-  switch (direction) {
-  case Direction::Up:
-    targetY -= 1;
-    break;
-  case Direction::Down:
-    targetY += 1;
-    break;
-  case Direction::Left:
-    targetX -= 1;
-    break;
-  case Direction::Right:
-    targetX += 1;
-    break;
-  }
+  auto [targetX, targetY] = player.getTargetPosition(direction);
 
   for (auto &col : colisionables) {
     if (col == it->second.get())
@@ -371,8 +233,8 @@ void Game::stopPlayer(uint32_t playerId) {
   if (it == players.end()) {
     return;
   }
-  PlayerInfo &player = *it->second;
-  player.moving = false;
+  Character &player = *it->second;
+  player.setMoving(false);
   messagesToSend.push_back(PlayerStoppedEventDTO{playerId});
 }
 
@@ -419,22 +281,7 @@ void Game::movePlayers() {
     if (!info->moving)
       continue;
 
-    int targetX = info->x;
-    int targetY = info->y;
-    switch (info->direction) {
-    case Direction::Up:
-      targetY -= 1;
-      break;
-    case Direction::Down:
-      targetY += 1;
-      break;
-    case Direction::Left:
-      targetX -= 1;
-      break;
-    case Direction::Right:
-      targetX += 1;
-      break;
-    }
+    auto [targetX, targetY] = info->getTargetPosition(info->direction);
 
     bool blocked = false;
     for (auto &col : colisionables) {
