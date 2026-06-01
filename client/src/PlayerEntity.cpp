@@ -20,7 +20,10 @@ void PlayerEntity::renderBody(SDL2pp::Renderer &renderer, Camera &camera,
   Sprite src = textureManager.getBodySprite(player.getBodyID(),
                                             player.getDirection(), animationIt);
 
-  SDL2pp::Rect dst = camera.toScreen(get_x(), get_y(), src.w, src.h);
+  SDL2pp::Rect playerRect = camera.toScreen(get_x(), get_y(), Player::Width, Player::Height);
+  SDL2pp::Rect dst{playerRect.x + (Player::Width - src.w) / 2,
+                   playerRect.y + (Player::Height - src.h) / 2,
+                   src.w, src.h};
 
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
 }
@@ -46,7 +49,9 @@ void PlayerEntity::renderHead(SDL2pp::Renderer &renderer, Camera &camera) {
   int head_x = get_head_x(camera);
   int head_y = get_head_y(camera);
 
-  SDL2pp::Rect dst{head_x, head_y, src.w, src.h};
+  SDL2pp::Rect dst{head_x + (Player::HeadWidth - src.w) / 2,
+                   head_y + (Player::HeadHeight - src.h) / 2,
+                   src.w, src.h};
 
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
 }
@@ -61,7 +66,7 @@ int PlayerEntity::get_head_x(Camera &camera) {
 int PlayerEntity::get_head_y(Camera &camera) {
   SDL2pp::Rect playerPosition = camera.toScreen(player.get_x(), player.get_y(),
                                                 Player::Width, Player::Height);
-  int headY = playerPosition.y - Player::HeadHeight + 4;
+  int headY = playerPosition.y - Player::HeadHeight + 5;
   return headY;
 }
 
