@@ -121,7 +121,7 @@ TEST(PersistenceTest, CreateDuplicateIsIgnored) {
 }
 
 TEST(PersistenceTest, PlayerDataToFromRoundTrip) {
-  PlayerInfo player(1, 10, 20, Direction::Right);
+  Character player(1, 10, 20, Direction::Right);
   player.name = "Test";
   player.password = "pass";
   player.race = Race::Elf;
@@ -139,7 +139,7 @@ TEST(PersistenceTest, PlayerDataToFromRoundTrip) {
   player.intelligence = 12;
 
   auto data = player.toPlayerData();
-  PlayerInfo restored(0, 0, 0, Direction::Down);
+  Character restored(0, 0, 0, Direction::Down);
   restored.fromPlayerData(data);
 
   EXPECT_EQ(restored.name, "Test");
