@@ -15,13 +15,13 @@
 #include "DTO/Commands/ExitCommandDTO.h"
 #include "DTO/Commands/LoginPlayerCommandDTO.h"
 #include "DTO/Events/RegisterPlayerEventDTO.h"
+#include "Socket.h"
 #include "protocol/Protocol.h"
 #include "protocol/RegisterAllParsers.h"
-#include "Socket.h"
 
 CharacterCreationPage::CharacterCreationPage(const QString &hostname,
-                                              const QString &port,
-                                              QWidget *parent)
+                                             const QString &port,
+                                             QWidget *parent)
     : BackgroundPage(parent), hostname(hostname), port(port) {
   auto *mainLayout = new QVBoxLayout(this);
   mainLayout->setAlignment(Qt::AlignCenter);
@@ -221,8 +221,7 @@ void CharacterCreationPage::onCreateClicked() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   try {
-    Socket sock(hostname.toStdString().c_str(),
-                port.toStdString().c_str());
+    Socket sock(hostname.toStdString().c_str(), port.toStdString().c_str());
     Protocol protocol(sock);
     registerAllParsers(protocol);
 
