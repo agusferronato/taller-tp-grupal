@@ -75,9 +75,21 @@ void SenderQueueMonitor::clearPendingMessages(uint32_t clientId) {
   }
 }
 
+void SenderQueueMonitor::markAsRegistered(uint32_t clientId) {
+  std::lock_guard<std::mutex> lock(mutex);
+  registeredClients.insert(clientId);
+}
+
+void SenderQueueMonitor::markAsUnregistered(uint32_t clientId) {
+  std::lock_guard<std::mutex> lock(mutex);
+  registeredClients.erase(clientId);
+}
+
 void SenderQueueMonitor::pushMessageToTheSenderQueues(
     const ServerEventDTO &message) {
   for (auto &[id, _] : senderQueues) {
-    queuesPendingMessages[id].push(message);
+    if (registeredClients.count(id)) {
+      queuesPendingMessages[id].push(message);
+    }
   }
 }

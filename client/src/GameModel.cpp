@@ -1,11 +1,9 @@
 #include "GameModel.h"
 #include "ChatMessageEventDTO.h"
-#include "EntityType.h"
 #include "GameWindow.h"
 #include "InventoryUpdateEventDTO.h"
 #include "NpcDefeatedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
-#include "PlayerEntity.h"
 #include "PlayerInfoEventDTO.h"
 #include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
@@ -20,19 +18,14 @@
 GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
                      Queue<ServerEventDTO> &receptionQueue,
                      Queue<ClientCommandDTO> &sendingQueue,
-                     TextureManager &textureManager, const std::string &race)
+                     const std::string &race)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
-      myPlayerID(myPlayerID), gameView(gameView),
-      textureManager(textureManager) {
+      myPlayerID(myPlayerID), gameView(gameView) {
   auto myPlayer = std::make_unique<Player>(this->myPlayerID, 0, 0);
   myPlayer->setRace(RaceUtils::stringToRace(race));
   players[myPlayerID] = std::move(myPlayer);
 
-  auto entity = std::make_unique<PlayerEntity>(
-      *players[myPlayerID], textureManager, gameView->getFont());
-  gameView->setMyPlayer(entity.get());
-  gameView->addEntity(EntityType::Player, myPlayerID, std::move(entity));
-
+  gameView->setMyPlayer(*players[myPlayerID], myPlayerID);
   registerPlayers();
 }
 
@@ -93,14 +86,12 @@ void GameModel::handle(const PlayerAppearedEventDTO &appeared) {
   player->setRace(appeared.race);
   applyStats(player.get());
 
-  auto entity = std::make_unique<PlayerEntity>(*player, textureManager,
-                                               gameView->getFont());
-  gameView->addEntity(EntityType::Player, pid, std::move(entity));
+  gameView->addPlayer(pid, *player);
   players[pid] = std::move(player);
 }
 
 void GameModel::handle(const PlayerRemovedEventDTO &removed) {
-  gameView->removeEntity(EntityType::Player, removed.playerId);
+  gameView->removePlayer(removed.playerId);
   players.erase(removed.playerId);
 }
 
@@ -148,10 +139,7 @@ void GameModel::registerPlayers() {
         player->setLevel(info.level);
         player->setExperience(info.experience);
 
-        auto entity = std::make_unique<PlayerEntity>(*player, textureManager,
-                                                     gameView->getFont());
-        gameView->addEntity(EntityType::Player, info.playerId,
-                            std::move(entity));
+        gameView->addPlayer(info.playerId, *player);
         players[info.playerId] = std::move(player);
       }
       break;
