@@ -79,27 +79,29 @@ int PlayerEntity::get_y() { return player.get_y(); }
 int PlayerEntity::get_h() { return Player::Height; }
 
 int PlayerEntity::getRaceBodyID(Race race) const {
-  // TODO: Agregar texturas para las otras razas
+  // TODO: Agregar texturas para los cuerpos de las otras razas
   // Por ahora todas usan el mismo body (ID 0)
   switch (race) {
   case Race::Human:
   case Race::Elf:
   case Race::Dwarf:
   case Race::Gnome:
+  default:
     return 0;
   }
-  return 0;
 }
 
 int PlayerEntity::getRaceHeadID(Race race) const {
-  // TODO: Agregar texturas para las otras razas
-  // Por ahora todas usan la misma cabeza (ID 1)
   switch (race) {
   case Race::Human:
-  case Race::Elf:
-  case Race::Dwarf:
-  case Race::Gnome:
     return 1;
+  case Race::Elf:
+    return 2;
+  case Race::Dwarf:
+    return 3;
+  case Race::Gnome:
+    return 4;
+  default:
+    return 1; // Human como fallback
   }
-  return 1;
 }
