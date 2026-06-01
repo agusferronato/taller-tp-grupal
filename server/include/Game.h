@@ -28,7 +28,8 @@
 #include "SenderQueueMonitor.h"
 #include "Thread.h"
 #include "NPC.h"
-#include <Biome.h>
+#include "Biome.h"
+#include "City.h"
 
 class PlayerInfo : public Colisionable {
 public:
@@ -90,6 +91,8 @@ private:
   std::set<std::tuple<int, int, int>> collidableCells;
 
   std::list<std::unique_ptr<Biome>> biomes;
+  std::list<City> cities;
+  std::list<std::unique_ptr<NPC>> npcs;
 
 
 public:
@@ -117,6 +120,7 @@ public:
 
   bool thereIsACollidableEntityAt(Position position);
   void appearNPC(std::unique_ptr<NPC>&& npc);
+  uint16_t nextNPCId{1};
 
 
 private:

@@ -20,8 +20,8 @@ void PlayerEntity::renderBody(SDL2pp::Renderer &renderer, Camera &camera,
   Sprite src = textureManager.getBodySprite(player.getBodyID(),
                                             player.getDirection(), animationIt);
 
-  SDL2pp::Rect dst = camera.toScreen(player.get_x(), player.get_y(),
-                                     Player::Width, Player::Height);
+  SDL2pp::Rect dst = camera.toScreen(get_x(), get_y(), src.w, src.h);
+
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
 }
 
@@ -46,7 +46,8 @@ void PlayerEntity::renderHead(SDL2pp::Renderer &renderer, Camera &camera) {
   int head_x = get_head_x(camera);
   int head_y = get_head_y(camera);
 
-  SDL2pp::Rect dst{head_x, head_y, Player::HeadWidth, Player::HeadHeight};
+  SDL2pp::Rect dst{head_x, head_y, src.w, src.h};
+
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
 }
 

@@ -12,7 +12,10 @@
 #include "PlayerRemovedEventDTO.h"
 #include "PlayerStoppedEventDTO.h"
 #include "RegisterPlayerEventDTO.h"
+#include "NPCAppearedEventDTO.h"
 #include "TextureInfoEventDTO.h"
+#include "Zombie.h"
+#include "ZombieEntity.h"
 #include <iostream>
 #include <stdexcept>
 
@@ -179,5 +182,17 @@ void GameModel::handle(const InventoryUpdateEventDTO &inv) {
 
 void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &) {}
-void GameModel::handle(const NpcDefeatedEventDTO &) {}
+void GameModel::handle(const NpcDefeatedEventDTO &event) {
+  gameView->removeEntity(EntityType::Npc, event.npcId);
+  npcs.erase(event.npcId);
+}
+void GameModel::handle(const NPCAppearedEventDTO &event) {
+  if (event.npcType != 0)
+    return;
+
+  auto zombie = std::make_unique<Zombie>(event.x, event.y);
+  auto entity = std::make_unique<ZombieEntity>(*zombie, textureManager);
+  gameView->addEntity(EntityType::Npc, event.npcId, std::move(entity));
+  npcs[event.npcId] = std::move(zombie);
+}
 void GameModel::handle(const RegisterPlayerEventDTO &) {}

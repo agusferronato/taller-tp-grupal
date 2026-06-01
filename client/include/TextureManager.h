@@ -31,6 +31,7 @@ public:
 
   Sprite getBodySprite(int bodyId, Direction dir, unsigned int it);
   Sprite getHeadSprite(int headId, Direction dir);
+  Sprite getZombieSprite(int txtID, Direction dir, unsigned int it);
 };
 
 #endif

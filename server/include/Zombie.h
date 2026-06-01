@@ -11,7 +11,7 @@ public:
     Zombie(Position position) : NPC(position) { }
 
     NPCType getType() override {
-        return NPCType::Zombie;
+        return NPCType::ZombieT;
     }
 
 };

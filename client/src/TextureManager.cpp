@@ -72,6 +72,41 @@ void TextureManager::loadLayoutsFromToml(const std::string &path) {
     addHeadFrame("Right", Direction::Right);
     texturesFrames.erase(TextureLayoutType::Head);
     texturesFrames.emplace(TextureLayoutType::Head, HeadLayout(headFrames));
+
+    if (auto *zombie = tbl["Zombie"].as_table()) {
+      std::map<Direction, std::vector<SpriteData>> zombieFrames;
+
+      auto parseDir = [&](const std::string &dirName, Direction dir) {
+          if (auto *dirTable = (*zombie)[dirName].as_table()) {
+              if (auto *arr = (*dirTable)["frames"].as_array()) {
+                  std::vector<SpriteData> frames;
+
+                  for (auto &elem : *arr) {
+                      auto &pt = *elem.as_table();
+
+                      frames.push_back({
+                          pt["x"].value_or(0),
+                          pt["y"].value_or(0),
+                          pt["w"].value_or(0),
+                          pt["h"].value_or(0)
+                      });
+                  }
+
+                  zombieFrames[dir] = std::move(frames);
+              }
+          }
+      };
+
+      parseDir("Down", Direction::Down);
+      parseDir("Up", Direction::Up);
+      parseDir("Left", Direction::Left);
+      parseDir("Right", Direction::Right);
+
+      texturesFrames.erase(TextureLayoutType::Zombie);
+      texturesFrames.emplace(TextureLayoutType::Zombie,
+                            BodyLayout(zombieFrames));
+    }
+
   }
 }
 
@@ -88,4 +123,19 @@ Sprite TextureManager::getHeadSprite(int headId, Direction dir) {
       std::get<HeadLayout>(texturesFrames.at(TextureLayoutType::Head));
   SpriteData frame = layout.getLayout(dir);
   return Sprite{textures.at(headId), frame.x, frame.y, frame.w, frame.h};
+}
+
+Sprite TextureManager::getZombieSprite(int txtID, Direction dir, unsigned int it)
+{
+  auto& layout = std::get<BodyLayout>(texturesFrames.at(TextureLayoutType::Zombie));
+
+    SpriteData frame = layout.getLayout(dir, it);
+
+    return Sprite{
+        textures.at(txtID),
+        frame.x,
+        frame.y,
+        frame.w,
+        frame.h
+    };
 }

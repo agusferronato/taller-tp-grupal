@@ -2,11 +2,10 @@
 #define BIOME_H
 
 
-#include "Game.h"
 #include <random>
 #include "Position.h"
 
-
+class Game;
 
 class Biome {
 
@@ -17,6 +16,8 @@ protected:
 public:
 
     Biome(Delimiter start, Delimiter end) : start(start), end(end) {};
+
+    virtual ~Biome() = default;
 
     virtual void NPCgenerationStrategy(Game& game) = 0;
 
