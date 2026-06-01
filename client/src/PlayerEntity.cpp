@@ -17,7 +17,7 @@ void PlayerEntity::renderBody(SDL2pp::Renderer &renderer, Camera &camera,
                               unsigned int it) {
   unsigned int animationIt = player.getIsMoving() ? it : 0;
 
-  Sprite src = textureManager.getBodySprite(player.getRace(),
+  Sprite src = textureManager.getBodySprite(getRaceBodyID(player.getRace()),
                                             player.getDirection(), animationIt);
 
   SDL2pp::Rect dst = camera.toScreen(player.get_x(), player.get_y(),
@@ -46,8 +46,8 @@ void PlayerEntity::renderName(SDL2pp::Renderer &renderer, Camera &camera) {
 }
 
 void PlayerEntity::renderHead(SDL2pp::Renderer &renderer, Camera &camera) {
-  Sprite src =
-      textureManager.getHeadSprite(player.getRace(), player.getDirection());
+  Sprite src = textureManager.getHeadSprite(getRaceHeadID(player.getRace()),
+                                            player.getDirection());
 
   int head_x = get_head_x(camera);
   int head_y = get_head_y(camera);
@@ -77,3 +77,29 @@ int PlayerEntity::get_x() { return player.get_x(); }
 int PlayerEntity::get_y() { return player.get_y(); }
 
 int PlayerEntity::get_h() { return Player::Height; }
+
+int PlayerEntity::getRaceBodyID(Race race) const {
+  // TODO: Agregar texturas para las otras razas
+  // Por ahora todas usan el mismo body (ID 0)
+  switch (race) {
+  case Race::Human:
+  case Race::Elf:
+  case Race::Dwarf:
+  case Race::Gnome:
+    return 0;
+  }
+  return 0;
+}
+
+int PlayerEntity::getRaceHeadID(Race race) const {
+  // TODO: Agregar texturas para las otras razas
+  // Por ahora todas usan la misma cabeza (ID 1)
+  switch (race) {
+  case Race::Human:
+  case Race::Elf:
+  case Race::Dwarf:
+  case Race::Gnome:
+    return 1;
+  }
+  return 1;
+}
