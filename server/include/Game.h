@@ -27,6 +27,8 @@
 #include "Queue.h"
 #include "SenderQueueMonitor.h"
 #include "Thread.h"
+#include "NPC.h"
+#include <Biome.h>
 
 class PlayerInfo : public Colisionable {
 public:
@@ -87,6 +89,9 @@ private:
   std::list<TileOrigin> textureOrigins;
   std::set<std::tuple<int, int, int>> collidableCells;
 
+  std::list<std::unique_ptr<Biome>> biomes;
+
+
 public:
   Game(Queue<ClientMessage> &gameloopQueue,
        SenderQueueMonitor &senderQueueMonitor,
@@ -110,11 +115,17 @@ public:
   void dropItem(uint32_t playerId, uint8_t inventorySlot);
 
 
+  bool thereIsACollidableEntityAt(Position position);
+  void appearNPC(std::unique_ptr<NPC>&& npc);
+
+
 private:
   void execute(ClientMessage clientMessage);
   void sendMessages();
   void movePlayers();
   void saveAllPlayers();
+
+  void appearNPCs();
 };
 
 #endif

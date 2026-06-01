@@ -147,6 +147,8 @@ void Game::run() {
   textureOrigins = mapLoader.GetTextureOrigins();
   collidableCells = mapLoader.GetCollidableCells();
 
+  biomes = mapLoader.GetBiomes();
+
   ConstantRateLoop rateloop(FPS_SERVER);
   CommandFactory factory;
   unsigned int it = 0;
@@ -160,6 +162,7 @@ void Game::run() {
       command->execute(*this, msg.connectionId);
     }
     movePlayers();
+    appearNPCs();
     sendMessages();
 
     if (++saveCounter >= 300) {
@@ -446,6 +449,26 @@ void Game::dropItem(uint32_t playerId, uint8_t inventorySlot) {
   it->second->inventory.removeItem(inventorySlot);
 }
 
+bool Game::thereIsACollidableEntityAt(Position position)
+{
+  return false;
+}
+
+void Game::appearNPC(std::unique_ptr<NPC>&& npc) {
+
+  Position& npcPosition = npc.getPosition(); 
+
+  messagesToSend.push_back(
+    NPCAppeared{
+      nextNPCID,
+      npc.getType(),
+      npcPosition.x,
+      npcPosition.y
+    }
+  );
+
+}
+
 void Game::movePlayers() {
   for (auto &[playerID, info] : players) {
     if (!info->moving)
@@ -521,4 +544,13 @@ void Game::saveAllPlayers() {
   for (auto &[id, player] : players) {
     repository.save(player->name, player->toPlayerData());
   }
+}
+
+void Game::appearNPCs()
+{
+
+  for (auto& biome : biomes) {
+    biome->NPCgenerationStrategy(*this);
+  }
+
 }
