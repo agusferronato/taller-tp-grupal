@@ -15,7 +15,6 @@ Gameloop::Gameloop(Queue<ServerEventDTO> &receptionQueue,
 }
 
 void Gameloop::run() {
-
   unsigned int it = 0;
 
   ConstantRateLoop rateloop(FPS);
@@ -52,7 +51,8 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
                         const ClientData &clientData) {
   if (clientData.is_new_character) {
     sendingQueue.push(RegisterPlayerCommandDTO{
-        clientData.character_name, clientData.race, clientData.player_class});
+        clientData.character_name, RaceUtils::stringToRace(clientData.race),
+        clientData.player_class});
   } else {
     sendingQueue.push(LoginPlayerCommandDTO{clientData.username});
   }
