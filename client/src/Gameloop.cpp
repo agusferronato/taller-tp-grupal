@@ -4,6 +4,7 @@
 #include "RegisterPlayerCommandDTO.h"
 
 #include <iostream>
+#include <list>
 #include <stdexcept>
 #include <string>
 
@@ -57,29 +58,37 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
     sendingQueue.push(LoginPlayerCommandDTO{clientData.username});
   }
 
-  ServerEventDTO event = receptionQueue.pop();
+  std::list<ServerEventDTO> deferredEvents;
 
-  // si se cierra el socket el hilo reciver cierra y lanza ClosedQueue
-  // debloquenado este pop
+  ServerEventDTO event;
+  uint32_t myPlayerId = 0;
+  bool registered = false;
 
-  auto *resp = std::get_if<RegisterPlayerEventDTO>(&event);
-  if (!resp) {
-    throw std::runtime_error("RegisterPlayerResponseDTO is null");
+  while (!registered) {
+    event = receptionQueue.pop();
+
+    if (auto *resp = std::get_if<RegisterPlayerEventDTO>(&event)) {
+      if (resp->status != 0) {
+        if (resp->status == 2) {
+          throw std::runtime_error("Player is already online");
+        }
+        throw std::runtime_error("Player registration failed");
+      }
+      myPlayerId = resp->playerId;
+      registered = true;
+    } else {
+      deferredEvents.push_back(std::move(event));
+    }
   }
-  if (resp->status != 0) {
-    throw std::runtime_error("Player registration failed");
-  }
-
-  uint32_t myPlayerId = resp->playerId;
 
   gameView = std::make_unique<GameWindow>(myPlayerId, 820, 400);
 
-  textureManager = std::make_unique<TextureManager>(gameView->getRenderer());
-  textureManager->loadLayoutsFromToml("assets/layouts.toml");
-  textureManager->loadTexturesFromToml("assets/sprites.toml");
-
-  gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
-                                          receptionQueue, sendingQueue,
-                                          *textureManager, clientData.race);
+  gameModel =
+      std::make_unique<GameModel>(myPlayerId, gameView.get(), receptionQueue,
+                                  sendingQueue, clientData.race);
   gameController = std::make_unique<GameController>(gameModel.get());
+
+  for (auto &deferred : deferredEvents) {
+    receptionQueue.push(std::move(deferred));
+  }
 }
