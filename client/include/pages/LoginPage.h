@@ -11,7 +11,8 @@ class LoginPage : public BackgroundPage {
   Q_OBJECT
 
 public:
-  explicit LoginPage(QWidget *parent = nullptr);
+  explicit LoginPage(const QString &hostname, const QString &port,
+                     QWidget *parent = nullptr);
 
 signals:
   void connectRequested(const QString &username, const QString &password);
@@ -26,6 +27,8 @@ private:
   QLineEdit *passwordEdit;
   QPushButton *connectBtn;
   QPushButton *backBtn;
+  QString hostname;
+  QString port;
 };
 
 #endif

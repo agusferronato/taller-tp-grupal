@@ -237,7 +237,7 @@ void CharacterCreationPage::onCreateClicked() {
       return;
     }
 
-    if (resp->status == 0) {
+    if (resp->status == 0 || resp->status == 2) {
       try {
         protocol.sendCommand(ExitCommandDTO{resp->playerId});
         sock.shutdown(1);
