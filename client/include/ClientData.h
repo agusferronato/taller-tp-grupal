@@ -2,16 +2,21 @@
 #define CLIENTDATA_H
 
 #include <string>
+#include <variant>
 
-struct ClientData {
+struct ClientDataRegister {
   std::string username;
-  std::string password;
-  std::string character_name;
   std::string race;
-  std::string player_class;
-  bool is_new_character = false;
-
-  explicit operator bool() const { return !username.empty(); }
+  std::string playerClass;
 };
+
+struct ClientDataLogin {
+  std::string username;
+};
+
+struct NullClientData {};
+
+using ClientData =
+    std::variant<NullClientData, ClientDataLogin, ClientDataRegister>;
 
 #endif
