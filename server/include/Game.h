@@ -102,6 +102,7 @@ public:
   void movePlayer(uint32_t playerId, Direction direction);
   void stopPlayer(uint32_t playerId);
   void exitPlayer(uint32_t playerId);
+  void exitPlayerByConnection(uint32_t connectionId);
   void equipItem(uint32_t playerId, uint8_t inventorySlot);
   void unequipSlot(uint32_t playerId, uint8_t equipSlot);
   void dropItem(uint32_t playerId, uint8_t inventorySlot);
