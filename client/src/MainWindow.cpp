@@ -6,7 +6,9 @@
 #include <QApplication>
 #include <QStackedWidget>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+MainWindow::MainWindow(const QString &hostname, const QString &port,
+                       QWidget *parent)
+    : QMainWindow(parent), hostname(hostname), port(port) {
   setWindowTitle("Lobby");
   setWindowState(Qt::WindowMaximized);
 
@@ -20,8 +22,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 void MainWindow::setupPages() {
   mainMenu = new MainMenuPage(this);
-  loginPage = new LoginPage(this);
-  charCreationPage = new CharacterCreationPage(this);
+  loginPage = new LoginPage(hostname, port, this);
+  charCreationPage = new CharacterCreationPage(hostname, port, this);
 
   stack->addWidget(mainMenu);
   stack->addWidget(loginPage);
