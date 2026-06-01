@@ -75,17 +75,17 @@ void TextureManager::loadLayoutsFromToml(const std::string &path) {
   }
 }
 
-Sprite TextureManager::getBodySprite(int bodyId, Direction dir,
+Sprite TextureManager::getBodySprite(uint32_t bodyID, Direction dir,
                                      unsigned int it) {
   auto &layout =
       std::get<BodyLayout>(texturesFrames.at(TextureLayoutType::Body));
   SpriteData frame = layout.getLayout(dir, it);
-  return Sprite{textures.at(bodyId), frame.x, frame.y, frame.w, frame.h};
+  return Sprite{textures.at(bodyID), frame.x, frame.y, frame.w, frame.h};
 }
 
-Sprite TextureManager::getHeadSprite(int headId, Direction dir) {
+Sprite TextureManager::getHeadSprite(uint32_t headID, Direction dir) {
   auto &layout =
       std::get<HeadLayout>(texturesFrames.at(TextureLayoutType::Head));
   SpriteData frame = layout.getLayout(dir);
-  return Sprite{textures.at(headId), frame.x, frame.y, frame.w, frame.h};
+  return Sprite{textures.at(headID), frame.x, frame.y, frame.w, frame.h};
 }

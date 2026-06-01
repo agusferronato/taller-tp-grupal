@@ -15,7 +15,6 @@
 #include <tuple>
 
 #include "Colisionable.h"
-#include "Direction.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "Direction.h"
@@ -25,6 +24,7 @@
 #include "PlayerData.h"
 #include "PlayerRepository.h"
 #include "Queue.h"
+#include "Race.h"
 #include "SenderQueueMonitor.h"
 #include "Thread.h"
 
@@ -40,7 +40,7 @@ public:
 
   std::string name;
   std::string password;
-  std::string race;
+  Race race;
   std::string playerClass;
   uint32_t level{1};
   uint32_t hp{100}, maxHp{100};
@@ -58,7 +58,8 @@ public:
   PlayerData toPlayerData() const;
   void fromPlayerData(const PlayerData &data);
 
-  bool colisionaCon(int targetX, int targetY, int ancho, int alto) const override;
+  bool colisionaCon(int targetX, int targetY, int ancho,
+                    int alto) const override;
   int getX() const override;
   int getY() const override;
   int getAncho() const override;
@@ -77,7 +78,7 @@ private:
   uint32_t nextPlayerId{1};
   int nextSpawnX{0};
   std::unordered_map<uint32_t, std::unique_ptr<PlayerInfo>> players;
-  std::vector<Colisionable*> colisionables;
+  std::vector<Colisionable *> colisionables;
   std::unordered_map<uint32_t, uint32_t> connectionToPlayer;
   std::unordered_map<uint32_t, uint32_t> playerToConnection;
 
@@ -89,8 +90,7 @@ private:
 
 public:
   Game(Queue<ClientMessage> &gameloopQueue,
-       SenderQueueMonitor &senderQueueMonitor,
-       PlayerRepository &repository);
+       SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository);
 
   virtual void run() override;
 
@@ -99,7 +99,8 @@ public:
   Game(const Game &) = delete;
   Game &operator=(const Game &) = delete;
 
-  void registerPlayer(const std::string &name, const std::string &race, const std::string &playerClass, uint32_t connectionId);
+  void registerPlayer(const std::string &name, const Race race,
+                      const std::string &playerClass, uint32_t connectionId);
   void loginPlayer(const std::string &name, uint32_t connectionId);
   void movePlayer(uint32_t playerId, Direction direction);
   void stopPlayer(uint32_t playerId);
@@ -108,7 +109,6 @@ public:
   void equipItem(uint32_t playerId, uint8_t inventorySlot);
   void unequipSlot(uint32_t playerId, uint8_t equipSlot);
   void dropItem(uint32_t playerId, uint8_t inventorySlot);
-
 
 private:
   void execute(ClientMessage clientMessage);

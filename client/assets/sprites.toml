@@ -6,6 +6,24 @@ transparent = true
 
 [[sprites]]
 id = 1
+path = "assets/cabezas/humano.png"
+layout_type = "Head"
+transparent = true
+
+[[sprites]]
+id = 2
 path = "assets/cabezas/elfo.png"
+layout_type = "Head"
+transparent = true
+
+[[sprites]]
+id = 3
+path = "assets/cabezas/enano.png"
+layout_type = "Head"
+transparent = true
+
+[[sprites]]
+id = 4
+path = "assets/cabezas/gnomo.png"
 layout_type = "Head"
 transparent = true

@@ -1,21 +1,18 @@
 #ifndef FORMULAS_H
 #define FORMULAS_H
 
+#include "Race.h"
 #include <cstdint>
 #include <string>
 
 class Formulas {
 public:
-  static uint32_t calcularVidaMax(uint32_t constitucion,
-                                  const std::string &raza,
+  static uint32_t calcularVidaMax(uint32_t constitucion, const Race race,
                                   const std::string &clase, uint32_t nivel);
-  static uint32_t calcularManaMax(uint32_t inteligencia,
-                                  const std::string &raza,
+  static uint32_t calcularManaMax(uint32_t inteligencia, const Race race,
                                   const std::string &clase, uint32_t nivel);
-  static uint32_t calcularRecuperacionVida(const std::string &raza,
-                                           uint32_t segundos);
-  static uint32_t calcularRecuperacionMana(const std::string &raza,
-                                           uint32_t segundos);
+  static uint32_t calcularRecuperacionVida(const Race race, uint32_t segundos);
+  static uint32_t calcularRecuperacionMana(const Race race, uint32_t segundos);
   static uint32_t calcularRecuperacionMeditacion(const std::string &clase,
                                                  uint32_t inteligencia,
                                                  uint32_t segundos);
@@ -41,9 +38,9 @@ public:
   static uint32_t calcularOroPerdidoMuerte(uint32_t oroActual, uint32_t nivel);
 
 private:
-  static double getFRazaVida(const std::string &raza);
-  static double getFRazaMana(const std::string &raza);
-  static double getFRazaRecuperacion(const std::string &raza);
+  static double getFRazaVida(const Race race);
+  static double getFRazaMana(const Race race);
+  static double getFRazaRecuperacion(const Race race);
   static double getFClaseVida(const std::string &clase);
   static double getFClaseMana(const std::string &clase);
   static double getFClaseMeditacion(const std::string &clase);

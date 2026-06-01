@@ -2,6 +2,7 @@
 #define PLAYER_LIST_DTO_H
 
 #include "Direction.h"
+#include "Race.h"
 #include "protocol/ProtocolCodes.h"
 #include <cstdint>
 #include <string>
@@ -13,7 +14,7 @@ struct PlayerInfoDTO {
   int16_t x;
   int16_t y;
   Direction direction;
-  std::string race;
+  Race race;
   std::string playerName;
   uint32_t hp;
   uint32_t maxHp;
