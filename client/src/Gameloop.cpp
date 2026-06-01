@@ -16,7 +16,6 @@ Gameloop::Gameloop(Queue<ServerEventDTO> &receptionQueue,
 }
 
 void Gameloop::run() {
-
   unsigned int it = 0;
 
   ConstantRateLoop rateloop(FPS);
@@ -53,7 +52,8 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
                         const ClientData &clientData) {
   if (clientData.is_new_character) {
     sendingQueue.push(RegisterPlayerCommandDTO{
-        clientData.character_name, clientData.race, clientData.player_class});
+        clientData.character_name, RaceUtils::stringToRace(clientData.race),
+        clientData.player_class});
   } else {
     sendingQueue.push(LoginPlayerCommandDTO{clientData.username});
   }
@@ -83,13 +83,9 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
 
   gameView = std::make_unique<GameWindow>(myPlayerId, 820, 400);
 
-  textureManager = std::make_unique<TextureManager>(gameView->getRenderer());
-  textureManager->loadLayoutsFromToml("assets/layouts.toml");
-  textureManager->loadTexturesFromToml("assets/sprites.toml");
-
-  gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
-                                          receptionQueue, sendingQueue,
-                                          *textureManager, clientData.race);
+  gameModel =
+      std::make_unique<GameModel>(myPlayerId, gameView.get(), receptionQueue,
+                                  sendingQueue, clientData.race);
   gameController = std::make_unique<GameController>(gameModel.get());
 
   for (auto &deferred : deferredEvents) {

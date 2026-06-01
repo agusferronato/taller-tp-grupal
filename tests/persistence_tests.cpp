@@ -58,7 +58,7 @@ TEST(PersistenceTest, LoadAfterCreate) {
   auto loaded = repo.load("Gandalf");
   EXPECT_EQ(std::string(loaded.name), "Gandalf");
   EXPECT_EQ(std::string(loaded.password), "secreta");
-  EXPECT_EQ(std::string(loaded.race), "Elfo");
+  EXPECT_EQ(loaded.race, "Elfo");
   EXPECT_EQ(std::string(loaded.playerClass), "Mago");
   EXPECT_EQ(loaded.x, 100);
   EXPECT_EQ(loaded.y, 200);
@@ -124,7 +124,7 @@ TEST(PersistenceTest, PlayerDataToFromRoundTrip) {
   PlayerInfo player(1, 10, 20, Direction::Right);
   player.name = "Test";
   player.password = "pass";
-  player.race = "Elfo";
+  player.race = Race::Elf;
   player.playerClass = "Mago";
   player.level = 3;
   player.hp = 50;
@@ -144,7 +144,7 @@ TEST(PersistenceTest, PlayerDataToFromRoundTrip) {
 
   EXPECT_EQ(restored.name, "Test");
   EXPECT_EQ(restored.password, "pass");
-  EXPECT_EQ(restored.race, "Elfo");
+  EXPECT_EQ(restored.race, Race::Elf);
   EXPECT_EQ(restored.playerClass, "Mago");
   EXPECT_EQ(restored.x, 10);
   EXPECT_EQ(restored.y, 20);
