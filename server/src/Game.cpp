@@ -491,7 +491,6 @@ void Game::appearNPC(std::unique_ptr<NPC>&& npc) {
       static_cast<int16_t>(px),
       static_cast<int16_t>(py)});
 
-  std::cout << npc->getType() << " appeared";
   npcs.push_back(std::move(npc));
 }
 
