@@ -30,6 +30,8 @@ private:
   void renderName(SDL2pp::Renderer &renderer, Camera &camera);
   int get_head_x(Camera &camera);
   int get_head_y(Camera &camera);
+  int getRaceBodyID(Race race) const;
+  int getRaceHeadID(Race race) const;
 };
 
 #endif

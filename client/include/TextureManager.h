@@ -24,17 +24,14 @@ private:
   std::map<int, SDL2pp::Texture> textures;
   std::map<TextureLayoutType, TextureLayout> texturesFrames;
 
-  int getRaceBodyID(Race race) const;
-  int getRaceHeadID(Race race) const;
-
 public:
   explicit TextureManager(SDL2pp::Renderer &renderer);
 
   void loadTexturesFromToml(const std::string &path);
   void loadLayoutsFromToml(const std::string &path);
 
-  Sprite getBodySprite(Race race, Direction dir, unsigned int it);
-  Sprite getHeadSprite(Race race, Direction dir);
+  Sprite getBodySprite(uint32_t bodyID, Direction dir, unsigned int it);
+  Sprite getHeadSprite(uint32_t headID, Direction dir);
 };
 
 #endif
