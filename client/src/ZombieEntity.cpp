@@ -12,6 +12,8 @@ void ZombieEntity::render(SDL2pp::Renderer &renderer, Camera &camera, unsigned i
 
     SDL2pp::Rect dst = camera.toScreen(get_x(), get_y(), src.w, src.h);
     renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
+
+    wasRendered = true;
 }
 
 

@@ -201,12 +201,6 @@ void GameWindow::render(unsigned int it) {
     }
   }
 
-  for (auto &[key, entity] : entities) {
-    if (!entity->rendered()) {
-      entity->render(*renderer, camera, it);
-    }
-  }
-
   renderHUD();
 }
 
