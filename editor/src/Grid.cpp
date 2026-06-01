@@ -215,7 +215,7 @@ void Grid::setMousePosition(int x, int y) {
 }
 
 void Grid::saveMap(GridSDL &gridSDL) {
-  this->downloader.saveMap(gridSDL, txtOrigins, collidableCells);
+  this->downloader.saveMap(gridSDL, txtOrigins, collidableCells, biomes);
 }
 
 void Grid::setInitBiomePosition(Biome biome) {

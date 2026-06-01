@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Queue.h"
 #include "TextureManager.h"
+#include "Zombie.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -20,6 +21,7 @@ private:
 
   uint32_t myPlayerID;
   std::unordered_map<uint32_t, std::unique_ptr<Player>> players;
+  std::unordered_map<uint32_t, std::unique_ptr<Zombie>> npcs;
 
   GameWindow *gameView;
   TextureManager &textureManager;
@@ -47,6 +49,7 @@ private:
   void handle(const PlayerRemovedEventDTO &event);
   void handle(const PlayerInfoEventDTO &event);
   void handle(const InventoryUpdateEventDTO &event);
+  void handle(const NPCAppearedEventDTO &event);
   void handle(const TextureInfoEventDTO &event);
   void handle(const PlayerListEventDTO &event);
   void handle(const ChatMessageEventDTO &event);

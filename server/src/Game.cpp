@@ -6,6 +6,7 @@
 #include "Game.h"
 #include "MapLoader.h"
 #include "MoveCommandDTO.h"
+#include "NPCAppearedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerInfoEventDTO.h"
 #include "PlayerListEventDTO.h"
@@ -147,7 +148,8 @@ void Game::run() {
   textureOrigins = mapLoader.GetTextureOrigins();
   collidableCells = mapLoader.GetCollidableCells();
 
-  biomes = mapLoader.GetBiomes();
+  biomes = std::move(mapLoader.GetBiomes());
+  cities = mapLoader.GetCities();
 
   ConstantRateLoop rateloop(FPS_SERVER);
   CommandFactory factory;
@@ -449,24 +451,48 @@ void Game::dropItem(uint32_t playerId, uint8_t inventorySlot) {
   it->second->inventory.removeItem(inventorySlot);
 }
 
-bool Game::thereIsACollidableEntityAt(Position position)
-{
+bool Game::thereIsACollidableEntityAt(Position position) {
+  int center = maxSize / 2;
+  int cellX = (position.row - center) * gridSize;
+  int cellY = (position.column - center) * gridSize;
+
+  if (collidableCells.count({position.row, position.column, 0}))
+    return true;
+
+  for (auto &col : colisionables) {
+    if (!(cellX + gridSize <= col->getX() ||
+          cellX >= col->getX() + col->getAncho() ||
+          cellY + gridSize <= col->getY() ||
+          cellY >= col->getY() + col->getAlto()))
+      return true;
+  }
+
+  for (auto &npc : npcs) {
+    if (!(cellX + gridSize <= npc->getX() ||
+          cellX >= npc->getX() + npc->getAncho() ||
+          cellY + gridSize <= npc->getY() ||
+          cellY >= npc->getY() + npc->getAlto()))
+      return true;
+  }
+
   return false;
 }
 
 void Game::appearNPC(std::unique_ptr<NPC>&& npc) {
+  int center = maxSize / 2;
+  int px = (npc->getPosition().row - center) * gridSize;
+  int py = (npc->getPosition().column - center) * gridSize;
+  npc->setPixelPosition(px, py);
 
-  Position& npcPosition = npc.getPosition(); 
+  uint16_t id = nextNPCId++;
+  messagesToSend.push_back(NPCAppearedEventDTO{
+      id,
+      static_cast<uint8_t>(npc->getType()),
+      static_cast<int16_t>(px),
+      static_cast<int16_t>(py)});
 
-  messagesToSend.push_back(
-    NPCAppeared{
-      nextNPCID,
-      npc.getType(),
-      npcPosition.x,
-      npcPosition.y
-    }
-  );
-
+  std::cout << npc->getType() << " appeared";
+  npcs.push_back(std::move(npc));
 }
 
 void Game::movePlayers() {

@@ -9,7 +9,8 @@ MapDownloader::MapDownloader(const std::string &path) : path(path) {}
 
 void MapDownloader::saveMap(
     GridSDL &gridSDL, std::list<TileOrigin> &txtOrigins,
-    std::set<std::tuple<int, int, int>> &collidableCells) {
+    std::set<std::tuple<int, int, int>> &collidableCells,
+    const std::vector<BiomeGrid> &biomes) {
 
   toml::table tbl;
 
@@ -39,6 +40,25 @@ void MapDownloader::saveMap(
     coll_arr.push_back(std::move(cell_tbl));
   }
   tbl.emplace("collidable_cells", std::move(coll_arr));
+
+  toml::array biomes_arr;
+  toml::array cities_arr;
+  for (auto &b : biomes) {
+    if (!b.initialized)
+      continue;
+    toml::table b_tbl;
+    b_tbl.emplace("type", b.asString);
+    b_tbl.emplace("i_init", b.i_init);
+    b_tbl.emplace("j_init", b.j_init);
+    b_tbl.emplace("i_end", b.i_end);
+    b_tbl.emplace("j_end", b.j_end);
+    if (b.asString == "City")
+      cities_arr.push_back(std::move(b_tbl));
+    else
+      biomes_arr.push_back(std::move(b_tbl));
+  }
+  tbl.emplace("biomes", std::move(biomes_arr));
+  tbl.emplace("cities", std::move(cities_arr));
 
   std::ofstream file(path);
   if (file) {
