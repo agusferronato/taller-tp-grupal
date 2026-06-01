@@ -16,9 +16,10 @@
 #include "Camera.h"
 #include "EntityType.h"
 #include "MapData.h"
+#include "Player.h"
 #include "RenderableEntity.h"
+#include "TextureManager.h"
 #include "TextureMapper.h"
-//#include "Te"
 
 class PlayerEntity;
 
@@ -32,7 +33,7 @@ private:
   std::unique_ptr<SDL2pp::Renderer> renderer;
   std::unique_ptr<SDL2pp::Font> font;
 
-  // TextureManager textutureManager;
+  std::unique_ptr<TextureManager> textureManager;
 
   Camera camera;
   uint32_t myPlayerID;
@@ -54,8 +55,10 @@ public:
 
   void addEntity(EntityType type, uint32_t id,
                  std::unique_ptr<RenderableEntity> entity);
+  void addPlayer(uint32_t ID, const Player &player);
   void removeEntity(EntityType type, uint32_t id);
-  void setMyPlayer(PlayerEntity *entity);
+  void removePlayer(uint32_t ID);
+  void setMyPlayer(const Player &player, uint32_t ID);
 
   SDL2pp::Renderer &getRenderer();
   SDL2pp::Font &getFont();

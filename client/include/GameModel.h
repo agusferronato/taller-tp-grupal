@@ -6,7 +6,6 @@
 #include "Direction.h"
 #include "Player.h"
 #include "Queue.h"
-#include "TextureManager.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -22,13 +21,12 @@ private:
   std::unordered_map<uint32_t, std::unique_ptr<Player>> players;
 
   GameWindow *gameView;
-  TextureManager &textureManager;
 
 public:
   GameModel(uint32_t myPlayerID, GameWindow *gameView,
             Queue<ServerEventDTO> &receptionQueue,
             Queue<ClientCommandDTO> &sendingQueue,
-            TextureManager &textureManager, const std::string &race = "humano");
+            const std::string &race = "humano");
   void updateStateFromServer();
 
 public:

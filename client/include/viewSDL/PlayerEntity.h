@@ -9,19 +9,19 @@
 
 class PlayerEntity : public RenderableEntity {
 public:
-  PlayerEntity(Player &player, TextureManager &textureManager,
+  PlayerEntity(const Player &player, TextureManager &textureManager,
                SDL2pp::Font &nameFont);
 
   void render(SDL2pp::Renderer &renderer, Camera &camera,
               unsigned int it) override;
 
-  Player &getPlayer();
+  const Player &getPlayer();
   int get_x() override;
   int get_y() override;
   int get_h() override;
 
 private:
-  Player &player;
+  const Player &player;
   TextureManager &textureManager;
   SDL2pp::Font &nameFont;
 

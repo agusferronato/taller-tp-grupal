@@ -1,6 +1,6 @@
 #include "PlayerEntity.h"
 
-PlayerEntity::PlayerEntity(Player &player, TextureManager &textureManager,
+PlayerEntity::PlayerEntity(const Player &player, TextureManager &textureManager,
                            SDL2pp::Font &nameFont)
     : player(player), textureManager(textureManager), nameFont(nameFont) {}
 
@@ -70,7 +70,7 @@ int PlayerEntity::get_head_y(Camera &camera) {
   return headY;
 }
 
-Player &PlayerEntity::getPlayer() { return player; }
+const Player &PlayerEntity::getPlayer() { return player; }
 
 int PlayerEntity::get_x() { return player.get_x(); }
 
