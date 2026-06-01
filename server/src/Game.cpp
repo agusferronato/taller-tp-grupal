@@ -182,7 +182,6 @@ void Game::loginPlayer(const std::string &name) {
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {
-
   auto it = players.find(playerId);
 
   if (it == players.end()) {
@@ -192,40 +191,6 @@ void Game::movePlayer(uint32_t playerId, Direction direction) {
   Character &player = *it->second;
   player.setDirection(direction);
   player.setMoving(true);
-
-  auto [targetX, targetY] = player.getTargetPosition(direction);
-
-  for (auto &col : colisionables) {
-    if (col == it->second.get())
-      continue;
-    if (col->colisionaCon(targetX, targetY, player.getAncho(),
-                          player.getAlto())) {
-      return;
-    }
-  }
-
-  {
-    int start_i = floorDiv(targetX, gridSize) + maxSize / 2;
-    int end_i =
-        floorDiv(targetX + player.getAncho() - 1, gridSize) + maxSize / 2;
-    int start_j = floorDiv(targetY, gridSize) + maxSize / 2;
-    int end_j =
-        floorDiv(targetY + player.getAlto() - 1, gridSize) + maxSize / 2;
-    for (int i = start_i; i <= end_i; i++) {
-      for (int j = start_j; j <= end_j; j++) {
-        if (collidableCells.count({i, j, 0})) {
-          return;
-        }
-      }
-    }
-  }
-
-  player.x = targetX;
-  player.y = targetY;
-
-  messagesToSend.push_back(
-      PlayerMovedEventDTO{playerId, static_cast<int16_t>(player.x),
-                          static_cast<int16_t>(player.y), direction});
 }
 
 void Game::stopPlayer(uint32_t playerId) {

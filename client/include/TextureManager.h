@@ -9,7 +9,6 @@
 #include <SDL2pp/SDL2pp.hh>
 
 #include "Direction.h"
-#include "Race.h"
 #include "TextureLayout.h"
 #include "TextureLayoutType.h"
 
