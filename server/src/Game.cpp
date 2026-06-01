@@ -77,7 +77,8 @@ void Game::registerPlayer(const std::string &name, const Race race,
                           uint32_t connectionId) {
 
   if (repository.exists(name)) {
-    senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{0, 1});
+    senderQueueMonitor.sendToClient(connectionId,
+                                    RegisterPlayerEventDTO{0, 1, race});
     return;
   }
 
@@ -104,7 +105,7 @@ void Game::registerPlayer(const std::string &name, const Race race,
   senderQueueMonitor.markAsRegistered(connectionId);
 
   senderQueueMonitor.sendToClient(connectionId,
-                                  RegisterPlayerEventDTO{newId, 0});
+                                  RegisterPlayerEventDTO{newId, 0, race});
 
   {
     std::vector<TextureOriginDTO> origins;
@@ -142,14 +143,15 @@ void Game::registerPlayer(const std::string &name, const Race race,
 void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   if (!repository.exists(name)) {
-    senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{0, 1});
+    senderQueueMonitor.sendToClient(connectionId,
+                                    RegisterPlayerEventDTO{0, 1, Race::Human});
     return;
   }
 
   for (auto &[pid, info] : players) {
     if (info->name == name) {
       senderQueueMonitor.sendToClient(connectionId,
-                                      RegisterPlayerEventDTO{0, 2});
+                                      RegisterPlayerEventDTO{0, 2, info->race});
       return;
     }
   }
@@ -168,8 +170,8 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   senderQueueMonitor.markAsRegistered(connectionId);
 
-  senderQueueMonitor.sendToClient(connectionId,
-                                  RegisterPlayerEventDTO{newId, 0});
+  senderQueueMonitor.sendToClient(
+      connectionId, RegisterPlayerEventDTO{newId, 0, players[newId]->race});
 
   std::vector<TextureOriginDTO> origins;
   origins.reserve(textureOrigins.size());
