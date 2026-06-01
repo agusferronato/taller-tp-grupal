@@ -50,12 +50,18 @@ void Gameloop::run() {
 void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
                         Queue<ClientCommandDTO> &sendingQueue,
                         const ClientData &clientData) {
-  Race race = RaceUtils::stringToRace(clientData.race);
-  if (clientData.is_new_character) {
-    sendingQueue.push(RegisterPlayerCommandDTO{clientData.character_name, race,
-                                               clientData.player_class});
+  Race race = Race::Human; // generico
+  if (std::holds_alternative<ClientDataRegister>(clientData)) {
+    const ClientDataRegister registerData =
+        std::get<ClientDataRegister>(clientData);
+    race = RaceUtils::stringToRace(registerData.race);
+    sendingQueue.push(RegisterPlayerCommandDTO{registerData.username, race,
+                                               registerData.playerClass});
+  } else if (std::holds_alternative<ClientDataLogin>(clientData)) {
+    const ClientDataLogin loginData = std::get<ClientDataLogin>(clientData);
+    sendingQueue.push(LoginPlayerCommandDTO{loginData.username});
   } else {
-    sendingQueue.push(LoginPlayerCommandDTO{clientData.username});
+    throw std::runtime_error("Invalid client data");
   }
 
   std::list<ServerEventDTO> deferredEvents;
@@ -76,6 +82,7 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
       }
       myPlayerId = resp->playerId;
       registered = true;
+      race = resp->race;
     } else {
       deferredEvents.push_back(std::move(event));
     }
@@ -83,9 +90,8 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
 
   gameView = std::make_unique<GameWindow>(myPlayerId, 820, 400);
 
-  gameModel =
-      std::make_unique<GameModel>(myPlayerId, gameView.get(), receptionQueue,
-                                  sendingQueue, clientData.race);
+  gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
+                                          receptionQueue, sendingQueue, race);
   gameController = std::make_unique<GameController>(gameModel.get());
 
   for (auto &deferred : deferredEvents) {

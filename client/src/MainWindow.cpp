@@ -55,12 +55,8 @@ void MainWindow::showCharacterCreation() {
 void MainWindow::onNewGame() { showCharacterCreation(); }
 
 void MainWindow::onStartGame(const QString &username, const QString &password) {
-  ClientData data;
-  data.username = username.toStdString();
-  data.password = password.toStdString();
-  data.race = "Humano";
-  data.is_new_character = false;
-
+  ClientData data = ClientDataLogin{username.toStdString()};
+  (void)password;
   emit gameStartRequested(data);
   close();
 }
@@ -69,14 +65,9 @@ void MainWindow::onCharacterCreated(const QString &username,
                                     const QString &password,
                                     const QString &race,
                                     const QString &playerClass) {
-  ClientData data;
-  data.username = username.toStdString();
-  data.password = password.toStdString();
-  data.character_name = username.toStdString();
-  data.race = race.toStdString();
-  data.player_class = playerClass.toStdString();
-  data.is_new_character = true;
-
+  ClientData data = ClientDataRegister{
+      username.toStdString(), race.toStdString(), playerClass.toStdString()};
+  (void)password;
   emit gameStartRequested(data);
   close();
 }
