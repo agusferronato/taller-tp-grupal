@@ -1,40 +1,32 @@
 #ifndef TOOLBAR_H
 #define TOOLBAR_H
 
-
+#include "Biome.h"
+#include <QLabel>
 #include <QMainWindow>
 #include <QObject>
-#include <QVBoxLayout>
 #include <QPushButton>
-#include <QLabel>
-#include "Biome.h"
-
+#include <QVBoxLayout>
 
 class ToolBar : public QWidget {
-    Q_OBJECT
+  Q_OBJECT
 
 private:
-    QPushButton* collisionButton = nullptr;
-    QHBoxLayout * layout;
-    QPushButton * saveButton;
-    QList<QPushButton*> biomeButtons;
+  QPushButton *collisionButton = nullptr;
+  QHBoxLayout *layout;
+  QPushButton *saveButton;
+  QList<QPushButton *> biomeButtons;
 
 public:
-    explicit ToolBar(
-        QWidget * parent = nullptr
-    );
+  explicit ToolBar(QWidget *parent = nullptr);
 
 private:
-    void initToolBar();
-    
+  void initToolBar();
+
 signals:
-    void saveMap();
-    void biomeSelected(Biome biome);
-    void collisionVisibilityChanged();
+  void saveMap();
+  void biomeSelected(Biome biome);
+  void collisionVisibilityChanged();
 };
-
-
-
-
 
 #endif

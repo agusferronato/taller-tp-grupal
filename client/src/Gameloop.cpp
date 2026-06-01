@@ -52,7 +52,8 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
                         Queue<ClientCommandDTO> &sendingQueue,
                         const ClientData &clientData) {
   if (clientData.is_new_character) {
-    sendingQueue.push(RegisterPlayerCommandDTO{clientData.character_name, clientData.race, clientData.player_class});
+    sendingQueue.push(RegisterPlayerCommandDTO{
+        clientData.character_name, clientData.race, clientData.player_class});
   } else {
     sendingQueue.push(LoginPlayerCommandDTO{clientData.username});
   }
@@ -88,8 +89,7 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
 
   gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
                                           receptionQueue, sendingQueue,
-                                          *textureManager,
-                                          clientData.race);
+                                          *textureManager, clientData.race);
   gameController = std::make_unique<GameController>(gameModel.get());
 
   for (auto &deferred : deferredEvents) {
