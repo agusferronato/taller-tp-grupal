@@ -18,6 +18,7 @@
 #include "MapData.h"
 #include "RenderableEntity.h"
 #include "TextureMapper.h"
+//#include "Te"
 
 class PlayerEntity;
 
@@ -30,6 +31,8 @@ private:
   std::unique_ptr<SDL2pp::Window> window;
   std::unique_ptr<SDL2pp::Renderer> renderer;
   std::unique_ptr<SDL2pp::Font> font;
+
+  // TextureManager textutureManager;
 
   Camera camera;
   uint32_t myPlayerID;

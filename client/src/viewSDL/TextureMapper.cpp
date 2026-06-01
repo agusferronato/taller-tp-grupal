@@ -32,9 +32,12 @@ void TextureMapper::loadFromToml(const std::string &path) {
 void TextureMapper::buildRenderGrid(const std::list<TileOrigin> &origins,
                                     int gridSizePx) {
   int maxPriority = 0;
-  for (const auto &origin : origins) {
-    if (origin.priority > maxPriority)
-      maxPriority = origin.priority;
+  auto maxCmp = [](const auto &a, const auto &b) {
+    return a.priority < b.priority;
+  };
+  auto itMax = std::max_element(origins.begin(), origins.end(), maxCmp);
+  if (itMax != origins.end()) {
+    maxPriority = itMax->priority;
   }
   tilesToRender.resize(maxPriority + 1);
 
