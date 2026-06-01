@@ -68,6 +68,9 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
 
     if (auto *resp = std::get_if<RegisterPlayerEventDTO>(&event)) {
       if (resp->status != 0) {
+        if (resp->status == 2) {
+          throw std::runtime_error("Player is already online");
+        }
         throw std::runtime_error("Player registration failed");
       }
       myPlayerId = resp->playerId;

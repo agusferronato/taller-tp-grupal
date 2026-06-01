@@ -266,18 +266,10 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
     return;
   }
 
-  for (auto it = players.begin(); it != players.end(); ++it) {
-    if (it->second->name == name) {
-      colisionables.erase(std::remove(colisionables.begin(),
-                                      colisionables.end(), it->second.get()),
-                          colisionables.end());
-      auto connIt = playerToConnection.find(it->first);
-      if (connIt != playerToConnection.end()) {
-        connectionToPlayer.erase(connIt->second);
-        playerToConnection.erase(connIt);
-      }
-      players.erase(it);
-      break;
+  for (auto &[pid, info] : players) {
+    if (info->name == name) {
+      senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{0, 2});
+      return;
     }
   }
 

@@ -22,7 +22,7 @@ MainWindow::MainWindow(const QString &hostname, const QString &port,
 
 void MainWindow::setupPages() {
   mainMenu = new MainMenuPage(this);
-  loginPage = new LoginPage(this);
+  loginPage = new LoginPage(hostname, port, this);
   charCreationPage = new CharacterCreationPage(hostname, port, this);
 
   stack->addWidget(mainMenu);
