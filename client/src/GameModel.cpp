@@ -17,12 +17,11 @@
 
 GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
                      Queue<ServerEventDTO> &receptionQueue,
-                     Queue<ClientCommandDTO> &sendingQueue,
-                     const std::string &race)
+                     Queue<ClientCommandDTO> &sendingQueue, const Race race)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
       myPlayerID(myPlayerID), gameView(gameView) {
   auto myPlayer = std::make_unique<Player>(this->myPlayerID, 0, 0);
-  myPlayer->setRace(RaceUtils::stringToRace(race));
+  myPlayer->setRace(race);
   players[myPlayerID] = std::move(myPlayer);
 
   gameView->setMyPlayer(*players[myPlayerID], myPlayerID);
