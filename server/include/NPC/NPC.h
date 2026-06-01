@@ -5,7 +5,17 @@
 
 enum NPCType {
     ZombieT,
-    SpiderT
+    SpiderT,
+    SpecialSpiderT,
+    ElfT,
+    SpecialElfT,
+    SkeletonT,
+    SpecialSkeletonT,
+    OrcT,
+    GreatReamerT,
+    GiantT,
+    GolemT,
+    SpecialGolemT
 };
 
 
