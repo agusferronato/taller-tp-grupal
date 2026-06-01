@@ -1,12 +1,23 @@
 #include "pages/LoginPage.h"
+#include <QApplication>
 #include <QFormLayout>
 #include <QGraphicsDropShadowEffect>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QVBoxLayout>
 
-LoginPage::LoginPage(QWidget *parent) : BackgroundPage(parent) {
+#include "DTO/Commands/ExitCommandDTO.h"
+#include "DTO/Commands/LoginPlayerCommandDTO.h"
+#include "DTO/Events/RegisterPlayerEventDTO.h"
+#include "protocol/Protocol.h"
+#include "protocol/RegisterAllParsers.h"
+#include "Socket.h"
+
+LoginPage::LoginPage(const QString &hostname, const QString &port,
+                     QWidget *parent)
+    : BackgroundPage(parent), hostname(hostname), port(port) {
   auto *mainLayout = new QVBoxLayout(this);
   mainLayout->setAlignment(Qt::AlignCenter);
 
@@ -85,7 +96,64 @@ LoginPage::LoginPage(QWidget *parent) : BackgroundPage(parent) {
 
 void LoginPage::onConnectClicked() {
   QString username = usernameEdit->text();
+  if (username.isEmpty()) {
+    QMessageBox::warning(this, "Nombre vacio",
+                         "Ingresa un nombre de personaje.");
+    return;
+  }
   QString password = passwordEdit->text();
 
-  emit connectRequested(username, password);
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  try {
+    Socket sock(hostname.toStdString().c_str(),
+                port.toStdString().c_str());
+    Protocol protocol(sock);
+    registerAllParsers(protocol);
+
+    protocol.sendCommand(LoginPlayerCommandDTO{username.toStdString()});
+
+    auto response = protocol.receiveEvent();
+    auto *resp = std::get_if<RegisterPlayerEventDTO>(&response);
+    if (!resp) {
+      QApplication::restoreOverrideCursor();
+      QMessageBox::critical(this, "Error",
+                            "Respuesta inesperada del servidor.");
+      return;
+    }
+
+    if (resp->status == 2) {
+      try {
+        sock.shutdown(2);
+      } catch (...) {}
+      QApplication::restoreOverrideCursor();
+      QMessageBox::warning(this, "Personaje ya conectado",
+                           "Ese personaje ya esta conectado al juego.");
+      return;
+    }
+
+    if (resp->status != 0) {
+      try {
+        sock.shutdown(2);
+      } catch (...) {}
+      QApplication::restoreOverrideCursor();
+      QMessageBox::warning(this, "Nombre no encontrado",
+                           "No existe un personaje con ese nombre.");
+      return;
+    }
+
+    try {
+      protocol.sendCommand(ExitCommandDTO{resp->playerId});
+      sock.shutdown(2);
+    } catch (...) {}
+
+    QApplication::restoreOverrideCursor();
+    emit connectRequested(username, password);
+
+  } catch (const std::exception &e) {
+    QApplication::restoreOverrideCursor();
+    QMessageBox::critical(this, "Error de conexion",
+                          "No se pudo conectar al servidor: " +
+                              QString(e.what()));
+  }
 }
