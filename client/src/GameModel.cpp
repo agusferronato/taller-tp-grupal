@@ -90,7 +90,7 @@ void GameModel::handle(const PlayerAppearedEventDTO &appeared) {
   }
 
   auto player = std::make_unique<Player>(pid, appeared.x, appeared.y);
-  player->setRace(RaceUtils::stringToRace(appeared.race));
+  player->setRace(appeared.race);
   applyStats(player.get());
 
   auto entity = std::make_unique<PlayerEntity>(*player, textureManager,
@@ -138,7 +138,7 @@ void GameModel::registerPlayers() {
           continue;
         }
         auto player = std::make_unique<Player>(info.playerId, info.x, info.y);
-        player->setRace(RaceUtils::stringToRace(info.race));
+        player->setRace(info.race);
         player->setName(info.playerName);
         player->setHp(info.hp);
         player->setMaxHp(info.maxHp);

@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Direction.h"
+#include "Race.h"
 #include "protocol/ProtocolCodes.h"
 
 struct PlayerAppearedEventDTO {
@@ -17,7 +18,7 @@ public:
   int16_t x;
   int16_t y;
   Direction direction;
-  std::string race;
+  Race race;
   std::string playerName;
   uint32_t hp;
   uint32_t maxHp;

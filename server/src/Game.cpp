@@ -242,10 +242,9 @@ void Game::registerPlayer(const std::string &name, const Race race,
 
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
-    std::string strRace = RaceUtils::raceToString(info->race);
     playerList.push_back(
         {pid, static_cast<int16_t>(info->x), static_cast<int16_t>(info->y),
-         info->direction, strRace, info->name, info->hp, info->maxHp,
+         info->direction, info->race, info->name, info->hp, info->maxHp,
          info->mana, info->maxMana, info->gold, info->level, info->experience});
   }
 
@@ -254,9 +253,9 @@ void Game::registerPlayer(const std::string &name, const Race race,
 
   messagesToSend.push_back(PlayerAppearedEventDTO{
       newId, static_cast<int16_t>(spawnX), static_cast<int16_t>(spawnY),
-      Direction::Down, RaceUtils::raceToString(race), name, players[newId]->hp,
-      players[newId]->maxHp, players[newId]->mana, players[newId]->maxMana,
-      players[newId]->gold, players[newId]->level, players[newId]->experience});
+      Direction::Down, race, name, players[newId]->hp, players[newId]->maxHp,
+      players[newId]->mana, players[newId]->maxMana, players[newId]->gold,
+      players[newId]->level, players[newId]->experience});
 }
 
 void Game::loginPlayer(const std::string &name) {
@@ -290,21 +289,19 @@ void Game::loginPlayer(const std::string &name) {
 
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
-    std::string strRace = RaceUtils::raceToString(info->race);
     playerList.push_back(
         {pid, static_cast<int16_t>(info->x), static_cast<int16_t>(info->y),
-         info->direction, strRace, info->name, info->hp, info->maxHp,
+         info->direction, info->race, info->name, info->hp, info->maxHp,
          info->mana, info->maxMana, info->gold, info->level, info->experience});
   }
   messagesToSend.push_back(PlayerListEventDTO{std::move(playerList)});
 
   messagesToSend.push_back(PlayerAppearedEventDTO{
       newId, static_cast<int16_t>(data.x), static_cast<int16_t>(data.y),
-      static_cast<Direction>(data.direction),
-      RaceUtils::raceToString(players[newId]->race), players[newId]->name,
-      players[newId]->hp, players[newId]->maxHp, players[newId]->mana,
-      players[newId]->maxMana, players[newId]->gold, players[newId]->level,
-      players[newId]->experience});
+      static_cast<Direction>(data.direction), players[newId]->race,
+      players[newId]->name, players[newId]->hp, players[newId]->maxHp,
+      players[newId]->mana, players[newId]->maxMana, players[newId]->gold,
+      players[newId]->level, players[newId]->experience});
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {
