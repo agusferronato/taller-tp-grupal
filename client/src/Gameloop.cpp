@@ -50,10 +50,10 @@ void Gameloop::run() {
 void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
                         Queue<ClientCommandDTO> &sendingQueue,
                         const ClientData &clientData) {
+  Race race = RaceUtils::stringToRace(clientData.race);
   if (clientData.is_new_character) {
-    sendingQueue.push(RegisterPlayerCommandDTO{
-        clientData.character_name, RaceUtils::stringToRace(clientData.race),
-        clientData.player_class});
+    sendingQueue.push(RegisterPlayerCommandDTO{clientData.character_name, race,
+                                               clientData.player_class});
   } else {
     sendingQueue.push(LoginPlayerCommandDTO{clientData.username});
   }

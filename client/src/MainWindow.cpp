@@ -58,7 +58,6 @@ void MainWindow::onStartGame(const QString &username, const QString &password) {
   ClientData data;
   data.username = username.toStdString();
   data.password = password.toStdString();
-  // esta mal proque si o si son humano
   data.race = "Humano";
   data.is_new_character = false;
 

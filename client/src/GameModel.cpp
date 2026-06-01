@@ -79,6 +79,8 @@ void GameModel::handle(const PlayerAppearedEventDTO &appeared) {
   };
 
   if (pid == myPlayerID) {
+    // hot fix, luego solucionar
+    players[pid]->setRace(appeared.race);
     return;
   }
 
