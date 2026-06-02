@@ -210,25 +210,23 @@ GameWindow::Layout GameWindow::getLayout() const {
   return Layout{
       SDL2pp::Rect(0, 0, 960, 540),
 
-      // Chat messages izquierdo
+      // Chat messages
       SDL2pp::Rect(3, 3, 676, 113),
       
-      // Chat input izquierdo
-      // SDL2pp::Rect(3, 120, 676, 113),
+      // Chat input
       SDL2pp::Rect(3, 122, 676, 20), 
       
-      // Area jugable
-      // SDL2pp::Rect(8, 148, 668, 382),
-      SDL2pp::Rect(8, 150, 668, 380),
+      // Juego principal
+      SDL2pp::Rect(8, 145, 668, 385),
 
-      // Panel derecho superior
+      // Informacion/Exp
       SDL2pp::Rect(688, 8, 260, 104),
 
-      // Inventario / equipamiento
-      SDL2pp::Rect(688, 150, 260, 270),
+      // Inventario/Equipamiento
+      SDL2pp::Rect(688, 155, 260, 265),
 
-      // Panel inferior derecho
-      SDL2pp::Rect(688, 432, 260, 100)
+      // Vida/Mana
+      SDL2pp::Rect(688, 440, 260, 88)
   };
 }
 
