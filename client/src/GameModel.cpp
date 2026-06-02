@@ -17,14 +17,9 @@
 
 GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
                      Queue<ServerEventDTO> &receptionQueue,
-                     Queue<ClientCommandDTO> &sendingQueue, const Race race)
+                     Queue<ClientCommandDTO> &sendingQueue)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
       myPlayerID(myPlayerID), gameView(gameView) {
-  auto myPlayer = std::make_unique<ClientPlayer>(this->myPlayerID, 0, 0);
-  myPlayer->setRace(race);
-  players[myPlayerID] = std::move(myPlayer);
-
-  gameView->setMyPlayer(*players[myPlayerID], myPlayerID);
   registerPlayers();
 }
 
@@ -66,26 +61,15 @@ void GameModel::handle(const PlayerStoppedEventDTO &stopped) {
 void GameModel::handle(const PlayerAppearedEventDTO &appeared) {
   uint32_t pid = appeared.playerId;
 
-  auto applyStats = [&](ClientPlayer *p) {
-    p->setName(appeared.playerName);
-    p->setHp(appeared.hp);
-    p->setMaxHp(appeared.maxHp);
-    p->setMana(appeared.mana);
-    p->setMaxMana(appeared.maxMana);
-    p->setGold(appeared.gold);
-    p->setLevel(appeared.level);
-    p->setExperience(appeared.experience);
-  };
+  auto player = std::make_unique<ClientPlayer>(
+      pid, appeared.playerName, appeared.x, appeared.y, appeared.direction,
+      playerStatsFrom(appeared));
 
   if (pid == myPlayerID) {
-    return;
+    gameView->setMyPlayer(*player, pid);
+  } else {
+    gameView->addPlayer(pid, *player);
   }
-
-  auto player = std::make_unique<ClientPlayer>(pid, appeared.x, appeared.y);
-  player->setRace(appeared.race);
-  applyStats(player.get());
-
-  gameView->addPlayer(pid, *player);
   players[pid] = std::move(player);
 }
 
@@ -94,19 +78,7 @@ void GameModel::handle(const PlayerRemovedEventDTO &removed) {
   players.erase(removed.playerId);
 }
 
-void GameModel::handle(const PlayerInfoEventDTO &info) {
-  auto it = players.find(info.playerId);
-  if (it == players.end()) {
-    return;
-  }
-  it->second->setHp(info.hp);
-  it->second->setMaxHp(info.maxHp);
-  it->second->setMana(info.mana);
-  it->second->setMaxMana(info.maxMana);
-  it->second->setGold(info.gold);
-  it->second->setLevel(info.level);
-  it->second->setExperience(info.experience);
-}
+void GameModel::handle(const PlayerInfoEventDTO &) {}
 
 void GameModel::handle(const TextureInfoEventDTO &texInfo) {
   std::list<TileOrigin> origins;
@@ -127,17 +99,9 @@ void GameModel::registerPlayers() {
         if (info.playerId == myPlayerID) {
           continue;
         }
-        auto player =
-            std::make_unique<ClientPlayer>(info.playerId, info.x, info.y);
-        player->setRace(info.race);
-        player->setName(info.playerName);
-        player->setHp(info.hp);
-        player->setMaxHp(info.maxHp);
-        player->setMana(info.mana);
-        player->setMaxMana(info.maxMana);
-        player->setGold(info.gold);
-        player->setLevel(info.level);
-        player->setExperience(info.experience);
+        auto player = std::make_unique<ClientPlayer>(
+            info.playerId, info.playerName, info.x, info.y, info.direction,
+            playerStatsFrom(info));
 
         gameView->addPlayer(info.playerId, *player);
         players[info.playerId] = std::move(player);
@@ -150,20 +114,30 @@ void GameModel::registerPlayers() {
   }
 }
 
-void GameModel::handle(const InventoryUpdateEventDTO &inv) {
-  if (inv.playerId != myPlayerID)
-    return;
-  auto it = players.find(inv.playerId);
-  if (it == players.end())
-    return;
-  it->second->setInventory(inv.items);
-  it->second->setEquippedWeapon(inv.equippedWeapon);
-  it->second->setEquippedArmor(inv.equippedArmor);
-  it->second->setEquippedHelmet(inv.equippedHelmet);
-  it->second->setEquippedShield(inv.equippedShield);
-}
-
+void GameModel::handle(const InventoryUpdateEventDTO &) {}
 void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &) {}
 void GameModel::handle(const NpcDefeatedEventDTO &) {}
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
+
+PlayerStatsInfo GameModel::playerStatsFrom(const PlayerInfoDTO &info) {
+  PlayerStatsInfo stats{stats.health = info.hp,
+                        stats.mana = info.mana,
+                        stats.gold = info.gold,
+                        stats.level = info.level,
+                        stats.experience = info.experience,
+                        stats.race = info.race,
+                        stats.playerClass = info.playerClass};
+  return stats;
+}
+
+PlayerStatsInfo GameModel::playerStatsFrom(const PlayerAppearedEventDTO &info) {
+  PlayerStatsInfo stats{stats.health = info.hp,
+                        stats.mana = info.mana,
+                        stats.gold = info.gold,
+                        stats.level = info.level,
+                        stats.experience = info.experience,
+                        stats.race = info.race,
+                        stats.playerClass = info.playerClass};
+  return stats;
+}
