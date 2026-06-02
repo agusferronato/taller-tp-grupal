@@ -219,14 +219,14 @@ GameWindow::Layout GameWindow::getLayout() const {
       // Juego principal
       SDL2pp::Rect(8, 145, 668, 385),
 
-      // Informacion/Exp
-      SDL2pp::Rect(688, 8, 260, 104),
+      // Informacion/Experiencia
+      SDL2pp::Rect(686, 7, 267, 114),
 
-      // Inventario/Equipamiento
-      SDL2pp::Rect(688, 155, 260, 265),
+      // Inventario/Equipamiento/Oro
+      SDL2pp::Rect(686, 128, 267, 294),
 
       // Vida/Mana
-      SDL2pp::Rect(688, 440, 260, 88)
+      SDL2pp::Rect(686, 429, 267, 104)
   };
 }
 
