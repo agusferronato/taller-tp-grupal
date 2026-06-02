@@ -58,7 +58,27 @@ void GameWindow::initResources() {
 
   uiFrameTexture = std::make_unique<SDL2pp::Texture>(
       *renderer,
-      SDL2pp::Surface(assetPath("assets/UpperLayer.png")));
+      SDL2pp::Surface(assetPath("assets/HUD/UpperLayer.png")));
+
+  chatMessagesBackground = std::make_unique<SDL2pp::Texture>(
+    *renderer,
+    SDL2pp::Surface(assetPath("assets/HUD/UserChat/base_messages.png")));
+
+  chatInputBackground = std::make_unique<SDL2pp::Texture>(
+      *renderer,
+      SDL2pp::Surface(assetPath("assets/HUD/UserChat/base_input.png")));
+
+  userInfoBackground = std::make_unique<SDL2pp::Texture>(
+      *renderer,
+      SDL2pp::Surface(assetPath("assets/HUD/UserInfo/base.png")));
+
+  userInventoryBackground = std::make_unique<SDL2pp::Texture>(
+      *renderer,
+      SDL2pp::Surface(assetPath("assets/HUD/UserInventory/base.png")));
+
+  userStatsBackground = std::make_unique<SDL2pp::Texture>(
+      *renderer,
+      SDL2pp::Surface(assetPath("assets/HUD/UserStats/base.png")));
 }
 
 void GameWindow::setMapData(int maxSize_, int gridSize_,
@@ -82,7 +102,6 @@ void GameWindow::show(unsigned int it) {
 
   renderer->Present();
 }
-
 void GameWindow::renderHUD() {
   Layout layout = getLayout();
 
@@ -129,6 +148,7 @@ void GameWindow::render(unsigned int it) {
   camera.follow(myPlayer.get_x(), myPlayer.get_y(), 32, 32);
 
   renderWorld(it);
+  renderUIBackgrounds(layout);
   renderHUD();
 }
 
@@ -401,6 +421,38 @@ void GameWindow::renderPlayerHeader(const Layout& layout) {
       tex,
       SDL2pp::NullOpt,
       SDL2pp::Rect(x, y, surf.GetWidth(), surf.GetHeight()));
+}
+
+void GameWindow::renderUIBackgrounds(const Layout& layout) {
+  if (chatMessagesBackground) {
+    renderer->Copy(*chatMessagesBackground,
+                   SDL2pp::NullOpt,
+                   layout.chatMessagesRect);
+  }
+
+  if (chatInputBackground) {
+    renderer->Copy(*chatInputBackground,
+                   SDL2pp::NullOpt,
+                   layout.chatInputRect);
+  }
+
+  if (userInfoBackground) {
+    renderer->Copy(*userInfoBackground,
+                   SDL2pp::NullOpt,
+                   layout.rightTopRect);
+  }
+
+  if (userInventoryBackground) {
+    renderer->Copy(*userInventoryBackground,
+                   SDL2pp::NullOpt,
+                   layout.inventoryRect);
+  }
+
+  if (userStatsBackground) {
+    renderer->Copy(*userStatsBackground,
+                   SDL2pp::NullOpt,
+                   layout.bottomRightRect);
+  }
 }
 
 // WIP
