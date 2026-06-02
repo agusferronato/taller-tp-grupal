@@ -1,17 +1,69 @@
 [[sprites]]
 id = 0
 path = "assets/11402.png"
-layout_type = "Body"
 transparent = true
 
 [[sprites]]
 id = 1
 path = "assets/cabezas/elfo.png"
-layout_type = "Head"
 transparent = true
 
 [[sprites]]
 id = 2
 path = "assets/zombie.png"
-layout_type = "Body"
+transparent = true
+
+[[sprites]]
+id = 3
+path = "assets/spider.png"
+transparent = true
+
+[[sprites]]
+id = 4
+path = "assets/special_spider.png"
+transparent = true
+
+[[sprites]]
+id = 5
+path = "assets/elf.png"
+transparent = true
+
+[[sprites]]
+id = 6
+path = "assets/special_elf.png"
+transparent = true
+
+[[sprites]]
+id = 7
+path = "assets/skeleton.png"
+transparent = true
+
+[[sprites]]
+id = 8
+path = "assets/special_skeleton.png"
+transparent = true
+
+[[sprites]]
+id = 9
+path = "assets/orc.png"
+transparent = true
+
+[[sprites]]
+id = 10
+path = "assets/great_reamer.png"
+transparent = true
+
+[[sprites]]
+id = 11
+path = "assets/giant.png"
+transparent = true
+
+[[sprites]]
+id = 12
+path = "assets/golem.png"
+transparent = true
+
+[[sprites]]
+id = 13
+path = "assets/special_golem.png"
 transparent = true

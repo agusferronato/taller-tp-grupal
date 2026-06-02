@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <SDL2pp/SDL2pp.hh>
+#include <toml++/toml.hpp>
 
 #include "Direction.h"
 #include "TextureLayout.h"
@@ -23,6 +24,9 @@ private:
   std::map<int, SDL2pp::Texture> textures;
   std::map<TextureLayoutType, TextureLayout> texturesFrames;
 
+  std::map<Direction, std::vector<SpriteData>> parseBodyFrames(const toml::table& table);
+  std::map<Direction, SpriteData> parseHeadFrames(const toml::table& table);
+
 public:
   explicit TextureManager(SDL2pp::Renderer &renderer);
 
@@ -30,6 +34,7 @@ public:
   void loadLayoutsFromToml(const std::string &path);
 
   Sprite getBodySprite(int bodyId, Direction dir, unsigned int it);
+  Sprite getBodySprite(TextureLayoutType layoutType, int bodyId, Direction dir, unsigned int it);
   Sprite getHeadSprite(int headId, Direction dir);
   Sprite getZombieSprite(int txtID, Direction dir, unsigned int it);
 };

@@ -77,7 +77,8 @@ void TextureMapper::buildRenderGrid(const std::list<TileOrigin> &origins,
 }
 
 SDL2pp::Texture &TextureMapper::getTexture(int id) {
-  return textures.at(id).texture;
+  SDL2pp::Texture& texture = textures.at(id).texture;
+  return texture;
 }
 
 const std::vector<std::map<std::pair<int, int>, std::vector<GridItem>>> &

@@ -1,6 +1,7 @@
 #include "Gameloop.h"
 
 #include "LoginPlayerCommandDTO.h"
+#include "NPCParser.h"
 #include "RegisterPlayerCommandDTO.h"
 
 #include <iostream>
@@ -87,9 +88,11 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
   textureManager->loadLayoutsFromToml("assets/layouts.toml");
   textureManager->loadTexturesFromToml("assets/sprites.toml");
 
+  NPCParser npcParser;
   gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
                                           receptionQueue, sendingQueue,
-                                          *textureManager, clientData.race);
+                                          *textureManager, npcParser,
+                                          clientData.race);
   gameController = std::make_unique<GameController>(gameModel.get());
 
   for (auto &deferred : deferredEvents) {

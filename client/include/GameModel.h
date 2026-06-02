@@ -7,7 +7,8 @@
 #include "Player.h"
 #include "Queue.h"
 #include "TextureManager.h"
-#include "Zombie.h"
+#include "NPC.h"
+#include "NPCParser.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -21,16 +22,18 @@ private:
 
   uint32_t myPlayerID;
   std::unordered_map<uint32_t, std::unique_ptr<Player>> players;
-  std::unordered_map<uint32_t, std::unique_ptr<Zombie>> npcs;
+  std::unordered_map<uint32_t, std::unique_ptr<NPC>> npcs;
 
   GameWindow *gameView;
   TextureManager &textureManager;
+  const NPCParser &npcParser;
 
 public:
   GameModel(uint32_t myPlayerID, GameWindow *gameView,
             Queue<ServerEventDTO> &receptionQueue,
             Queue<ClientCommandDTO> &sendingQueue,
-            TextureManager &textureManager, const std::string &race = "humano");
+            TextureManager &textureManager, const NPCParser &npcParser,
+            const std::string &race = "humano");
   void updateStateFromServer();
 
 public:
