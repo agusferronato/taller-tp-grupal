@@ -17,7 +17,6 @@
 #include "Queue.h"
 #include "RegisterPlayerEventDTO.h"
 #include "ShutdownEvent.h"
-#include "TextureManager.h"
 #include "Thread.h"
 #include "WindowClosed.h"
 
@@ -27,7 +26,6 @@ private:
   ShutdownEvent &shutdownEvent;
   ClientData clientData;
 
-  std::unique_ptr<TextureManager> textureManager;
   std::unique_ptr<GameController> gameController;
   std::unique_ptr<GameWindow> gameView;
   std::unique_ptr<GameModel> gameModel;

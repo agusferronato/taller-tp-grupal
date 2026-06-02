@@ -9,6 +9,7 @@
 
 #include "Player.h"
 #include "PlayerEntity.h"
+#include "NPCEntity.h"
 
 GameWindow::GameWindow(uint32_t myPlayerID, int windowWidth, int windowHeight)
     : camera(Camera(windowWidth, windowHeight)), myPlayerID(myPlayerID) {
@@ -29,6 +30,10 @@ void GameWindow::initResources() {
 
   textureMapper = std::make_unique<TextureMapper>(*renderer);
   textureMapper->loadFromToml("assets/textures.toml");
+
+  textureManager = std::make_unique<TextureManager>(*renderer);
+  textureManager->loadLayoutsFromToml("assets/layouts.toml");
+  textureManager->loadTexturesFromToml("assets/sprites.toml");
 }
 
 void GameWindow::addEntity(EntityType type, uint32_t id,
@@ -45,7 +50,12 @@ void GameWindow::removeEntity(EntityType type, uint32_t id) {
   entities.erase(key);
 }
 
-void GameWindow::setMyPlayer(PlayerEntity *entity) { myPlayerEntity = entity; }
+void GameWindow::setMyPlayer(const Player &player, uint32_t ID) {
+  myPlayerID = ID;
+  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
+  myPlayerEntity = entity.get();
+  addEntity(EntityType::Player, ID, std::move(entity));
+}
 
 SDL2pp::Renderer &GameWindow::getRenderer() { return *renderer; }
 
@@ -209,4 +219,24 @@ void GameWindow::clear() {
     entity->clear();
   }
   renderer->Clear();
+}
+
+void GameWindow::addPlayer(uint32_t ID, const Player &player) {
+  if (ID == myPlayerID) {
+    setMyPlayer(player, ID);
+    return;
+  }
+  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
+  addEntity(EntityType::Player, ID, std::move(entity));
+}
+
+void GameWindow::addNpc(uint32_t ID, NPC &npc, NPCType npcType) {
+  NPCInfo info = npcParser.getInfo(npcType);
+  auto entity = std::make_unique<NPCEntity>(npc, *textureManager,
+                                            info.textureId, info.layoutType);
+  addEntity(EntityType::Npc, ID, std::move(entity));
+}
+
+void GameWindow::removePlayer(uint32_t ID) {
+  removeEntity(EntityType::Player, ID);
 }

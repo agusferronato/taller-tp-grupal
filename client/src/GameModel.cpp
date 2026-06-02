@@ -1,41 +1,33 @@
 #include "GameModel.h"
 #include "ChatMessageEventDTO.h"
-#include "EntityType.h"
 #include "GameWindow.h"
 #include "InventoryUpdateEventDTO.h"
 #include "NpcDefeatedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
-#include "PlayerEntity.h"
 #include "PlayerInfoEventDTO.h"
 #include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "PlayerRemovedEventDTO.h"
 #include "PlayerStoppedEventDTO.h"
+#include "Race.h"
 #include "RegisterPlayerEventDTO.h"
 #include "NPCAppearedEventDTO.h"
 #include "TextureInfoEventDTO.h"
 #include "NPC.h"
-#include "NPCEntity.h"
+#include "NPCType.h"
 #include <iostream>
 #include <stdexcept>
 
 GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
                      Queue<ServerEventDTO> &receptionQueue,
-                     Queue<ClientCommandDTO> &sendingQueue,
-                     TextureManager &textureManager, const NPCParser &npcParser,
-                     const std::string &race)
+                     Queue<ClientCommandDTO> &sendingQueue, const Race race)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
-      myPlayerID(myPlayerID), gameView(gameView),
-      textureManager(textureManager), npcParser(npcParser) {
+      myPlayerID(myPlayerID), gameView(gameView) {
   auto myPlayer = std::make_unique<Player>(this->myPlayerID, 0, 0);
   myPlayer->setRace(race);
   players[myPlayerID] = std::move(myPlayer);
 
-  auto entity = std::make_unique<PlayerEntity>(
-      *players[myPlayerID], textureManager, gameView->getFont());
-  gameView->setMyPlayer(entity.get());
-  gameView->addEntity(EntityType::Player, myPlayerID, std::move(entity));
-
+  gameView->setMyPlayer(*players[myPlayerID], myPlayerID);
   registerPlayers();
 }
 
@@ -85,21 +77,18 @@ void GameModel::handle(const PlayerAppearedEventDTO &appeared) {
     p->setExperience(appeared.experience);
   };
   if (pid == myPlayerID) {
-    players[pid]->setCoordinates(appeared.x, appeared.y);
-    players[pid]->setRace(appeared.race);
-    applyStats(players[pid].get());
     return;
   }
   auto player = std::make_unique<Player>(pid, appeared.x, appeared.y);
   player->setRace(appeared.race);
   applyStats(player.get());
-  auto entity = std::make_unique<PlayerEntity>(*player, textureManager, gameView->getFont());
-  gameView->addEntity(EntityType::Player, pid, std::move(entity));
+
+  gameView->addPlayer(pid, *player);
   players[pid] = std::move(player);
 }
 
 void GameModel::handle(const PlayerRemovedEventDTO &removed) {
-  gameView->removeEntity(EntityType::Player, removed.playerId);
+  gameView->removePlayer(removed.playerId);
   players.erase(removed.playerId);
 }
 
@@ -128,7 +117,22 @@ void GameModel::registerPlayers() {
     auto event = receptionQueue.pop();
     if (auto *list = std::get_if<PlayerListEventDTO>(&event)) {
       for (const auto &info : list->players) {
-        if (info.playerId == myPlayerID) continue;
+        if (info.playerId == myPlayerID) {
+          auto it = players.find(myPlayerID);
+          if (it != players.end()) {
+            it->second->setName(info.playerName);
+            it->second->setDirection(info.direction);
+            it->second->setCoordinates(info.x, info.y);
+            it->second->setHp(info.hp);
+            it->second->setMaxHp(info.maxHp);
+            it->second->setMana(info.mana);
+            it->second->setMaxMana(info.maxMana);
+            it->second->setGold(info.gold);
+            it->second->setLevel(info.level);
+            it->second->setExperience(info.experience);
+          }
+          continue;
+        }
         auto player = std::make_unique<Player>(info.playerId, info.x, info.y);
         player->setRace(info.race);
         player->setName(info.playerName);
@@ -139,8 +143,8 @@ void GameModel::registerPlayers() {
         player->setGold(info.gold);
         player->setLevel(info.level);
         player->setExperience(info.experience);
-        auto entity = std::make_unique<PlayerEntity>(*player, textureManager, gameView->getFont());
-        gameView->addEntity(EntityType::Player, info.playerId, std::move(entity));
+
+        gameView->addPlayer(info.playerId, *player);
         players[info.playerId] = std::move(player);
       }
       break;
@@ -170,12 +174,9 @@ void GameModel::handle(const NpcDefeatedEventDTO &event) {
 }
 
 void GameModel::handle(const NPCAppearedEventDTO &event) {
-  NPCType type = static_cast<NPCType>(event.npcType);
-  NPCInfo info = npcParser.getInfo(type);
   auto npc = std::make_unique<NPC>(event.x, event.y);
-  auto entity = std::make_unique<NPCEntity>(*npc, textureManager,
-                                             info.textureId, info.layoutType);
-  gameView->addEntity(EntityType::Npc, event.npcId, std::move(entity));
+  NPCType npcType = static_cast<NPCType>(event.npcType);
+  gameView->addNpc(event.npcId, *npc, npcType);
   npcs[event.npcId] = std::move(npc);
 }
 

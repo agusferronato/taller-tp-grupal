@@ -6,9 +6,7 @@
 #include "Direction.h"
 #include "Player.h"
 #include "Queue.h"
-#include "TextureManager.h"
 #include "NPC.h"
-#include "NPCParser.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -25,16 +23,12 @@ private:
   std::unordered_map<uint32_t, std::unique_ptr<NPC>> npcs;
 
   GameWindow *gameView;
-  TextureManager &textureManager;
-  const NPCParser &npcParser;
-
 public:
   GameModel(uint32_t myPlayerID, GameWindow *gameView,
             Queue<ServerEventDTO> &receptionQueue,
-            Queue<ClientCommandDTO> &sendingQueue,
-            TextureManager &textureManager, const NPCParser &npcParser,
-            const std::string &race = "humano");
-  void updateStateFromServer();
+            Queue<ClientCommandDTO> &sendingQueue, const Race race);
+
+  void updateStateFromServer(); 
 
 public:
   /*update State From Controller*/

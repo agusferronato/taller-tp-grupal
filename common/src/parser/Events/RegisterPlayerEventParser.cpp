@@ -14,11 +14,13 @@ void RegisterPlayerEventParser::serialize(std::vector<uint8_t> &bytes,
                     bytes);
   utils.appendBytes(event.playerId, bytes);
   utils.appendBytes(event.status, bytes);
+  utils.appendBytes(static_cast<uint8_t>(event.race), bytes);
 }
 
 ServerEventDTO RegisterPlayerEventParser::deserialize(Protocol &protocol) {
   uint32_t playerId = protocol.getUint32();
   uint8_t status = protocol.getUint8();
+  Race race = static_cast<Race>(protocol.getUint8());
 
-  return RegisterPlayerEventDTO{playerId, status};
+  return RegisterPlayerEventDTO{playerId, status, race};
 }

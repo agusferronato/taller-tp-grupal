@@ -10,6 +10,7 @@
 #include <toml++/toml.hpp>
 
 #include "Direction.h"
+#include "Race.h"
 #include "TextureLayout.h"
 #include "TextureLayoutType.h"
 
@@ -33,7 +34,7 @@ public:
   void loadTexturesFromToml(const std::string &path);
   void loadLayoutsFromToml(const std::string &path);
 
-  Sprite getBodySprite(int bodyId, Direction dir, unsigned int it);
+  Sprite getBodySprite(uint32_t bodyId, Direction dir, unsigned int it);
   Sprite getBodySprite(TextureLayoutType layoutType, int bodyId, Direction dir, unsigned int it);
   Sprite getHeadSprite(int headId, Direction dir);
   Sprite getZombieSprite(int txtID, Direction dir, unsigned int it);
