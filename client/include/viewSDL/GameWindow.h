@@ -17,10 +17,12 @@
 #include "ClientPlayer.h"
 #include "EntityType.h"
 #include "MapData.h"
+#include "NPCParser.h"
 #include "RenderableEntity.h"
 #include "TextureManager.h"
 #include "TextureMapper.h"
 
+class NPC;
 class PlayerEntity;
 
 class GameWindow {
@@ -42,6 +44,7 @@ private:
   std::map<EntityKey, std::unique_ptr<RenderableEntity>> entities;
   PlayerEntity *myPlayerEntity{nullptr};
 
+  NPCParser npcParser;
   std::unique_ptr<TextureMapper> textureMapper;
 
   int maxSize, gridSize, commonGroundTextureId;
@@ -56,6 +59,7 @@ public:
   void addEntity(EntityType type, uint32_t id,
                  std::unique_ptr<RenderableEntity> entity);
   void addPlayer(uint32_t ID, const ClientPlayer &player);
+  void addNpc(uint32_t ID, NPC &npc, NPCType npcType);
   void removeEntity(EntityType type, uint32_t id);
   void removePlayer(uint32_t ID);
   void setMyPlayer(const ClientPlayer &player, uint32_t ID);

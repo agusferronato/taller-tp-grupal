@@ -14,7 +14,9 @@
 #include <set>
 #include <tuple>
 
+#include "Biome.h"
 #include "Character.h"
+#include "City.h"
 #include "Colisionable.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
@@ -22,6 +24,7 @@
 #include "Inventory.h"
 #include "ItemDef.h"
 #include "MapData.h"
+#include "NPC.h"
 #include "PlayerData.h"
 #include "PlayerRepository.h"
 #include "Queue.h"
@@ -51,6 +54,10 @@ private:
   std::list<TileOrigin> textureOrigins;
   std::set<std::tuple<int, int, int>> collidableCells;
 
+  std::list<std::unique_ptr<Biome>> biomes;
+  std::list<City> cities;
+  std::list<std::unique_ptr<NPC>> npcs;
+
 public:
   Game(Queue<ClientMessage> &gameloopQueue,
        SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository);
@@ -73,11 +80,17 @@ public:
   void unequipSlot(uint32_t playerId, uint8_t equipSlot);
   void dropItem(uint32_t playerId, uint8_t inventorySlot);
 
+  bool thereIsACollidableEntityAt(Position position);
+  void appearNPC(std::unique_ptr<NPC> &&npc);
+  uint16_t nextNPCId{1};
+
 private:
   void execute(ClientMessage clientMessage);
   void sendMessages();
   void movePlayers();
   void saveAllPlayers();
+
+  void appearNPCs();
 };
 
 #endif

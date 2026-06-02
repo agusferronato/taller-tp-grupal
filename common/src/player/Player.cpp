@@ -23,3 +23,11 @@ void Player::move(int newX, int newY) {
   x = newX;
   y = newY;
 }
+
+void Player::takeDamage(uint32_t) {}
+uint32_t Player::heal(uint32_t) { return 0; }
+bool Player::useMana(uint32_t) { return false; }
+bool Player::gainExperience(uint32_t) { return false; }
+bool Player::expentGold(uint32_t) { return false; }
+void Player::earnGold(uint32_t) {}
+uint32_t Player::atack() { return 0; }
