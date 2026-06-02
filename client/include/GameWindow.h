@@ -103,6 +103,10 @@ private:
                   const std::string &text,
                   SDL_Color color);
 
+  void renderCenteredTextInRect(const SDL2pp::Rect& rect,
+                              const std::string& text,
+                              SDL_Color color);
+                              
   void drawBar(int x, int y,
                int w, int h,
                uint32_t cur,
