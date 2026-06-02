@@ -26,7 +26,8 @@ private:
   // Struct auxiliar para organizar el UI
   struct Layout {
     SDL2pp::Rect windowRect;
-    SDL2pp::Rect chatRect;
+    SDL2pp::Rect chatMessagesRect;
+    SDL2pp::Rect chatInputRect;
     SDL2pp::Rect gameRect;
     SDL2pp::Rect rightTopRect;
     SDL2pp::Rect inventoryRect;
@@ -42,9 +43,11 @@ private:
   std::unique_ptr<SDL2pp::Renderer> renderer;
 
   std::unique_ptr<SDL2pp::Texture> uiFrameTexture;
-  std::unique_ptr<SDL2pp::Font> font;
   std::unique_ptr<GameChatView> chatView;
   std::unique_ptr<TextureMapper> textureMapper;
+  std::unique_ptr<SDL2pp::Font> font;
+  std::unique_ptr<SDL2pp::Font> titleFont;
+  std::unique_ptr<SDL2pp::Font> uiFont;
 
   // Chat state
   std::deque<std::string> chatMessages;
@@ -82,6 +85,9 @@ private:
   void renderUIFrame(const Layout &layout);
   void renderChat(const Layout &layout);
   void renderPlayerStats(const Layout &layout);
+  void renderPlayerHeader(const Layout& layout);
+  void renderInventoryPanel(const Layout& layout);
+  void renderVitals(const Layout& layout);
 
   void renderText(int x, int y,
                   const std::string &text,

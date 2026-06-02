@@ -42,18 +42,14 @@ GameWindow::GameWindow(uint32_t myPlayerID)
 }
 
 void GameWindow::initResources() {
-  font = nullptr;
+  font = std::make_unique<SDL2pp::Font>(
+      assetPath("fonts/Vera.ttf"), 14);
 
-  std::ifstream sys("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf");
-  if (sys.good()) {
-    font = std::make_unique<SDL2pp::Font>(
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 14);
-  } else {
-    std::ifstream veraf(assetPath("fonts/Vera.ttf"));
-    if (veraf.good()) {
-      font = std::make_unique<SDL2pp::Font>(assetPath("fonts/Vera.ttf"), 14);
-    }
-  }
+  titleFont = std::make_unique<SDL2pp::Font>(
+      assetPath("fonts/OldLondon.ttf"), 34);
+
+  uiFont = std::make_unique<SDL2pp::Font>(
+      assetPath("fonts/CinzelBold.ttf"), 18);
 
   textureMapper = std::make_unique<TextureMapper>(*renderer);
   textureMapper->loadFromToml("assets/textures.toml");
@@ -90,8 +86,10 @@ void GameWindow::show(unsigned int it) {
 void GameWindow::renderHUD() {
   Layout layout = getLayout();
 
-  renderPlayerStats(layout);
   renderChat(layout);
+  renderPlayerHeader(layout);
+  renderPlayerStats(layout);
+  renderVitals(layout);
 }
 
 void GameWindow::renderCommonGround() {
@@ -192,11 +190,16 @@ GameWindow::Layout GameWindow::getLayout() const {
   return Layout{
       SDL2pp::Rect(0, 0, 960, 540),
 
-      // Chat superior izquierdo
+      // Chat messages izquierdo
       SDL2pp::Rect(3, 3, 676, 113),
       
+      // Chat input izquierdo
+      // SDL2pp::Rect(3, 120, 676, 113),
+      SDL2pp::Rect(3, 122, 676, 20), 
+      
       // Area jugable
-      SDL2pp::Rect(8, 148, 668, 382),
+      // SDL2pp::Rect(8, 148, 668, 382),
+      SDL2pp::Rect(8, 150, 668, 380),
 
       // Panel derecho superior
       SDL2pp::Rect(688, 8, 260, 104),
@@ -277,7 +280,8 @@ void GameWindow::renderChat(const Layout& layout) {
 
   chatView->render(
       *renderer,
-      layout.chatRect,
+      layout.chatMessagesRect,
+      layout.chatInputRect,
       chatMessages,
       currentChatInput,
       chatActive);
@@ -338,50 +342,66 @@ void GameWindow::drawBar(int x,
   renderer->FillRect(fillRect);
 }
 
-void GameWindow::renderPlayerStats(
-    const Layout& layout) {
-
+void GameWindow::renderPlayerStats(const Layout& layout) {
   auto itMy = players.find(myPlayerID);
-
   if (itMy == players.end())
     return;
 
   const Player& p = *itMy->second;
 
-  int x = layout.rightTopRect.GetX() + 70;
-  int y = layout.rightTopRect.GetY() + 20;
-  int barW = 170;
-  int barH = 16;
+  int x = layout.rightTopRect.GetX() + 25;
+  int y = layout.rightTopRect.GetY() + 75;
 
-  drawBar(
-      x,
-      y,
-      barW,
-      barH,
-      p.getHp(),
-      p.getMaxHp(),
-      SDL_Color{200,40,40,255},
-      SDL_Color{60,10,10,255});
+  renderText(x, y,
+             "Lv " + std::to_string(p.getLevel()),
+             SDL_Color{255,255,200,255});
 
-  drawBar(
-      x,
-      y + 22,
-      barW,
-      barH,
-      p.getMana(),
-      p.getMaxMana(),
-      SDL_Color{40,80,220,255},
-      SDL_Color{10,20,60,255});
-
-  renderText(
-      x,
-      y + 50,
-      "Lv " + std::to_string(p.getLevel()),
-      SDL_Color{255,255,200,255});
-
-  renderText(
-      x,
-      y + 70,
-      "Oro: " + std::to_string(p.getGold()),
-      SDL_Color{255,215,0,255});
+  renderText(x, y + 18,
+             "Oro: " + std::to_string(p.getGold()),
+             SDL_Color{255,215,0,255});
 }
+
+
+void GameWindow::renderVitals(const Layout& layout) {
+  auto itMy = players.find(myPlayerID);
+  if (itMy == players.end())
+    return;
+
+  const Player& p = *itMy->second;
+
+  int x = layout.bottomRightRect.GetX() + 30;
+  int y = layout.bottomRightRect.GetY() + 30;
+  int barW = layout.bottomRightRect.GetW() - 60;
+  int barH = 14;
+
+  drawBar(x, y, barW, barH, p.getHp(), p.getMaxHp(),
+          SDL_Color{200,40,40,255}, SDL_Color{60,10,10,255});
+
+  drawBar(x, y + 35, barW, barH, p.getMana(), p.getMaxMana(),
+          SDL_Color{40,80,220,255}, SDL_Color{10,20,60,255});
+}
+
+void GameWindow::renderPlayerHeader(const Layout& layout) {
+  if (!titleFont)
+    return;
+
+  SDL2pp::Surface surf =
+      titleFont->RenderUTF8_Blended(
+          "Argentum",
+          SDL_Color{255, 255, 255, 255});
+
+  SDL2pp::Texture tex(*renderer, surf);
+
+  int x = layout.rightTopRect.GetX() +
+          (layout.rightTopRect.GetW() - surf.GetWidth()) / 2;
+
+  int y = layout.rightTopRect.GetY() + 20;
+
+  renderer->Copy(
+      tex,
+      SDL2pp::NullOpt,
+      SDL2pp::Rect(x, y, surf.GetWidth(), surf.GetHeight()));
+}
+
+// WIP
+void GameWindow::renderInventoryPanel([[maybe_unused]] const Layout& layout) {}
