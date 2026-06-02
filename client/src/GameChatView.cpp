@@ -12,33 +12,37 @@ void GameChatView::render(SDL2pp::Renderer& renderer,
                           bool active) {
     
     renderer.SetDrawBlendMode(SDL_BLENDMODE_BLEND);
-    renderer.SetDrawColor(0, 0, 0, 180);
+
+    // Fondo negro opaco
+    renderer.SetDrawColor(0, 0, 0, 255);
     renderer.FillRect(rect);
 
     if (!font)
         return;
 
-    int inputAreaHeight = 20;
-    int maxMessagesY = rect.GetY() + rect.GetH() - inputAreaHeight;
+    const int paddingX = 6;
+    const int paddingY = 6;
+    const int inputAreaHeight = 20;
 
+    int maxMessagesY = rect.GetY() + rect.GetH() - inputAreaHeight;
     int y = maxMessagesY;
 
     for (auto it = messages.rbegin(); it != messages.rend(); ++it) {
         SDL2pp::Surface surf =
-            font->RenderUTF8_Solid(*it, SDL_Color{255,255,255,255});
+            font->RenderUTF8_Solid(*it, SDL_Color{220,220,220,255});
 
         SDL2pp::Texture tex(renderer, surf);
 
         y -= surf.GetHeight() + 2;
 
-        if (y < rect.GetY() + 5)
+        if (y < rect.GetY() + paddingY)
             break;
 
         renderer.Copy(
             tex,
             SDL2pp::NullOpt,
             SDL2pp::Rect(
-                rect.GetX() + 5,
+                rect.GetX() + paddingX,
                 y,
                 surf.GetWidth(),
                 surf.GetHeight()));
@@ -55,8 +59,8 @@ void GameChatView::render(SDL2pp::Renderer& renderer,
         inputTex,
         SDL2pp::NullOpt,
         SDL2pp::Rect(
-            rect.GetX() + 5,
-            rect.GetY() + rect.GetH() - inputSurf.GetHeight() - 5,
+            rect.GetX() + paddingX,
+            rect.GetY() + rect.GetH() - inputSurf.GetHeight() - paddingY,
             inputSurf.GetWidth(),
             inputSurf.GetHeight()));
 }
