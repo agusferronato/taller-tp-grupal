@@ -97,6 +97,7 @@ private:
   void renderInventoryPanel(const Layout& layout);
   void renderVitals(const Layout& layout);
   void renderUIBackgrounds(const Layout& layout);
+  void renderInventoryInfo(const Layout& layout);
 
   void renderText(int x, int y,
                   const std::string &text,
