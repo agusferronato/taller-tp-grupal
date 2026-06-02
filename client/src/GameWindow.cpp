@@ -156,6 +156,8 @@ void GameWindow::clear() {
   for (auto& entity : entities) {
     entity->clear();
   }
+
+  renderer->SetDrawColor(0, 0, 0, 255);
   renderer->Clear();
 }
 
@@ -367,18 +369,36 @@ void GameWindow::renderPlayerStats(const Layout& layout) {
 
   const Player& p = *itMy->second;
 
-  int x = layout.rightTopRect.GetX() + 25;
-  int y = layout.rightTopRect.GetY() + 75;
+  int xpCur = 357;   // placeholder
+  int xpMax = 1000;  // placeholder
 
-  renderText(x, y,
-             "Lv " + std::to_string(p.getLevel()),
-             SDL_Color{255,255,200,255});
+  int x = layout.rightTopRect.GetX();
+  int y = layout.rightTopRect.GetY();
 
-  renderText(x, y + 18,
-             "Oro: " + std::to_string(p.getGold()),
-             SDL_Color{255,215,0,255});
+  renderText(
+      x + 40,
+      y + 28,
+      std::to_string(p.getLevel()),
+      SDL_Color{255, 255, 200, 255});
+
+  int xpX = x + 20;
+  int xpY = y + 84;
+  int xpW = 227;
+  int xpH = 20;
+  // int xpX = x + 20 + 2;
+  // int xpY = y + 84 + 2;
+  // int xpW = 227 - 2;
+  // int xpH = 20 - 2;
+
+  drawBar(xpX, xpY, xpW, xpH,
+          xpCur, xpMax,
+          SDL_Color{60, 180, 60, 255},
+          SDL_Color{20, 20, 20, 255});
+
+  // renderText(xpX + 55, xpY - 2,
+  //            std::to_string(xpCur) + " / " + std::to_string(xpMax),
+  //            SDL_Color{255,255,255,255});
 }
-
 
 void GameWindow::renderVitals(const Layout& layout) {
   auto itMy = players.find(myPlayerID);
@@ -387,16 +407,32 @@ void GameWindow::renderVitals(const Layout& layout) {
 
   const Player& p = *itMy->second;
 
-  int x = layout.bottomRightRect.GetX() + 30;
-  int y = layout.bottomRightRect.GetY() + 30;
-  int barW = layout.bottomRightRect.GetW() - 60;
-  int barH = 14;
+  int x = layout.bottomRightRect.GetX();
+  int y = layout.bottomRightRect.GetY();
 
-  drawBar(x, y, barW, barH, p.getHp(), p.getMaxHp(),
-          SDL_Color{200,40,40,255}, SDL_Color{60,10,10,255});
+  int barX = x + 20;
+  int barW = 227;
+  int barH = 20;
 
-  drawBar(x, y + 35, barW, barH, p.getMana(), p.getMaxMana(),
-          SDL_Color{40,80,220,255}, SDL_Color{10,20,60,255});
+  int hpY = y + 30;
+  drawBar(barX, hpY, barW, barH,
+          p.getHp(), p.getMaxHp(),
+          SDL_Color{200,40,40,255},
+          SDL_Color{30,0,0,255});
+
+  renderText(barX + 82, hpY - 1,
+             std::to_string(p.getHp()) + "/" + std::to_string(p.getMaxHp()),
+             SDL_Color{255,255,255,255});
+
+  int manaY = y + 74;
+  drawBar(barX, manaY, barW, barH,
+          p.getMana(), p.getMaxMana(),
+          SDL_Color{40,80,220,255},
+          SDL_Color{0,0,40,255});
+
+  renderText(barX + 82, manaY - 1,
+             std::to_string(p.getMana()) + "/" + std::to_string(p.getMaxMana()),
+             SDL_Color{255,255,255,255});
 }
 
 void GameWindow::renderPlayerHeader(const Layout& layout) {
@@ -410,10 +446,10 @@ void GameWindow::renderPlayerHeader(const Layout& layout) {
 
   SDL2pp::Texture tex(*renderer, surf);
 
-  int x = layout.rightTopRect.GetX() +
+  int x = layout.rightTopRect.GetX() + 24 +
           (layout.rightTopRect.GetW() - surf.GetWidth()) / 2;
 
-  int y = layout.rightTopRect.GetY() + 20;
+  int y = layout.rightTopRect.GetY() + 18;
 
   renderer->Copy(
       tex,
@@ -451,6 +487,25 @@ void GameWindow::renderUIBackgrounds(const Layout& layout) {
                    SDL2pp::NullOpt,
                    layout.bottomRightRect);
   }
+}
+
+void GameWindow::renderInventoryInfo(const Layout& layout) {
+  auto itMy = players.find(myPlayerID);
+  if (itMy == players.end())
+    return;
+
+  const Player& p = *itMy->second;
+
+  int x = layout.inventoryRect.GetX();
+  int y = layout.inventoryRect.GetY();
+
+  renderText(x + 83, y + 252,
+             std::to_string(p.getGold()),
+             SDL_Color{255,255,200,255});
+
+  renderText(x + 215, y + 252,
+             "0",
+             SDL_Color{255,255,200,255});
 }
 
 // WIP
