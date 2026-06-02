@@ -3,16 +3,18 @@
 
 #include "Direction.h"
 #include "InventoryConstants.h"
-#include "RenderableEntity.h"
-#include "Camera.h"
+#include "Race.h"
 #include <array>
 #include <cstdint>
-#include <memory>
-#include <SpriteCalculator.h>
 #include <string>
-#include <SDL2pp/SDL2pp.hh>
 
-class Player : public RenderableEntity {
+class Player {
+
+public:
+  static constexpr int Width = 32;
+  static constexpr int Height = 32;
+  static constexpr int HeadWidth = 24;
+  static constexpr int HeadHeight = 24;
 
 private:
   uint32_t id;
@@ -20,7 +22,7 @@ private:
   Direction direction{Direction::Down};
 
   int x, y;
-  std::string race;
+  Race race;
   std::string name;
   std::array<uint8_t, MAX_INVENTORY_SLOTS> inventory{};
   uint8_t equippedWeapon{0};
@@ -35,29 +37,16 @@ private:
   uint32_t level{1};
   uint32_t experience{0};
 
-  std::unique_ptr<SDL2pp::Texture> playerTexture;
-  SDL2pp::Font* nameFont;
-  SpriteFrameCalculator spriteFrameCalculator;
-  std::unique_ptr<SDL2pp::Texture> headTexture;
-
-private:
-
-  SpriteFrame headFrameForDirection(Direction dir);
-
-
 public:
   Player(uint32_t id, int xOrigin, int yOrigin);
-
-  void setPlayerTexture(std::unique_ptr<SDL2pp::Texture> texture);
 
   /* Model, el unico que puede modificar Player */
   uint32_t getID() const;
   void setCoordinates(int x, int y);
   void updateCoordinates(int x, int y, Direction direction);
-  void setHeadTexture(std::unique_ptr<SDL2pp::Texture> txt);
-  void setNameFont(SDL2pp::Font* font);
   void stopMoving();
-  void setRace(const std::string &race);
+  void setRace(const Race race);
+  void setDirection(Direction direction);
 
   void setName(const std::string &v) { name = v; }
 
@@ -65,7 +54,9 @@ public:
   void setMaxHp(uint32_t v) { maxHp = v; }
   void setMana(uint32_t v) { mana = v; }
   void setMaxMana(uint32_t v) { maxMana = v; }
-  void setInventory(const std::array<uint8_t, MAX_INVENTORY_SLOTS> &v) { inventory = v; }
+  void setInventory(const std::array<uint8_t, MAX_INVENTORY_SLOTS> &v) {
+    inventory = v;
+  }
   void setEquippedWeapon(uint8_t v) { equippedWeapon = v; }
   void setEquippedArmor(uint8_t v) { equippedArmor = v; }
   void setEquippedHelmet(uint8_t v) { equippedHelmet = v; }
@@ -74,26 +65,21 @@ public:
   uint8_t getEquippedArmor() const { return equippedArmor; }
   uint8_t getEquippedHelmet() const { return equippedHelmet; }
   uint8_t getEquippedShield() const { return equippedShield; }
-  const std::array<uint8_t, MAX_INVENTORY_SLOTS> &getInventory() const { return inventory; }
+  const std::array<uint8_t, MAX_INVENTORY_SLOTS> &getInventory() const {
+    return inventory;
+  }
 
   void setGold(uint32_t v) { gold = v; }
   void setLevel(uint32_t v) { level = v; }
   void setExperience(uint32_t v) { experience = v; }
 
   /* View */
-  void render(SDL2pp::Renderer &renderer, Camera &camera,
-              unsigned int it) override;
-
-  int get_x() override;
-  int get_y() override;
-  int get_h() override;
-  bool rendered() override;
-
   bool getIsMoving() const { return isMoving; }
   Direction getDirection() const { return direction; }
-  int getX() const { return x; }
-  int getY() const { return y; }
-  const std::string &getRace() const { return race; }
+  int get_x() const { return x; }
+  int get_y() const { return y; }
+  Race getRace() const { return race; }
+  const std::string &getName() const { return name; }
   uint32_t getHp() const { return hp; }
   uint32_t getMaxHp() const { return maxHp; }
   uint32_t getMana() const { return mana; }

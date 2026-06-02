@@ -22,9 +22,9 @@
 #include "command/GlobalChatMessageCommand.h"
 
 std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
-  if (const auto *request =
-          std::get_if<RegisterPlayerCommandDTO>(&dto)) {
-    return std::make_unique<RegisterPlayerCommand>(request->playerName, request->race, request->playerClass);
+  if (const auto *request = std::get_if<RegisterPlayerCommandDTO>(&dto)) {
+    return std::make_unique<RegisterPlayerCommand>(request->name, request->race,
+                                                   request->playerClass);
   }
 
   if (const auto *request = std::get_if<LoginPlayerCommandDTO>(&dto)) {
@@ -33,7 +33,7 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
 
   if (const auto *request = std::get_if<MoveCommandDTO>(&dto)) {
     return std::make_unique<MovePlayerCommand>(request->playerId,
-                                                request->direction);
+                                               request->direction);
   }
 
   if (const auto *request = std::get_if<PlayerStopCommandDTO>(&dto)) {

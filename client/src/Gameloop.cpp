@@ -4,6 +4,7 @@
 #include "RegisterPlayerCommandDTO.h"
 
 #include <iostream>
+#include <list>
 #include <stdexcept>
 #include <string>
 
@@ -15,7 +16,6 @@ Gameloop::Gameloop(Queue<ServerEventDTO> &receptionQueue,
 }
 
 void Gameloop::run() {
-
   unsigned int it = 0;
 
   ConstantRateLoop rateloop(FPS);
@@ -50,29 +50,52 @@ void Gameloop::run() {
 void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
                         Queue<ClientCommandDTO> &sendingQueue,
                         const ClientData &clientData) {
-  if (clientData.is_new_character) {
-    sendingQueue.push(RegisterPlayerCommandDTO{clientData.character_name, clientData.race, clientData.player_class});
+  Race race = Race::Human; // generico
+  if (std::holds_alternative<ClientDataRegister>(clientData)) {
+    const ClientDataRegister registerData =
+        std::get<ClientDataRegister>(clientData);
+    race = RaceUtils::stringToRace(registerData.race);
+    sendingQueue.push(RegisterPlayerCommandDTO{registerData.username, race,
+                                               registerData.playerClass});
+  } else if (std::holds_alternative<ClientDataLogin>(clientData)) {
+    const ClientDataLogin loginData = std::get<ClientDataLogin>(clientData);
+    sendingQueue.push(LoginPlayerCommandDTO{loginData.username});
   } else {
-    sendingQueue.push(LoginPlayerCommandDTO{clientData.username});
+    throw std::runtime_error("Invalid client data");
   }
 
-  ServerEventDTO event = receptionQueue.pop();
-  // si se cierra el socket el hilo reciver cierra y lanza ClosedQueue
-  // debloquenado este pop
+  std::list<ServerEventDTO> deferredEvents;
 
-  auto *resp = std::get_if<RegisterPlayerEventDTO>(&event);
-  if (!resp) {
-    throw std::runtime_error("RegisterPlayerResponseDTO is null");
+  ServerEventDTO event;
+  uint32_t myPlayerId = 0;
+  bool registered = false;
+
+  while (!registered) {
+    event = receptionQueue.pop();
+
+    if (auto *resp = std::get_if<RegisterPlayerEventDTO>(&event)) {
+      if (resp->status != 0) {
+        if (resp->status == 2) {
+          throw std::runtime_error("Player is already online");
+        }
+        throw std::runtime_error("Player registration failed");
+      }
+      myPlayerId = resp->playerId;
+      registered = true;
+      race = resp->race;
+    } else {
+      deferredEvents.push_back(std::move(event));
+    }
   }
-  if (resp->status != 0) {
-    throw std::runtime_error("Player registration failed");
-  }
 
-  uint32_t myPlayerId = resp->playerId;
+  gameView = std::make_unique<GameWindow>(myPlayerId, 820, 400);
 
-  gameView = std::make_unique<GameWindow>(myPlayerId);
   gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
                                           receptionQueue, sendingQueue,
-                                          clientData.race);
+                                          race);
   gameController = std::make_unique<GameController>(gameModel.get());
+
+  for (auto &deferred : deferredEvents) {
+    receptionQueue.push(std::move(deferred));
+  }
 }

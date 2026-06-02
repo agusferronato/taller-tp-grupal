@@ -37,6 +37,7 @@ enum class EventOpcode : uint8_t {
   PlayerAppearedEvent,
   PlayerStoppedEvent,
   PlayerRemovedEvent,
+  NPCAppearedEvent,
   InventoryUpdateEvent,
   TextureInfoEvent,
   PrivateMessageEvent,

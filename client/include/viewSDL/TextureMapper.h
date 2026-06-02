@@ -5,6 +5,7 @@
 #include <list>
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "MapData.h"
@@ -26,12 +27,11 @@ public:
   explicit TextureMapper(SDL2pp::Renderer &renderer);
 
   void loadFromToml(const std::string &path);
-  void buildRenderGrid(const std::list<TileOrigin> &origins,
-                       int gridSizePx);
+  void buildRenderGrid(const std::list<TileOrigin> &origins, int gridSizePx);
 
   SDL2pp::Texture &getTexture(int id);
-  const std::vector<std::map<std::pair<int, int>, std::vector<GridItem>>>
-      &getTilesToRender() const;
+  const std::vector<std::map<std::pair<int, int>, std::vector<GridItem>>> &
+  getTilesToRender() const;
 };
 
 #endif
