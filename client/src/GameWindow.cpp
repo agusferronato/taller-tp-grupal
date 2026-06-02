@@ -369,8 +369,9 @@ void GameWindow::renderPlayerStats(const Layout& layout) {
 
   const Player& p = *itMy->second;
 
-  int xpCur = 357;   // placeholder
-  int xpMax = 1000;  // placeholder
+  int xpCur = 357;   // placeholder, reemplazar por xp actual
+  int xpMax = 1000;  // placeholder, reemplazar por xp total para subir de nivel
+  // Para el nivel maximo se podria hacer que la barra aparezca siempre llena por ejemplo
 
   int x = layout.rightTopRect.GetX();
   int y = layout.rightTopRect.GetY();
@@ -390,14 +391,17 @@ void GameWindow::renderPlayerStats(const Layout& layout) {
   // int xpW = 227 - 2;
   // int xpH = 20 - 2;
 
+  
   drawBar(xpX, xpY, xpW, xpH,
-          xpCur, xpMax,
-          SDL_Color{60, 180, 60, 255},
-          SDL_Color{20, 20, 20, 255});
-
-  // renderText(xpX + 55, xpY - 2,
-  //            std::to_string(xpCur) + " / " + std::to_string(xpMax),
-  //            SDL_Color{255,255,255,255});
+    xpCur, xpMax,
+    SDL_Color{60, 180, 60, 255},
+    SDL_Color{20, 20, 20, 255});
+    
+  SDL2pp::Rect xpBarRect(xpX, xpY, xpW, xpH);
+  renderCenteredTextInRect(
+      xpBarRect,
+      std::to_string(xpCur) + " / " + std::to_string(xpMax),
+      SDL_Color{255, 255, 255, 255});
 }
 
 void GameWindow::renderVitals(const Layout& layout) {
@@ -420,9 +424,11 @@ void GameWindow::renderVitals(const Layout& layout) {
           SDL_Color{200,40,40,255},
           SDL_Color{30,0,0,255});
 
-  renderText(barX + 82, hpY - 1,
-             std::to_string(p.getHp()) + "/" + std::to_string(p.getMaxHp()),
-             SDL_Color{255,255,255,255});
+  SDL2pp::Rect hpBarRect(barX, hpY, barW, barH);
+  renderCenteredTextInRect(
+      hpBarRect,
+      std::to_string(p.getHp()) + "/" + std::to_string(p.getMaxHp()),
+      SDL_Color{255,255,255,255});
 
   int manaY = y + 74;
   drawBar(barX, manaY, barW, barH,
@@ -430,9 +436,11 @@ void GameWindow::renderVitals(const Layout& layout) {
           SDL_Color{40,80,220,255},
           SDL_Color{0,0,40,255});
 
-  renderText(barX + 82, manaY - 1,
-             std::to_string(p.getMana()) + "/" + std::to_string(p.getMaxMana()),
-             SDL_Color{255,255,255,255});
+  SDL2pp::Rect manaBarRect(barX, manaY, barW, barH);
+  renderCenteredTextInRect(
+      manaBarRect,
+      std::to_string(p.getMana()) + "/" + std::to_string(p.getMaxMana()),
+      SDL_Color{255,255,255,255});
 }
 
 void GameWindow::renderPlayerHeader(const Layout& layout) {
@@ -506,6 +514,24 @@ void GameWindow::renderInventoryInfo(const Layout& layout) {
   renderText(x + 215, y + 252,
              "0",
              SDL_Color{255,255,200,255});
+}
+
+void GameWindow::renderCenteredTextInRect(const SDL2pp::Rect& rect,
+                                          const std::string& text,
+                                          SDL_Color color) {
+  if (!font)
+    return;
+
+  SDL2pp::Surface surf = font->RenderUTF8_Solid(text, color);
+  SDL2pp::Texture tex(*renderer, surf);
+
+  int x = rect.GetX() + (rect.GetW() - surf.GetWidth()) / 2;
+  int y = rect.GetY() + (rect.GetH() - surf.GetHeight()) / 2;
+
+  renderer->Copy(
+      tex,
+      SDL2pp::NullOpt,
+      SDL2pp::Rect(x, y, surf.GetWidth(), surf.GetHeight()));
 }
 
 // WIP
