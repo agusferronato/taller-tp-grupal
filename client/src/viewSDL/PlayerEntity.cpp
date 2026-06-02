@@ -99,14 +99,14 @@ int PlayerEntity::getRaceBodyID(Race race) const {
 int PlayerEntity::getRaceHeadID(Race race) const {
   switch (race) {
   case Race::Human:
-    return 1;
+    return 16;
   case Race::Elf:
-    return 2;
+    return 17;
   case Race::Dwarf:
-    return 3;
+    return 14;
   case Race::Gnome:
-    return 4;
+    return 15;
   default:
-    return 1; // Human como fallback
+    return 16; // Human como fallback
   }
 }

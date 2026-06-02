@@ -25,9 +25,17 @@ public:
          PlayerClass playerClass, int x, int y);
   Player(std::string name, Direction direction, int x, int y,
          const PlayerStatsInfo &statsInfo);
+
   void startMoving(Direction dir);
   void stopMoving();
   void move(int newX, int newY);
+  void takeDamage(uint32_t damage);
+  uint32_t heal(uint32_t amount);
+  bool useMana(uint32_t amount);
+  bool gainExperience(uint32_t amount);
+  bool expentGold(uint32_t amount);
+  void earnGold(uint32_t);
+  uint32_t atack();
 
   bool isMoving() const { return moving; }
   Direction getDirection() const { return direction; }

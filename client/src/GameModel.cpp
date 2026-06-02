@@ -2,6 +2,9 @@
 #include "ChatMessageEventDTO.h"
 #include "GameWindow.h"
 #include "InventoryUpdateEventDTO.h"
+#include "NPC.h"
+#include "NPCAppearedEventDTO.h"
+#include "NPCType.h"
 #include "NpcDefeatedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerInfoEventDTO.h"
@@ -25,7 +28,6 @@ GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
 
 void GameModel::updateStateFromServer() {
   ServerEventDTO event;
-
   while (receptionQueue.try_pop(event)) {
     std::visit([this](const auto &e) { handle(e); }, event);
   }
@@ -44,7 +46,6 @@ void GameModel::handle(const PlayerMovedEventDTO &moved) {
   int16_t x = moved.x;
   int16_t y = moved.y;
   Direction dir = moved.direction;
-
   auto it = players.find(pid);
   if (it != players.end()) {
     it->second->updateCoordinates(x, y, dir);
@@ -93,7 +94,6 @@ void GameModel::handle(const TextureInfoEventDTO &texInfo) {
 void GameModel::registerPlayers() {
   while (true) {
     auto event = receptionQueue.pop();
-
     if (auto *list = std::get_if<PlayerListEventDTO>(&event)) {
       for (const auto &info : list->players) {
         if (info.playerId == myPlayerID) {
@@ -107,7 +107,6 @@ void GameModel::registerPlayers() {
         players[info.playerId] = std::move(player);
       }
       break;
-
     } else if (auto *texInfo = std::get_if<TextureInfoEventDTO>(&event)) {
       handle(*texInfo);
     }
@@ -117,7 +116,19 @@ void GameModel::registerPlayers() {
 void GameModel::handle(const InventoryUpdateEventDTO &) {}
 void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &) {}
-void GameModel::handle(const NpcDefeatedEventDTO &) {}
+
+void GameModel::handle(const NpcDefeatedEventDTO &event) {
+  gameView->removeEntity(EntityType::Npc, event.npcId);
+  npcs.erase(event.npcId);
+}
+
+void GameModel::handle(const NPCAppearedEventDTO &event) {
+  auto npc = std::make_unique<NPC>(event.x, event.y);
+  NPCType npcType = static_cast<NPCType>(event.npcType);
+  gameView->addNpc(event.npcId, *npc, npcType);
+  npcs[event.npcId] = std::move(npc);
+}
+
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
 
 PlayerStatsInfo GameModel::playerStatsFrom(const PlayerInfoDTO &info) {

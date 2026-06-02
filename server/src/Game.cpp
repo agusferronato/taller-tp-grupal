@@ -6,6 +6,7 @@
 #include "Game.h"
 #include "MapLoader.h"
 #include "MoveCommandDTO.h"
+#include "NPCAppearedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerInfoEventDTO.h"
 #include "PlayerListEventDTO.h"
@@ -33,6 +34,9 @@ void Game::run() {
   textureOrigins = mapLoader.GetTextureOrigins();
   collidableCells = mapLoader.GetCollidableCells();
 
+  biomes = std::move(mapLoader.GetBiomes());
+  cities = mapLoader.GetCities();
+
   ConstantRateLoop rateloop(FPS_SERVER);
   CommandFactory factory;
   unsigned int it = 0;
@@ -46,6 +50,7 @@ void Game::run() {
       command->execute(*this, msg.connectionId);
     }
     movePlayers();
+    appearNPCs();
     sendMessages();
 
     if (++saveCounter >= 300) {
@@ -76,8 +81,7 @@ void Game::registerPlayer(const std::string &name, const Race race,
                           uint32_t connectionId) {
 
   if (repository.exists(name)) {
-    senderQueueMonitor.sendToClient(connectionId,
-                                    RegisterPlayerEventDTO{0, 1});
+    senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{0, 1});
     return;
   }
 
@@ -102,8 +106,8 @@ void Game::registerPlayer(const std::string &name, const Race race,
 
   senderQueueMonitor.markAsRegistered(connectionId);
 
-  senderQueueMonitor.sendToClient(
-      connectionId, RegisterPlayerEventDTO{newId, 0});
+  senderQueueMonitor.sendToClient(connectionId,
+                                  RegisterPlayerEventDTO{newId, 0});
 
   {
     std::vector<TextureOriginDTO> origins;
@@ -122,11 +126,11 @@ void Game::registerPlayer(const std::string &name, const Race race,
 
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
-    playerList.push_back(
-        {pid, static_cast<int16_t>(info->x), static_cast<int16_t>(info->y),
-         info->direction, info->race, info->playerClass, info->name,
-         info->hp, info->maxHp, info->mana, info->maxMana, info->gold,
-         info->level, info->experience});
+    playerList.push_back({pid, static_cast<int16_t>(info->x),
+                          static_cast<int16_t>(info->y), info->direction,
+                          info->race, info->playerClass, info->name, info->hp,
+                          info->maxHp, info->mana, info->maxMana, info->gold,
+                          info->level, info->experience});
   }
 
   senderQueueMonitor.sendToClient(connectionId,
@@ -139,19 +143,17 @@ void Game::registerPlayer(const std::string &name, const Race race,
       players[newId]->gold, players[newId]->level, players[newId]->experience});
 }
 
-
 void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   if (!repository.exists(name)) {
-    senderQueueMonitor.sendToClient(connectionId,
-                                    RegisterPlayerEventDTO{0, 1});
+    senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{0, 1});
     return;
   }
 
   for (auto &[pid, info] : players) {
     if (info->name == name) {
-      senderQueueMonitor.sendToClient(
-          connectionId, RegisterPlayerEventDTO{0, 2});
+      senderQueueMonitor.sendToClient(connectionId,
+                                      RegisterPlayerEventDTO{0, 2});
       return;
     }
   }
@@ -170,8 +172,8 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   senderQueueMonitor.markAsRegistered(connectionId);
 
-  senderQueueMonitor.sendToClient(
-      connectionId, RegisterPlayerEventDTO{newId, 0});
+  senderQueueMonitor.sendToClient(connectionId,
+                                  RegisterPlayerEventDTO{newId, 0});
 
   std::vector<TextureOriginDTO> origins;
   origins.reserve(textureOrigins.size());
@@ -188,11 +190,11 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
-    playerList.push_back(
-        {pid, static_cast<int16_t>(info->x), static_cast<int16_t>(info->y),
-         info->direction, info->race, info->playerClass, info->name,
-         info->hp, info->maxHp, info->mana, info->maxMana, info->gold,
-         info->level, info->experience});
+    playerList.push_back({pid, static_cast<int16_t>(info->x),
+                          static_cast<int16_t>(info->y), info->direction,
+                          info->race, info->playerClass, info->name, info->hp,
+                          info->maxHp, info->mana, info->maxMana, info->gold,
+                          info->level, info->experience});
   }
   senderQueueMonitor.sendToClient(connectionId,
                                   PlayerListEventDTO{std::move(playerList)});
@@ -200,10 +202,9 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
   messagesToSend.push_back(PlayerAppearedEventDTO{
       newId, static_cast<int16_t>(data.x), static_cast<int16_t>(data.y),
       static_cast<Direction>(data.direction), players[newId]->race,
-      players[newId]->playerClass, players[newId]->name,
-      players[newId]->hp, players[newId]->maxHp, players[newId]->mana,
-      players[newId]->maxMana, players[newId]->gold, players[newId]->level,
-      players[newId]->experience});
+      players[newId]->playerClass, players[newId]->name, players[newId]->hp,
+      players[newId]->maxHp, players[newId]->mana, players[newId]->maxMana,
+      players[newId]->gold, players[newId]->level, players[newId]->experience});
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {
@@ -282,6 +283,48 @@ void Game::dropItem(uint32_t playerId, uint8_t inventorySlot) {
   it->second->inventory.removeItem(inventorySlot);
 }
 
+bool Game::thereIsACollidableEntityAt(Position position) {
+  int center = maxSize / 2;
+  int cellX = (position.row - center) * gridSize;
+  int cellY = (position.column - center) * gridSize;
+
+  if (collidableCells.count({position.row, position.column, 0}))
+    return true;
+
+  for (auto &col : colisionables) {
+    if (!(cellX + gridSize <= col->getX() ||
+          cellX >= col->getX() + col->getAncho() ||
+          cellY + gridSize <= col->getY() ||
+          cellY >= col->getY() + col->getAlto()))
+      return true;
+  }
+
+  for (auto &npc : npcs) {
+    if (!(cellX + gridSize <= npc->getX() ||
+          cellX >= npc->getX() + npc->getAncho() ||
+          cellY + gridSize <= npc->getY() ||
+          cellY >= npc->getY() + npc->getAlto()))
+      return true;
+  }
+
+  return false;
+}
+
+void Game::appearNPC(std::unique_ptr<NPC> &&npc) {
+  int center = maxSize / 2;
+  int px = (npc->getPosition().row - center) * gridSize;
+  int py = (npc->getPosition().column - center) * gridSize;
+  npc->setPixelPosition(px, py);
+
+  uint16_t id = nextNPCId++;
+  messagesToSend.push_back(
+      NPCAppearedEventDTO{id, static_cast<uint8_t>(npc->getType()),
+                          static_cast<int16_t>(px), static_cast<int16_t>(py)});
+
+  std::cout << "NPC of type " << (int)npc->getType() << std::endl;
+  npcs.push_back(std::move(npc));
+}
+
 void Game::movePlayers() {
   for (auto &[playerID, info] : players) {
     if (!info->moving) {
@@ -342,5 +385,12 @@ void Game::sendMessages() {
 void Game::saveAllPlayers() {
   for (auto &[id, player] : players) {
     repository.save(player->name, player->toPlayerData());
+  }
+}
+
+void Game::appearNPCs() {
+
+  for (auto &biome : biomes) {
+    biome->NPCgenerationStrategy(*this);
   }
 }

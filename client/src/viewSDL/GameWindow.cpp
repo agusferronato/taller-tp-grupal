@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <string>
 
+#include "NPCEntity.h"
 #include "Player.h"
 #include "PlayerEntity.h"
 
@@ -210,7 +211,7 @@ void GameWindow::render(unsigned int it) {
     }
   }
 
-  for (auto &[key, entity] : entities) {
+  for (auto *entity : sortedEntities) {
     if (!entity->rendered()) {
       entity->render(*renderer, camera, it);
     }
@@ -229,9 +230,17 @@ void GameWindow::clear() {
 void GameWindow::addPlayer(uint32_t ID, const ClientPlayer &player) {
   if (ID == myPlayerID) {
     setMyPlayer(player, ID);
+    return;
   }
   auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
   addEntity(EntityType::Player, ID, std::move(entity));
+}
+
+void GameWindow::addNpc(uint32_t ID, NPC &npc, NPCType npcType) {
+  NPCInfo info = npcParser.getInfo(npcType);
+  auto entity = std::make_unique<NPCEntity>(npc, *textureManager,
+                                            info.textureId, info.layoutType);
+  addEntity(EntityType::Npc, ID, std::move(entity));
 }
 
 void GameWindow::removePlayer(uint32_t ID) {

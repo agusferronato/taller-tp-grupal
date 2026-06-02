@@ -5,6 +5,7 @@
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "Direction.h"
+#include "NPC.h"
 #include "Queue.h"
 #include <memory>
 #include <string>
@@ -19,6 +20,7 @@ private:
 
   uint32_t myPlayerID;
   std::unordered_map<uint32_t, std::unique_ptr<ClientPlayer>> players;
+  std::unordered_map<uint32_t, std::unique_ptr<NPC>> npcs;
 
   GameWindow *gameView;
 
@@ -46,6 +48,7 @@ private:
   void handle(const PlayerRemovedEventDTO &event);
   void handle(const PlayerInfoEventDTO &event);
   void handle(const InventoryUpdateEventDTO &event);
+  void handle(const NPCAppearedEventDTO &event);
   void handle(const TextureInfoEventDTO &event);
   void handle(const PlayerListEventDTO &event);
   void handle(const ChatMessageEventDTO &event);
