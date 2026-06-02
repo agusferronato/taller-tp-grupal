@@ -21,37 +21,46 @@ bool Formulas::isGuerrero(const std::string &clase) {
   return toLower(clase) == "guerrero";
 }
 
-double Formulas::getFRazaVida(const std::string &raza) {
-  std::string lr = toLower(raza);
-  if (lr == "elfo")
+double Formulas::getFRazaVida(const Race race) {
+  switch (race) {
+  case Race::Human:
+    return 1;
+  case Race::Elf:
     return 0.8;
-  if (lr == "enano")
+  case Race::Dwarf:
     return 1.3;
-  if (lr == "gnomo")
+  case Race::Gnome:
     return 1.1;
-  return 1.0;
+  }
+  return 0;
 }
 
-double Formulas::getFRazaMana(const std::string &raza) {
-  std::string lr = toLower(raza);
-  if (lr == "elfo")
+double Formulas::getFRazaMana(const Race race) {
+  switch (race) {
+  case Race::Human:
+    return 1;
+  case Race::Elf:
     return 1.3;
-  if (lr == "enano")
+  case Race::Dwarf:
     return 0.7;
-  if (lr == "gnomo")
+  case Race::Gnome:
     return 1.2;
-  return 1.0;
+  }
+  return 0;
 }
 
-double Formulas::getFRazaRecuperacion(const std::string &raza) {
-  std::string lr = toLower(raza);
-  if (lr == "elfo")
+double Formulas::getFRazaRecuperacion(const Race race) {
+  switch (race) {
+  case Race::Human:
+    return 1;
+  case Race::Elf:
     return 1.2;
-  if (lr == "enano")
+  case Race::Dwarf:
     return 0.8;
-  if (lr == "gnomo")
+  case Race::Gnome:
     return 0.9;
-  return 1.0;
+  }
+  return 0;
 }
 
 double Formulas::getFClaseVida(const std::string &clase) {
@@ -93,33 +102,31 @@ double Formulas::getFClaseMeditacion(const std::string &clase) {
   return 0.0;
 }
 
-uint32_t Formulas::calcularVidaMax(uint32_t constitucion,
-                                   const std::string &raza,
+uint32_t Formulas::calcularVidaMax(uint32_t constitucion, const Race race,
                                    const std::string &clase, uint32_t nivel) {
   double resultado = static_cast<double>(constitucion) * getFClaseVida(clase) *
-                     getFRazaVida(raza) * static_cast<double>(nivel);
+                     getFRazaVida(race) * static_cast<double>(nivel);
   return static_cast<uint32_t>(std::round(resultado));
 }
 
-uint32_t Formulas::calcularManaMax(uint32_t inteligencia,
-                                   const std::string &raza,
+uint32_t Formulas::calcularManaMax(uint32_t inteligencia, const Race race,
                                    const std::string &clase, uint32_t nivel) {
   if (isGuerrero(clase))
     return 0;
   double resultado = static_cast<double>(inteligencia) * getFClaseMana(clase) *
-                     getFRazaMana(raza) * static_cast<double>(nivel);
+                     getFRazaMana(race) * static_cast<double>(nivel);
   return static_cast<uint32_t>(std::round(resultado));
 }
 
-uint32_t Formulas::calcularRecuperacionVida(const std::string &raza,
+uint32_t Formulas::calcularRecuperacionVida(const Race race,
                                             uint32_t segundos) {
-  double resultado = getFRazaRecuperacion(raza) * static_cast<double>(segundos);
+  double resultado = getFRazaRecuperacion(race) * static_cast<double>(segundos);
   return static_cast<uint32_t>(std::round(resultado));
 }
 
-uint32_t Formulas::calcularRecuperacionMana(const std::string &raza,
+uint32_t Formulas::calcularRecuperacionMana(const Race race,
                                             uint32_t segundos) {
-  double resultado = getFRazaRecuperacion(raza) * static_cast<double>(segundos);
+  double resultado = getFRazaRecuperacion(race) * static_cast<double>(segundos);
   return static_cast<uint32_t>(std::round(resultado));
 }
 

@@ -109,7 +109,8 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerCommand) {
   registerAllParsers(client);
   registerAllParsers(server);
 
-  ClientCommandDTO original = RegisterPlayerCommandDTO{"L0rd", "elfo", "Mago"};
+  ClientCommandDTO original =
+      RegisterPlayerCommandDTO{"L0rd", Race::Elf, "Mago"};
 
   client.sendCommand(original);
 
@@ -118,7 +119,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerCommand) {
 
   ASSERT_NE(dto, nullptr);
   EXPECT_EQ(dto->name, "L0rd");
-  EXPECT_EQ(dto->race, "elfo");
+  EXPECT_EQ(dto->race, Race::Elf);
   EXPECT_EQ(dto->playerClass, "Mago");
 }
 
@@ -333,7 +334,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerResponse) {
   registerAllParsers(server);
   registerAllParsers(client);
 
-  ServerEventDTO original = RegisterPlayerEventDTO{1, 0};
+  ServerEventDTO original = RegisterPlayerEventDTO{1, 0, Race::Elf};
 
   server.sendEvent(original);
 
@@ -343,6 +344,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerResponse) {
   ASSERT_NE(dto, nullptr);
   EXPECT_EQ(dto->playerId, 1);
   EXPECT_EQ(dto->status, 0);
+  EXPECT_EQ(dto->race, Race::Elf);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
@@ -355,12 +357,12 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
   registerAllParsers(client);
 
   std::vector<PlayerInfoDTO> players = {
-      {1, 100, 200, Direction::Down, "humano", "jug1", 100, 100, 50, 100, 500,
-       5, 2000},
-      {2, 300, 400, Direction::Up, "elfo", "jug2", 80, 80, 100, 150, 300, 3,
+      {1, 100, 200, Direction::Down, Race::Human, "jug1", 100, 100, 50, 100,
+       500, 5, 2000},
+      {2, 300, 400, Direction::Up, Race::Elf, "jug2", 80, 80, 100, 150, 300, 3,
        800},
-      {3, 500, 600, Direction::Left, "enano", "jug3", 120, 120, 0, 0, 1000, 8,
-       7000},
+      {3, 500, 600, Direction::Left, Race::Dwarf, "jug3", 120, 120, 0, 0, 1000,
+       8, 7000},
   };
 
   ServerEventDTO original = PlayerListEventDTO{players};
@@ -377,17 +379,17 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
   EXPECT_EQ(dto->players[0].x, 100);
   EXPECT_EQ(dto->players[0].y, 200);
   EXPECT_EQ(dto->players[0].direction, Direction::Down);
-  EXPECT_EQ(dto->players[0].race, "humano");
+  EXPECT_EQ(dto->players[0].race, Race::Human);
 
   EXPECT_EQ(dto->players[1].playerId, 2);
   EXPECT_EQ(dto->players[1].x, 300);
   EXPECT_EQ(dto->players[1].y, 400);
   EXPECT_EQ(dto->players[1].direction, Direction::Up);
-  EXPECT_EQ(dto->players[1].race, "elfo");
+  EXPECT_EQ(dto->players[1].race, Race::Elf);
 
   EXPECT_EQ(dto->players[2].playerId, 3);
   EXPECT_EQ(dto->players[2].x, 500);
   EXPECT_EQ(dto->players[2].y, 600);
   EXPECT_EQ(dto->players[2].direction, Direction::Left);
-  EXPECT_EQ(dto->players[2].race, "enano");
+  EXPECT_EQ(dto->players[2].race, Race::Dwarf);
 }

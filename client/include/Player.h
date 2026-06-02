@@ -3,6 +3,7 @@
 
 #include "Direction.h"
 #include "InventoryConstants.h"
+#include "Race.h"
 #include <array>
 #include <cstdint>
 #include <string>
@@ -21,7 +22,7 @@ private:
   Direction direction{Direction::Down};
 
   int x, y;
-  std::string race;
+  Race race;
   std::string name;
   std::array<uint8_t, MAX_INVENTORY_SLOTS> inventory{};
   uint8_t equippedWeapon{0};
@@ -41,12 +42,11 @@ public:
 
   /* Model, el unico que puede modificar Player */
   uint32_t getID() const;
-  uint32_t getBodyID() const { return 0; }
-  uint32_t getHeadID() const { return 1; }
   void setCoordinates(int x, int y);
   void updateCoordinates(int x, int y, Direction direction);
   void stopMoving();
-  void setRace(const std::string &race);
+  void setRace(const Race race);
+  void setDirection(Direction direction);
 
   void setName(const std::string &v) { name = v; }
 
@@ -78,7 +78,7 @@ public:
   Direction getDirection() const { return direction; }
   int get_x() const { return x; }
   int get_y() const { return y; }
-  const std::string &getRace() const { return race; }
+  Race getRace() const { return race; }
   const std::string &getName() const { return name; }
   uint32_t getHp() const { return hp; }
   uint32_t getMaxHp() const { return maxHp; }

@@ -1,6 +1,6 @@
 #include "PlayerEntity.h"
 
-PlayerEntity::PlayerEntity(Player &player, TextureManager &textureManager,
+PlayerEntity::PlayerEntity(const Player &player, TextureManager &textureManager,
                            SDL2pp::Font &nameFont)
     : player(player), textureManager(textureManager), nameFont(nameFont) {}
 
@@ -17,7 +17,7 @@ void PlayerEntity::renderBody(SDL2pp::Renderer &renderer, Camera &camera,
                               unsigned int it) {
   unsigned int animationIt = player.getIsMoving() ? it : 0;
 
-  Sprite src = textureManager.getBodySprite(player.getBodyID(),
+  Sprite src = textureManager.getBodySprite(getRaceBodyID(player.getRace()),
                                             player.getDirection(), animationIt);
 
   SDL2pp::Rect playerRect = camera.toScreen(get_x(), get_y(), Player::Width, Player::Height);
@@ -29,12 +29,18 @@ void PlayerEntity::renderBody(SDL2pp::Renderer &renderer, Camera &camera,
 }
 
 void PlayerEntity::renderName(SDL2pp::Renderer &renderer, Camera &camera) {
+  // No renderizar si el nombre está vacío
+  const std::string &name = player.getName();
+  if (name.empty()) {
+    return;
+  }
+
   int head_y = get_head_y(camera);
   SDL2pp::Rect playerPosition = camera.toScreen(player.get_x(), player.get_y(),
                                                 Player::Width, Player::Height);
 
-  SDL2pp::Surface surf = nameFont.RenderUTF8_Solid(
-      player.getName(), SDL_Color{255, 255, 255, 255});
+  SDL2pp::Surface surf =
+      nameFont.RenderUTF8_Solid(name, SDL_Color{255, 255, 255, 255});
   SDL2pp::Texture tex(renderer, surf);
   int nameX = playerPosition.x + (playerPosition.w - surf.GetWidth()) / 2;
   int nameY = head_y - surf.GetHeight() - 2;
@@ -43,8 +49,8 @@ void PlayerEntity::renderName(SDL2pp::Renderer &renderer, Camera &camera) {
 }
 
 void PlayerEntity::renderHead(SDL2pp::Renderer &renderer, Camera &camera) {
-  Sprite src =
-      textureManager.getHeadSprite(player.getHeadID(), player.getDirection());
+  Sprite src = textureManager.getHeadSprite(getRaceHeadID(player.getRace()),
+                                            player.getDirection());
 
   int head_x = get_head_x(camera);
   int head_y = get_head_y(camera);
@@ -70,10 +76,38 @@ int PlayerEntity::get_head_y(Camera &camera) {
   return headY;
 }
 
-Player &PlayerEntity::getPlayer() { return player; }
+const Player &PlayerEntity::getPlayer() { return player; }
 
 int PlayerEntity::get_x() { return player.get_x(); }
 
 int PlayerEntity::get_y() { return player.get_y(); }
 
 int PlayerEntity::get_h() { return Player::Height; }
+
+int PlayerEntity::getRaceBodyID(Race race) const {
+  // TODO: Agregar texturas para los cuerpos de las otras razas
+  // Por ahora todas usan el mismo body (ID 0)
+  switch (race) {
+  case Race::Human:
+  case Race::Elf:
+  case Race::Dwarf:
+  case Race::Gnome:
+  default:
+    return 0;
+  }
+}
+
+int PlayerEntity::getRaceHeadID(Race race) const {
+  switch (race) {
+  case Race::Human:
+    return 16;
+  case Race::Elf:
+    return 17;
+  case Race::Dwarf:
+    return 14;
+  case Race::Gnome:
+    return 15;
+  default:
+    return 16; // Human como fallback
+  }
+}

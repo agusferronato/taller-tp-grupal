@@ -3,20 +3,20 @@
 #include "Formulas.h"
 
 TEST(FormulasTest, VidaMax) {
-  EXPECT_EQ(Formulas::calcularVidaMax(20, "Humano", "Guerrero", 1), 28);
+  EXPECT_EQ(Formulas::calcularVidaMax(20, Race::Human, "Guerrero", 1), 28);
 }
 
 TEST(FormulasTest, ManaMaxGuerreroSiempreCero) {
-  EXPECT_EQ(Formulas::calcularManaMax(100, "Elfo", "Guerrero", 10), 0);
+  EXPECT_EQ(Formulas::calcularManaMax(100, Race::Elf, "Guerrero", 10), 0);
 }
 
 TEST(FormulasTest, ManaMax) {
-  EXPECT_EQ(Formulas::calcularManaMax(31, "Elfo", "Mago", 1), 60);
+  EXPECT_EQ(Formulas::calcularManaMax(31, Race::Elf, "Mago", 1), 60);
 }
 
 TEST(FormulasTest, Recuperacion) {
-  EXPECT_EQ(Formulas::calcularRecuperacionVida("Elfo", 10), 12);
-  EXPECT_EQ(Formulas::calcularRecuperacionMana("Elfo", 10), 12);
+  EXPECT_EQ(Formulas::calcularRecuperacionVida(Race::Elf, 10), 12);
+  EXPECT_EQ(Formulas::calcularRecuperacionMana(Race::Elf, 10), 12);
 }
 
 TEST(FormulasTest, MeditacionGuerreroCero) {

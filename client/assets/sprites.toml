@@ -4,11 +4,6 @@ path = "assets/11402.png"
 transparent = true
 
 [[sprites]]
-id = 1
-path = "assets/cabezas/elfo.png"
-transparent = true
-
-[[sprites]]
 id = 2
 path = "assets/zombie.png"
 transparent = true
@@ -66,4 +61,27 @@ transparent = true
 [[sprites]]
 id = 13
 path = "assets/special_golem.png"
+transparent = true
+
+[[sprites]]
+id = 14
+path = "assets/cabezas/enano.png"
+layout_type = "Head"
+transparent = true
+
+[[sprites]]
+id = 15
+path = "assets/cabezas/gnomo.png"
+layout_type = "Head"
+transparent = true
+
+[[sprites]]
+id = 16
+path = "assets/cabezas/humano.png"
+layout_type = "Head"
+transparent = true
+
+[[sprites]]
+id = 17
+path = "assets/cabezas/elfo.png"
 transparent = true

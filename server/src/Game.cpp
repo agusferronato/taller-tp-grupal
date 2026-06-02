@@ -28,7 +28,7 @@ PlayerData PlayerInfo::toPlayerData() const {
   PlayerData data{};
   data.setName(name);
   data.setPassword(password);
-  data.setRace(race);
+  data.setRace(RaceUtils::raceToString(race));
   data.setPlayerClass(playerClass);
   data.x = x;
   data.y = y;
@@ -55,7 +55,7 @@ PlayerData PlayerInfo::toPlayerData() const {
 void PlayerInfo::fromPlayerData(const PlayerData &data) {
   name = data.name;
   password = data.password;
-  race = data.race;
+  race = RaceUtils::stringToRace(data.race);
   playerClass = data.playerClass;
   x = data.x;
   y = data.y;
@@ -79,27 +79,30 @@ void PlayerInfo::fromPlayerData(const PlayerData &data) {
 }
 
 static std::string lowercase(const std::string &s) {
-  std::string r = s;
-  for (auto &c : r)
-    c = std::tolower(static_cast<unsigned char>(c));
-  return r;
+  std::string result = s;
+  auto toLower = [](unsigned char c) { return std::tolower(c); };
+  std::transform(result.begin(), result.end(), result.begin(), toLower);
+  return result;
 }
 
-static void initPlayerStats(PlayerInfo &player, const std::string &race,
+static void initPlayerStats(PlayerInfo &player, const Race race,
                             const std::string &playerClass) {
   struct BaseStats {
     uint32_t strength, agility, constitution, intelligence;
   };
 
-  auto getRaceStats = [](const std::string &r) -> BaseStats {
-    std::string lr = lowercase(r);
-    if (lr == "elfo")
+  auto getRaceStats = [](const Race &race) -> BaseStats {
+    switch (race) {
+    case Race::Human:
+      return {10, 10, 10, 10};
+    case Race::Elf:
       return {6, 13, 5, 16};
-    if (lr == "enano")
+    case Race::Dwarf:
       return {13, 4, 16, 7};
-    if (lr == "gnomo")
+    case Race::Gnome:
       return {7, 6, 14, 13};
-    return {10, 10, 10, 10};
+    }
+    throw std::invalid_argument("Invalid race");
   };
 
   auto getClassStats = [](const std::string &c) -> BaseStats {
@@ -190,12 +193,13 @@ void Game::run() {
 
 void Game::kill() { keepRunning = false; }
 
-void Game::registerPlayer(const std::string &name, const std::string &race,
+void Game::registerPlayer(const std::string &name, const Race race,
                           const std::string &playerClass,
                           uint32_t connectionId) {
 
   if (repository.exists(name)) {
-    senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{0, 1});
+    senderQueueMonitor.sendToClient(connectionId,
+                                    RegisterPlayerEventDTO{0, 1, race});
     return;
   }
 
@@ -229,7 +233,7 @@ void Game::registerPlayer(const std::string &name, const std::string &race,
   senderQueueMonitor.markAsRegistered(connectionId);
 
   senderQueueMonitor.sendToClient(connectionId,
-                                  RegisterPlayerEventDTO{newId, 0});
+                                  RegisterPlayerEventDTO{newId, 0, race});
 
   {
     std::vector<TextureOriginDTO> origins;
@@ -267,13 +271,15 @@ void Game::registerPlayer(const std::string &name, const std::string &race,
 void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   if (!repository.exists(name)) {
-    senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{0, 1});
+    senderQueueMonitor.sendToClient(connectionId,
+                                    RegisterPlayerEventDTO{0, 1, Race::Human});
     return;
   }
 
   for (auto &[pid, info] : players) {
     if (info->name == name) {
-      senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{0, 2});
+      senderQueueMonitor.sendToClient(connectionId,
+                                      RegisterPlayerEventDTO{0, 2, info->race});
       return;
     }
   }
@@ -292,23 +298,21 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   senderQueueMonitor.markAsRegistered(connectionId);
 
-  senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{newId, 0});
+  senderQueueMonitor.sendToClient(
+      connectionId, RegisterPlayerEventDTO{newId, 0, players[newId]->race});
 
   std::vector<TextureOriginDTO> origins;
   origins.reserve(textureOrigins.size());
   for (const auto &o : textureOrigins) {
-    origins.push_back(
-        {static_cast<uint8_t>(o.priority),
-         static_cast<uint8_t>(o.texture_id),
-         static_cast<uint16_t>(o.x),
-         static_cast<uint16_t>(o.y)});
+    origins.push_back({static_cast<uint8_t>(o.priority),
+                       static_cast<uint8_t>(o.texture_id),
+                       static_cast<uint16_t>(o.x), static_cast<uint16_t>(o.y)});
   }
   senderQueueMonitor.sendToClient(
       connectionId,
-      TextureInfoEventDTO{static_cast<uint16_t>(maxSize),
-                          static_cast<uint16_t>(gridSize),
-                          static_cast<uint8_t>(commonGroundTextureId),
-                          std::move(origins)});
+      TextureInfoEventDTO{
+          static_cast<uint16_t>(maxSize), static_cast<uint16_t>(gridSize),
+          static_cast<uint8_t>(commonGroundTextureId), std::move(origins)});
 
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
@@ -317,7 +321,8 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
          info->direction, info->race, info->name, info->hp, info->maxHp,
          info->mana, info->maxMana, info->gold, info->level, info->experience});
   }
-  senderQueueMonitor.sendToClient(connectionId, PlayerListEventDTO{std::move(playerList)});
+  senderQueueMonitor.sendToClient(connectionId,
+                                  PlayerListEventDTO{std::move(playerList)});
 
   messagesToSend.push_back(PlayerAppearedEventDTO{
       newId, static_cast<int16_t>(data.x), static_cast<int16_t>(data.y),
@@ -491,6 +496,7 @@ void Game::appearNPC(std::unique_ptr<NPC>&& npc) {
       static_cast<int16_t>(px),
       static_cast<int16_t>(py)});
 
+  std::cout << "NPC of type " << (int)npc->getType() << std::endl; 
   npcs.push_back(std::move(npc));
 }
 

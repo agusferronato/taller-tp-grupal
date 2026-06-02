@@ -16,9 +16,13 @@
 #include "Camera.h"
 #include "EntityType.h"
 #include "MapData.h"
+#include "Player.h"
 #include "RenderableEntity.h"
+#include "TextureManager.h"
 #include "TextureMapper.h"
+#include "NPCParser.h"
 
+class NPC;
 class PlayerEntity;
 
 class GameWindow {
@@ -31,6 +35,8 @@ private:
   std::unique_ptr<SDL2pp::Renderer> renderer;
   std::unique_ptr<SDL2pp::Font> font;
 
+  std::unique_ptr<TextureManager> textureManager;
+
   Camera camera;
   uint32_t myPlayerID;
 
@@ -38,6 +44,7 @@ private:
   std::map<EntityKey, std::unique_ptr<RenderableEntity>> entities;
   PlayerEntity *myPlayerEntity{nullptr};
 
+  NPCParser npcParser;
   std::unique_ptr<TextureMapper> textureMapper;
 
   int maxSize, gridSize, commonGroundTextureId;
@@ -51,8 +58,11 @@ public:
 
   void addEntity(EntityType type, uint32_t id,
                  std::unique_ptr<RenderableEntity> entity);
+  void addPlayer(uint32_t ID, const Player &player);
+  void addNpc(uint32_t ID, NPC &npc, NPCType npcType);
   void removeEntity(EntityType type, uint32_t id);
-  void setMyPlayer(PlayerEntity *entity);
+  void removePlayer(uint32_t ID);
+  void setMyPlayer(const Player &player, uint32_t ID);
 
   SDL2pp::Renderer &getRenderer();
   SDL2pp::Font &getFont();

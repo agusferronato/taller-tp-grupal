@@ -112,13 +112,13 @@ void TextureManager::loadLayoutsFromToml(const std::string &path) {
   registerBody("Orc",            TextureLayoutType::Orc);
 }
 
-Sprite TextureManager::getBodySprite(int bodyId, Direction dir,
+Sprite TextureManager::getBodySprite(uint32_t bodyID, Direction dir,
                                      unsigned int it) {
   
                                       auto &layout =
       std::get<BodyLayout>(texturesFrames.at(TextureLayoutType::Body));
   SpriteData frame = layout.getLayout(dir, it);
-  return Sprite{textures.at(bodyId), frame.x, frame.y, frame.w, frame.h};
+  return Sprite{textures.at(bodyID), frame.x, frame.y, frame.w, frame.h};
 }
 
 Sprite TextureManager::getBodySprite(TextureLayoutType layoutType, int bodyId,
