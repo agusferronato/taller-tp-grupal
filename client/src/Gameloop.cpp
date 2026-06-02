@@ -91,7 +91,8 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
   gameView = std::make_unique<GameWindow>(myPlayerId, 820, 400);
 
   gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
-                                          receptionQueue, sendingQueue, race);
+                                          receptionQueue, sendingQueue,
+                                          race);
   gameController = std::make_unique<GameController>(gameModel.get());
 
   for (auto &deferred : deferredEvents) {

@@ -46,6 +46,7 @@ public:
   void updateCoordinates(int x, int y, Direction direction);
   void stopMoving();
   void setRace(const Race race);
+  void setDirection(Direction direction);
 
   void setName(const std::string &v) { name = v; }
 

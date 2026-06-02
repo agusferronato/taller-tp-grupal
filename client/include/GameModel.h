@@ -6,6 +6,7 @@
 #include "Direction.h"
 #include "Player.h"
 #include "Queue.h"
+#include "NPC.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -19,14 +20,15 @@ private:
 
   uint32_t myPlayerID;
   std::unordered_map<uint32_t, std::unique_ptr<Player>> players;
+  std::unordered_map<uint32_t, std::unique_ptr<NPC>> npcs;
 
   GameWindow *gameView;
-
 public:
   GameModel(uint32_t myPlayerID, GameWindow *gameView,
             Queue<ServerEventDTO> &receptionQueue,
             Queue<ClientCommandDTO> &sendingQueue, const Race race);
-  void updateStateFromServer();
+
+  void updateStateFromServer(); 
 
 public:
   /*update State From Controller*/
@@ -44,6 +46,7 @@ private:
   void handle(const PlayerRemovedEventDTO &event);
   void handle(const PlayerInfoEventDTO &event);
   void handle(const InventoryUpdateEventDTO &event);
+  void handle(const NPCAppearedEventDTO &event);
   void handle(const TextureInfoEventDTO &event);
   void handle(const PlayerListEventDTO &event);
   void handle(const ChatMessageEventDTO &event);
