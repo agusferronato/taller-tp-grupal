@@ -108,6 +108,7 @@ void GameWindow::renderHUD() {
   renderChat(layout);
   renderPlayerHeader(layout);
   renderPlayerStats(layout);
+  renderInventoryInfo(layout);
   renderVitals(layout);
 }
 
@@ -420,14 +421,14 @@ void GameWindow::renderVitals(const Layout& layout) {
 
   int hpY = y + 30;
   drawBar(barX, hpY, barW, barH,
-          p.getHp(), p.getMaxHp(),
+          p.getHp()-15, p.getMaxHp(),
           SDL_Color{200,40,40,255},
           SDL_Color{30,0,0,255});
 
   SDL2pp::Rect hpBarRect(barX, hpY, barW, barH);
   renderCenteredTextInRect(
       hpBarRect,
-      std::to_string(p.getHp()) + "/" + std::to_string(p.getMaxHp()),
+      std::to_string(p.getHp()-15) + "/" + std::to_string(p.getMaxHp()),
       SDL_Color{255,255,255,255});
 
   int manaY = y + 74;
@@ -502,18 +503,27 @@ void GameWindow::renderInventoryInfo(const Layout& layout) {
   if (itMy == players.end())
     return;
 
-  const Player& p = *itMy->second;
+  // Cuando deje de estar mockeado el oro, reemplazar por p.getGold() o similar
+  // const Player& p = *itMy->second;
+
+  int insuredGold = 399; // placeholder
+  int excessGold = 0;    // placeholder
 
   int x = layout.inventoryRect.GetX();
   int y = layout.inventoryRect.GetY();
 
-  renderText(x + 83, y + 252,
-             std::to_string(p.getGold()),
-             SDL_Color{255,255,200,255});
+  SDL2pp::Rect insuredRect(x + 70, y + 260, 60, 22);
+  SDL2pp::Rect excessRect(x + 190, y + 260, 60, 22);
 
-  renderText(x + 215, y + 252,
-             "0",
-             SDL_Color{255,255,200,255});
+  renderCenteredTextInRect(
+      insuredRect,
+      std::to_string(insuredGold),
+      SDL_Color{255, 255, 200, 255});
+
+  renderCenteredTextInRect(
+      excessRect,
+      std::to_string(excessGold),
+      SDL_Color{255, 255, 200, 255});
 }
 
 void GameWindow::renderCenteredTextInRect(const SDL2pp::Rect& rect,
