@@ -12,7 +12,8 @@ private:
 public:
   explicit GameChatView(SDL2pp::Font* font);
   void render(SDL2pp::Renderer& renderer,
-              const SDL2pp::Rect& rect,
+              const SDL2pp::Rect& messagesRect,
+              const SDL2pp::Rect& inputRect,
               const std::deque<std::string>& messages,
               const std::string& input,
               bool active);
