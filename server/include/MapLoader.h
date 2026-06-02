@@ -2,10 +2,16 @@
 #define MAP_LOADER_H
 
 #include <list>
+#include <memory>
 #include <set>
 #include <string>
 #include <tuple>
 
+#include "Biome.h"
+#include "City.h"
+#include "Desert.h"
+#include "Dungeon.h"
+#include "Forest.h"
 #include "MapData.h"
 
 class MapLoader {
@@ -15,6 +21,8 @@ private:
   int commonGroundTextureId;
   std::set<std::tuple<int, int, int>> collidableCells;
   std::list<TileOrigin> textureOrigins;
+  std::list<std::unique_ptr<Biome>> biomes;
+  std::list<City> cities;
 
 public:
   explicit MapLoader(const std::string &path);
@@ -24,6 +32,8 @@ public:
   int GetCommonGroundTextureId() const;
   const std::set<std::tuple<int, int, int>> &GetCollidableCells() const;
   const std::list<TileOrigin> &GetTextureOrigins() const;
+  std::list<std::unique_ptr<Biome>> &GetBiomes();
+  std::list<City> &GetCities();
 };
 
 #endif

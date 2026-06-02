@@ -9,6 +9,7 @@
 
 #include "Player.h"
 #include "PlayerEntity.h"
+#include "NPCEntity.h"
 
 GameWindow::GameWindow(uint32_t myPlayerID, int windowWidth, int windowHeight)
     : camera(Camera(windowWidth, windowHeight)), myPlayerID(myPlayerID) {
@@ -210,12 +211,6 @@ void GameWindow::render(unsigned int it) {
     }
   }
 
-  for (auto &[key, entity] : entities) {
-    if (!entity->rendered()) {
-      entity->render(*renderer, camera, it);
-    }
-  }
-
   renderHUD();
 }
 
@@ -229,9 +224,17 @@ void GameWindow::clear() {
 void GameWindow::addPlayer(uint32_t ID, const Player &player) {
   if (ID == myPlayerID) {
     setMyPlayer(player, ID);
+    return;
   }
   auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
   addEntity(EntityType::Player, ID, std::move(entity));
+}
+
+void GameWindow::addNpc(uint32_t ID, NPC &npc, NPCType npcType) {
+  NPCInfo info = npcParser.getInfo(npcType);
+  auto entity = std::make_unique<NPCEntity>(npc, *textureManager,
+                                            info.textureId, info.layoutType);
+  addEntity(EntityType::Npc, ID, std::move(entity));
 }
 
 void GameWindow::removePlayer(uint32_t ID) {

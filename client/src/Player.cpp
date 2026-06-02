@@ -17,6 +17,8 @@ void Player::stopMoving() { isMoving = false; }
 
 void Player::setRace(const Race newRace) { race = newRace; }
 
+void Player::setDirection(Direction direction) { this->direction = direction; }
+
 void Player::updateCoordinates(int x, int y, Direction direction) {
   setCoordinates(x, y);
   isMoving = true;

@@ -6,6 +6,7 @@
 #include "Game.h"
 #include "MapLoader.h"
 #include "MoveCommandDTO.h"
+#include "NPCAppearedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerInfoEventDTO.h"
 #include "PlayerListEventDTO.h"
@@ -150,6 +151,9 @@ void Game::run() {
   textureOrigins = mapLoader.GetTextureOrigins();
   collidableCells = mapLoader.GetCollidableCells();
 
+  biomes = std::move(mapLoader.GetBiomes());
+  cities = mapLoader.GetCities();
+
   ConstantRateLoop rateloop(FPS_SERVER);
   CommandFactory factory;
   unsigned int it = 0;
@@ -163,6 +167,7 @@ void Game::run() {
       command->execute(*this, msg.connectionId);
     }
     movePlayers();
+    appearNPCs();
     sendMessages();
 
     if (++saveCounter >= 300) {
@@ -451,6 +456,50 @@ void Game::dropItem(uint32_t playerId, uint8_t inventorySlot) {
   it->second->inventory.removeItem(inventorySlot);
 }
 
+bool Game::thereIsACollidableEntityAt(Position position) {
+  int center = maxSize / 2;
+  int cellX = (position.row - center) * gridSize;
+  int cellY = (position.column - center) * gridSize;
+
+  if (collidableCells.count({position.row, position.column, 0}))
+    return true;
+
+  for (auto &col : colisionables) {
+    if (!(cellX + gridSize <= col->getX() ||
+          cellX >= col->getX() + col->getAncho() ||
+          cellY + gridSize <= col->getY() ||
+          cellY >= col->getY() + col->getAlto()))
+      return true;
+  }
+
+  for (auto &npc : npcs) {
+    if (!(cellX + gridSize <= npc->getX() ||
+          cellX >= npc->getX() + npc->getAncho() ||
+          cellY + gridSize <= npc->getY() ||
+          cellY >= npc->getY() + npc->getAlto()))
+      return true;
+  }
+
+  return false;
+}
+
+void Game::appearNPC(std::unique_ptr<NPC>&& npc) {
+  int center = maxSize / 2;
+  int px = (npc->getPosition().row - center) * gridSize;
+  int py = (npc->getPosition().column - center) * gridSize;
+  npc->setPixelPosition(px, py);
+
+  uint16_t id = nextNPCId++;
+  messagesToSend.push_back(NPCAppearedEventDTO{
+      id,
+      static_cast<uint8_t>(npc->getType()),
+      static_cast<int16_t>(px),
+      static_cast<int16_t>(py)});
+
+  std::cout << "NPC of type " << (int)npc->getType() << std::endl; 
+  npcs.push_back(std::move(npc));
+}
+
 void Game::movePlayers() {
   for (auto &[playerID, info] : players) {
     if (!info->moving)
@@ -526,4 +575,13 @@ void Game::saveAllPlayers() {
   for (auto &[id, player] : players) {
     repository.save(player->name, player->toPlayerData());
   }
+}
+
+void Game::appearNPCs()
+{
+
+  for (auto& biome : biomes) {
+    biome->NPCgenerationStrategy(*this);
+  }
+
 }

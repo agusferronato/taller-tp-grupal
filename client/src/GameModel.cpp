@@ -11,7 +11,10 @@
 #include "PlayerStoppedEventDTO.h"
 #include "Race.h"
 #include "RegisterPlayerEventDTO.h"
+#include "NPCAppearedEventDTO.h"
 #include "TextureInfoEventDTO.h"
+#include "NPC.h"
+#include "NPCType.h"
 #include <iostream>
 #include <stdexcept>
 
@@ -30,7 +33,6 @@ GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
 
 void GameModel::updateStateFromServer() {
   ServerEventDTO event;
-
   while (receptionQueue.try_pop(event)) {
     std::visit([this](const auto &e) { handle(e); }, event);
   }
@@ -49,7 +51,6 @@ void GameModel::handle(const PlayerMovedEventDTO &moved) {
   int16_t x = moved.x;
   int16_t y = moved.y;
   Direction dir = moved.direction;
-
   auto it = players.find(pid);
   if (it != players.end()) {
     it->second->updateCoordinates(x, y, dir);
@@ -65,7 +66,6 @@ void GameModel::handle(const PlayerStoppedEventDTO &stopped) {
 
 void GameModel::handle(const PlayerAppearedEventDTO &appeared) {
   uint32_t pid = appeared.playerId;
-
   auto applyStats = [&](Player *p) {
     p->setName(appeared.playerName);
     p->setHp(appeared.hp);
@@ -76,11 +76,9 @@ void GameModel::handle(const PlayerAppearedEventDTO &appeared) {
     p->setLevel(appeared.level);
     p->setExperience(appeared.experience);
   };
-
   if (pid == myPlayerID) {
     return;
   }
-
   auto player = std::make_unique<Player>(pid, appeared.x, appeared.y);
   player->setRace(appeared.race);
   applyStats(player.get());
@@ -96,9 +94,7 @@ void GameModel::handle(const PlayerRemovedEventDTO &removed) {
 
 void GameModel::handle(const PlayerInfoEventDTO &info) {
   auto it = players.find(info.playerId);
-  if (it == players.end()) {
-    return;
-  }
+  if (it == players.end()) return;
   it->second->setHp(info.hp);
   it->second->setMaxHp(info.maxHp);
   it->second->setMana(info.mana);
@@ -111,20 +107,30 @@ void GameModel::handle(const PlayerInfoEventDTO &info) {
 void GameModel::handle(const TextureInfoEventDTO &texInfo) {
   std::list<TileOrigin> origins;
   for (const auto &o : texInfo.origins) {
-    origins.push_back({o.priority, o.texture_id, static_cast<int>(o.i),
-                       static_cast<int>(o.j)});
+    origins.push_back({o.priority, o.texture_id, static_cast<int>(o.i), static_cast<int>(o.j)});
   }
-  gameView->setMapData(texInfo.maxSize, texInfo.gridSize,
-                       texInfo.commonGroundTextureId, origins);
+  gameView->setMapData(texInfo.maxSize, texInfo.gridSize, texInfo.commonGroundTextureId, origins);
 }
 
 void GameModel::registerPlayers() {
   while (true) {
     auto event = receptionQueue.pop();
-
     if (auto *list = std::get_if<PlayerListEventDTO>(&event)) {
       for (const auto &info : list->players) {
         if (info.playerId == myPlayerID) {
+          auto it = players.find(myPlayerID);
+          if (it != players.end()) {
+            it->second->setName(info.playerName);
+            it->second->setDirection(info.direction);
+            it->second->setCoordinates(info.x, info.y);
+            it->second->setHp(info.hp);
+            it->second->setMaxHp(info.maxHp);
+            it->second->setMana(info.mana);
+            it->second->setMaxMana(info.maxMana);
+            it->second->setGold(info.gold);
+            it->second->setLevel(info.level);
+            it->second->setExperience(info.experience);
+          }
           continue;
         }
         auto player = std::make_unique<Player>(info.playerId, info.x, info.y);
@@ -142,7 +148,6 @@ void GameModel::registerPlayers() {
         players[info.playerId] = std::move(player);
       }
       break;
-
     } else if (auto *texInfo = std::get_if<TextureInfoEventDTO>(&event)) {
       handle(*texInfo);
     }
@@ -150,11 +155,9 @@ void GameModel::registerPlayers() {
 }
 
 void GameModel::handle(const InventoryUpdateEventDTO &inv) {
-  if (inv.playerId != myPlayerID)
-    return;
+  if (inv.playerId != myPlayerID) return;
   auto it = players.find(inv.playerId);
-  if (it == players.end())
-    return;
+  if (it == players.end()) return;
   it->second->setInventory(inv.items);
   it->second->setEquippedWeapon(inv.equippedWeapon);
   it->second->setEquippedArmor(inv.equippedArmor);
@@ -164,5 +167,17 @@ void GameModel::handle(const InventoryUpdateEventDTO &inv) {
 
 void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &) {}
-void GameModel::handle(const NpcDefeatedEventDTO &) {}
+
+void GameModel::handle(const NpcDefeatedEventDTO &event) {
+  gameView->removeEntity(EntityType::Npc, event.npcId);
+  npcs.erase(event.npcId);
+}
+
+void GameModel::handle(const NPCAppearedEventDTO &event) {
+  auto npc = std::make_unique<NPC>(event.x, event.y);
+  NPCType npcType = static_cast<NPCType>(event.npcType);
+  gameView->addNpc(event.npcId, *npc, npcType);
+  npcs[event.npcId] = std::move(npc);
+}
+
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
