@@ -49,7 +49,7 @@ void GameWindow::removeEntity(EntityType type, uint32_t id) {
   entities.erase(key);
 }
 
-void GameWindow::setMyPlayer(const Player &player, uint32_t ID) {
+void GameWindow::setMyPlayer(const ClientPlayer &player, uint32_t ID) {
   myPlayerID = ID;
   auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
   myPlayerEntity = entity.get();
@@ -84,7 +84,7 @@ void GameWindow::show(unsigned int it) {
 void GameWindow::renderHUD() {
   if (!myPlayerEntity)
     return;
-  const Player &p = myPlayerEntity->getPlayer();
+  const ClientPlayer &p = myPlayerEntity->getPlayer();
 
   int barW = 180;
   int barH = 16;
@@ -168,7 +168,7 @@ void GameWindow::getSortedEntities(
 void GameWindow::render(unsigned int it) {
   if (myPlayerEntity) {
     camera.follow(myPlayerEntity->get_x(), myPlayerEntity->get_y(),
-                  Player::Width, Player::Height);
+                  ClientPlayer::Width, ClientPlayer::Height);
   }
 
   renderCommonGround();
@@ -226,7 +226,7 @@ void GameWindow::clear() {
   renderer->Clear();
 }
 
-void GameWindow::addPlayer(uint32_t ID, const Player &player) {
+void GameWindow::addPlayer(uint32_t ID, const ClientPlayer &player) {
   if (ID == myPlayerID) {
     setMyPlayer(player, ID);
   }

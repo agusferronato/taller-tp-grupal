@@ -4,6 +4,7 @@
 #include "PlayerClass.h"
 #include "Race.h"
 #include <cstdint>
+#include <tuple>
 
 class Formulas {
 public:
@@ -38,6 +39,10 @@ public:
                                   double randomCasco);
   static uint32_t calcularOroDropNPC(uint32_t vidaMaxNPC, double randomFactor);
   static uint32_t calcularOroPerdidoMuerte(uint32_t oroActual, uint32_t nivel);
+  static std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
+  getRaceStats(const Race race);
+  static std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
+  getPlayerClassStats(const PlayerClass playerClass);
 
 private:
   static double getFRazaVida(const Race race);

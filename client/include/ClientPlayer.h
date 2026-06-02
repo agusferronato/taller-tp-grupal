@@ -1,5 +1,5 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef CLIENT_PLAYER_H
+#define CLIENT_PLAYER_H
 
 #include "Direction.h"
 #include "InventoryConstants.h"
@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <string>
 
-class Player {
+class ClientPlayer {
 
 public:
   static constexpr int Width = 32;
@@ -38,7 +38,7 @@ private:
   uint32_t experience{0};
 
 public:
-  Player(uint32_t id, int xOrigin, int yOrigin);
+  ClientPlayer(uint32_t id, int xOrigin, int yOrigin);
 
   /* Model, el unico que puede modificar Player */
   uint32_t getID() const;
