@@ -29,6 +29,8 @@ public:
   uint32_t getID() const;
   void updateCoordinates(int x, int y, Direction direction);
   void stopMoving();
+  void updateStats(uint32_t hp, uint32_t maxHp, uint32_t mana, uint32_t maxMana,
+                   uint32_t gold, uint32_t level, uint32_t experience);
 
   /* View */
   bool getIsMoving() const { return player.isMoving(); }

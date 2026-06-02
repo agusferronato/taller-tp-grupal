@@ -79,7 +79,13 @@ void GameModel::handle(const PlayerRemovedEventDTO &removed) {
   players.erase(removed.playerId);
 }
 
-void GameModel::handle(const PlayerInfoEventDTO &) {}
+void GameModel::handle(const PlayerInfoEventDTO &event) {
+  auto it = players.find(event.playerId);
+  if (it != players.end()) {
+    it->second->updateStats(event.hp, event.maxHp, event.mana, event.maxMana,
+                            event.gold, event.level, event.experience);
+  }
+}
 
 void GameModel::handle(const TextureInfoEventDTO &texInfo) {
   std::list<TileOrigin> origins;
