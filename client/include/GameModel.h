@@ -3,31 +3,37 @@
 
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
-#include "GameWindow.h"
+#include "Direction.h"
 #include "Player.h"
 #include "Queue.h"
+#include "NPC.h"
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <deque> //Double ended queue for chat messages
+
+class GameWindow;
 
 class GameModel {
 private:
   Queue<ServerEventDTO> &receptionQueue;
   Queue<ClientCommandDTO> &sendingQueue;
+
   uint32_t myPlayerID;
   std::unordered_map<uint32_t, std::unique_ptr<Player>> players;
-  GameWindow *gameView;
+  std::unordered_map<uint32_t, std::unique_ptr<NPC>> npcs;
 
   std::deque<std::string> chatMessages;
   std::string currentChatInput;
   bool chatActive = false;
 
+  GameWindow *gameView;
 public:
   GameModel(uint32_t myPlayerID, GameWindow *gameView,
             Queue<ServerEventDTO> &receptionQueue,
-            Queue<ClientCommandDTO> &sendingQueue,
-            const std::string &race = "humano");
-  void updateStateFromServer();
+            Queue<ClientCommandDTO> &sendingQueue, const Race race);
+
+  void updateStateFromServer(); 
 
 public:
   /*update State From Controller*/
@@ -58,6 +64,7 @@ private:
   void handle(const PlayerRemovedEventDTO &event);
   void handle(const PlayerInfoEventDTO &event);
   void handle(const InventoryUpdateEventDTO &event);
+  void handle(const NPCAppearedEventDTO &event);
   void handle(const TextureInfoEventDTO &event);
   void handle(const PlayerListEventDTO &event);
   void handle(const ChatMessageEventDTO &event);

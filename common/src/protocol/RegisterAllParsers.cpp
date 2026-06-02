@@ -12,6 +12,7 @@
 #include "parser/Commands/UnequipCommandParser.h"
 #include "parser/Events/ChatMessageEventParser.h"
 #include "parser/Events/InventoryUpdateEventParser.h"
+#include "parser/Events/NPCAppearedEventParser.h"
 #include "parser/Events/NpcDefeatedEventParser.h"
 #include "parser/Events/PlayerAppearedEventParser.h"
 #include "parser/Events/PlayerInfoEventParser.h"
@@ -80,6 +81,10 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::ChatMessageEvent),
       std::make_unique<ChatMessageEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::NPCAppearedEvent),
+      std::make_unique<NPCAppearedEventParser>());
 
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::NPCDefeatedEvent),

@@ -1,6 +1,7 @@
 #ifndef REGISTER_PLAYER_COMMAND_DTO_H
 #define REGISTER_PLAYER_COMMAND_DTO_H
 
+#include "Race.h"
 #include "protocol/ProtocolCodes.h"
 #include <string>
 
@@ -11,8 +12,8 @@ private:
 
 public:
   ClientCommandOpCode getCode() const { return opCode; }
-  std::string playerName;
-  std::string race;
+  std::string name;
+  Race race;
   std::string playerClass;
 };
 

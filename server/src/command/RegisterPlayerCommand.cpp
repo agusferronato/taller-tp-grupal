@@ -2,8 +2,9 @@
 
 #include "Game.h"
 
-RegisterPlayerCommand::RegisterPlayerCommand(std::string playerName, std::string race, std::string playerClass)
-    : playerName(std::move(playerName)), race(std::move(race)), playerClass(std::move(playerClass)) {}
+RegisterPlayerCommand::RegisterPlayerCommand(std::string name, Race race,
+                                             std::string playerClass)
+    : name(std::move(name)), race(race), playerClass(std::move(playerClass)) {}
 
 void RegisterPlayerCommand::execute(Game &game, uint32_t connectionId) {
   game.registerPlayer(playerName, race, playerClass, connectionId);

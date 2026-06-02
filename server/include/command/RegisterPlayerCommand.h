@@ -5,15 +5,16 @@
 #include <string>
 
 #include "Command.h"
+#include "Race.h"
 
 class RegisterPlayerCommand : public Command {
 private:
-  std::string playerName;
-  std::string race;
+  std::string name;
+  Race race;
   std::string playerClass;
 
 public:
-  RegisterPlayerCommand(std::string playerName, std::string race, std::string playerClass);
+  RegisterPlayerCommand(std::string name, Race race, std::string playerClass);
 
   void execute(Game &game, uint32_t connectionId) override;
 };

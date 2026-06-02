@@ -18,18 +18,18 @@ int main(int argc, char *argv[]) {
   const char *hostname = argv[1];
   const char *port = argv[2];
 
-  ClientData clientData;
+  ClientData clientData = NullClientData{};
   {
     QApplication app(argc, argv);
 
-    MainWindow window;
+    MainWindow window(hostname, port);
     QObject::connect(&window, &MainWindow::gameStartRequested,
                      [&](const ClientData &d) { clientData = d; });
     window.show();
     app.exec();
   }
 
-  if (clientData) {
+  if (!std::holds_alternative<NullClientData>(clientData)) {
     try {
       Client client(hostname, port, clientData);
       client.run();

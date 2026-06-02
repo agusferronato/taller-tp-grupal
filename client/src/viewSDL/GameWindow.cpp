@@ -5,9 +5,9 @@
 #include <stdexcept>
 #include <string>
 
-static std::string assetPath(const std::string &relative) {
-  return "../client/" + relative;
-}
+#include "Player.h"
+#include "PlayerEntity.h"
+#include "NPCEntity.h"
 
 std::unique_ptr<SDL2pp::Texture>
 GameWindow::loadPlayerTexture(SDL2pp::Renderer& renderer,
@@ -42,14 +42,11 @@ GameWindow::GameWindow(uint32_t myPlayerID)
 }
 
 void GameWindow::initResources() {
-  font = std::make_unique<SDL2pp::Font>(
-      assetPath("fonts/Vera.ttf"), 14);
+  font = std::make_unique<SDL2pp::Font>(("fonts/Vera.ttf"), 14);
 
-  titleFont = std::make_unique<SDL2pp::Font>(
-      assetPath("fonts/OldLondon.ttf"), 34);
+  titleFont = std::make_unique<SDL2pp::Font>(("fonts/OldLondon.ttf"), 34);
 
-  uiFont = std::make_unique<SDL2pp::Font>(
-      assetPath("fonts/CinzelBold.ttf"), 18);
+  uiFont = std::make_unique<SDL2pp::Font>(("fonts/CinzelBold.ttf"), 18);
 
   textureMapper = std::make_unique<TextureMapper>(*renderer);
   textureMapper->loadFromToml("assets/textures.toml");
@@ -58,35 +55,64 @@ void GameWindow::initResources() {
 
   uiFrameTexture = std::make_unique<SDL2pp::Texture>(
       *renderer,
-      SDL2pp::Surface(assetPath("assets/HUD/UpperLayer.png")));
+      SDL2pp::Surface("assets/HUD/UpperLayer.png"));
 
   chatMessagesBackground = std::make_unique<SDL2pp::Texture>(
     *renderer,
-    SDL2pp::Surface(assetPath("assets/HUD/UserChat/base_messages.png")));
+    SDL2pp::Surface("assets/HUD/UserChat/base_messages.png"));
 
   chatInputBackground = std::make_unique<SDL2pp::Texture>(
       *renderer,
-      SDL2pp::Surface(assetPath("assets/HUD/UserChat/base_input.png")));
+      SDL2pp::Surface("assets/HUD/UserChat/base_input.png"));
 
   userInfoBackground = std::make_unique<SDL2pp::Texture>(
       *renderer,
-      SDL2pp::Surface(assetPath("assets/HUD/UserInfo/base.png")));
+      SDL2pp::Surface("assets/HUD/UserInfo/base.png"));
 
   userInventoryBackground = std::make_unique<SDL2pp::Texture>(
       *renderer,
-      SDL2pp::Surface(assetPath("assets/HUD/UserInventory/base.png")));
+      SDL2pp::Surface("assets/HUD/UserInventory/base.png"));
 
   userStatsBackground = std::make_unique<SDL2pp::Texture>(
       *renderer,
-      SDL2pp::Surface(assetPath("assets/HUD/UserStats/base.png")));
+      SDL2pp::Surface("assets/HUD/UserStats/base.png"));
+
+  textureManager = std::make_unique<TextureManager>(*renderer);
+  textureManager->loadLayoutsFromToml("assets/layouts.toml");
+  textureManager->loadTexturesFromToml("assets/sprites.toml");
 }
 
-void GameWindow::setMapData(int maxSize_, int gridSize_,
-                            int commonGroundTextureId_,
+void GameWindow::addEntity(EntityType type, uint32_t id,
+                           std::unique_ptr<RenderableEntity> entity) {
+  EntityKey key(type, id);
+  entities[key] = std::move(entity);
+}
+
+void GameWindow::removeEntity(EntityType type, uint32_t id) {
+  EntityKey key(type, id);
+  if (myPlayerEntity && type == EntityType::Player && id == myPlayerID) {
+    myPlayerEntity = nullptr;
+  }
+  entities.erase(key);
+}
+
+void GameWindow::setMyPlayer(const Player &player, uint32_t ID) {
+  myPlayerID = ID;
+  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
+  myPlayerEntity = entity.get();
+  addEntity(EntityType::Player, ID, std::move(entity));
+}
+
+SDL2pp::Renderer &GameWindow::getRenderer() { return *renderer; }
+
+SDL2pp::Font &GameWindow::getFont() { return *font; }
+
+void GameWindow::setMapData(int maxSize, int gridSize,
+                            int commonGroundTextureId,
                             const std::list<TileOrigin> &origins) {
-  maxSize = maxSize_;
-  gridSize = gridSize_;
-  commonGroundTextureId = commonGroundTextureId_;
+  this->maxSize = maxSize;
+  this->gridSize = gridSize;
+  this->commonGroundTextureId = commonGroundTextureId;
   textureMapper->buildRenderGrid(origins, gridSize);
   tilesToRender = textureMapper->getTilesToRender();
 }
@@ -115,78 +141,75 @@ void GameWindow::renderHUD() {
 void GameWindow::renderCommonGround() {
   for (int i = 0; i < maxSize; i++) {
     for (int j = 0; j < maxSize; j++) {
-      SDL2pp::Rect dstRect = camera.toScreen(
-          (i - maxSize / 2) * gridSize,
-          (j - maxSize / 2) * gridSize,
-          gridSize,
-          gridSize);
+      SDL2pp::Rect dstRect =
+          camera.toScreen((i - maxSize / 2) * gridSize,
+                          (j - maxSize / 2) * gridSize, gridSize, gridSize);
 
       SDL2pp::Rect srcRect = {0, 0, gridSize, gridSize};
-
-      renderer->Copy(textureMapper->getTexture(commonGroundTextureId),
-                     srcRect,
+      renderer->Copy(textureMapper->getTexture(commonGroundTextureId), srcRect,
                      dstRect);
     }
   }
 }
 
-void GameWindow::render(unsigned int it) {
-  auto itMy = players.find(myPlayerID);
-  if (itMy == players.end()) {
-    throw std::runtime_error("My player not found in map");
+void GameWindow::getSortedEntities(
+    std::vector<RenderableEntity *> &sortedEntities) {
+
+  sortedEntities.reserve(entities.size());
+
+  for (auto &[key, entity] : entities) {
+    sortedEntities.push_back(entity.get());
   }
 
+  std::sort(sortedEntities.begin(), sortedEntities.end(),
+            [](RenderableEntity *a, RenderableEntity *b) {
+              if (a->get_y() != b->get_y())
+                return a->get_y() < b->get_y();
+              return a->get_x() < b->get_x();
+            });
+}
+
+void GameWindow::render(unsigned int it) {
+  if (myPlayerEntity) {
+    camera.follow(myPlayerEntity->get_x(), myPlayerEntity->get_y(),
+    Player::Width, Player::Height);
+  }
+  
   Layout layout = getLayout();
-
-  Player &myPlayer = *itMy->second;
-
-  camera.setViewport(
-      layout.gameRect.GetX(),
-      layout.gameRect.GetY(),
-      layout.gameRect.GetW(),
-      layout.gameRect.GetH());
-
-  camera.follow(myPlayer.get_x(), myPlayer.get_y(), 32, 32);
-
   renderWorld(it);
   renderUIBackgrounds(layout);
   renderHUD();
 }
 
 void GameWindow::clear() {
-  for (auto& entity : entities) {
+  for (auto &[key, entity] : entities) {
     entity->clear();
   }
+  renderer->Clear();
 
   renderer->SetDrawColor(0, 0, 0, 255);
   renderer->Clear();
 }
 
-void GameWindow::addPlayer(uint32_t id, Player* player) {
-  players[id] = player;
+void GameWindow::addPlayer(uint32_t ID, const Player &player) {
+  if (ID == myPlayerID) {
+    setMyPlayer(player, ID);
+    return;
+  }
 
-  auto bodyTexture = loadPlayerTexture(
-      *renderer,
-      assetPath("assets/11402.png"));
-
-  player->setPlayerTexture(std::move(bodyTexture));
-
-  auto headTexture = loadPlayerTexture(
-      *renderer,
-      assetPath(headPathForRace(player->getRace())));
-
-  player->setHeadTexture(std::move(headTexture));
-  player->setNameFont(font.get());
-
-  entities.push_back(player);
+  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
+  addEntity(EntityType::Player, ID, std::move(entity));
 }
 
-void GameWindow::removePlayer(uint32_t id) {
-  auto it = players.find(id);
-  if (it != players.end()) {
-    entities.remove(it->second);
-    players.erase(it);
-  }
+void GameWindow::removePlayer(uint32_t ID) {
+  removeEntity(EntityType::Player, ID);
+}
+
+void GameWindow::addNpc(uint32_t ID, NPC &npc, NPCType npcType) {
+  NPCInfo info = npcParser.getInfo(npcType);
+  auto entity = std::make_unique<NPCEntity>(npc, *textureManager,
+                                            info.textureId, info.layoutType);
+  addEntity(EntityType::Npc, ID, std::move(entity));
 }
 
 std::string GameWindow::headPathForRace(const std::string& race) const {
@@ -246,14 +269,17 @@ void GameWindow::renderWorld(unsigned int it) {
 }
 
 void GameWindow::renderEntitiesByPriority(unsigned int it) {
+  std::vector<RenderableEntity *> sortedEntities;
+  getSortedEntities(sortedEntities);
+
   for (size_t i = 0; i < tilesToRender.size(); i++) {
-    auto& priority = tilesToRender[i];
+    auto &priority = tilesToRender[i];
 
     for (auto &[pair, items] : priority) {
       int max_row = pair.first;
       int y_max = (max_row - maxSize / 2 + 1) * gridSize;
 
-      for (auto& entity : entities) {
+      for (auto *entity : sortedEntities) {
         if (!entity->rendered() &&
             entity->get_y() + 1.25 * entity->get_h() < y_max &&
             entity->hasPriority(i)) {
@@ -281,18 +307,13 @@ void GameWindow::renderEntitiesByPriority(unsigned int it) {
       }
     }
 
-    for (auto& entity : entities) {
+    for (auto *entity : sortedEntities) {
       if (!entity->rendered() && entity->hasPriority(i)) {
         entity->render(*renderer, camera, it);
       }
     }
   }
 
-  for (auto& entity : entities) {
-    if (!entity->rendered()) {
-      entity->render(*renderer, camera, it);
-    }
-  }
 }
 
 void GameWindow::renderChat(const Layout& layout) {
@@ -364,11 +385,9 @@ void GameWindow::drawBar(int x,
 }
 
 void GameWindow::renderPlayerStats(const Layout& layout) {
-  auto itMy = players.find(myPlayerID);
-  if (itMy == players.end())
+  if (!myPlayerEntity)
     return;
-
-  const Player& p = *itMy->second;
+  const Player &p = myPlayerEntity->getPlayer();
 
   int xpCur = 357;   // placeholder, reemplazar por xp actual
   int xpMax = 1000;  // placeholder, reemplazar por xp total para subir de nivel
@@ -391,7 +410,6 @@ void GameWindow::renderPlayerStats(const Layout& layout) {
   // int xpY = y + 84 + 2;
   // int xpW = 227 - 2;
   // int xpH = 20 - 2;
-
   
   drawBar(xpX, xpY, xpW, xpH,
     xpCur, xpMax,
@@ -406,11 +424,9 @@ void GameWindow::renderPlayerStats(const Layout& layout) {
 }
 
 void GameWindow::renderVitals(const Layout& layout) {
-  auto itMy = players.find(myPlayerID);
-  if (itMy == players.end())
+  if (!myPlayerEntity)
     return;
-
-  const Player& p = *itMy->second;
+  const Player &p = myPlayerEntity->getPlayer();
 
   int x = layout.bottomRightRect.GetX();
   int y = layout.bottomRightRect.GetY();
@@ -498,11 +514,22 @@ void GameWindow::renderUIBackgrounds(const Layout& layout) {
   }
 }
 
-void GameWindow::renderInventoryInfo(const Layout& layout) {
-  auto itMy = players.find(myPlayerID);
-  if (itMy == players.end())
-    return;
+void GameWindow::addNpc(uint32_t ID, NPC &npc, NPCType npcType) {
+  NPCInfo info = npcParser.getInfo(npcType);
+  auto entity = std::make_unique<NPCEntity>(npc, *textureManager,
+                                            info.textureId, info.layoutType);
+  addEntity(EntityType::Npc, ID, std::move(entity));
+}
 
+void GameWindow::removePlayer(uint32_t ID) {
+  removeEntity(EntityType::Player, ID);
+}
+
+void GameWindow::renderInventoryInfo(const Layout& layout) {
+  if (!myPlayerEntity)
+    return;
+  const Player &p = myPlayerEntity->getPlayer();
+  
   // Cuando deje de estar mockeado el oro, reemplazar por p.getGold() o similar
   // const Player& p = *itMy->second;
 

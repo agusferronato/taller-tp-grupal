@@ -7,18 +7,27 @@
 
 #include <cstdint>
 #include <deque>
+#include <cstdint>
 #include <list>
 #include <map>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <utility>
 
 #include "Camera.h"
 #include "GameChatView.h"
 #include "MapData.h"
 #include "Player.h"
 #include "TextureMapper.h"
+#include "EntityType.h"
+#include "RenderableEntity.h"
+#include "TextureManager.h"
+#include "NPCParser.h"
+
+class NPC;
+class PlayerEntity;
 
 class GameWindow {
 private:
@@ -62,16 +71,20 @@ private:
   std::string currentChatInput;
   bool chatActive{false};
 
+  std::unique_ptr<TextureManager> textureManager;
+
   Camera camera;
+  uint32_t myPlayerID;
 
-  uint32_t myPlayerID{0};
+  using EntityKey = std::pair<EntityType, uint32_t>;
+  std::map<EntityKey, std::unique_ptr<RenderableEntity>> entities;
+  PlayerEntity *myPlayerEntity{nullptr};
 
-  std::unordered_map<uint32_t, Player *> players;
-  std::list<RenderableEntity *> entities;
+  NPCParser npcParser;
+  std::unique_ptr<TextureMapper> textureMapper;
 
-  int maxSize{100};
-  int gridSize{32};
-  int commonGroundTextureId{0};
+  int maxSize, gridSize, commonGroundTextureId;
+  int windowWidth, windowHeight;
 
   std::vector<std::map<std::pair<int, int>, std::vector<GridItem>>>
       tilesToRender;
@@ -120,7 +133,17 @@ private:
 
 public:
   explicit GameWindow(uint32_t myPlayerID);
+  
+  void addEntity(EntityType type, uint32_t id,
+                 std::unique_ptr<RenderableEntity> entity);
+  void addPlayer(uint32_t ID, const Player &player);
+  void addNpc(uint32_t ID, NPC &npc, NPCType npcType);
+  void removeEntity(EntityType type, uint32_t id);
+  void removePlayer(uint32_t ID);
+  void setMyPlayer(const Player &player, uint32_t ID);
 
+  SDL2pp::Renderer &getRenderer();
+  SDL2pp::Font &getFont();
   void show(unsigned int it);
 
   void addPlayer(uint32_t id, Player *player);
@@ -134,6 +157,14 @@ public:
   void setChatState(const std::deque<std::string> &messages,
                     const std::string &input,
                     bool active);
+private:
+  void renderHUD();
+  void render(unsigned int it);
+  void clear();
+  void initResources();
+  void renderCommonGround();
+
+  void getSortedEntities(std::vector<RenderableEntity *> &);
 };
 
 #endif

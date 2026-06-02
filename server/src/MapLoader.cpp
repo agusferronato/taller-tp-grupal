@@ -29,6 +29,35 @@ MapLoader::MapLoader(const std::string &path) {
       textureOrigins.push_back(std::move(origin));
     }
   }
+
+  if (auto *bioArr = tbl["biomes"].as_array()) {
+    for (auto &elem : *bioArr) {
+      auto &b = *elem.as_table();
+      std::string type = b["type"].value_or("");
+      int i_init = b["i_init"].value_or(0);
+      int j_init = b["j_init"].value_or(0);
+      int i_end = b["i_end"].value_or(0);
+      int j_end = b["j_end"].value_or(0);
+      Delimiter init{i_init, j_init}, end{i_end, j_end};
+      if (type == "Desert")
+        biomes.push_back(std::make_unique<Desert>(init, end));
+      else if (type == "Forest")
+        biomes.push_back(std::make_unique<Forest>(init, end));
+      else if (type == "Dungeon")
+        biomes.push_back(std::make_unique<Dungeon>(init, end));
+    }
+  }
+
+  if (auto *citArr = tbl["cities"].as_array()) {
+    for (auto &elem : *citArr) {
+      auto &c = *elem.as_table();
+      int i_init = c["i_init"].value_or(0);
+      int j_init = c["j_init"].value_or(0);
+      int i_end = c["i_end"].value_or(0);
+      int j_end = c["j_end"].value_or(0);
+      cities.emplace_back(Delimiter{i_init, j_init}, Delimiter{i_end, j_end});
+    }
+  }
 }
 
 int MapLoader::GetMaxSize() const { return maxSize; }
@@ -39,11 +68,15 @@ int MapLoader::GetCommonGroundTextureId() const {
   return commonGroundTextureId;
 }
 
-const std::set<std::tuple<int, int, int>> &MapLoader::GetCollidableCells()
-    const {
+const std::set<std::tuple<int, int, int>> &
+MapLoader::GetCollidableCells() const {
   return collidableCells;
 }
 
 const std::list<TileOrigin> &MapLoader::GetTextureOrigins() const {
   return textureOrigins;
 }
+
+std::list<std::unique_ptr<Biome>> &MapLoader::GetBiomes() { return biomes; }
+
+std::list<City> &MapLoader::GetCities() { return cities; }
