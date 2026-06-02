@@ -10,7 +10,7 @@ PlayerData Character::toPlayerData() const {
   data.setName(name);
   data.setPassword(password);
   data.setRace(RaceUtils::raceToString(race));
-  data.setPlayerClass(playerClass);
+  data.setPlayerClass(PlayerClassUtils::playerClassToString(playerClass));
   data.x = x;
   data.y = y;
   data.direction = static_cast<uint8_t>(direction);
@@ -37,7 +37,7 @@ void Character::fromPlayerData(const PlayerData &data) {
   name = data.name;
   password = data.password;
   race = RaceUtils::stringToRace(data.race);
-  playerClass = data.playerClass;
+  playerClass = PlayerClassUtils::stringToPlayerClass(data.playerClass);
   x = data.x;
   y = data.y;
   direction = static_cast<Direction>(data.direction);
@@ -59,15 +59,8 @@ void Character::fromPlayerData(const PlayerData &data) {
   inventory.setShield(data.equippedShield);
 }
 
-static std::string lowercase(const std::string &s) {
-  std::string result = s;
-  auto toLower = [](unsigned char c) { return std::tolower(c); };
-  std::transform(result.begin(), result.end(), result.begin(), toLower);
-  return result;
-}
-
 static void initPlayerStats(Character &player, const Race race,
-                            const std::string &playerClass) {
+                            const PlayerClass &playerClass) {
   struct BaseStats {
     uint32_t strength, agility, constitution, intelligence;
   };
@@ -86,15 +79,19 @@ static void initPlayerStats(Character &player, const Race race,
     throw std::invalid_argument("Invalid race");
   };
 
-  auto getClassStats = [](const std::string &c) -> BaseStats {
-    std::string lc = lowercase(c);
-    if (lc == "mago")
+  auto getClassStats = [](const PlayerClass playerClass) -> BaseStats {
+    switch (playerClass) {
+    case PlayerClass::Mage:
       return {3, 5, 5, 15};
-    if (lc == "clerigo")
+    case PlayerClass::Priest:
       return {7, 7, 9, 10};
-    if (lc == "paladin")
+    case PlayerClass::Paladin:
       return {10, 6, 10, 8};
-    return {10, 8, 10, 3};
+    case PlayerClass::Warrior:
+      return {10, 8, 10, 3};
+    default:
+      return {0, 0, 0, 0};
+    }
   };
 
   auto raceStats = getRaceStats(race);
@@ -140,7 +137,7 @@ std::pair<int, int> Character::getTargetPosition(Direction dir) const {
 }
 
 void Character::initializeStats(const Race &characterRace,
-                                const std::string &characterClass) {
+                                const PlayerClass &characterClass) {
   initPlayerStats(*this, characterRace, characterClass);
   maxHp = Formulas::calcularVidaMax(constitution, characterRace, characterClass,
                                     level);

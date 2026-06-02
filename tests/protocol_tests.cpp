@@ -110,7 +110,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerCommand) {
   registerAllParsers(server);
 
   ClientCommandDTO original =
-      RegisterPlayerCommandDTO{"L0rd", Race::Elf, "Mago"};
+      RegisterPlayerCommandDTO{"L0rd", Race::Elf, PlayerClass::Mage};
 
   client.sendCommand(original);
 
@@ -120,7 +120,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerCommand) {
   ASSERT_NE(dto, nullptr);
   EXPECT_EQ(dto->name, "L0rd");
   EXPECT_EQ(dto->race, Race::Elf);
-  EXPECT_EQ(dto->playerClass, "Mago");
+  EXPECT_EQ(dto->playerClass, PlayerClass::Mage);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesLoginPlayerCommand) {
@@ -334,7 +334,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerResponse) {
   registerAllParsers(server);
   registerAllParsers(client);
 
-  ServerEventDTO original = RegisterPlayerEventDTO{1, 0, Race::Elf};
+  ServerEventDTO original = RegisterPlayerEventDTO{1, 0, Race::Human};
 
   server.sendEvent(original);
 
@@ -344,7 +344,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerResponse) {
   ASSERT_NE(dto, nullptr);
   EXPECT_EQ(dto->playerId, 1);
   EXPECT_EQ(dto->status, 0);
-  EXPECT_EQ(dto->race, Race::Elf);
+  EXPECT_EQ(dto->race, Race::Human);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {

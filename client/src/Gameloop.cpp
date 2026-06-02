@@ -1,6 +1,8 @@
 #include "Gameloop.h"
 
 #include "LoginPlayerCommandDTO.h"
+#include "PlayerClass.h"
+#include "Race.h"
 #include "RegisterPlayerCommandDTO.h"
 
 #include <iostream>
@@ -55,8 +57,10 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
     const ClientDataRegister registerData =
         std::get<ClientDataRegister>(clientData);
     race = RaceUtils::stringToRace(registerData.race);
-    sendingQueue.push(RegisterPlayerCommandDTO{registerData.username, race,
-                                               registerData.playerClass});
+    PlayerClass playerClass =
+        PlayerClassUtils::stringToPlayerClass(registerData.playerClass);
+    sendingQueue.push(
+        RegisterPlayerCommandDTO{registerData.username, race, playerClass});
   } else if (std::holds_alternative<ClientDataLogin>(clientData)) {
     const ClientDataLogin loginData = std::get<ClientDataLogin>(clientData);
     sendingQueue.push(LoginPlayerCommandDTO{loginData.username});

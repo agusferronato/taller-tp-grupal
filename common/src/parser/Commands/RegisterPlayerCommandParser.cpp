@@ -15,14 +15,14 @@ void RegisterPlayerParser::serialize(std::vector<uint8_t> &bytes,
       static_cast<uint8_t>(ClientCommandOpCode::RegisterPlayerCommand), bytes);
   utils.appendBytes(request.name, bytes);
   utils.appendBytes(static_cast<uint8_t>(request.race), bytes);
-  utils.appendBytes(request.playerClass, bytes);
+  utils.appendBytes(static_cast<uint8_t>(request.playerClass), bytes);
 }
 
 ClientCommandDTO RegisterPlayerParser::deserialize(Protocol &protocol) {
   std::string name = protocol.getStringData();
   uint8_t raceValue = protocol.getUint8();
-  std::string playerClass = protocol.getStringData();
+  uint8_t playerClassValue = protocol.getUint8();
 
   return RegisterPlayerCommandDTO{std::move(name), static_cast<Race>(raceValue),
-                                  std::move(playerClass)};
+                                  static_cast<PlayerClass>(playerClassValue)};
 }

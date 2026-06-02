@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <cctype>
 
-#include "Character.h"
 #include "ConstantRateLoop.h"
 #include "Formulas.h"
 #include "Game.h"
@@ -73,12 +72,12 @@ void Game::run() {
 void Game::kill() { keepRunning = false; }
 
 void Game::registerPlayer(const std::string &name, const Race race,
-                          const std::string &playerClass,
+                          const PlayerClass playerClass,
                           uint32_t connectionId) {
 
   if (repository.exists(name)) {
     senderQueueMonitor.sendToClient(connectionId,
-                                    RegisterPlayerEventDTO{0, 1, race});
+                                    RegisterPlayerEventDTO{0, 1, Race::Human});
     return;
   }
 
@@ -94,7 +93,6 @@ void Game::registerPlayer(const std::string &name, const Race race,
   player->playerClass = playerClass;
 
   player->initializeStats(race, playerClass);
-
   repository.create(player->toPlayerData());
 
   colisionables.push_back(player.get());
@@ -104,8 +102,8 @@ void Game::registerPlayer(const std::string &name, const Race race,
 
   senderQueueMonitor.markAsRegistered(connectionId);
 
-  senderQueueMonitor.sendToClient(connectionId,
-                                  RegisterPlayerEventDTO{newId, 0, race});
+  senderQueueMonitor.sendToClient(
+      connectionId, RegisterPlayerEventDTO{newId, 0, players[newId]->race});
 
   {
     std::vector<TextureOriginDTO> origins;
@@ -150,8 +148,8 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   for (auto &[pid, info] : players) {
     if (info->name == name) {
-      senderQueueMonitor.sendToClient(connectionId,
-                                      RegisterPlayerEventDTO{0, 2, info->race});
+      senderQueueMonitor.sendToClient(
+          connectionId, RegisterPlayerEventDTO{0, 2, Race::Human});
       return;
     }
   }
@@ -205,6 +203,7 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {
+
   auto it = players.find(playerId);
 
   if (it == players.end()) {
@@ -212,8 +211,8 @@ void Game::movePlayer(uint32_t playerId, Direction direction) {
   }
 
   Character &player = *it->second;
-  player.setDirection(direction);
-  player.setMoving(true);
+  player.direction = direction;
+  player.moving = true;
 }
 
 void Game::stopPlayer(uint32_t playerId) {
@@ -222,7 +221,7 @@ void Game::stopPlayer(uint32_t playerId) {
     return;
   }
   Character &player = *it->second;
-  player.setMoving(false);
+  player.moving = false;
   messagesToSend.push_back(PlayerStoppedEventDTO{playerId});
 }
 
@@ -273,15 +272,17 @@ void Game::unequipSlot(uint32_t playerId, uint8_t equipSlot) {
 
 void Game::dropItem(uint32_t playerId, uint8_t inventorySlot) {
   auto it = players.find(playerId);
-  if (it == players.end())
+  if (it == players.end()) {
     return;
+  }
   it->second->inventory.removeItem(inventorySlot);
 }
 
 void Game::movePlayers() {
   for (auto &[playerID, info] : players) {
-    if (!info->moving)
+    if (!info->moving) {
       continue;
+    }
 
     auto [targetX, targetY] = info->getTargetPosition(info->direction);
 

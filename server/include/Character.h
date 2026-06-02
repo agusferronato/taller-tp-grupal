@@ -4,6 +4,7 @@
 #include "Colisionable.h"
 #include "Direction.h"
 #include "Inventory.h"
+#include "PlayerClass.h"
 #include "PlayerData.h"
 #include "Race.h"
 #include <cstdint>
@@ -23,7 +24,7 @@ public:
   std::string name;
   std::string password;
   Race race;
-  std::string playerClass;
+  PlayerClass playerClass;
   uint32_t level{1};
   uint32_t hp{100}, maxHp{100};
   uint32_t mana{0}, maxMana{0};
@@ -48,7 +49,7 @@ public:
 
   // Initialize stats based on race and class
   void initializeStats(const Race &characterRace,
-                       const std::string &characterClass);
+                       const PlayerClass &characterClass);
 
   // Stats management
   void takeDamage(uint32_t damage);
