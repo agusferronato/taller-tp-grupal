@@ -2,21 +2,7 @@
 #define NPC_H
 
 #include "Position.h"
-
-enum NPCType {
-    ZombieT,
-    SpiderT,
-    SpecialSpiderT,
-    ElfT,
-    SpecialElfT,
-    SkeletonT,
-    SpecialSkeletonT,
-    OrcT,
-    GreatReamerT,
-    GiantT,
-    GolemT,
-    SpecialGolemT
-};
+#include "NPCType.h"
 
 
 class NPC {
