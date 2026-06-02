@@ -20,7 +20,7 @@ GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
                      Queue<ClientCommandDTO> &sendingQueue, const Race race)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
       myPlayerID(myPlayerID), gameView(gameView) {
-  auto myPlayer = std::make_unique<Player>(this->myPlayerID, 0, 0);
+  auto myPlayer = std::make_unique<ClientPlayer>(this->myPlayerID, 0, 0);
   myPlayer->setRace(race);
   players[myPlayerID] = std::move(myPlayer);
 
@@ -66,7 +66,7 @@ void GameModel::handle(const PlayerStoppedEventDTO &stopped) {
 void GameModel::handle(const PlayerAppearedEventDTO &appeared) {
   uint32_t pid = appeared.playerId;
 
-  auto applyStats = [&](Player *p) {
+  auto applyStats = [&](ClientPlayer *p) {
     p->setName(appeared.playerName);
     p->setHp(appeared.hp);
     p->setMaxHp(appeared.maxHp);
@@ -81,7 +81,7 @@ void GameModel::handle(const PlayerAppearedEventDTO &appeared) {
     return;
   }
 
-  auto player = std::make_unique<Player>(pid, appeared.x, appeared.y);
+  auto player = std::make_unique<ClientPlayer>(pid, appeared.x, appeared.y);
   player->setRace(appeared.race);
   applyStats(player.get());
 
@@ -127,7 +127,8 @@ void GameModel::registerPlayers() {
         if (info.playerId == myPlayerID) {
           continue;
         }
-        auto player = std::make_unique<Player>(info.playerId, info.x, info.y);
+        auto player =
+            std::make_unique<ClientPlayer>(info.playerId, info.x, info.y);
         player->setRace(info.race);
         player->setName(info.playerName);
         player->setHp(info.hp);

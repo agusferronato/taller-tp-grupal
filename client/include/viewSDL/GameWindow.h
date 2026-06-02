@@ -14,9 +14,9 @@
 #include <vector>
 
 #include "Camera.h"
+#include "ClientPlayer.h"
 #include "EntityType.h"
 #include "MapData.h"
-#include "Player.h"
 #include "RenderableEntity.h"
 #include "TextureManager.h"
 #include "TextureMapper.h"
@@ -55,10 +55,10 @@ public:
 
   void addEntity(EntityType type, uint32_t id,
                  std::unique_ptr<RenderableEntity> entity);
-  void addPlayer(uint32_t ID, const Player &player);
+  void addPlayer(uint32_t ID, const ClientPlayer &player);
   void removeEntity(EntityType type, uint32_t id);
   void removePlayer(uint32_t ID);
-  void setMyPlayer(const Player &player, uint32_t ID);
+  void setMyPlayer(const ClientPlayer &player, uint32_t ID);
 
   SDL2pp::Renderer &getRenderer();
   SDL2pp::Font &getFont();

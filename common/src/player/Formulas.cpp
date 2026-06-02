@@ -230,3 +230,35 @@ uint32_t Formulas::calcularOroPerdidoMuerte(uint32_t oroActual,
                                             uint32_t nivel) {
   return calcularOroExceso(oroActual, nivel);
 }
+
+std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
+Formulas::getRaceStats(const Race race) {
+  switch (race) {
+  case Race::Human:
+    return {10, 10, 10, 10};
+  case Race::Elf:
+    return {6, 13, 5, 16};
+  case Race::Dwarf:
+    return {13, 4, 16, 7};
+  case Race::Gnome:
+    return {7, 6, 14, 13};
+  default:
+    return {0, 0, 0, 0};
+  }
+}
+
+std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
+Formulas::getPlayerClassStats(const PlayerClass playerClass) {
+  switch (playerClass) {
+  case PlayerClass::Mage:
+    return {3, 5, 5, 15};
+  case PlayerClass::Priest:
+    return {7, 7, 9, 10};
+  case PlayerClass::Paladin:
+    return {10, 6, 10, 8};
+  case PlayerClass::Warrior:
+    return {10, 8, 10, 3};
+  default:
+    return {0, 0, 0, 0};
+  }
+}

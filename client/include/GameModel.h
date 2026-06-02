@@ -1,10 +1,10 @@
 #ifndef GAMEMODEL_H
 #define GAMEMODEL_H
 
+#include "ClientPlayer.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "Direction.h"
-#include "Player.h"
 #include "Queue.h"
 #include <memory>
 #include <string>
@@ -18,7 +18,7 @@ private:
   Queue<ClientCommandDTO> &sendingQueue;
 
   uint32_t myPlayerID;
-  std::unordered_map<uint32_t, std::unique_ptr<Player>> players;
+  std::unordered_map<uint32_t, std::unique_ptr<ClientPlayer>> players;
 
   GameWindow *gameView;
 
