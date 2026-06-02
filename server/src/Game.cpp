@@ -77,7 +77,7 @@ void Game::registerPlayer(const std::string &name, const Race race,
 
   if (repository.exists(name)) {
     senderQueueMonitor.sendToClient(connectionId,
-                                    RegisterPlayerEventDTO{0, 1, Race::Human});
+                                    RegisterPlayerEventDTO{0, 1});
     return;
   }
 
@@ -103,7 +103,7 @@ void Game::registerPlayer(const std::string &name, const Race race,
   senderQueueMonitor.markAsRegistered(connectionId);
 
   senderQueueMonitor.sendToClient(
-      connectionId, RegisterPlayerEventDTO{newId, 0, players[newId]->race});
+      connectionId, RegisterPlayerEventDTO{newId, 0});
 
   {
     std::vector<TextureOriginDTO> origins;
@@ -124,8 +124,9 @@ void Game::registerPlayer(const std::string &name, const Race race,
   for (auto &[pid, info] : players) {
     playerList.push_back(
         {pid, static_cast<int16_t>(info->x), static_cast<int16_t>(info->y),
-         info->direction, info->race, info->name, info->hp, info->maxHp,
-         info->mana, info->maxMana, info->gold, info->level, info->experience});
+         info->direction, info->race, info->playerClass, info->name,
+         info->hp, info->maxHp, info->mana, info->maxMana, info->gold,
+         info->level, info->experience});
   }
 
   senderQueueMonitor.sendToClient(connectionId,
@@ -133,23 +134,24 @@ void Game::registerPlayer(const std::string &name, const Race race,
 
   messagesToSend.push_back(PlayerAppearedEventDTO{
       newId, static_cast<int16_t>(spawnX), static_cast<int16_t>(spawnY),
-      Direction::Down, race, name, players[newId]->hp, players[newId]->maxHp,
-      players[newId]->mana, players[newId]->maxMana, players[newId]->gold,
-      players[newId]->level, players[newId]->experience});
+      Direction::Down, race, playerClass, name, players[newId]->hp,
+      players[newId]->maxHp, players[newId]->mana, players[newId]->maxMana,
+      players[newId]->gold, players[newId]->level, players[newId]->experience});
 }
+
 
 void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   if (!repository.exists(name)) {
     senderQueueMonitor.sendToClient(connectionId,
-                                    RegisterPlayerEventDTO{0, 1, Race::Human});
+                                    RegisterPlayerEventDTO{0, 1});
     return;
   }
 
   for (auto &[pid, info] : players) {
     if (info->name == name) {
       senderQueueMonitor.sendToClient(
-          connectionId, RegisterPlayerEventDTO{0, 2, Race::Human});
+          connectionId, RegisterPlayerEventDTO{0, 2});
       return;
     }
   }
@@ -169,7 +171,7 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
   senderQueueMonitor.markAsRegistered(connectionId);
 
   senderQueueMonitor.sendToClient(
-      connectionId, RegisterPlayerEventDTO{newId, 0, players[newId]->race});
+      connectionId, RegisterPlayerEventDTO{newId, 0});
 
   std::vector<TextureOriginDTO> origins;
   origins.reserve(textureOrigins.size());
@@ -188,8 +190,9 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
   for (auto &[pid, info] : players) {
     playerList.push_back(
         {pid, static_cast<int16_t>(info->x), static_cast<int16_t>(info->y),
-         info->direction, info->race, info->name, info->hp, info->maxHp,
-         info->mana, info->maxMana, info->gold, info->level, info->experience});
+         info->direction, info->race, info->playerClass, info->name,
+         info->hp, info->maxHp, info->mana, info->maxMana, info->gold,
+         info->level, info->experience});
   }
   senderQueueMonitor.sendToClient(connectionId,
                                   PlayerListEventDTO{std::move(playerList)});
@@ -197,9 +200,10 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
   messagesToSend.push_back(PlayerAppearedEventDTO{
       newId, static_cast<int16_t>(data.x), static_cast<int16_t>(data.y),
       static_cast<Direction>(data.direction), players[newId]->race,
-      players[newId]->name, players[newId]->hp, players[newId]->maxHp,
-      players[newId]->mana, players[newId]->maxMana, players[newId]->gold,
-      players[newId]->level, players[newId]->experience});
+      players[newId]->playerClass, players[newId]->name,
+      players[newId]->hp, players[newId]->maxHp, players[newId]->mana,
+      players[newId]->maxMana, players[newId]->gold, players[newId]->level,
+      players[newId]->experience});
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {

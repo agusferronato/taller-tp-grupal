@@ -334,7 +334,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerResponse) {
   registerAllParsers(server);
   registerAllParsers(client);
 
-  ServerEventDTO original = RegisterPlayerEventDTO{1, 0, Race::Human};
+  ServerEventDTO original = RegisterPlayerEventDTO{1, 0};
 
   server.sendEvent(original);
 
@@ -344,7 +344,6 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerResponse) {
   ASSERT_NE(dto, nullptr);
   EXPECT_EQ(dto->playerId, 1);
   EXPECT_EQ(dto->status, 0);
-  EXPECT_EQ(dto->race, Race::Human);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
@@ -357,12 +356,15 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
   registerAllParsers(client);
 
   std::vector<PlayerInfoDTO> players = {
-      {1, 100, 200, Direction::Down, Race::Human, "jug1", 100, 100, 50, 100,
-       500, 5, 2000},
-      {2, 300, 400, Direction::Up, Race::Elf, "jug2", 80, 80, 100, 150, 300, 3,
-       800},
-      {3, 500, 600, Direction::Left, Race::Dwarf, "jug3", 120, 120, 0, 0, 1000,
-       8, 7000},
+      {1,         100,       200,       Direction::Down, Race::Human,
+       PlayerClass::Warrior, "jug1",   100,             100,
+       50,        100,       500,      5,                2000},
+      {2,         300,       400,       Direction::Up,   Race::Elf,
+       PlayerClass::Mage,    "jug2",   80,              80,
+       100,       150,       300,      3,                800},
+      {3,         500,       600,       Direction::Left, Race::Dwarf,
+       PlayerClass::Paladin, "jug3",   120,             120,
+       0,         0,         1000,     8,                7000},
   };
 
   ServerEventDTO original = PlayerListEventDTO{players};

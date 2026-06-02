@@ -25,7 +25,7 @@ private:
 public:
   GameModel(uint32_t myPlayerID, GameWindow *gameView,
             Queue<ServerEventDTO> &receptionQueue,
-            Queue<ClientCommandDTO> &sendingQueue, const Race race);
+            Queue<ClientCommandDTO> &sendingQueue);
   void updateStateFromServer();
 
 public:
@@ -35,6 +35,8 @@ public:
 
 private:
   void registerPlayers();
+  PlayerStatsInfo playerStatsFrom(const PlayerInfoDTO &info);
+  PlayerStatsInfo playerStatsFrom(const PlayerAppearedEventDTO &info);
 
 private:
   /* Event handlers */
