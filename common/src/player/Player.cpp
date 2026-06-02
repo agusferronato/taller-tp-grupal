@@ -12,6 +12,12 @@ Player::Player(std::string name, Race race, Direction direction,
       playerClass(playerClass), x(x), y(y), moving(false),
       stats(race, playerClass) {}
 
+void Player::updateStats(uint32_t hp, uint32_t maxHp, uint32_t mana,
+                         uint32_t maxMana, uint32_t gold, uint32_t level,
+                         uint32_t experience) {
+  stats.updateStats(hp, maxHp, mana, maxMana, gold, level, experience);
+}
+
 void Player::startMoving(Direction dir) {
   direction = dir;
   moving = true;

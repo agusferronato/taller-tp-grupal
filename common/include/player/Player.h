@@ -26,6 +26,8 @@ public:
   Player(std::string name, Direction direction, int x, int y,
          const PlayerStatsInfo &statsInfo);
 
+  void updateStats(uint32_t hp, uint32_t maxHp, uint32_t mana, uint32_t maxMana,
+                   uint32_t gold, uint32_t level, uint32_t experience);
   void startMoving(Direction dir);
   void stopMoving();
   void move(int newX, int newY);

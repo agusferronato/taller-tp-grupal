@@ -37,6 +37,9 @@ private:
   void initStats(Race race, PlayerClass playerClass);
 
 public:
+  void updateStats(uint32_t hp, uint32_t maxHp, uint32_t mana, uint32_t maxMana,
+                   uint32_t gold, uint32_t level, uint32_t experience);
+
   uint32_t getGold() const { return gold; }
   uint32_t getExperience() const { return experience; }
   uint32_t getLevel() const { return level; }
