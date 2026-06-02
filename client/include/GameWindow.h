@@ -49,6 +49,14 @@ private:
   std::unique_ptr<SDL2pp::Font> titleFont;
   std::unique_ptr<SDL2pp::Font> uiFont;
 
+
+  // UI Backgrounds
+  std::unique_ptr<SDL2pp::Texture> chatMessagesBackground;
+  std::unique_ptr<SDL2pp::Texture> chatInputBackground;
+  std::unique_ptr<SDL2pp::Texture> userInfoBackground;
+  std::unique_ptr<SDL2pp::Texture> userInventoryBackground;
+  std::unique_ptr<SDL2pp::Texture> userStatsBackground;
+
   // Chat state
   std::deque<std::string> chatMessages;
   std::string currentChatInput;
@@ -88,6 +96,7 @@ private:
   void renderPlayerHeader(const Layout& layout);
   void renderInventoryPanel(const Layout& layout);
   void renderVitals(const Layout& layout);
+  void renderUIBackgrounds(const Layout& layout);
 
   void renderText(int x, int y,
                   const std::string &text,
