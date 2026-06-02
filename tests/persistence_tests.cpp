@@ -125,7 +125,7 @@ TEST(PersistenceTest, PlayerDataToFromRoundTrip) {
   player.name = "Test";
   player.password = "pass";
   player.race = Race::Elf;
-  player.playerClass = "Mago";
+  player.playerClass = PlayerClass::Mage;
   player.level = 3;
   player.hp = 50;
   player.maxHp = 80;
@@ -145,7 +145,7 @@ TEST(PersistenceTest, PlayerDataToFromRoundTrip) {
   EXPECT_EQ(restored.name, "Test");
   EXPECT_EQ(restored.password, "pass");
   EXPECT_EQ(restored.race, Race::Elf);
-  EXPECT_EQ(restored.playerClass, "Mago");
+  EXPECT_EQ(restored.playerClass, PlayerClass::Mage);
   EXPECT_EQ(restored.x, 10);
   EXPECT_EQ(restored.y, 20);
   EXPECT_EQ(restored.direction, Direction::Right);

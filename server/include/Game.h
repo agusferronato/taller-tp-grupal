@@ -63,7 +63,7 @@ public:
   Game &operator=(const Game &) = delete;
 
   void registerPlayer(const std::string &name, const Race race,
-                      const std::string &playerClass, uint32_t connectionId);
+                      const PlayerClass playerClass, uint32_t connectionId);
   void loginPlayer(const std::string &name, uint32_t connectionId);
   void movePlayer(uint32_t playerId, Direction direction);
   void stopPlayer(uint32_t playerId);
