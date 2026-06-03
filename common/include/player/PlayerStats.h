@@ -47,6 +47,10 @@ public:
   uint32_t getMaxHp() const { return maxHealth; }
   uint32_t getMana() const { return mana; }
   uint32_t getMaxMana() const { return maxMana; }
+  uint32_t getStrength() const { return strength; }
+  uint32_t getAgility() const { return agility; }
+  uint32_t getConstitution() const { return constitution; }
+  uint32_t getIntelligence() const { return intelligence; }
 };
 
 #endif

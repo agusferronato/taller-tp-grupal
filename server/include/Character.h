@@ -3,9 +3,13 @@
 
 #include "Colisionable.h"
 #include "Direction.h"
-#include "Inventory.h"
+#include "Player.h"
+#include "PlayerAppearedEventDTO.h"
 #include "PlayerClass.h"
 #include "PlayerData.h"
+#include "PlayerInfoEventDTO.h"
+#include "PlayerListEventDTO.h"
+#include "PlayerMovedEventDTO.h"
 #include "Race.h"
 #include <cstdint>
 #include <string>
@@ -16,42 +20,36 @@ public:
   static constexpr int ANCHO = 32;
   static constexpr int ALTO = 32;
 
-  uint32_t id;
-  int x{0}, y{0};
-  Direction direction{Direction::Down};
-  bool moving{false};
+  // Register constructor: new character
+  Character(uint32_t id, std::string name, Race race, PlayerClass playerClass,
+            int x, int y, Direction dir);
 
-  std::string name;
-  std::string password;
-  Race race;
-  PlayerClass playerClass;
-  uint32_t level{1};
-  uint32_t hp{100}, maxHp{100};
-  uint32_t mana{0}, maxMana{0};
-  uint32_t experience{0};
-  uint32_t gold{0};
-  uint32_t strength{};
-  uint32_t agility{};
-  uint32_t constitution{};
-  uint32_t intelligence{};
-  Inventory inventory;
+  // Login constructor: restore from saved data
+  Character(uint32_t id, const PlayerData &data);
 
-  Character(uint32_t id, int x, int y, Direction dir);
+  uint32_t getId() const { return id; }
+  const std::string &getName() const { return player.getName(); }
 
-  // Conversion methods
+  // conversion para red o persistencia
   PlayerData toPlayerData() const;
-  void fromPlayerData(const PlayerData &data);
+  PlayerInfoDTO toPlayerInfo(uint32_t playerId) const;
+  PlayerInfoEventDTO toPlayerInfoEvent() const;
+  PlayerAppearedEventDTO toPlayerAppeared() const;
+  PlayerMovedEventDTO toPlayerMoved() const;
 
-  // Movement logic
+  bool isMoving() const { return player.isMoving(); }
+  void setDirection(Direction dir);
+  void stop();
   std::pair<int, int> getTargetPosition(Direction dir) const;
-  void setDirection(Direction dir) { direction = dir; }
-  void setMoving(bool isMoving) { moving = isMoving; }
+  std::pair<int, int> getTargetPosition() const;
+  void move(int newX, int newY) { player.move(newX, newY); }
 
-  // Initialize stats based on race and class
-  void initializeStats(const Race &characterRace,
-                       const PlayerClass &characterClass);
+  // Inventory (delegates to Player)
+  bool equipItem(uint8_t slot) { return player.equipItem(slot); }
+  bool unequipSlot(EquipSlot slot) { return player.unequipSlot(slot); }
+  bool removeItem(uint8_t slot) { return player.removeItem(slot); }
 
-  // Stats management
+  // Stats management (delegates to Player)
   void takeDamage(uint32_t damage);
   void heal(uint32_t amount);
   void gainExperience(uint32_t xp);
@@ -65,6 +63,10 @@ public:
   int getY() const override;
   int getAncho() const override;
   int getAlto() const override;
+
+private:
+  uint32_t id;
+  Player player;
 };
 
 #endif // CHARACTER_H

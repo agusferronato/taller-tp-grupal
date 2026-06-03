@@ -2,7 +2,6 @@
 #include <cctype>
 
 #include "ConstantRateLoop.h"
-#include "Formulas.h"
 #include "Game.h"
 #include "MapLoader.h"
 #include "MoveCommandDTO.h"
@@ -55,16 +54,14 @@ void Game::run() {
 
     if (++saveCounter >= 300) {
       for (auto &[id, player] : players) {
-        repository.save(player->name, player->toPlayerData());
+        repository.save(player->getName(), player->toPlayerData());
       }
       saveCounter = 0;
     }
 
     if (it % 60 == 0) {
       for (auto &[pid, p] : players) {
-        messagesToSend.push_back(
-            PlayerInfoEventDTO{pid, p->hp, p->maxHp, p->mana, p->maxMana,
-                               p->gold, p->level, p->experience});
+        messagesToSend.push_back(p->toPlayerInfoEvent());
       }
     }
 
@@ -90,13 +87,8 @@ void Game::registerPlayer(const std::string &name, const Race race,
   int spawnY = 0;
   nextSpawnX += 64;
 
-  auto player =
-      std::make_unique<Character>(newId, spawnX, spawnY, Direction::Down);
-  player->name = name;
-  player->race = race;
-  player->playerClass = playerClass;
-
-  player->initializeStats(race, playerClass);
+  auto player = std::make_unique<Character>(newId, name, race, playerClass,
+                                            spawnX, spawnY, Direction::Down);
   repository.create(player->toPlayerData());
 
   colisionables.push_back(player.get());
@@ -126,21 +118,13 @@ void Game::registerPlayer(const std::string &name, const Race race,
 
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
-    playerList.push_back({pid, static_cast<int16_t>(info->x),
-                          static_cast<int16_t>(info->y), info->direction,
-                          info->race, info->playerClass, info->name, info->hp,
-                          info->maxHp, info->mana, info->maxMana, info->gold,
-                          info->level, info->experience});
+    playerList.push_back(info->toPlayerInfo(pid));
   }
 
   senderQueueMonitor.sendToClient(connectionId,
                                   PlayerListEventDTO{std::move(playerList)});
 
-  messagesToSend.push_back(PlayerAppearedEventDTO{
-      newId, static_cast<int16_t>(spawnX), static_cast<int16_t>(spawnY),
-      Direction::Down, race, playerClass, name, players[newId]->hp,
-      players[newId]->maxHp, players[newId]->mana, players[newId]->maxMana,
-      players[newId]->gold, players[newId]->level, players[newId]->experience});
+  messagesToSend.push_back(players[newId]->toPlayerAppeared());
 }
 
 void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
@@ -151,7 +135,7 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
   }
 
   for (auto &[pid, info] : players) {
-    if (info->name == name) {
+    if (info->getName() == name) {
       senderQueueMonitor.sendToClient(connectionId,
                                       RegisterPlayerEventDTO{0, 2});
       return;
@@ -161,9 +145,7 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
   PlayerData data = repository.load(name);
   uint32_t newId = nextPlayerId++;
 
-  auto player = std::make_unique<Character>(
-      newId, data.x, data.y, static_cast<Direction>(data.direction));
-  player->fromPlayerData(data);
+  auto player = std::make_unique<Character>(newId, data);
 
   colisionables.push_back(player.get());
   players[newId] = std::move(player);
@@ -190,21 +172,12 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
-    playerList.push_back({pid, static_cast<int16_t>(info->x),
-                          static_cast<int16_t>(info->y), info->direction,
-                          info->race, info->playerClass, info->name, info->hp,
-                          info->maxHp, info->mana, info->maxMana, info->gold,
-                          info->level, info->experience});
+    playerList.push_back(info->toPlayerInfo(pid));
   }
   senderQueueMonitor.sendToClient(connectionId,
                                   PlayerListEventDTO{std::move(playerList)});
 
-  messagesToSend.push_back(PlayerAppearedEventDTO{
-      newId, static_cast<int16_t>(data.x), static_cast<int16_t>(data.y),
-      static_cast<Direction>(data.direction), players[newId]->race,
-      players[newId]->playerClass, players[newId]->name, players[newId]->hp,
-      players[newId]->maxHp, players[newId]->mana, players[newId]->maxMana,
-      players[newId]->gold, players[newId]->level, players[newId]->experience});
+  messagesToSend.push_back(players[newId]->toPlayerAppeared());
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {
@@ -215,9 +188,7 @@ void Game::movePlayer(uint32_t playerId, Direction direction) {
     return;
   }
 
-  Character &player = *it->second;
-  player.direction = direction;
-  player.moving = true;
+  it->second->setDirection(direction);
 }
 
 void Game::stopPlayer(uint32_t playerId) {
@@ -225,8 +196,7 @@ void Game::stopPlayer(uint32_t playerId) {
   if (it == players.end()) {
     return;
   }
-  Character &player = *it->second;
-  player.moving = false;
+  it->second->stop();
   messagesToSend.push_back(PlayerStoppedEventDTO{playerId});
 }
 
@@ -236,7 +206,7 @@ void Game::exitPlayer(uint32_t playerId) {
     return;
   }
 
-  repository.save(it->second->name, it->second->toPlayerData());
+  repository.save(it->second->getName(), it->second->toPlayerData());
 
   colisionables.erase(
       std::remove(colisionables.begin(), colisionables.end(), it->second.get()),
@@ -265,14 +235,14 @@ void Game::equipItem(uint32_t playerId, uint8_t inventorySlot) {
   auto it = players.find(playerId);
   if (it == players.end())
     return;
-  it->second->inventory.equipItem(inventorySlot);
+  it->second->equipItem(inventorySlot);
 }
 
 void Game::unequipSlot(uint32_t playerId, uint8_t equipSlot) {
   auto it = players.find(playerId);
   if (it == players.end())
     return;
-  it->second->inventory.unequipSlot(static_cast<EquipSlot>(equipSlot));
+  it->second->unequipSlot(static_cast<EquipSlot>(equipSlot));
 }
 
 void Game::dropItem(uint32_t playerId, uint8_t inventorySlot) {
@@ -280,7 +250,7 @@ void Game::dropItem(uint32_t playerId, uint8_t inventorySlot) {
   if (it == players.end()) {
     return;
   }
-  it->second->inventory.removeItem(inventorySlot);
+  it->second->removeItem(inventorySlot);
 }
 
 bool Game::thereIsACollidableEntityAt(Position position) {
@@ -327,11 +297,11 @@ void Game::appearNPC(std::unique_ptr<NPC> &&npc) {
 
 void Game::movePlayers() {
   for (auto &[playerID, info] : players) {
-    if (!info->moving) {
+    if (!info->isMoving()) {
       continue;
     }
 
-    auto [targetX, targetY] = info->getTargetPosition(info->direction);
+    auto [targetX, targetY] = info->getTargetPosition();
 
     bool blocked = false;
     for (auto &col : colisionables) {
@@ -368,12 +338,9 @@ void Game::movePlayers() {
         continue;
     }
 
-    info->x = targetX;
-    info->y = targetY;
+    info->move(targetX, targetY);
 
-    messagesToSend.push_back(
-        PlayerMovedEventDTO{playerID, static_cast<int16_t>(info->x),
-                            static_cast<int16_t>(info->y), info->direction});
+    messagesToSend.push_back(info->toPlayerMoved());
   }
 }
 
@@ -384,7 +351,7 @@ void Game::sendMessages() {
 
 void Game::saveAllPlayers() {
   for (auto &[id, player] : players) {
-    repository.save(player->name, player->toPlayerData());
+    repository.save(player->getName(), player->toPlayerData());
   }
 }
 

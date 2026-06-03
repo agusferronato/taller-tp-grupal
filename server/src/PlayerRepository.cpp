@@ -20,7 +20,6 @@ static std::string readString(std::ifstream &file) {
 
 static void writeData(std::ostream &file, const PlayerData &data) {
   writeString(file, data.name, PLAYER_NAME_MAX);
-  writeString(file, data.password, PLAYER_PASS_MAX);
   writeString(file, data.race, PLAYER_RACE_MAX);
   writeString(file, data.playerClass, PLAYER_CLASS_MAX);
 
@@ -60,11 +59,9 @@ static void writeData(std::ostream &file, const PlayerData &data) {
 
 static void readData(std::ifstream &file, PlayerData &data) {
   std::string name = readString(file);
-  std::string password = readString(file);
   std::string race = readString(file);
   std::string playerClass = readString(file);
   data.setName(name);
-  data.setPassword(password);
   data.setRace(race);
   data.setPlayerClass(playerClass);
 
