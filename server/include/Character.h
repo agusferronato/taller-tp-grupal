@@ -29,6 +29,16 @@ public:
 
   uint32_t getId() const { return id; }
   const std::string &getName() const { return player.getName(); }
+  Direction getDirection() const { return player.getDirection(); }
+  Race getRace() const { return player.getRace(); }
+  PlayerClass getPlayerClass() const { return player.getPlayerClass(); }
+  uint32_t getHp() const { return player.getHp(); }
+  uint32_t getMaxHp() const { return player.getMaxHp(); }
+  uint32_t getMana() const { return player.getMana(); }
+  uint32_t getMaxMana() const { return player.getMaxMana(); }
+  uint32_t getLevel() const { return player.getLevel(); }
+  uint32_t getExperience() const { return player.getExperience(); }
+  uint32_t getGold() const { return player.getGold(); }
 
   // conversion para red o persistencia
   PlayerData toPlayerData() const;
