@@ -122,6 +122,69 @@ void GameModel::registerPlayers() {
 void GameModel::handle(const InventoryUpdateEventDTO &) {}
 void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &) {}
+void GameModel::handle(const PrivateMessageEventDTO &) {}
+
+void GameModel::handle(const GlobalChatMessageEventDTO &event) {
+  chatMessages.push_back(event.message);
+
+  while (chatMessages.size() > 100) {
+    chatMessages.pop_front();
+  }
+
+  updateChatView();
+}
+
+void GameModel::updateChatView() {
+  gameView->setChatState(chatMessages, currentChatInput, chatActive);
+}
+
+const std::deque<std::string> &GameModel::getChatMessages() const {
+  return chatMessages;
+}
+
+const std::string &GameModel::getCurrentChatInput() const {
+  return currentChatInput;
+}
+
+bool GameModel::isChatActive() const { return chatActive; }
+
+void GameModel::openChat() {
+  chatActive = true;
+  SDL_StartTextInput();
+  updateChatView();
+}
+
+void GameModel::closeChat() {
+  chatActive = false;
+  currentChatInput.clear();
+  SDL_StopTextInput();
+  updateChatView();
+}
+
+void GameModel::appendChatText(const char *text) {
+  currentChatInput += text;
+  updateChatView();
+}
+
+void GameModel::backspaceChat() {
+  if (!currentChatInput.empty()) {
+    currentChatInput.pop_back();
+  }
+  updateChatView();
+}
+
+void GameModel::submitChat() {
+  if (currentChatInput.empty()) {
+    closeChat();
+    return;
+  }
+
+  sendingQueue.push(GlobalChatMessageCommandDTO{myPlayerID, currentChatInput});
+
+  currentChatInput.clear();
+  chatActive = false;
+  updateChatView();
+}
 
 void GameModel::handle(const NpcDefeatedEventDTO &event) {
   gameView->removeEntity(EntityType::Npc, event.npcId);

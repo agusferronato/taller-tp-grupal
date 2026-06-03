@@ -90,7 +90,7 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
     }
   }
 
-  gameView = std::make_unique<GameWindow>(myPlayerId, 820, 400);
+  gameView = std::make_unique<GameWindow>(myPlayerId);
 
   gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
                                           receptionQueue, sendingQueue);
