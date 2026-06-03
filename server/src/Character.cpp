@@ -1,124 +1,78 @@
 #include "Character.h"
-#include "Formulas.h"
+#include "PlayerClass.h"
+#include "Race.h"
 #include <algorithm>
 
-Character::Character(uint32_t id, int x, int y, Direction dir)
-    : id(id), x(x), y(y), direction(dir) {}
+Character::Character(uint32_t id, std::string name, Race race,
+                     PlayerClass playerClass, int x, int y, Direction dir)
+    : id(id), player(std::move(name), race, dir, playerClass, x, y) {}
+
+Character::Character(uint32_t id, const PlayerData &data)
+    : id(id), player(data.name, RaceUtils::stringToRace(data.race),
+                     static_cast<Direction>(data.direction),
+                     PlayerClassUtils::stringToPlayerClass(data.playerClass),
+                     data.x, data.y) {
+  player.updateStats(data.hp, data.maxHp, data.mana, data.maxMana, data.gold,
+                     data.level, data.experience);
+  player.setInventoryItems(data.inventory);
+  player.setEquippedWeapon(data.equippedWeapon);
+  player.setEquippedArmor(data.equippedArmor);
+  player.setEquippedHelmet(data.equippedHelmet);
+  player.setEquippedShield(data.equippedShield);
+}
 
 PlayerData Character::toPlayerData() const {
   PlayerData data{};
-  data.setName(name);
-  data.setPassword(password);
-  data.setRace(RaceUtils::raceToString(race));
-  data.setPlayerClass(PlayerClassUtils::playerClassToString(playerClass));
-  data.x = x;
-  data.y = y;
-  data.direction = static_cast<uint8_t>(direction);
-  data.level = level;
-  data.hp = hp;
-  data.maxHp = maxHp;
-  data.mana = mana;
-  data.maxMana = maxMana;
-  data.experience = experience;
-  data.gold = gold;
-  data.strength = strength;
-  data.agility = agility;
-  data.constitution = constitution;
-  data.intelligence = intelligence;
-  data.inventory = inventory.getItems();
-  data.equippedWeapon = inventory.getWeapon();
-  data.equippedArmor = inventory.getArmor();
-  data.equippedHelmet = inventory.getHelmet();
-  data.equippedShield = inventory.getShield();
+  data.setName(player.getName());
+  data.setRace(RaceUtils::raceToString(player.getRace()));
+  data.setPlayerClass(
+      PlayerClassUtils::playerClassToString(player.getPlayerClass()));
+  data.x = player.getX();
+  data.y = player.getY();
+  data.direction = static_cast<uint8_t>(player.getDirection());
+  data.level = player.getLevel();
+  data.hp = player.getHp();
+  data.maxHp = player.getMaxHp();
+  data.mana = player.getMana();
+  data.maxMana = player.getMaxMana();
+  data.experience = player.getExperience();
+  data.gold = player.getGold();
+  data.strength = player.getStrength();
+  data.agility = player.getAgility();
+  data.constitution = player.getConstitution();
+  data.intelligence = player.getIntelligence();
+  data.inventory = player.getInventoryItems();
+  data.equippedWeapon = player.getEquippedWeapon();
+  data.equippedArmor = player.getEquippedArmor();
+  data.equippedHelmet = player.getEquippedHelmet();
+  data.equippedShield = player.getEquippedShield();
   return data;
 }
 
-void Character::fromPlayerData(const PlayerData &data) {
-  name = data.name;
-  password = data.password;
-  race = RaceUtils::stringToRace(data.race);
-  playerClass = PlayerClassUtils::stringToPlayerClass(data.playerClass);
-  x = data.x;
-  y = data.y;
-  direction = static_cast<Direction>(data.direction);
-  level = data.level;
-  hp = data.hp;
-  maxHp = data.maxHp;
-  mana = data.mana;
-  maxMana = data.maxMana;
-  experience = data.experience;
-  gold = data.gold;
-  strength = data.strength;
-  agility = data.agility;
-  constitution = data.constitution;
-  intelligence = data.intelligence;
-  inventory.setItems(data.inventory);
-  inventory.setWeapon(data.equippedWeapon);
-  inventory.setArmor(data.equippedArmor);
-  inventory.setHelmet(data.equippedHelmet);
-  inventory.setShield(data.equippedShield);
+PlayerInfoDTO Character::toPlayerInfo(uint32_t playerId) const {
+  return {playerId,
+          static_cast<int16_t>(player.getX()),
+          static_cast<int16_t>(player.getY()),
+          player.getDirection(),
+          player.getRace(),
+          player.getPlayerClass(),
+          player.getName(),
+          player.getHp(),
+          player.getMaxHp(),
+          player.getMana(),
+          player.getMaxMana(),
+          player.getGold(),
+          player.getLevel(),
+          player.getExperience()};
 }
 
-static void initPlayerStats(Character &player, const Race race,
-                            const PlayerClass &playerClass) {
-  struct BaseStats {
-    uint32_t strength, agility, constitution, intelligence;
-  };
+void Character::setDirection(Direction dir) { player.startMoving(dir); }
 
-  auto getRaceStats = [](const Race &race) -> BaseStats {
-    switch (race) {
-    case Race::Human:
-      return {10, 10, 10, 10};
-    case Race::Elf:
-      return {6, 13, 5, 16};
-    case Race::Dwarf:
-      return {13, 4, 16, 7};
-    case Race::Gnome:
-      return {7, 6, 14, 13};
-    }
-    throw std::invalid_argument("Invalid race");
-  };
-
-  auto getClassStats = [](const PlayerClass playerClass) -> BaseStats {
-    switch (playerClass) {
-    case PlayerClass::Mage:
-      return {3, 5, 5, 15};
-    case PlayerClass::Priest:
-      return {7, 7, 9, 10};
-    case PlayerClass::Paladin:
-      return {10, 6, 10, 8};
-    case PlayerClass::Warrior:
-      return {10, 8, 10, 3};
-    default:
-      return {0, 0, 0, 0};
-    }
-  };
-
-  auto raceStats = getRaceStats(race);
-  auto classStats = getClassStats(playerClass);
-  player.strength = raceStats.strength + classStats.strength;
-  player.agility = raceStats.agility + classStats.agility;
-  player.constitution = raceStats.constitution + classStats.constitution;
-  player.intelligence = raceStats.intelligence + classStats.intelligence;
-}
-
-bool Character::colisionaCon(int targetX, int targetY, int ancho,
-                             int alto) const {
-  return !(targetX + ancho <= x || targetX >= x + ANCHO ||
-           targetY + alto <= y || targetY >= y + ALTO);
-}
-
-int Character::getX() const { return x; }
-
-int Character::getY() const { return y; }
-
-int Character::getAncho() const { return ANCHO; }
-
-int Character::getAlto() const { return ALTO; }
+void Character::stop() { player.stopMoving(); }
 
 std::pair<int, int> Character::getTargetPosition(Direction dir) const {
-  int targetX = x;
-  int targetY = y;
+  int targetX = player.getX();
+  int targetY = player.getY();
   switch (dir) {
   case Direction::Up:
     targetY -= 1;
@@ -136,33 +90,64 @@ std::pair<int, int> Character::getTargetPosition(Direction dir) const {
   return {targetX, targetY};
 }
 
-void Character::initializeStats(const Race &characterRace,
-                                const PlayerClass &characterClass) {
-  initPlayerStats(*this, characterRace, characterClass);
-  maxHp = Formulas::calcularVidaMax(constitution, characterRace, characterClass,
-                                    level);
-  hp = maxHp;
-  maxMana = Formulas::calcularManaMax(intelligence, characterRace,
-                                      characterClass, level);
-  mana = maxMana;
+void Character::takeDamage(uint32_t damage) { player.takeDamage(damage); }
+
+void Character::heal(uint32_t amount) { player.heal(amount); }
+
+void Character::gainExperience(uint32_t xp) { player.gainExperience(xp); }
+
+void Character::addGold(uint32_t amount) { player.earnGold(amount); }
+
+void Character::spendGold(uint32_t amount) { player.expentGold(amount); }
+
+bool Character::colisionaCon(int targetX, int targetY, int ancho,
+                             int alto) const {
+  return !(targetX + ancho <= player.getX() ||
+           targetX >= player.getX() + ANCHO ||
+           targetY + alto <= player.getY() || targetY >= player.getY() + ALTO);
 }
 
-void Character::takeDamage(uint32_t damage) {
-  if (damage >= hp) {
-    hp = 0;
-  } else {
-    hp -= damage;
-  }
+int Character::getX() const { return player.getX(); }
+
+int Character::getY() const { return player.getY(); }
+
+int Character::getAncho() const { return ANCHO; }
+
+int Character::getAlto() const { return ALTO; }
+
+PlayerInfoEventDTO Character::toPlayerInfoEvent() const {
+  return {id,
+          player.getHp(),
+          player.getMaxHp(),
+          player.getMana(),
+          player.getMaxMana(),
+          player.getGold(),
+          player.getLevel(),
+          player.getExperience()};
 }
 
-void Character::heal(uint32_t amount) { hp = std::min(hp + amount, maxHp); }
+PlayerAppearedEventDTO Character::toPlayerAppeared() const {
+  return {id,
+          static_cast<int16_t>(player.getX()),
+          static_cast<int16_t>(player.getY()),
+          player.getDirection(),
+          player.getRace(),
+          player.getPlayerClass(),
+          player.getName(),
+          player.getHp(),
+          player.getMaxHp(),
+          player.getMana(),
+          player.getMaxMana(),
+          player.getGold(),
+          player.getLevel(),
+          player.getExperience()};
+}
 
-void Character::gainExperience(uint32_t xp) { experience += xp; }
+PlayerMovedEventDTO Character::toPlayerMoved() const {
+  return {id, static_cast<int16_t>(player.getX()),
+          static_cast<int16_t>(player.getY()), player.getDirection()};
+}
 
-void Character::addGold(uint32_t amount) { gold += amount; }
-
-void Character::spendGold(uint32_t amount) {
-  if (amount <= gold) {
-    gold -= amount;
-  }
+std::pair<int, int> Character::getTargetPosition() const {
+  return getTargetPosition(player.getDirection());
 }
