@@ -10,6 +10,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <deque> //Double ended queue for chat messages
 
 class GameWindow;
 
@@ -21,6 +22,10 @@ private:
   uint32_t myPlayerID;
   std::unordered_map<uint32_t, std::unique_ptr<Player>> players;
   std::unordered_map<uint32_t, std::unique_ptr<NPC>> npcs;
+
+  std::deque<std::string> chatMessages;
+  std::string currentChatInput;
+  bool chatActive = false;
 
   GameWindow *gameView;
 public:
@@ -35,8 +40,21 @@ public:
   void moveMyPlayer(Direction direction);
   void stopMyPlayer();
 
+public:
+  //Chat
+  const std::deque<std::string>& getChatMessages() const;
+  const std::string& getCurrentChatInput() const;
+  bool isChatActive() const;
+
+  void openChat();
+  void closeChat();
+  void appendChatText(const char* text);
+  void backspaceChat();
+  void submitChat();
+
 private:
   void registerPlayers();
+  void updateChatView();
 
 private:
   /* Event handlers */
@@ -52,6 +70,9 @@ private:
   void handle(const ChatMessageEventDTO &event);
   void handle(const NpcDefeatedEventDTO &event);
   void handle(const RegisterPlayerEventDTO &event);
+  void handle(const PrivateMessageEventDTO &event);
+  void handle(const GlobalChatMessageEventDTO &event);
+
 };
 
 #endif

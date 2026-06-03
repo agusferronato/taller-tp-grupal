@@ -78,6 +78,9 @@ private:
 
   std::list<ServerEventDTO> messagesToSend;
   bool keepRunning = true;
+  
+  std::unordered_map<std::string, uint32_t> playerIdByName;
+  
   uint32_t nextPlayerId{1};
   int nextSpawnX{0};
   std::unordered_map<uint32_t, std::unique_ptr<PlayerInfo>> players;
@@ -117,7 +120,7 @@ public:
   void equipItem(uint32_t playerId, uint8_t inventorySlot);
   void unequipSlot(uint32_t playerId, uint8_t equipSlot);
   void dropItem(uint32_t playerId, uint8_t inventorySlot);
-
+  void sendGlobalChatMessage(uint32_t playerId, const std::string &message);
 
   bool thereIsACollidableEntityAt(Position position);
   void appearNPC(std::unique_ptr<NPC>&& npc);
