@@ -139,18 +139,18 @@ TEST(PersistenceTest, PlayerDataToFromRoundTrip) {
   Character restored(0, data);
 
   EXPECT_EQ(restored.getName(), "Test");
-  EXPECT_EQ(restored.getPlayer().getRace(), Race::Elf);
-  EXPECT_EQ(restored.getPlayer().getPlayerClass(), PlayerClass::Mage);
-  EXPECT_EQ(restored.getPlayer().getX(), 10);
-  EXPECT_EQ(restored.getPlayer().getY(), 20);
-  EXPECT_EQ(restored.getPlayer().getDirection(), Direction::Right);
-  EXPECT_EQ(restored.getPlayer().getLevel(), 5u);
-  EXPECT_EQ(restored.getPlayer().getHp(), 60u);
-  EXPECT_EQ(restored.getPlayer().getMaxHp(), 100u);
-  EXPECT_EQ(restored.getPlayer().getMana(), 40u);
-  EXPECT_EQ(restored.getPlayer().getMaxMana(), 80u);
-  EXPECT_EQ(restored.getPlayer().getExperience(), 1500u);
-  EXPECT_EQ(restored.getPlayer().getGold(), 300u);
+  EXPECT_EQ(restored.getRace(), Race::Elf);
+  EXPECT_EQ(restored.getPlayerClass(), PlayerClass::Mage);
+  EXPECT_EQ(restored.getX(), 10);
+  EXPECT_EQ(restored.getY(), 20);
+  EXPECT_EQ(restored.getDirection(), Direction::Right);
+  EXPECT_EQ(restored.getLevel(), 5u);
+  EXPECT_EQ(restored.getHp(), 60u);
+  EXPECT_EQ(restored.getMaxHp(), 100u);
+  EXPECT_EQ(restored.getMana(), 40u);
+  EXPECT_EQ(restored.getMaxMana(), 80u);
+  EXPECT_EQ(restored.getExperience(), 1500u);
+  EXPECT_EQ(restored.getGold(), 300u);
 }
 
 TEST(PersistenceTest, DataSurvivesRepoRecreation) {
