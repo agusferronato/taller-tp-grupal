@@ -7,5 +7,5 @@ RegisterPlayerCommand::RegisterPlayerCommand(std::string name, Race race,
     : name(std::move(name)), race(race), playerClass(std::move(playerClass)) {}
 
 void RegisterPlayerCommand::execute(Game &game, uint32_t connectionId) {
-  game.registerPlayer(playerName, race, playerClass, connectionId);
+  game.registerPlayer(name, race, playerClass, connectionId);
 }
