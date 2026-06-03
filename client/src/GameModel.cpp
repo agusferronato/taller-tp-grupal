@@ -167,7 +167,6 @@ void GameModel::handle(const InventoryUpdateEventDTO &inv) {
 
 void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &) {}
-void GameModel::handle(const RegisterPlayerEventDTO &) {}
 void GameModel::handle(const PrivateMessageEventDTO &) {}
 
 void GameModel::handle(const GlobalChatMessageEventDTO &event) {

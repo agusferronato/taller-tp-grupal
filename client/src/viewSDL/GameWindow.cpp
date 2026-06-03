@@ -22,6 +22,7 @@ GameWindow::loadPlayerTexture(SDL2pp::Renderer& renderer,
 
   return texture;
 }
+
 GameWindow::GameWindow(uint32_t myPlayerID)
     : camera(Camera(680, 355)), myPlayerID(myPlayerID) {
   window = std::make_unique<SDL2pp::Window>(
@@ -170,12 +171,21 @@ void GameWindow::getSortedEntities(
 }
 
 void GameWindow::render(unsigned int it) {
-  if (myPlayerEntity) {
-    camera.follow(myPlayerEntity->get_x(), myPlayerEntity->get_y(),
-    Player::Width, Player::Height);
-  }
-  
   Layout layout = getLayout();
+
+  if (myPlayerEntity) {
+    camera.setViewport(
+        layout.gameRect.GetX(),
+        layout.gameRect.GetY(),
+        layout.gameRect.GetW(),
+        layout.gameRect.GetH());
+
+    camera.follow(myPlayerEntity->get_x(),
+                  myPlayerEntity->get_y(),
+                  Player::Width,
+                  Player::Height);
+  }
+
   renderWorld(it);
   renderUIBackgrounds(layout);
   renderHUD();
@@ -514,22 +524,12 @@ void GameWindow::renderUIBackgrounds(const Layout& layout) {
   }
 }
 
-void GameWindow::addNpc(uint32_t ID, NPC &npc, NPCType npcType) {
-  NPCInfo info = npcParser.getInfo(npcType);
-  auto entity = std::make_unique<NPCEntity>(npc, *textureManager,
-                                            info.textureId, info.layoutType);
-  addEntity(EntityType::Npc, ID, std::move(entity));
-}
-
-void GameWindow::removePlayer(uint32_t ID) {
-  removeEntity(EntityType::Player, ID);
-}
-
 void GameWindow::renderInventoryInfo(const Layout& layout) {
   if (!myPlayerEntity)
     return;
-  const Player &p = myPlayerEntity->getPlayer();
   
+  const Player &p = myPlayerEntity->getPlayer();
+  (void) p;
   // Cuando deje de estar mockeado el oro, reemplazar por p.getGold() o similar
   // const Player& p = *itMy->second;
 

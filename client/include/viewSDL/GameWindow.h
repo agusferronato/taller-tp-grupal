@@ -53,7 +53,6 @@ private:
 
   std::unique_ptr<SDL2pp::Texture> uiFrameTexture;
   std::unique_ptr<GameChatView> chatView;
-  std::unique_ptr<TextureMapper> textureMapper;
   std::unique_ptr<SDL2pp::Font> font;
   std::unique_ptr<SDL2pp::Font> titleFont;
   std::unique_ptr<SDL2pp::Font> uiFont;
@@ -94,15 +93,9 @@ private:
 
   Layout getLayout() const;
 
-  void initResources();
-  void clear();
-
-  void render(unsigned int it);
   void renderWorld(unsigned int it);
-  void renderCommonGround();
   void renderEntitiesByPriority(unsigned int it);
 
-  void renderHUD();
   void renderUIFrame(const Layout &layout);
   void renderChat(const Layout &layout);
   void renderPlayerStats(const Layout &layout);
@@ -139,7 +132,6 @@ public:
   void addPlayer(uint32_t ID, const Player &player);
   void addNpc(uint32_t ID, NPC &npc, NPCType npcType);
   void removeEntity(EntityType type, uint32_t id);
-  void removePlayer(uint32_t ID);
   void setMyPlayer(const Player &player, uint32_t ID);
 
   SDL2pp::Renderer &getRenderer();

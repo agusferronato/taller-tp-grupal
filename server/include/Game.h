@@ -79,7 +79,6 @@ private:
   std::list<ServerEventDTO> messagesToSend;
   bool keepRunning = true;
   
-  std::unordered_map<uint32_t, std::unique_ptr<PlayerInfo>> players;
   std::unordered_map<std::string, uint32_t> playerIdByName;
   
   uint32_t nextPlayerId{1};
