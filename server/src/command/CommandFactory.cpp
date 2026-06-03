@@ -9,6 +9,7 @@
 #include "RegisterPlayerCommandDTO.h"
 #include "TakeItemCommandDTO.h"
 #include "UnequipCommandDTO.h"
+#include "GlobalChatMessageCommandDTO.h"
 #include "command/DropItemCommand.h"
 #include "command/EquipCommand.h"
 #include "command/ExitCommand.h"
@@ -18,6 +19,7 @@
 #include "command/RegisterPlayerCommand.h"
 #include "command/TakeItemCommand.h"
 #include "command/UnequipCommand.h"
+#include "command/GlobalChatMessageCommand.h"
 
 std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
   if (const auto *request = std::get_if<RegisterPlayerCommandDTO>(&dto)) {
@@ -59,6 +61,10 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
 
   if (const auto *request = std::get_if<TakeItemCommandDTO>(&dto)) {
     return std::make_unique<TakeItemCommand>(request->playerId);
+  }
+
+  if (const auto *request = std::get_if<GlobalChatMessageCommandDTO>(&dto)) {
+    return std::make_unique<GlobalChatMessageCommand>(request->playerId, request->message);
   }
 
   throw std::runtime_error("Unknown client request DTO type");

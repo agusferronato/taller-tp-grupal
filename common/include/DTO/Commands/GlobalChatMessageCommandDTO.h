@@ -1,17 +1,17 @@
-#ifndef PRIVATE_MESSAGE_COMMAND_DTO_H
-#define PRIVATE_MESSAGE_COMMAND_DTO_H
+#ifndef GLOBAL_CHAT_MESSAGE_COMMAND_DTO_H
+#define GLOBAL_CHAT_MESSAGE_COMMAND_DTO_H
 
 #include "protocol/ProtocolCodes.h"
 #include <string>
 
-struct PrivateMessageCommandDTO {
+struct GlobalChatMessageCommandDTO {
 private:
   static constexpr ClientCommandOpCode opCode =
-      ClientCommandOpCode::PrivateMessageCommand;
+      ClientCommandOpCode::GlobalChatMessageCommand;
 
 public:
   ClientCommandOpCode getCode() const { return opCode; }
-  std::string targetName;
+  uint32_t playerId;
   std::string message;
 };
 

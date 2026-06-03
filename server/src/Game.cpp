@@ -355,6 +355,12 @@ void Game::saveAllPlayers() {
   }
 }
 
+void Game::sendGlobalChatMessage(uint32_t playerId,
+                                 const std::string &message) {
+  messagesToSend.push_back(
+      GlobalChatMessageEventDTO{std::to_string(playerId), message});
+}
+
 void Game::appearNPCs() {
 
   for (auto &biome : biomes) {
