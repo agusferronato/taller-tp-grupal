@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Formulas.h"
 
 Player::Player(std::string name, Direction direction, int x, int y,
                const PlayerStatsInfo &statsInfo)
@@ -31,7 +32,8 @@ void Player::move(int newX, int newY) {
 }
 
 uint32_t Player::takeDamage(uint32_t damage) {
-  uint32_t defence = 0;
+  uint32_t defence =
+      Formulas::calcularDefensa(0, 0, 0, 0, 0, 0, rand(), rand(), rand());
   uint32_t actualDamage = damage - defence;
   stats.takeDamage(actualDamage);
   return actualDamage;
@@ -43,4 +45,6 @@ bool Player::gainExperience(uint32_t) { return false; }
 bool Player::expentGold(uint32_t) { return false; }
 void Player::earnGold(uint32_t) {}
 
-uint32_t Player::atack() const { return stats.getStrength() * 1; }
+uint32_t Player::atack() const {
+  return Formulas::calcularDaño(stats.getStrength(), 0, 0, rand());
+}
