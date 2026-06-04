@@ -1,7 +1,9 @@
 #include "GameModel.h"
 #include "ChatMessageEventDTO.h"
 #include "DropItemCommandDTO.h"
+#include "EquipCommandDTO.h"
 #include "GameWindow.h"
+#include "UnequipCommandDTO.h"
 #include "GlobalChatMessageCommandDTO.h"
 #include "GlobalChatMessageEventDTO.h"
 #include "GroundItemAppearedEventDTO.h"
@@ -68,6 +70,14 @@ void GameModel::takeItem() {
 
 void GameModel::dropItem(uint8_t slot) {
   sendingQueue.push(DropItemCommandDTO{myPlayerID, slot});
+}
+
+void GameModel::equipItem(uint8_t slot) {
+  sendingQueue.push(EquipCommandDTO{myPlayerID, slot});
+}
+
+void GameModel::unequipItem(uint8_t equipSlot) {
+  sendingQueue.push(UnequipCommandDTO{myPlayerID, equipSlot});
 }
 
 void GameModel::moveMyPlayer(Direction direction) {

@@ -60,15 +60,6 @@ void InventoryManager::dropItem(uint32_t playerId, uint8_t slotIndex) {
   if (itemId == EMPTY_ITEM)
     return;
 
-  const ItemDef &def = ITEM_TABLE[itemId];
-
-  if (def.type == ItemType::PotionHp || def.type == ItemType::PotionMana) {
-    if (!player.removeItem(slotIndex))
-      return;
-    broadcastInventoryUpdate(player);
-    return;
-  }
-
   if (!player.removeItem(slotIndex))
     return;
 
