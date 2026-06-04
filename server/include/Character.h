@@ -60,7 +60,7 @@ public:
   bool removeItem(uint8_t slot) { return player.removeItem(slot); }
 
   // Stats management (delegates to Player)
-  void takeDamage(uint32_t damage);
+  uint32_t takeDamage(uint32_t damage);
   void heal(uint32_t amount);
   void gainExperience(uint32_t xp);
   void addGold(uint32_t amount);
@@ -76,6 +76,7 @@ public:
 
   bool isNewbie() const { return player.getLevel() < 13; }
   uint32_t getDamage() const;
+  bool tryParry() const;
 
 private:
   uint32_t id;

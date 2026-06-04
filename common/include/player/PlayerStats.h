@@ -51,6 +51,8 @@ public:
   uint32_t getAgility() const { return agility; }
   uint32_t getConstitution() const { return constitution; }
   uint32_t getIntelligence() const { return intelligence; }
+
+  void takeDamage(uint32_t damage);
 };
 
 #endif

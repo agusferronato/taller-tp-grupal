@@ -30,11 +30,17 @@ void Player::move(int newX, int newY) {
   y = newY;
 }
 
-void Player::takeDamage(uint32_t) {}
+uint32_t Player::takeDamage(uint32_t damage) {
+  uint32_t defence = 0;
+  uint32_t actualDamage = damage - defence;
+  stats.takeDamage(actualDamage);
+  return actualDamage;
+}
+
 uint32_t Player::heal(uint32_t) { return 0; }
 bool Player::useMana(uint32_t) { return false; }
 bool Player::gainExperience(uint32_t) { return false; }
 bool Player::expentGold(uint32_t) { return false; }
 void Player::earnGold(uint32_t) {}
 
-uint32_t Player::atack() const { return 10; }
+uint32_t Player::atack() const { return stats.getStrength() * 1; }
