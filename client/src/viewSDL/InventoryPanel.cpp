@@ -121,6 +121,17 @@ void InventoryPanel::render(const ClientPlayer &player) {
     if (itemId != 0) {
       renderItemIcon(r.x, r.y, itemId);
     }
+    try {
+      SDL_Color gray{140, 140, 140, 180};
+      std::string numStr = std::to_string(i);
+      SDL2pp::Surface surf = slotFont->RenderUTF8_Solid(numStr, gray);
+      SDL2pp::Texture tex(renderer, surf);
+      int tx = r.x + r.w - surf.GetWidth() - 2;
+      int ty = r.y + r.h - surf.GetHeight() - 1;
+      renderer.Copy(tex, SDL2pp::NullOpt,
+                    SDL2pp::Rect(tx, ty, surf.GetWidth(), surf.GetHeight()));
+    } catch (...) {
+    }
   }
 
   const auto &invItems = player.getInventory().getItems();

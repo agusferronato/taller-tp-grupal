@@ -4,7 +4,7 @@
 #include <string>
 #include <cstdint>
 
-enum class ChatCommandType { None, Tomar, Tirar };
+enum class ChatCommandType { None, Tomar, Tirar, Equipar, Desequipar };
 
 struct ChatCommand {
   ChatCommandType type;

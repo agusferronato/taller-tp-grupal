@@ -45,6 +45,8 @@ public:
   void handleInventoryClick(int screenX, int screenY, uint8_t button);
   void takeItem();
   void dropItem(uint8_t slot);
+  void equipItem(uint8_t slot);
+  void unequipItem(uint8_t equipSlot);
   const GroundItemManager &getGroundItemManager() const {
     return groundItemManager;
   }

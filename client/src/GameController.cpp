@@ -51,6 +51,10 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
           gameModel->takeItem();
         } else if (cmd.type == ChatCommandType::Tirar) {
           gameModel->dropItem(static_cast<uint8_t>(cmd.arg));
+        } else if (cmd.type == ChatCommandType::Equipar) {
+          gameModel->equipItem(static_cast<uint8_t>(cmd.arg));
+        } else if (cmd.type == ChatCommandType::Desequipar) {
+          gameModel->unequipItem(static_cast<uint8_t>(cmd.arg));
         }
         gameModel->closeChat();
       } else {
