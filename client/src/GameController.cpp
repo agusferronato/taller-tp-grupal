@@ -1,5 +1,6 @@
 #include "GameController.h"
 
+#include "ChatCommandParser.h"
 #include "PlayerStoppedEventDTO.h"
 #include "WindowClosed.h"
 
@@ -43,7 +44,18 @@ void GameController::handleEvent(const SDL_Event &event) {
 void GameController::handleKeyDown(const SDL_Keycode &key) {
   if (gameModel->isChatActive()) {
     if (key == SDLK_RETURN) {
-      gameModel->submitChat();
+      ChatCommand cmd =
+          ChatCommandParser::parse(gameModel->getCurrentChatInput());
+      if (cmd.type != ChatCommandType::None) {
+        if (cmd.type == ChatCommandType::Tomar) {
+          gameModel->takeItem();
+        } else if (cmd.type == ChatCommandType::Tirar) {
+          gameModel->dropItem(static_cast<uint8_t>(cmd.arg));
+        }
+        gameModel->closeChat();
+      } else {
+        gameModel->submitChat();
+      }
       return;
     }
 
@@ -62,11 +74,6 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
 
   if (key == SDLK_RETURN) {
     gameModel->openChat();
-    return;
-  }
-
-  if (key == SDLK_t) {
-    gameModel->takeItem();
     return;
   }
 

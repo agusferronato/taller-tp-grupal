@@ -44,6 +44,7 @@ public:
   void stopMyPlayer();
   void handleInventoryClick(int screenX, int screenY, uint8_t button);
   void takeItem();
+  void dropItem(uint8_t slot);
   const GroundItemManager &getGroundItemManager() const {
     return groundItemManager;
   }
