@@ -135,6 +135,8 @@ public:
   void setChatState(const std::deque<std::string> &messages,
                     const std::string &input, bool active);
 
+  std::pair<int, int> screenToWorld(int mouseX, int mouseY);
+
 private:
   void renderHUD();
   void render(unsigned int it);

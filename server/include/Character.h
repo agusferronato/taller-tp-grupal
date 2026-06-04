@@ -74,6 +74,9 @@ public:
   int getAncho() const override;
   int getAlto() const override;
 
+  bool isNewbie() const { return player.getLevel() < 13; }
+  uint32_t getDamage() const;
+
 private:
   uint32_t id;
   Player player;

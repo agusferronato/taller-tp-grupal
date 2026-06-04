@@ -26,13 +26,20 @@ void GameController::handleEvent(const SDL_Event &event) {
   case SDL_KEYUP:
     handleKeyUp(event.key.keysym.sym);
     break;
-    
+
   case SDL_TEXTINPUT:
     if (gameModel->isChatActive()) {
       gameModel->appendChatText(event.text.text);
     }
     break;
 
+  case SDL_MOUSEBUTTONDOWN:
+    if (event.button.button == SDL_BUTTON_LEFT) {
+      int mouseX = event.button.x;
+      int mouseY = event.button.y;
+      gameModel->atack(mouseX, mouseY);
+    }
+    break;
   }
 }
 

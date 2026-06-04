@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "ClientMessage.h"
+#include <optional>
 #include <set>
 #include <tuple>
 
@@ -83,6 +84,7 @@ public:
   void unequipSlot(uint32_t playerId, uint8_t equipSlot);
   void dropItem(uint32_t playerId, uint8_t inventorySlot);
   void sendGlobalChatMessage(uint32_t playerId, const std::string &message);
+  void atack(uint32_t playerId, int16_t x, int16_t y);
 
   bool thereIsACollidableEntityAt(Position position);
   void appearNPC(std::unique_ptr<NPC> &&npc);
@@ -95,6 +97,14 @@ private:
   void saveAllPlayers();
 
   void appearNPCs();
+
+  void playerAtackPlayer(Character &atacker, Character &target);
+  void playerAtackNPC(Character &atacker, NPC &target);
+  uint32_t calculateDamage(Character &atacker);
+  bool validAtack(Character &atacker, Character &target);
+  Character *findPlayerByCoordinates(int16_t x, int16_t y);
+  NPC *findNPCByCoordinates(int16_t x, int16_t y);
+  const std::string npcName(NPC &npc);
 };
 
 #endif
