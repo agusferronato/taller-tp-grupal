@@ -28,6 +28,13 @@ void PlayerStats::updateStats(uint32_t hp, uint32_t maxHp, uint32_t mana,
   this->experience = experience;
 }
 
+void PlayerStats::addMana(uint32_t amount) {
+  uint32_t newMana = mana + amount;
+  if (newMana > maxMana)
+    newMana = maxMana;
+  mana = newMana;
+}
+
 void PlayerStats::initStats(Race race, PlayerClass playerClass) {
   auto [strengthRace, agilityRace, constitutionRace, intelligenceRace] =
       Formulas::getRaceStats(race);

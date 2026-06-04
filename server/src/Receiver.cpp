@@ -37,9 +37,13 @@ void Receiver::run() {
       gameloopQueue.push(ClientMessage{std::move(command), connectionId});
 
     } catch (const CommunicationEnded &e) {
-      if (keepRunning && lastPlayerId > 0) {
-        gameloopQueue.push(
-            ClientMessage{ExitCommandDTO{lastPlayerId}, lastPlayerId});
+      if (keepRunning) {
+        if (lastPlayerId > 0) {
+          gameloopQueue.push(
+              ClientMessage{ExitCommandDTO{lastPlayerId}, connectionId});
+        } else {
+          gameloopQueue.push(ClientMessage{ExitCommandDTO{0}, connectionId});
+        }
       }
       break;
 

@@ -5,6 +5,7 @@
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "Direction.h"
+#include "GroundItemManager.h"
 #include "NPC.h"
 #include "Queue.h"
 #include <deque> //Double ended queue for chat messages
@@ -23,6 +24,8 @@ private:
   std::unordered_map<uint32_t, std::unique_ptr<ClientPlayer>> players;
   std::unordered_map<uint32_t, std::unique_ptr<NPC>> npcs;
 
+  GroundItemManager groundItemManager;
+
   std::deque<std::string> chatMessages;
   std::string currentChatInput;
   bool chatActive = false;
@@ -39,6 +42,11 @@ public:
   /*update State From Controller*/
   void moveMyPlayer(Direction direction);
   void stopMyPlayer();
+  void handleInventoryClick(int screenX, int screenY, uint8_t button);
+  void takeItem();
+  const GroundItemManager &getGroundItemManager() const {
+    return groundItemManager;
+  }
 
 public:
   // Chat
@@ -72,6 +80,9 @@ private:
   void handle(const ChatMessageEventDTO &event);
   void handle(const NpcDefeatedEventDTO &event);
   void handle(const RegisterPlayerEventDTO &event);
+  void handle(const GroundItemAppearedEventDTO &event);
+  void handle(const GroundItemRemovedEventDTO &event);
+  void handle(const GroundItemsListEventDTO &event);
   void handle(const PrivateMessageEventDTO &event);
   void handle(const GlobalChatMessageEventDTO &event);
 };

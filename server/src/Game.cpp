@@ -17,6 +17,9 @@
 #include "RegisterPlayerEventDTO.h"
 #include "TextureInfoEventDTO.h"
 #include "command/CommandFactory.h"
+#include "GroundItemsListEventDTO.h"
+#include "InventoryUpdateEventDTO.h"
+#include "GlobalChatMessageEventDTO.h"
 
 static int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
 
@@ -35,6 +38,10 @@ void Game::run() {
 
   biomes = std::move(mapLoader.GetBiomes());
   cities = mapLoader.GetCities();
+
+  inventoryManager.addGroundItem(16, 64, 32);
+  inventoryManager.addGroundItem(1, 96, 32);
+  inventoryManager.addGroundItem(18, 128, 32);
 
   ConstantRateLoop rateloop(FPS_SERVER);
   CommandFactory factory;
@@ -89,6 +96,8 @@ void Game::registerPlayer(const std::string &name, const Race race,
 
   auto player = std::make_unique<Character>(newId, name, race, playerClass,
                                             spawnX, spawnY, Direction::Down);
+  player->addItem(17);
+  player->addItem(1);
   repository.create(player->toPlayerData());
 
   colisionables.push_back(player.get());
@@ -125,6 +134,24 @@ void Game::registerPlayer(const std::string &name, const Race race,
                                   PlayerListEventDTO{std::move(playerList)});
 
   messagesToSend.push_back(players[newId]->toPlayerAppeared());
+
+  messagesToSend.push_back(InventoryUpdateEventDTO{
+      newId, players[newId]->getInventoryItems(),
+      players[newId]->getEquippedWeapon(),
+      players[newId]->getEquippedArmor(),
+      players[newId]->getEquippedHelmet(),
+      players[newId]->getEquippedShield()});
+
+  {
+    std::vector<GroundItemInfoDTO> groundItemList;
+    for (const auto &gi : inventoryManager.getGroundItems()) {
+      groundItemList.push_back(
+          {gi.id, gi.itemId, static_cast<int16_t>(gi.x),
+           static_cast<int16_t>(gi.y)});
+    }
+    senderQueueMonitor.sendToClient(
+        connectionId, GroundItemsListEventDTO{std::move(groundItemList)});
+  }
 }
 
 void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
@@ -178,6 +205,24 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
                                   PlayerListEventDTO{std::move(playerList)});
 
   messagesToSend.push_back(players[newId]->toPlayerAppeared());
+
+  messagesToSend.push_back(InventoryUpdateEventDTO{
+      newId, players[newId]->getInventoryItems(),
+      players[newId]->getEquippedWeapon(),
+      players[newId]->getEquippedArmor(),
+      players[newId]->getEquippedHelmet(),
+      players[newId]->getEquippedShield()});
+
+  {
+    std::vector<GroundItemInfoDTO> groundItemList;
+    for (const auto &gi : inventoryManager.getGroundItems()) {
+      groundItemList.push_back(
+          {gi.id, gi.itemId, static_cast<int16_t>(gi.x),
+           static_cast<int16_t>(gi.y)});
+    }
+    senderQueueMonitor.sendToClient(
+        connectionId, GroundItemsListEventDTO{std::move(groundItemList)});
+  }
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {
@@ -232,25 +277,19 @@ void Game::exitPlayerByConnection(uint32_t connectionId) {
 }
 
 void Game::equipItem(uint32_t playerId, uint8_t inventorySlot) {
-  auto it = players.find(playerId);
-  if (it == players.end())
-    return;
-  it->second->equipItem(inventorySlot);
+  inventoryManager.equipItem(playerId, inventorySlot);
 }
 
 void Game::unequipSlot(uint32_t playerId, uint8_t equipSlot) {
-  auto it = players.find(playerId);
-  if (it == players.end())
-    return;
-  it->second->unequipSlot(static_cast<EquipSlot>(equipSlot));
+  inventoryManager.unequipSlot(playerId, static_cast<EquipSlot>(equipSlot));
 }
 
 void Game::dropItem(uint32_t playerId, uint8_t inventorySlot) {
-  auto it = players.find(playerId);
-  if (it == players.end()) {
-    return;
-  }
-  it->second->removeItem(inventorySlot);
+  inventoryManager.dropItem(playerId, inventorySlot);
+}
+
+void Game::takeItem(uint32_t playerId) {
+  inventoryManager.takeItem(playerId);
 }
 
 bool Game::thereIsACollidableEntityAt(Position position) {
@@ -357,12 +396,17 @@ void Game::saveAllPlayers() {
 
 void Game::sendGlobalChatMessage(uint32_t playerId,
                                  const std::string &message) {
+  std::string senderName = std::to_string(playerId);
+  auto it = players.find(playerId);
+  if (it != players.end()) {
+    senderName = it->second->getName();
+  }
+
   messagesToSend.push_back(
-      GlobalChatMessageEventDTO{std::to_string(playerId), message});
+      GlobalChatMessageEventDTO{std::move(senderName), message});
 }
 
 void Game::appearNPCs() {
-
   for (auto &biome : biomes) {
     biome->NPCgenerationStrategy(*this);
   }

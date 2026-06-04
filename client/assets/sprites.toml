@@ -1,87 +1,185 @@
 [[sprites]]
 id = 0
-path = "assets/11402.png"
+path = "assets/1036.png"
+layout_type = "Body"
 transparent = true
 
 [[sprites]]
-id = 2
-path = "assets/zombie.png"
-transparent = true
-
-[[sprites]]
-id = 3
-path = "assets/spider.png"
-transparent = true
-
-[[sprites]]
-id = 4
-path = "assets/special_spider.png"
-transparent = true
-
-[[sprites]]
-id = 5
-path = "assets/elf.png"
-transparent = true
-
-[[sprites]]
-id = 6
-path = "assets/special_elf.png"
-transparent = true
-
-[[sprites]]
-id = 7
-path = "assets/skeleton.png"
-transparent = true
-
-[[sprites]]
-id = 8
-path = "assets/special_skeleton.png"
-transparent = true
-
-[[sprites]]
-id = 9
-path = "assets/orc.png"
-transparent = true
-
-[[sprites]]
-id = 10
-path = "assets/great_reamer.png"
-transparent = true
-
-[[sprites]]
-id = 11
-path = "assets/giant.png"
-transparent = true
-
-[[sprites]]
-id = 12
-path = "assets/golem.png"
-transparent = true
-
-[[sprites]]
-id = 13
-path = "assets/special_golem.png"
-transparent = true
-
-[[sprites]]
-id = 14
-path = "assets/cabezas/enano.png"
-layout_type = "Head"
-transparent = true
-
-[[sprites]]
-id = 15
-path = "assets/cabezas/gnomo.png"
-layout_type = "Head"
-transparent = true
-
-[[sprites]]
-id = 16
+id = 1
 path = "assets/cabezas/humano.png"
 layout_type = "Head"
 transparent = true
 
 [[sprites]]
-id = 17
+id = 2
 path = "assets/cabezas/elfo.png"
+layout_type = "Head"
+transparent = true
+
+[[sprites]]
+id = 3
+path = "assets/cabezas/enano.png"
+layout_type = "Head"
+transparent = true
+
+[[sprites]]
+id = 4
+path = "assets/cabezas/gnomo.png"
+layout_type = "Head"
+transparent = true
+
+[[sprites]]
+id = 200
+path = "assets/equipable/espada.png"
+layout_type = "EquipableGrid"
+transparent = true
+
+[[sprites]]
+id = 201
+path = "assets/equipable/hacha.png"
+layout_type = "EquipableGrid"
+transparent = true
+
+[[sprites]]
+id = 202
+path = "assets/equipable/martillo.png"
+layout_type = "EquipableGrid"
+transparent = true
+
+[[sprites]]
+id = 203
+path = "assets/equipable/arcoSimple.png"
+layout_type = "EquipableGrid"
+transparent = true
+
+[[sprites]]
+id = 204
+path = "assets/equipable/arcoComp.png"
+layout_type = "EquipableGrid"
+transparent = true
+
+[[sprites]]
+id = 205
+path = "assets/equipable/baculoE.png"
+layout_type = "EquipableGrid"
+transparent = true
+
+[[sprites]]
+id = 206
+path = "assets/equipable/flauta.png"
+layout_type = "EquipableGrid"
+transparent = true
+
+[[sprites]]
+id = 207
+path = "assets/equipable/baculoN.png"
+layout_type = "EquipableGrid"
+transparent = true
+
+[[sprites]]
+id = 208
+path = "assets/equipable/varaF.png"
+layout_type = "EquipableGrid"
+transparent = true
+
+[[sprites]]
+id = 209
+path = "assets/equipable/1030.png"
+layout_type = "EquipableGrid"
+transparent = true
+
+[[sprites]]
+id = 210
+path = "assets/equipable/capucha.png"
+layout_type = "Helmet"
+transparent = true
+
+[[sprites]]
+id = 211
+path = "assets/equipable/casco.png"
+layout_type = "Helmet"
+transparent = true
+
+[[sprites]]
+id = 212
+path = "assets/equipable/sombrero.png"
+layout_type = "Helmet"
+transparent = true
+
+[[sprites]]
+id = 213
+path = "assets/equipable/escudo1.png"
+layout_type = "EquipableGrid"
+transparent = true
+
+[[sprites]]
+id = 214
+path = "assets/equipable/escudo2.png"
+layout_type = "EquipableGrid"
+transparent = true
+
+# NPC sprites (from dev branch)
+[[sprites]]
+id = 100
+path = "assets/11402.png"
+transparent = true
+
+[[sprites]]
+id = 101
+path = "assets/zombie.png"
+transparent = true
+
+[[sprites]]
+id = 102
+path = "assets/spider.png"
+transparent = true
+
+[[sprites]]
+id = 103
+path = "assets/special_spider.png"
+transparent = true
+
+[[sprites]]
+id = 104
+path = "assets/elf.png"
+transparent = true
+
+[[sprites]]
+id = 105
+path = "assets/special_elf.png"
+transparent = true
+
+[[sprites]]
+id = 106
+path = "assets/skeleton.png"
+transparent = true
+
+[[sprites]]
+id = 107
+path = "assets/special_skeleton.png"
+transparent = true
+
+[[sprites]]
+id = 108
+path = "assets/orc.png"
+transparent = true
+
+[[sprites]]
+id = 109
+path = "assets/great_reamer.png"
+transparent = true
+
+[[sprites]]
+id = 110
+path = "assets/giant.png"
+transparent = true
+
+[[sprites]]
+id = 111
+path = "assets/golem.png"
+transparent = true
+
+[[sprites]]
+id = 112
+path = "assets/special_golem.png"
 transparent = true

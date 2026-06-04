@@ -92,6 +92,23 @@ void TextureManager::loadLayoutsFromToml(const std::string &path) {
     texturesFrames.emplace(TextureLayoutType::Head, HeadLayout(frames));
   }
 
+  // Load equipable frames (weapons, armor, helmets, shields)
+  for (auto &[key, val] : tbl) {
+    std::string keyStr(key.str());
+    if (keyStr == "Body" || keyStr == "Head" || keyStr == "Zombie" ||
+        keyStr == "Skeleton" || keyStr == "Spider" || keyStr == "Golem" ||
+        keyStr == "GreatReamer" || keyStr == "Giant" || keyStr == "Elf" ||
+        keyStr == "SpecialSpider" || keyStr == "SpecialSkeleton" ||
+        keyStr == "Orc")
+      continue;
+    if (auto *section = val.as_table()) {
+      auto frames = parseBodyFrames(*section);
+      equipableFrames.erase(keyStr);
+      equipableFrames.emplace(keyStr, BodyLayout(frames));
+    }
+  }
+
+  // Load NPC body frames
   auto registerBody = [&](const char* key, TextureLayoutType type) {
     if (auto* t = tbl[key].as_table()) {
       auto frames = parseBodyFrames(*t);
@@ -128,7 +145,7 @@ Sprite TextureManager::getBodySprite(TextureLayoutType layoutType, int bodyId,
   return Sprite{textures.at(bodyId), frame.x, frame.y, frame.w, frame.h};
 }
 
-Sprite TextureManager::getHeadSprite(int headId, Direction dir) {
+Sprite TextureManager::getHeadSprite(uint32_t headId, Direction dir) {
   auto &layout =
       std::get<HeadLayout>(texturesFrames.at(TextureLayoutType::Head));
   SpriteData frame = layout.getLayout(dir);
@@ -148,4 +165,12 @@ Sprite TextureManager::getZombieSprite(int txtID, Direction dir, unsigned int it
         frame.w,
         frame.h
     };
+}
+
+Sprite TextureManager::getEquipableSprite(const std::string &type,
+                                          int textureId, Direction dir,
+                                          unsigned int it) {
+  auto &layout = equipableFrames.at(type);
+  SpriteData frame = layout.getLayout(dir, it);
+  return Sprite{textures.at(textureId), frame.x, frame.y, frame.w, frame.h};
 }
