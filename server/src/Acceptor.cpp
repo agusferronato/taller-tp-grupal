@@ -7,7 +7,7 @@ Acceptor::Acceptor(Socket &socket, Queue<ClientMessage> &gameloopQueue,
 
 void Acceptor::run() {
 
-  std::vector<ClientConnection *> connections;
+  std::vector<std::unique_ptr<ClientConnection>> connections;
 
   while (keepRunning) {
 
@@ -15,13 +15,13 @@ void Acceptor::run() {
       Socket peer = acceptor.accept();
 
       uint32_t clientId = nextClientId++;
-      auto *connection = new ClientConnection(std::move(peer), gameloopQueue,
-                                              senderQueueMonitor, clientId);
+      auto connection = std::make_unique<ClientConnection>(
+          std::move(peer), gameloopQueue, senderQueueMonitor, clientId);
 
       reap(connections);
-      connections.push_back(connection);
       connection->start();
-
+      connections.push_back(std::move(connection));
+      
     } catch (...) {
       break;
     }
@@ -31,24 +31,22 @@ void Acceptor::run() {
 
 void Acceptor::kill() {
   keepRunning = false;
-  acceptor.shutdown(SHUT_RDWR);
-  acceptor.close();
+
+  try {
+    acceptor.shutdown(SHUT_RDWR);
+    acceptor.close();
+  } catch (...) {}
 }
 
-void Acceptor::reap(std::vector<ClientConnection *> &connections) {
-
-  auto shouldReap = [](ClientConnection &client) {
-    bool isDead = client.isDead();
-    if (isDead) {
-      client.join();
-      delete &client;
-    }
-    return isDead;
-  };
+void Acceptor::reap(std::vector<std::unique_ptr<ClientConnection>>& connections) {
 
   auto it = connections.begin();
+
   while (it != connections.end()) {
-    if (shouldReap(**it)) {
+    ClientConnection& client = **it;
+
+    if (client.isDead()) {
+      client.join();
       it = connections.erase(it);
     } else {
       ++it;
@@ -56,12 +54,16 @@ void Acceptor::reap(std::vector<ClientConnection *> &connections) {
   }
 }
 
-void Acceptor::clear(std::vector<ClientConnection *> &connections) {
+void Acceptor::clear(
+    std::vector<std::unique_ptr<ClientConnection>>& connections) {
 
-  for (auto *client : connections) {
-    client->kill();
+  for (auto& client : connections) {
+    try {
+      client->kill();
+    } catch (...) {}
+
     client->join();
-    delete client;
   }
+
   connections.clear();
 }
