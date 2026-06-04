@@ -43,6 +43,8 @@ private:
   const ItemTextureCache &itemTextureCache;
 
   std::unique_ptr<SDL2pp::Texture> baseTex;
+  std::unique_ptr<SDL2pp::Font> slotFont;
+  std::unique_ptr<SDL2pp::Font> itemFont;
 
   SlotRect getEquipSlotRect(int idx) const;
   SlotRect getInventorySlotRect(int row, int col) const;

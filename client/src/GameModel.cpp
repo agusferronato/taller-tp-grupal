@@ -1,5 +1,6 @@
 #include "GameModel.h"
 #include "ChatMessageEventDTO.h"
+#include "DropItemCommandDTO.h"
 #include "GameWindow.h"
 #include "GlobalChatMessageCommandDTO.h"
 #include "GlobalChatMessageEventDTO.h"
@@ -63,6 +64,10 @@ void GameModel::handleInventoryClick(int screenX, int screenY,
 
 void GameModel::takeItem() {
   sendingQueue.push(TakeItemCommandDTO{myPlayerID});
+}
+
+void GameModel::dropItem(uint8_t slot) {
+  sendingQueue.push(DropItemCommandDTO{myPlayerID, slot});
 }
 
 void GameModel::moveMyPlayer(Direction direction) {
