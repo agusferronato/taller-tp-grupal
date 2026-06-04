@@ -9,6 +9,7 @@
 #include <SDL2pp/SDL2pp.hh>
 #include <toml++/toml.hpp>
 
+#include "BodyLayout.h"
 #include "Direction.h"
 #include "TextureLayout.h"
 #include "TextureLayoutType.h"
@@ -23,6 +24,7 @@ private:
   SDL2pp::Renderer &renderer;
   std::map<int, SDL2pp::Texture> textures;
   std::map<TextureLayoutType, TextureLayout> texturesFrames;
+  std::map<std::string, BodyLayout> equipableFrames;
 
   std::map<Direction, std::vector<SpriteData>>
   parseBodyFrames(const toml::table &table);
@@ -37,7 +39,9 @@ public:
   Sprite getBodySprite(uint32_t bodyId, Direction dir, unsigned int it);
   Sprite getBodySprite(TextureLayoutType layoutType, int bodyId, Direction dir,
                        unsigned int it);
-  Sprite getHeadSprite(int headId, Direction dir);
+  Sprite getHeadSprite(uint32_t headId, Direction dir);
+  Sprite getEquipableSprite(const std::string &type, int textureId,
+                            Direction dir, unsigned int it);
   Sprite getZombieSprite(int txtID, Direction dir, unsigned int it);
 };
 

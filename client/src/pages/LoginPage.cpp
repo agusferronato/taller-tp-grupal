@@ -48,13 +48,6 @@ LoginPage::LoginPage(const QString &hostname, const QString &port,
   usernameEdit->setPlaceholderText("Nombre del personaje");
   usernameEdit->setObjectName("usernameEdit");
   formLayout->addRow("Usuario:", usernameEdit);
-
-  passwordEdit = new QLineEdit(this);
-  passwordEdit->setPlaceholderText("Contrasena");
-  passwordEdit->setEchoMode(QLineEdit::Password);
-  passwordEdit->setObjectName("passwordEdit");
-  formLayout->addRow("Contrasena:", passwordEdit);
-
   panelLayout->addLayout(formLayout);
 
   panelLayout->addSpacing(20);
@@ -64,7 +57,7 @@ LoginPage::LoginPage(const QString &hostname, const QString &port,
   connectBtn->setFixedSize(300, 70);
   connectBtn->setStyleSheet(
       "QPushButton {"
-      "  border-image: url(assets/boton_play.png) stretch;"
+      "  border-image: url(assets/menu/boton_play.png) stretch;"
       "  background: transparent;"
       "  border: none;"
       "  color: white;"
@@ -82,7 +75,7 @@ LoginPage::LoginPage(const QString &hostname, const QString &port,
   backBtn->setObjectName("backBtn");
   backBtn->setFixedSize(300, 70);
   backBtn->setStyleSheet("QPushButton {"
-                         "  border-image: url(assets/boton_volver.png) stretch;"
+                          "  border-image: url(assets/menu/boton_volver.png) stretch;"
                          "  background: transparent;"
                          "  border: none;"
                          "}");
@@ -101,7 +94,6 @@ void LoginPage::onConnectClicked() {
                          "Ingresa un nombre de personaje.");
     return;
   }
-  QString password = passwordEdit->text();
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -150,7 +142,7 @@ void LoginPage::onConnectClicked() {
     }
 
     QApplication::restoreOverrideCursor();
-    emit connectRequested(username, password);
+    emit connectRequested(username);
 
   } catch (const std::exception &e) {
     QApplication::restoreOverrideCursor();

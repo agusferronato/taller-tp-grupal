@@ -28,6 +28,8 @@ private:
   void renderBody(SDL2pp::Renderer &renderer, Camera &camera, unsigned int it);
   void renderHead(SDL2pp::Renderer &renderer, Camera &camera);
   void renderName(SDL2pp::Renderer &renderer, Camera &camera);
+  void renderEquipable(SDL2pp::Renderer &renderer, Camera &camera,
+                       unsigned int it);
   int get_head_x(Camera &camera);
   int get_head_y(Camera &camera);
   int getRaceBodyID(Race race) const;

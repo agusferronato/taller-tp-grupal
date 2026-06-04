@@ -40,6 +40,9 @@ enum class EventOpcode : uint8_t {
   NPCAppearedEvent,
   InventoryUpdateEvent,
   TextureInfoEvent,
+  GroundItemAppearedEvent,
+  GroundItemRemovedEvent,
+  GroundItemsListEvent,
   PrivateMessageEvent,
   GlobalChatMessageEvent,
 };

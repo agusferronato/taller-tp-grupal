@@ -26,13 +26,17 @@ void GameController::handleEvent(const SDL_Event &event) {
   case SDL_KEYUP:
     handleKeyUp(event.key.keysym.sym);
     break;
-    
+
+  case SDL_MOUSEBUTTONDOWN:
+    gameModel->handleInventoryClick(event.button.x, event.button.y,
+                                    event.button.button);
+    break;
+
   case SDL_TEXTINPUT:
     if (gameModel->isChatActive()) {
       gameModel->appendChatText(event.text.text);
     }
     break;
-
   }
 }
 
@@ -58,6 +62,11 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
 
   if (key == SDLK_RETURN) {
     gameModel->openChat();
+    return;
+  }
+
+  if (key == SDLK_t) {
+    gameModel->takeItem();
     return;
   }
 

@@ -4,4 +4,6 @@
 
 TakeItemCommand::TakeItemCommand(uint32_t playerId) : playerId(playerId) {}
 
-void TakeItemCommand::execute(Game &, uint32_t) {}
+void TakeItemCommand::execute(Game &game, uint32_t) {
+  game.takeItem(playerId);
+}

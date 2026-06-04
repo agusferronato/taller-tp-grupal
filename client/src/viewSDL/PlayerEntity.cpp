@@ -9,6 +9,7 @@ void PlayerEntity::render(SDL2pp::Renderer &renderer, Camera &camera,
                           unsigned int it) {
   renderBody(renderer, camera, it);
   renderHead(renderer, camera);
+  renderEquipable(renderer, camera, it);
   renderName(renderer, camera);
 
   wasRendered = true;
@@ -24,6 +25,48 @@ void PlayerEntity::renderBody(SDL2pp::Renderer &renderer, Camera &camera,
   SDL2pp::Rect dst = camera.toScreen(player.get_x(), player.get_y(),
                                      ClientPlayer::Width, ClientPlayer::Height);
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
+}
+
+void PlayerEntity::renderEquipable(SDL2pp::Renderer &renderer, Camera &camera,
+                                   unsigned int it) {
+  unsigned int animationIt = player.getIsMoving() ? it : 0;
+
+  struct EquipInfo {
+    std::string type;
+    int textureId;
+  };
+
+  static const std::map<uint8_t, EquipInfo> equipMap = {
+      {1, {"EquipableGrid", 200}},  {2, {"EquipableGrid", 201}},
+      {3, {"EquipableGrid", 202}},  {4, {"EquipableGrid", 203}},
+      {5, {"EquipableGrid", 204}},  {6, {"EquipableGrid", 205}},
+      {7, {"EquipableGrid", 206}},  {8, {"EquipableGrid", 207}},
+      {9, {"EquipableGrid", 208}},  {12, {"EquipableGrid", 209}},
+      {13, {"Helmet", 210}},        {14, {"Helmet", 211}},
+      {15, {"Helmet", 212}},        {16, {"EquipableGrid", 213}},
+      {17, {"EquipableGrid", 214}},
+  };
+
+  auto renderSlot = [&](uint8_t slotItem) {
+    if (slotItem == 0)
+      return;
+    auto itMap = equipMap.find(slotItem);
+    if (itMap == equipMap.end())
+      return;
+
+    Sprite src = textureManager.getEquipableSprite(itMap->second.type,
+                                                   itMap->second.textureId,
+                                                   player.getDirection(),
+                                                   animationIt);
+    SDL2pp::Rect dst = camera.toScreen(player.get_x(), player.get_y(), src.w,
+                                        src.h);
+    renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
+  };
+
+  renderSlot(player.getEquippedArmor());
+  renderSlot(player.getEquippedHelmet());
+  renderSlot(player.getEquippedShield());
+  renderSlot(player.getEquippedWeapon());
 }
 
 void PlayerEntity::renderName(SDL2pp::Renderer &renderer, Camera &camera) {
@@ -84,8 +127,6 @@ int PlayerEntity::get_y() { return player.get_y(); }
 int PlayerEntity::get_h() { return ClientPlayer::Height; }
 
 int PlayerEntity::getRaceBodyID(Race race) const {
-  // TODO: Agregar texturas para los cuerpos de las otras razas
-  // Por ahora todas usan el mismo body (ID 0)
   switch (race) {
   case Race::Human:
   case Race::Elf:
@@ -99,14 +140,14 @@ int PlayerEntity::getRaceBodyID(Race race) const {
 int PlayerEntity::getRaceHeadID(Race race) const {
   switch (race) {
   case Race::Human:
-    return 16;
+    return 1;
   case Race::Elf:
-    return 17;
+    return 2;
   case Race::Dwarf:
-    return 14;
+    return 3;
   case Race::Gnome:
-    return 15;
+    return 4;
   default:
-    return 16; // Human como fallback
+    return 1;
   }
 }
