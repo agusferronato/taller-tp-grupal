@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "Formulas.h"
 #include "PlayerClass.h"
 #include "Race.h"
 #include <algorithm>
@@ -90,7 +91,9 @@ std::pair<int, int> Character::getTargetPosition(Direction dir) const {
   return {targetX, targetY};
 }
 
-void Character::takeDamage(uint32_t damage) { player.takeDamage(damage); }
+uint32_t Character::takeDamage(uint32_t damage) {
+  return player.takeDamage(damage);
+}
 
 void Character::heal(uint32_t amount) { player.heal(amount); }
 
@@ -153,3 +156,7 @@ std::pair<int, int> Character::getTargetPosition() const {
 }
 
 uint32_t Character::getDamage() const { return player.atack(); }
+
+bool Character::tryParry() const {
+  return Formulas::calcularEsquivo(player.getAgility(), rand() % 2);
+}

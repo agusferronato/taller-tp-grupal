@@ -42,3 +42,7 @@ void PlayerStats::initStats(Race race, PlayerClass playerClass) {
   maxHealth = Formulas::calcularVidaMax(constitution, race, playerClass, level);
   maxMana = Formulas::calcularManaMax(intelligence, race, playerClass, level);
 }
+
+void PlayerStats::takeDamage(uint32_t damage) {
+  health = damage > health ? 0 : health - damage;
+}

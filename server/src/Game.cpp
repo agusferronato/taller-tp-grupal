@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "ConstantRateLoop.h"
+#include "Formulas.h"
 #include "Game.h"
 #include "MapLoader.h"
 #include "MoveCommandDTO.h"
@@ -390,14 +391,20 @@ void Game::appearNPCs() {
 void Game::playerAtackPlayer(Character &atacker, Character &target) {
   if (validAtack(atacker, target)) {
     return;
-  } else if (false) {
-    // [TODO] si es jugador ver si esquiba (avisar a atacante y atacado por
-    // unicast)
-    return; // esquivó
+  } else if (target.tryParry()) {
+    senderQueueMonitor.sendToClient(
+        playerToConnection[atacker.getId()],
+        ChatMessageEventDTO{"Sistema", "Atacaste a " + target.getName() +
+                                           " pero el lo esquivo"});
+    senderQueueMonitor.sendToClient(
+        playerToConnection[target.getId()],
+        ChatMessageEventDTO{"Sistema",
+                            atacker.getName() +
+                                " trato de atacarte pero lo esquivaste"});
+    return;
   }
   uint32_t damage = calculateDamage(atacker);
-  uint32_t defence = 0;
-  // [TODO] aplicar daño al target
+  damage = target.takeDamage(damage);
   if (target.getHp() == 0) {
     // [TODO] muerte del jugador
   } else {
@@ -405,13 +412,13 @@ void Game::playerAtackPlayer(Character &atacker, Character &target) {
         playerToConnection[atacker.getId()],
         ChatMessageEventDTO{
             "Sistema", "Atacaste a " + target.getName() + " y le hiciste " +
-                           std::to_string(damage - defence) + " de daño!"});
+                           std::to_string(damage) + " de daño!"});
     senderQueueMonitor.sendToClient(
         playerToConnection[target.getId()],
-        ChatMessageEventDTO{
-            "Sistema", "Recibiste un ataque de " + atacker.getName() +
-                           " y te hicieron " +
-                           std::to_string(damage - defence) + " de daño!"});
+        ChatMessageEventDTO{"Sistema",
+                            "Recibiste un ataque de " + atacker.getName() +
+                                " y te hicieron " + std::to_string(damage) +
+                                " de daño!"});
     messagesToSend.push_back(target.toPlayerInfoEvent());
   }
 }
@@ -432,9 +439,7 @@ void Game::playerAtackNPC(Character &atacker, NPC &target) {
 
 uint32_t Game::calculateDamage(Character &atacker) {
   uint32_t damage = atacker.getDamage();
-  int criticalChance = 5; // 5% de chance de crítico, [TODO] agregar al TOML
-  int critical = rand() % 100 + 1;
-  if (critical <= criticalChance) {
+  if (Formulas::calcularCritico(std::rand())) {
     return damage * 2;
   }
   return damage;
