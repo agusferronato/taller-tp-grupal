@@ -10,15 +10,8 @@ static double clamp01(double value) {
   return std::max(0.0, std::min(1.0, value));
 }
 
-std::string Formulas::toLower(const std::string &s) {
-  std::string r = s;
-  for (auto &c : r)
-    c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-  return r;
-}
-
-bool Formulas::isGuerrero(const std::string &clase) {
-  return toLower(clase) == "guerrero";
+bool Formulas::isGuerrero(const PlayerClass playerClass) {
+  return playerClass == PlayerClass::Warrior;
 }
 
 double Formulas::getFRazaVida(const Race race) {
@@ -45,8 +38,9 @@ double Formulas::getFRazaMana(const Race race) {
     return 0.7;
   case Race::Gnome:
     return 1.2;
+  default:
+    return 0;
   }
-  return 0;
 }
 
 double Formulas::getFRazaRecuperacion(const Race race) {
@@ -59,62 +53,73 @@ double Formulas::getFRazaRecuperacion(const Race race) {
     return 0.8;
   case Race::Gnome:
     return 0.9;
+  default:
+    return 0;
   }
-  return 0;
 }
 
-double Formulas::getFClaseVida(const std::string &clase) {
-  std::string lc = toLower(clase);
-  if (lc == "guerrero")
+double Formulas::getFClaseVida(const PlayerClass playerClass) {
+  switch (playerClass) {
+  case PlayerClass::Warrior:
     return 1.4;
-  if (lc == "mago")
+  case PlayerClass::Mage:
     return 0.7;
-  if (lc == "clerigo")
+  case PlayerClass::Priest:
     return 1.0;
-  if (lc == "paladin")
+  case PlayerClass::Paladin:
     return 1.2;
-  return 1.0;
+  default:
+    return 0;
+  }
 }
 
-double Formulas::getFClaseMana(const std::string &clase) {
-  if (isGuerrero(clase))
+double Formulas::getFClaseMana(const PlayerClass playerClass) {
+  switch (playerClass) {
+  case PlayerClass::Warrior:
     return 0.0;
-  std::string lc = toLower(clase);
-  if (lc == "mago")
+  case PlayerClass::Mage:
     return 1.5;
-  if (lc == "clerigo")
+  case PlayerClass::Priest:
     return 1.2;
-  if (lc == "paladin")
+  case PlayerClass::Paladin:
     return 0.8;
-  return 1.0;
+  default:
+    return 1.0;
+  }
 }
 
-double Formulas::getFClaseMeditacion(const std::string &clase) {
-  if (isGuerrero(clase))
-    return 0.0;
-  std::string lc = toLower(clase);
-  if (lc == "mago")
+double Formulas::getFClaseMeditacion(const PlayerClass playerClass) {
+  switch (playerClass) {
+  case PlayerClass::Mage:
     return 1.5;
-  if (lc == "clerigo")
+  case PlayerClass::Priest:
     return 1.2;
-  if (lc == "paladin")
+  case PlayerClass::Paladin:
     return 0.5;
-  return 0.0;
+  case PlayerClass::Warrior:
+    return 0.0;
+  default:
+    return 1;
+  }
 }
 
 uint32_t Formulas::calcularVidaMax(uint32_t constitucion, const Race race,
-                                   const std::string &clase, uint32_t nivel) {
-  double resultado = static_cast<double>(constitucion) * getFClaseVida(clase) *
-                     getFRazaVida(race) * static_cast<double>(nivel);
+                                   const PlayerClass playerClass,
+                                   uint32_t nivel) {
+  double resultado = static_cast<double>(constitucion) *
+                     getFClaseVida(playerClass) * getFRazaVida(race) *
+                     static_cast<double>(nivel);
   return static_cast<uint32_t>(std::round(resultado));
 }
 
 uint32_t Formulas::calcularManaMax(uint32_t inteligencia, const Race race,
-                                   const std::string &clase, uint32_t nivel) {
-  if (isGuerrero(clase))
+                                   const PlayerClass playerClass,
+                                   uint32_t nivel) {
+  if (isGuerrero(playerClass))
     return 0;
-  double resultado = static_cast<double>(inteligencia) * getFClaseMana(clase) *
-                     getFRazaMana(race) * static_cast<double>(nivel);
+  double resultado = static_cast<double>(inteligencia) *
+                     getFClaseMana(playerClass) * getFRazaMana(race) *
+                     static_cast<double>(nivel);
   return static_cast<uint32_t>(std::round(resultado));
 }
 
@@ -130,12 +135,12 @@ uint32_t Formulas::calcularRecuperacionMana(const Race race,
   return static_cast<uint32_t>(std::round(resultado));
 }
 
-uint32_t Formulas::calcularRecuperacionMeditacion(const std::string &clase,
+uint32_t Formulas::calcularRecuperacionMeditacion(const PlayerClass playerClass,
                                                   uint32_t inteligencia,
                                                   uint32_t segundos) {
-  if (isGuerrero(clase))
+  if (isGuerrero(playerClass))
     return 0;
-  double resultado = getFClaseMeditacion(clase) *
+  double resultado = getFClaseMeditacion(playerClass) *
                      static_cast<double>(inteligencia) *
                      static_cast<double>(segundos);
   return static_cast<uint32_t>(std::round(resultado));
@@ -224,4 +229,36 @@ uint32_t Formulas::calcularOroDropNPC(uint32_t vidaMaxNPC,
 uint32_t Formulas::calcularOroPerdidoMuerte(uint32_t oroActual,
                                             uint32_t nivel) {
   return calcularOroExceso(oroActual, nivel);
+}
+
+std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
+Formulas::getRaceStats(const Race race) {
+  switch (race) {
+  case Race::Human:
+    return {10, 10, 10, 10};
+  case Race::Elf:
+    return {6, 13, 5, 16};
+  case Race::Dwarf:
+    return {13, 4, 16, 7};
+  case Race::Gnome:
+    return {7, 6, 14, 13};
+  default:
+    return {0, 0, 0, 0};
+  }
+}
+
+std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
+Formulas::getPlayerClassStats(const PlayerClass playerClass) {
+  switch (playerClass) {
+  case PlayerClass::Mage:
+    return {3, 5, 5, 15};
+  case PlayerClass::Priest:
+    return {7, 7, 9, 10};
+  case PlayerClass::Paladin:
+    return {10, 6, 10, 8};
+  case PlayerClass::Warrior:
+    return {10, 8, 10, 3};
+  default:
+    return {0, 0, 0, 0};
+  }
 }

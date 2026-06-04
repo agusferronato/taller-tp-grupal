@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Direction.h"
+#include "PlayerClass.h"
 #include "Race.h"
 #include "protocol/ProtocolCodes.h"
 
@@ -19,6 +20,7 @@ public:
   int16_t y;
   Direction direction;
   Race race;
+  PlayerClass playerClass;
   std::string playerName;
   uint32_t hp;
   uint32_t maxHp;

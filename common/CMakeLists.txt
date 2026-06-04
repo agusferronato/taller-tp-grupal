@@ -17,4 +17,5 @@ target_include_directories(taller_common
         ${CMAKE_CURRENT_SOURCE_DIR}/include/parser/Commands
         ${CMAKE_CURRENT_SOURCE_DIR}/include/parser/Events
         ${CMAKE_CURRENT_SOURCE_DIR}/include/exceptions
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/player
 )
