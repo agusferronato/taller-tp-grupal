@@ -39,6 +39,7 @@ public:
   /*update State From Controller*/
   void moveMyPlayer(Direction direction);
   void stopMyPlayer();
+  void atack(int mouseX, int mouseY);
 
 public:
   // Chat

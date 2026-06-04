@@ -37,7 +37,7 @@ public:
   bool gainExperience(uint32_t amount);
   bool expentGold(uint32_t amount);
   void earnGold(uint32_t);
-  uint32_t atack();
+  uint32_t atack() const;
 
   bool isMoving() const { return moving; }
   Direction getDirection() const { return direction; }

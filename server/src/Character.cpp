@@ -151,3 +151,5 @@ PlayerMovedEventDTO Character::toPlayerMoved() const {
 std::pair<int, int> Character::getTargetPosition() const {
   return getTargetPosition(player.getDirection());
 }
+
+uint32_t Character::getDamage() const { return player.atack(); }
