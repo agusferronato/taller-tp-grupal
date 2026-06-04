@@ -7,31 +7,30 @@
 
 #include <cstdint>
 #include <deque>
-#include <cstdint>
 #include <list>
 #include <map>
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include "Camera.h"
+#include "ClientPlayer.h"
+#include "EntityType.h"
 #include "GameChatView.h"
 #include "MapData.h"
+#include "NPCParser.h"
 #include "Player.h"
-#include "TextureMapper.h"
-#include "EntityType.h"
 #include "RenderableEntity.h"
 #include "TextureManager.h"
-#include "NPCParser.h"
+#include "TextureMapper.h"
 
 class NPC;
 class PlayerEntity;
 
 class GameWindow {
 private:
-
   // Struct auxiliar para organizar el UI
   struct Layout {
     SDL2pp::Rect windowRect;
@@ -56,7 +55,6 @@ private:
   std::unique_ptr<SDL2pp::Font> font;
   std::unique_ptr<SDL2pp::Font> titleFont;
   std::unique_ptr<SDL2pp::Font> uiFont;
-
 
   // UI Backgrounds
   std::unique_ptr<SDL2pp::Texture> chatMessagesBackground;
@@ -99,56 +97,44 @@ private:
   void renderUIFrame(const Layout &layout);
   void renderChat(const Layout &layout);
   void renderPlayerStats(const Layout &layout);
-  void renderPlayerHeader(const Layout& layout);
-  void renderInventoryPanel(const Layout& layout);
-  void renderVitals(const Layout& layout);
-  void renderUIBackgrounds(const Layout& layout);
-  void renderInventoryInfo(const Layout& layout);
+  void renderPlayerHeader(const Layout &layout);
+  void renderInventoryPanel(const Layout &layout);
+  void renderVitals(const Layout &layout);
+  void renderUIBackgrounds(const Layout &layout);
+  void renderInventoryInfo(const Layout &layout);
 
-  void renderText(int x, int y,
-                  const std::string &text,
-                  SDL_Color color);
+  void renderText(int x, int y, const std::string &text, SDL_Color color);
 
-  void renderCenteredTextInRect(const SDL2pp::Rect& rect,
-                              const std::string& text,
-                              SDL_Color color);
-                              
-  void drawBar(int x, int y,
-               int w, int h,
-               uint32_t cur,
-               uint32_t max,
-               SDL_Color fg,
-               SDL_Color bg);
+  void renderCenteredTextInRect(const SDL2pp::Rect &rect,
+                                const std::string &text, SDL_Color color);
+
+  void drawBar(int x, int y, int w, int h, uint32_t cur, uint32_t max,
+               SDL_Color fg, SDL_Color bg);
 
   std::unique_ptr<SDL2pp::Texture>
-  loadPlayerTexture(SDL2pp::Renderer &renderer,
-                    const std::string &texturePath);
+  loadPlayerTexture(SDL2pp::Renderer &renderer, const std::string &texturePath);
 
 public:
   explicit GameWindow(uint32_t myPlayerID);
-  
+
   void addEntity(EntityType type, uint32_t id,
                  std::unique_ptr<RenderableEntity> entity);
-  void addPlayer(uint32_t ID, const Player &player);
+  void addPlayer(uint32_t ID, const ClientPlayer &player);
   void addNpc(uint32_t ID, NPC &npc, NPCType npcType);
   void removeEntity(EntityType type, uint32_t id);
-  void setMyPlayer(const Player &player, uint32_t ID);
+  void removePlayer(uint32_t ID);
+  void setMyPlayer(const ClientPlayer &player, uint32_t ID);
 
   SDL2pp::Renderer &getRenderer();
   SDL2pp::Font &getFont();
   void show(unsigned int it);
 
-  void addPlayer(uint32_t id, Player *player);
-  void removePlayer(uint32_t id);
-
-  void setMapData(int maxSize,
-                  int gridSize,
-                  int commonGroundTextureId,
+  void setMapData(int maxSize, int gridSize, int commonGroundTextureId,
                   const std::list<TileOrigin> &origins);
 
   void setChatState(const std::deque<std::string> &messages,
-                    const std::string &input,
-                    bool active);
+                    const std::string &input, bool active);
+
 private:
   void renderHUD();
   void render(unsigned int it);

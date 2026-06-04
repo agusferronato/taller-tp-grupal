@@ -3,20 +3,20 @@
 #include <unistd.h>
 
 #include "DTO/Commands/ClientCommandDTO.h"
+#include "DTO/Commands/GlobalChatMessageCommandDTO.h"
 #include "DTO/Commands/LoginPlayerCommandDTO.h"
 #include "DTO/Commands/MeditateCommandDTO.h"
 #include "DTO/Commands/MoveCommandDTO.h"
 #include "DTO/Commands/PlayerStopCommandDTO.h"
 #include "DTO/Commands/PrivateMessageCommandDTO.h"
 #include "DTO/Commands/RegisterPlayerCommandDTO.h"
-#include "DTO/Commands/GlobalChatMessageCommandDTO.h"
 #include "DTO/Events/ChatMessageEventDTO.h"
+#include "DTO/Events/GlobalChatMessageEventDTO.h"
 #include "DTO/Events/NpcDefeatedEventDTO.h"
 #include "DTO/Events/PlayerListEventDTO.h"
 #include "DTO/Events/PlayerMovedEventDTO.h"
 #include "DTO/Events/PlayerStoppedEventDTO.h"
 #include "DTO/Events/RegisterPlayerEventDTO.h"
-#include "DTO/Events/GlobalChatMessageEventDTO.h"
 #include "Direction.h"
 #include "protocol/Protocol.h"
 #include "protocol/ProtocolCodes.h"
@@ -46,7 +46,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerCommand) {
   registerAllParsers(server);
 
   ClientCommandDTO original =
-      RegisterPlayerCommandDTO{"L0rd", Race::Elf, "Mago"};
+      RegisterPlayerCommandDTO{"L0rd", Race::Elf, PlayerClass::Mage};
 
   client.sendCommand(original);
 
@@ -56,7 +56,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerCommand) {
   ASSERT_NE(dto, nullptr);
   EXPECT_EQ(dto->name, "L0rd");
   EXPECT_EQ(dto->race, Race::Elf);
-  EXPECT_EQ(dto->playerClass, "Mago");
+  EXPECT_EQ(dto->playerClass, PlayerClass::Mage);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesLoginPlayerCommand) {
@@ -270,7 +270,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerResponse) {
   registerAllParsers(server);
   registerAllParsers(client);
 
-  ServerEventDTO original = RegisterPlayerEventDTO{1, 0, Race::Elf};
+  ServerEventDTO original = RegisterPlayerEventDTO{1, 0};
 
   server.sendEvent(original);
 
@@ -280,7 +280,6 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerResponse) {
   ASSERT_NE(dto, nullptr);
   EXPECT_EQ(dto->playerId, 1);
   EXPECT_EQ(dto->status, 0);
-  EXPECT_EQ(dto->race, Race::Elf);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
@@ -293,12 +292,12 @@ TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
   registerAllParsers(client);
 
   std::vector<PlayerInfoDTO> players = {
-      {1, 100, 200, Direction::Down, Race::Human, "jug1", 100, 100, 50, 100,
-       500, 5, 2000},
-      {2, 300, 400, Direction::Up, Race::Elf, "jug2", 80, 80, 100, 150, 300, 3,
-       800},
-      {3, 500, 600, Direction::Left, Race::Dwarf, "jug3", 120, 120, 0, 0, 1000,
-       8, 7000},
+      {1, 100, 200, Direction::Down, Race::Human, PlayerClass::Warrior, "jug1",
+       100, 100, 50, 100, 500, 5, 2000},
+      {2, 300, 400, Direction::Up, Race::Elf, PlayerClass::Mage, "jug2", 80, 80,
+       100, 150, 300, 3, 800},
+      {3, 500, 600, Direction::Left, Race::Dwarf, PlayerClass::Paladin, "jug3",
+       120, 120, 0, 0, 1000, 8, 7000},
   };
 
   ServerEventDTO original = PlayerListEventDTO{players};
@@ -339,9 +338,8 @@ TEST_F(ProtocolTest, SendsAndReceivesPrivateMessageEvent) {
   registerAllParsers(client);
   registerAllParsers(server);
 
-  ServerEventDTO original =
-      PrivateMessageEventDTO{"SenderPlayer", "TargetPlayer",
-                             "Hola desde el sender"};
+  ServerEventDTO original = PrivateMessageEventDTO{
+      "SenderPlayer", "TargetPlayer", "Hola desde el sender"};
 
   server.sendEvent(original);
 

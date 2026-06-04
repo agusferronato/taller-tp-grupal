@@ -1,6 +1,7 @@
 #include "PlayerEntity.h"
 
-PlayerEntity::PlayerEntity(const Player &player, TextureManager &textureManager,
+PlayerEntity::PlayerEntity(const ClientPlayer &player,
+                           TextureManager &textureManager,
                            SDL2pp::Font &nameFont)
     : player(player), textureManager(textureManager), nameFont(nameFont) {}
 
@@ -20,11 +21,8 @@ void PlayerEntity::renderBody(SDL2pp::Renderer &renderer, Camera &camera,
   Sprite src = textureManager.getBodySprite(getRaceBodyID(player.getRace()),
                                             player.getDirection(), animationIt);
 
-  SDL2pp::Rect playerRect = camera.toScreen(get_x(), get_y(), Player::Width, Player::Height);
-  SDL2pp::Rect dst{playerRect.x + (Player::Width - src.w) / 2,
-                   playerRect.y + (Player::Height - src.h) / 2,
-                   src.w, src.h};
-
+  SDL2pp::Rect dst = camera.toScreen(player.get_x(), player.get_y(),
+                                     ClientPlayer::Width, ClientPlayer::Height);
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
 }
 
@@ -36,8 +34,9 @@ void PlayerEntity::renderName(SDL2pp::Renderer &renderer, Camera &camera) {
   }
 
   int head_y = get_head_y(camera);
-  SDL2pp::Rect playerPosition = camera.toScreen(player.get_x(), player.get_y(),
-                                                Player::Width, Player::Height);
+  SDL2pp::Rect playerPosition =
+      camera.toScreen(player.get_x(), player.get_y(), ClientPlayer::Width,
+                      ClientPlayer::Height);
 
   SDL2pp::Surface surf =
       nameFont.RenderUTF8_Solid(name, SDL_Color{255, 255, 255, 255});
@@ -55,34 +54,34 @@ void PlayerEntity::renderHead(SDL2pp::Renderer &renderer, Camera &camera) {
   int head_x = get_head_x(camera);
   int head_y = get_head_y(camera);
 
-  SDL2pp::Rect dst{head_x + (Player::HeadWidth - src.w) / 2,
-                   head_y + (Player::HeadHeight - src.h) / 2,
-                   src.w, src.h};
-
+  SDL2pp::Rect dst{head_x, head_y, ClientPlayer::HeadWidth,
+                   ClientPlayer::HeadHeight};
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
 }
 
 int PlayerEntity::get_head_x(Camera &camera) {
-  SDL2pp::Rect playerPosition = camera.toScreen(player.get_x(), player.get_y(),
-                                                Player::Width, Player::Height);
-  return playerPosition.x + (playerPosition.w - Player::HeadWidth) / 2 -
+  SDL2pp::Rect playerPosition =
+      camera.toScreen(player.get_x(), player.get_y(), ClientPlayer::Width,
+                      ClientPlayer::Height);
+  return playerPosition.x + (playerPosition.w - ClientPlayer::HeadWidth) / 2 -
          (player.getDirection() == Direction::Right ? 1 : 0);
 }
 
 int PlayerEntity::get_head_y(Camera &camera) {
-  SDL2pp::Rect playerPosition = camera.toScreen(player.get_x(), player.get_y(),
-                                                Player::Width, Player::Height);
-  int headY = playerPosition.y - Player::HeadHeight + 5;
+  SDL2pp::Rect playerPosition =
+      camera.toScreen(player.get_x(), player.get_y(), ClientPlayer::Width,
+                      ClientPlayer::Height);
+  int headY = playerPosition.y - ClientPlayer::HeadHeight + 4;
   return headY;
 }
 
-const Player &PlayerEntity::getPlayer() { return player; }
+const ClientPlayer &PlayerEntity::getPlayer() { return player; }
 
 int PlayerEntity::get_x() { return player.get_x(); }
 
 int PlayerEntity::get_y() { return player.get_y(); }
 
-int PlayerEntity::get_h() { return Player::Height; }
+int PlayerEntity::get_h() { return ClientPlayer::Height; }
 
 int PlayerEntity::getRaceBodyID(Race race) const {
   // TODO: Agregar texturas para los cuerpos de las otras razas

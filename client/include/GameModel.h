@@ -1,16 +1,16 @@
 #ifndef GAMEMODEL_H
 #define GAMEMODEL_H
 
+#include "ClientPlayer.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "Direction.h"
-#include "Player.h"
-#include "Queue.h"
 #include "NPC.h"
+#include "Queue.h"
+#include <deque> //Double ended queue for chat messages
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <deque> //Double ended queue for chat messages
 
 class GameWindow;
 
@@ -20,7 +20,7 @@ private:
   Queue<ClientCommandDTO> &sendingQueue;
 
   uint32_t myPlayerID;
-  std::unordered_map<uint32_t, std::unique_ptr<Player>> players;
+  std::unordered_map<uint32_t, std::unique_ptr<ClientPlayer>> players;
   std::unordered_map<uint32_t, std::unique_ptr<NPC>> npcs;
 
   std::deque<std::string> chatMessages;
@@ -28,12 +28,12 @@ private:
   bool chatActive = false;
 
   GameWindow *gameView;
+
 public:
   GameModel(uint32_t myPlayerID, GameWindow *gameView,
             Queue<ServerEventDTO> &receptionQueue,
-            Queue<ClientCommandDTO> &sendingQueue, const Race race);
-
-  void updateStateFromServer(); 
+            Queue<ClientCommandDTO> &sendingQueue);
+  void updateStateFromServer();
 
 public:
   /*update State From Controller*/
@@ -41,19 +41,21 @@ public:
   void stopMyPlayer();
 
 public:
-  //Chat
-  const std::deque<std::string>& getChatMessages() const;
-  const std::string& getCurrentChatInput() const;
+  // Chat
+  const std::deque<std::string> &getChatMessages() const;
+  const std::string &getCurrentChatInput() const;
   bool isChatActive() const;
 
   void openChat();
   void closeChat();
-  void appendChatText(const char* text);
+  void appendChatText(const char *text);
   void backspaceChat();
   void submitChat();
 
 private:
   void registerPlayers();
+  PlayerStatsInfo playerStatsFrom(const PlayerInfoDTO &info);
+  PlayerStatsInfo playerStatsFrom(const PlayerAppearedEventDTO &info);
   void updateChatView();
 
 private:
@@ -72,7 +74,6 @@ private:
   void handle(const RegisterPlayerEventDTO &event);
   void handle(const PrivateMessageEventDTO &event);
   void handle(const GlobalChatMessageEventDTO &event);
-
 };
 
 #endif

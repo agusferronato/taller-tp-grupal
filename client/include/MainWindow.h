@@ -14,7 +14,7 @@ class MainWindow : public QMainWindow {
 
 public:
   explicit MainWindow(const QString &hostname, const QString &port,
-                       QWidget *parent = nullptr);
+                      QWidget *parent = nullptr);
 
 signals:
   void gameStartRequested(const ClientData &data);

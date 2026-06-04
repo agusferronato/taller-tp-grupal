@@ -3,25 +3,25 @@
 
 #include <SDL2pp/SDL2pp.hh>
 
-#include "Player.h"
+#include "ClientPlayer.h"
 #include "RenderableEntity.h"
 #include "TextureManager.h"
 
 class PlayerEntity : public RenderableEntity {
 public:
-  PlayerEntity(const Player &player, TextureManager &textureManager,
+  PlayerEntity(const ClientPlayer &player, TextureManager &textureManager,
                SDL2pp::Font &nameFont);
 
   void render(SDL2pp::Renderer &renderer, Camera &camera,
               unsigned int it) override;
 
-  const Player &getPlayer();
+  const ClientPlayer &getPlayer();
   int get_x() override;
   int get_y() override;
   int get_h() override;
 
 private:
-  const Player &player;
+  const ClientPlayer &player;
   TextureManager &textureManager;
   SDL2pp::Font &nameFont;
 
