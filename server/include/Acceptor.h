@@ -35,8 +35,8 @@ public:
 
   void kill();
 
-  void reap(std::vector<ClientConnection *> &connections);
-  void clear(std::vector<ClientConnection *> &connections);
+  void reap(std::vector<std::unique_ptr<ClientConnection>> &connections);
+  void clear(std::vector<std::unique_ptr<ClientConnection>> &connections);
 };
 
 #endif

@@ -2,6 +2,9 @@
 #include "ChatMessageEventDTO.h"
 #include "GameWindow.h"
 #include "InventoryUpdateEventDTO.h"
+#include "NPC.h"
+#include "NPCAppearedEventDTO.h"
+#include "NPCType.h"
 #include "NpcDefeatedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerInfoEventDTO.h"
@@ -11,23 +14,15 @@
 #include "PlayerStoppedEventDTO.h"
 #include "Race.h"
 #include "RegisterPlayerEventDTO.h"
-#include "NPCAppearedEventDTO.h"
 #include "TextureInfoEventDTO.h"
-#include "NPC.h"
-#include "NPCType.h"
 #include <iostream>
 #include <stdexcept>
 
 GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
                      Queue<ServerEventDTO> &receptionQueue,
-                     Queue<ClientCommandDTO> &sendingQueue, const Race race)
+                     Queue<ClientCommandDTO> &sendingQueue)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
       myPlayerID(myPlayerID), gameView(gameView) {
-  auto myPlayer = std::make_unique<Player>(this->myPlayerID, 0, 0);
-  myPlayer->setRace(race);
-  players[myPlayerID] = std::move(myPlayer);
-
-  gameView->setMyPlayer(*players[myPlayerID], myPlayerID);
   registerPlayers();
 }
 
@@ -66,24 +61,16 @@ void GameModel::handle(const PlayerStoppedEventDTO &stopped) {
 
 void GameModel::handle(const PlayerAppearedEventDTO &appeared) {
   uint32_t pid = appeared.playerId;
-  auto applyStats = [&](Player *p) {
-    p->setName(appeared.playerName);
-    p->setHp(appeared.hp);
-    p->setMaxHp(appeared.maxHp);
-    p->setMana(appeared.mana);
-    p->setMaxMana(appeared.maxMana);
-    p->setGold(appeared.gold);
-    p->setLevel(appeared.level);
-    p->setExperience(appeared.experience);
-  };
-  if (pid == myPlayerID) {
-    return;
-  }
-  auto player = std::make_unique<Player>(pid, appeared.x, appeared.y);
-  player->setRace(appeared.race);
-  applyStats(player.get());
 
-  gameView->addPlayer(pid, *player);
+  auto player = std::make_unique<ClientPlayer>(
+      pid, appeared.playerName, appeared.x, appeared.y, appeared.direction,
+      playerStatsFrom(appeared));
+
+  if (pid == myPlayerID) {
+    gameView->setMyPlayer(*player, pid);
+  } else {
+    gameView->addPlayer(pid, *player);
+  }
   players[pid] = std::move(player);
 }
 
@@ -92,24 +79,22 @@ void GameModel::handle(const PlayerRemovedEventDTO &removed) {
   players.erase(removed.playerId);
 }
 
-void GameModel::handle(const PlayerInfoEventDTO &info) {
-  auto it = players.find(info.playerId);
-  if (it == players.end()) return;
-  it->second->setHp(info.hp);
-  it->second->setMaxHp(info.maxHp);
-  it->second->setMana(info.mana);
-  it->second->setMaxMana(info.maxMana);
-  it->second->setGold(info.gold);
-  it->second->setLevel(info.level);
-  it->second->setExperience(info.experience);
+void GameModel::handle(const PlayerInfoEventDTO &event) {
+  auto it = players.find(event.playerId);
+  if (it != players.end()) {
+    it->second->updateStats(event.hp, event.maxHp, event.mana, event.maxMana,
+                            event.gold, event.level, event.experience);
+  }
 }
 
 void GameModel::handle(const TextureInfoEventDTO &texInfo) {
   std::list<TileOrigin> origins;
   for (const auto &o : texInfo.origins) {
-    origins.push_back({o.priority, o.texture_id, static_cast<int>(o.i), static_cast<int>(o.j)});
+    origins.push_back({o.priority, o.texture_id, static_cast<int>(o.i),
+                       static_cast<int>(o.j)});
   }
-  gameView->setMapData(texInfo.maxSize, texInfo.gridSize, texInfo.commonGroundTextureId, origins);
+  gameView->setMapData(texInfo.maxSize, texInfo.gridSize,
+                       texInfo.commonGroundTextureId, origins);
 }
 
 void GameModel::registerPlayers() {
@@ -118,31 +103,11 @@ void GameModel::registerPlayers() {
     if (auto *list = std::get_if<PlayerListEventDTO>(&event)) {
       for (const auto &info : list->players) {
         if (info.playerId == myPlayerID) {
-          auto it = players.find(myPlayerID);
-          if (it != players.end()) {
-            it->second->setName(info.playerName);
-            it->second->setDirection(info.direction);
-            it->second->setCoordinates(info.x, info.y);
-            it->second->setHp(info.hp);
-            it->second->setMaxHp(info.maxHp);
-            it->second->setMana(info.mana);
-            it->second->setMaxMana(info.maxMana);
-            it->second->setGold(info.gold);
-            it->second->setLevel(info.level);
-            it->second->setExperience(info.experience);
-          }
           continue;
         }
-        auto player = std::make_unique<Player>(info.playerId, info.x, info.y);
-        player->setRace(info.race);
-        player->setName(info.playerName);
-        player->setHp(info.hp);
-        player->setMaxHp(info.maxHp);
-        player->setMana(info.mana);
-        player->setMaxMana(info.maxMana);
-        player->setGold(info.gold);
-        player->setLevel(info.level);
-        player->setExperience(info.experience);
+        auto player = std::make_unique<ClientPlayer>(
+            info.playerId, info.playerName, info.x, info.y, info.direction,
+            playerStatsFrom(info));
 
         gameView->addPlayer(info.playerId, *player);
         players[info.playerId] = std::move(player);
@@ -154,19 +119,72 @@ void GameModel::registerPlayers() {
   }
 }
 
-void GameModel::handle(const InventoryUpdateEventDTO &inv) {
-  if (inv.playerId != myPlayerID) return;
-  auto it = players.find(inv.playerId);
-  if (it == players.end()) return;
-  it->second->setInventory(inv.items);
-  it->second->setEquippedWeapon(inv.equippedWeapon);
-  it->second->setEquippedArmor(inv.equippedArmor);
-  it->second->setEquippedHelmet(inv.equippedHelmet);
-  it->second->setEquippedShield(inv.equippedShield);
-}
-
+void GameModel::handle(const InventoryUpdateEventDTO &) {}
 void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &) {}
+void GameModel::handle(const PrivateMessageEventDTO &) {}
+
+void GameModel::handle(const GlobalChatMessageEventDTO &event) {
+  chatMessages.push_back(event.message);
+
+  while (chatMessages.size() > 100) {
+    chatMessages.pop_front();
+  }
+
+  updateChatView();
+}
+
+void GameModel::updateChatView() {
+  gameView->setChatState(chatMessages, currentChatInput, chatActive);
+}
+
+const std::deque<std::string> &GameModel::getChatMessages() const {
+  return chatMessages;
+}
+
+const std::string &GameModel::getCurrentChatInput() const {
+  return currentChatInput;
+}
+
+bool GameModel::isChatActive() const { return chatActive; }
+
+void GameModel::openChat() {
+  chatActive = true;
+  SDL_StartTextInput();
+  updateChatView();
+}
+
+void GameModel::closeChat() {
+  chatActive = false;
+  currentChatInput.clear();
+  SDL_StopTextInput();
+  updateChatView();
+}
+
+void GameModel::appendChatText(const char *text) {
+  currentChatInput += text;
+  updateChatView();
+}
+
+void GameModel::backspaceChat() {
+  if (!currentChatInput.empty()) {
+    currentChatInput.pop_back();
+  }
+  updateChatView();
+}
+
+void GameModel::submitChat() {
+  if (currentChatInput.empty()) {
+    closeChat();
+    return;
+  }
+
+  sendingQueue.push(GlobalChatMessageCommandDTO{myPlayerID, currentChatInput});
+
+  currentChatInput.clear();
+  chatActive = false;
+  updateChatView();
+}
 
 void GameModel::handle(const NpcDefeatedEventDTO &event) {
   gameView->removeEntity(EntityType::Npc, event.npcId);
@@ -181,3 +199,25 @@ void GameModel::handle(const NPCAppearedEventDTO &event) {
 }
 
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
+
+PlayerStatsInfo GameModel::playerStatsFrom(const PlayerInfoDTO &info) {
+  PlayerStatsInfo stats{stats.health = info.hp,
+                        stats.mana = info.mana,
+                        stats.gold = info.gold,
+                        stats.level = info.level,
+                        stats.experience = info.experience,
+                        stats.race = info.race,
+                        stats.playerClass = info.playerClass};
+  return stats;
+}
+
+PlayerStatsInfo GameModel::playerStatsFrom(const PlayerAppearedEventDTO &info) {
+  PlayerStatsInfo stats{stats.health = info.hp,
+                        stats.mana = info.mana,
+                        stats.gold = info.gold,
+                        stats.level = info.level,
+                        stats.experience = info.experience,
+                        stats.race = info.race,
+                        stats.playerClass = info.playerClass};
+  return stats;
+}
