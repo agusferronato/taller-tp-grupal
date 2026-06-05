@@ -14,12 +14,52 @@ GridSDL::GridSDL(QWidget *parent) : QWidget(parent), timer(QTimer(this)) {
 
   connect(&timer, &QTimer::timeout, this, &GridSDL::renderLoop);
 
-  moveBtn = new QPushButton("➡️ Mover", this);
-  deleteBtn = new QPushButton("❌ Borrar", this);
+  moveBtn = new QPushButton("Mover", this);
+  deleteBtn = new QPushButton("Borrar", this);
+
+  moveBtn->setFixedHeight(28);
+  deleteBtn->setFixedHeight(28);
+  moveBtn->setCursor(Qt::PointingHandCursor);
+  deleteBtn->setCursor(Qt::PointingHandCursor);
+
+  moveBtn->setStyleSheet(R"(
+      QPushButton {
+          font-size: 11px;
+          font-weight: 600;
+          color: #185FA5;
+          background: #E6F1FB;
+          border: 1px solid #85B7EB;
+          border-radius: 6px;
+          padding: 0 10px;
+      }
+      QPushButton:hover {
+          background: #B5D4F4;
+          border-color: #378ADD;
+      }
+      QPushButton:pressed {
+          background: #85B7EB;
+      }
+  )");
+
+  deleteBtn->setStyleSheet(R"(
+      QPushButton {
+          font-size: 11px;
+          font-weight: 600;
+          color: #A32D2D;
+          background: #FCEBEB;
+          border: 1px solid #F09595;
+          border-radius: 6px;
+          padding: 0 10px;
+      }
+      QPushButton:hover {
+          background: #F7C1C1;
+          border-color: #E24B4A;
+      }
+      QPushButton:pressed {
+          background: #F09595;
+      }
+  )");
     
-  QString btnStyle = "QPushButton { background: #fff; border: 1px solid #ccc; border-radius: 4px; padding: 4px 8px; font-size:11px; font-weight:bold; } QPushButton:hover { background: #eee; }";
-  moveBtn->setStyleSheet(btnStyle);
-  deleteBtn->setStyleSheet(btnStyle);
   
   moveBtn->hide();
   deleteBtn->hide();

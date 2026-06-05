@@ -75,9 +75,44 @@ void ToolBar::initToolBar() {
   connect(collisionButton, &QPushButton::toggled, this,
           &ToolBar::collisionVisibilityChanged);
 
-  layout->addStretch();
 
-  connect(saveButton, &QPushButton::clicked, this, &ToolBar::saveMap);
+  QPushButton *selectModeBtn = new QPushButton("Seleccionar", this);
+    selectModeBtn->setFixedHeight(34);
+    selectModeBtn->setCursor(Qt::PointingHandCursor);
+    selectModeBtn->setCheckable(true);
+    selectModeBtn->setStyleSheet(R"(
+        QPushButton {
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            background: transparent;
+            border: 1.5px dashed #aaa;
+            border-radius: 17px;
+            padding: 0 14px;
+        }
+        QPushButton:hover {
+            background: #EEEDFE;
+            border-color: #7F77DD;
+            color: #534AB7;
+        }
+        QPushButton:checked {
+            color: #534AB7;
+            background: #EEEDFE;
+            border: 1.5px solid #AFA9EC;
+        }
+        QPushButton:checked:hover {
+            background: #CECBF6;
+            border-color: #7F77DD;
+        }
+    )");
+    layout->addWidget(selectModeBtn);
+
+    connect(selectModeBtn, &QPushButton::toggled, this, [this](bool checked) {
+        if (checked) 
+            emit interactionModeSelected();
+    });
+
+  layout->addStretch();
 
   QLabel *biomeLabel = new QLabel("Bioma:", this);
   biomeLabel->setStyleSheet(
@@ -122,46 +157,18 @@ void ToolBar::initToolBar() {
         }
     )";
 
-  for (const BiomeInfo &b : biomes) {
-    QPushButton *btn = new QPushButton(b.name, this);
-    btn->setFixedHeight(34);
-    btn->setCursor(Qt::PointingHandCursor);
-    btn->setCheckable(true);
-    btn->setAutoExclusive(true);
-    btn->setStyleSheet(
-        biomeButtonStyle.arg(b.bg).arg(b.border).arg(b.color).arg(b.hoverBg));
-    layout->addWidget(btn);
-    biomeButtons.append(btn);
-  }
+    for (const BiomeInfo &b : biomes) {
+        QPushButton *btn = new QPushButton(b.name, this);
+        btn->setFixedHeight(34);
+        btn->setCursor(Qt::PointingHandCursor);
+        btn->setCheckable(true);
+        btn->setAutoExclusive(true);
+        btn->setStyleSheet(
+            biomeButtonStyle.arg(b.bg).arg(b.border).arg(b.color).arg(b.hoverBg));
+        layout->addWidget(btn);
+        biomeButtons.append(btn);
+    }
 
-  QPushButton *selectModeBtn = new QPushButton("🔍 Seleccionar", this);
-    selectModeBtn->setFixedHeight(34);
-    selectModeBtn->setCursor(Qt::PointingHandCursor);
-    selectModeBtn->setCheckable(true);
-    selectModeBtn->setAutoExclusive(true);
-    selectModeBtn->setStyleSheet(R"(
-        QPushButton {
-            font-size: 12px;
-            font-weight: 600;
-            color: #1a3f6f;
-            background: #ddeeff;
-            border: 1.5px solid #5a9fd4;
-            border-radius: 7px;
-            padding: 0 14px;
-        }
-        QPushButton:hover {
-            background: #bce0fd;
-        }
-        QPushButton:checked {
-            background: #5a9fd4;
-            color: white;
-        }
-    )");
-    layout->addWidget(selectModeBtn);
-
-    connect(selectModeBtn, &QPushButton::clicked, this, [this]() {
-        emit interactionModeSelected();
-    });
 
   connect(saveButton, &QPushButton::clicked, this, &ToolBar::saveMap);
 

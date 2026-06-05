@@ -43,19 +43,23 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap &textureMap) {
 
     for (auto &[_, tile] : priority) {
 
-      for (auto &item : tile->getItems()) {
+      bool isHover = hoverTile && tile->getId() == hoverTile->getId();
 
-        SDL2pp::Rect dstRect = camera.toScreen(
-            (item.i - MAX_SIZE / 2) * GRID_SIZE_PX,
-            (item.j - MAX_SIZE / 2) * GRID_SIZE_PX, GRID_SIZE_PX, GRID_SIZE_PX);
+        for (auto &item : tile->getItems()) {
+            SDL2pp::Rect dstRect = camera.toScreen(
+                (item.i - MAX_SIZE / 2) * GRID_SIZE_PX,
+                (item.j - MAX_SIZE / 2) * GRID_SIZE_PX, GRID_SIZE_PX, GRID_SIZE_PX);
 
-        SDL2pp::Rect srcRect = {item.x_start, item.y_start,
-                                item.x_end - item.x_start,
-                                item.y_end - item.y_start};
+            SDL2pp::Rect srcRect = {item.x_start, item.y_start,
+                                    item.x_end - item.x_start,
+                                    item.y_end - item.y_start};
 
-        renderer.Copy(textureMap.getTexture(item.texture_id).txt, srcRect,
-                      dstRect);
-      }
+            SDL2pp::Texture &tex = textureMap.getTexture(item.texture_id).txt;
+
+            if (isHover) tex.SetAlphaMod(160);
+            renderer.Copy(tex, srcRect, dstRect);
+            if (isHover) tex.SetAlphaMod(255);
+        }
     }
   }
 
@@ -421,14 +425,22 @@ void Grid::renderHoverAndSelection(SDL2pp::Renderer &renderer) {
         int max_j = selectedTile->getMaxJ();
 
         SDL2pp::Rect dstRect = camera.toScreen(
-            (selectedTile->getMinI() - MAX_SIZE / 2) * GRID_SIZE_PX,
-            (selectedTile->getMinJ() - MAX_SIZE / 2) * GRID_SIZE_PX,
+            (min_i - MAX_SIZE / 2) * GRID_SIZE_PX,
+            (min_j - MAX_SIZE / 2) * GRID_SIZE_PX,
             (max_i - min_i + 1) * GRID_SIZE_PX,
             (max_j - min_j + 1) * GRID_SIZE_PX
         );
-        SDL_SetRenderDrawBlendMode(renderer.Get(), SDL_BLENDMODE_BLEND);
-        renderer.SetDrawColor(255, 140, 0, 255);
-        renderer.DrawRect(dstRect);
-    }
 
+        SDL_SetRenderDrawBlendMode(renderer.Get(), SDL_BLENDMODE_BLEND);
+
+        renderer.SetDrawColor(55, 138, 221, 35);
+        renderer.FillRect(dstRect);
+
+        renderer.SetDrawColor(55, 138, 221, 220);
+        renderer.DrawRect(dstRect);
+
+        SDL2pp::Rect inner = {dstRect.x + 1, dstRect.y + 1, dstRect.w - 2, dstRect.h - 2};
+        renderer.SetDrawColor(55, 138, 221, 80);
+        renderer.DrawRect(inner);
+    }
 }
