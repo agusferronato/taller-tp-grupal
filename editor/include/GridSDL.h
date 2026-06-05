@@ -16,6 +16,7 @@
 #include <SDL2pp/SDL2pp.hh>
 #include <memory>
 #include <string>
+#include <QPushButton>
 
 class Grid;
 
@@ -24,6 +25,10 @@ class GridSDL : public QWidget {
 
 private:
   QTimer timer;
+
+  QPushButton *moveBtn{nullptr};
+  QPushButton *deleteBtn{nullptr};
+  
 
   std::optional<SDL2pp::SDL> sdl;
   std::optional<SDL2pp::Window> window;
@@ -49,6 +54,11 @@ public:
 
   void saveMap();
 
+private:
+
+  void updateFloatingButtonsPos();
+  void hideFloatingButtons();
+
 signals:
   void mapSavedSuccesfully(const std::string &path);
 
@@ -56,6 +66,7 @@ private slots:
   void renderLoop();
 
 public slots:
+  void setInteractionMode();
   void changeCollidableCellsVisibility();
   void setTextureID(int texture_id);
   void setBiome(Biome biome);
