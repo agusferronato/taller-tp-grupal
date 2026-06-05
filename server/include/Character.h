@@ -77,6 +77,7 @@ public:
   bool isNewbie() const { return player.getLevel() < 13; }
   uint32_t getDamage() const;
   bool tryParry() const;
+  bool assertAtackDistance(int16_t targetX, int16_t targetY) const;
 
 private:
   uint32_t id;

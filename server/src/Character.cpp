@@ -160,3 +160,10 @@ uint32_t Character::getDamage() const { return player.atack(); }
 bool Character::tryParry() const {
   return Formulas::calcularEsquivo(player.getAgility(), rand() % 2);
 }
+
+bool Character::assertAtackDistance(int16_t targetX, int16_t targetY) const {
+  (void)targetX;
+  (void)targetY;
+  // [TODO] validar distancia del ataque con arma cuerpo a cuerpo o a distancia
+  return true;
+}
