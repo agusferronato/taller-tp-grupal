@@ -14,11 +14,13 @@
 #include "RegisterPlayerCommandDTO.h"
 #include "TakeItemCommandDTO.h"
 #include "UnequipCommandDTO.h"
+#include "GlobalChatMessageCommandDTO.h"
 
 using ClientCommandDTO =
     std::variant<RegisterPlayerCommandDTO, LoginPlayerCommandDTO,
                  MeditateCommandDTO, PrivateMessageCommandDTO, MoveCommandDTO,
                  ExitCommandDTO, PlayerStopCommandDTO, EquipCommandDTO,
-                 UnequipCommandDTO, DropItemCommandDTO, TakeItemCommandDTO>;
+                 UnequipCommandDTO, DropItemCommandDTO, TakeItemCommandDTO,
+                 GlobalChatMessageCommandDTO>;
 
 #endif

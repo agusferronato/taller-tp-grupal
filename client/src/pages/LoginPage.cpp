@@ -11,9 +11,9 @@
 #include "DTO/Commands/ExitCommandDTO.h"
 #include "DTO/Commands/LoginPlayerCommandDTO.h"
 #include "DTO/Events/RegisterPlayerEventDTO.h"
+#include "Socket.h"
 #include "protocol/Protocol.h"
 #include "protocol/RegisterAllParsers.h"
-#include "Socket.h"
 
 LoginPage::LoginPage(const QString &hostname, const QString &port,
                      QWidget *parent)
@@ -106,8 +106,7 @@ void LoginPage::onConnectClicked() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   try {
-    Socket sock(hostname.toStdString().c_str(),
-                port.toStdString().c_str());
+    Socket sock(hostname.toStdString().c_str(), port.toStdString().c_str());
     Protocol protocol(sock);
     registerAllParsers(protocol);
 
@@ -125,7 +124,8 @@ void LoginPage::onConnectClicked() {
     if (resp->status == 2) {
       try {
         sock.shutdown(2);
-      } catch (...) {}
+      } catch (...) {
+      }
       QApplication::restoreOverrideCursor();
       QMessageBox::warning(this, "Personaje ya conectado",
                            "Ese personaje ya esta conectado al juego.");
@@ -135,7 +135,8 @@ void LoginPage::onConnectClicked() {
     if (resp->status != 0) {
       try {
         sock.shutdown(2);
-      } catch (...) {}
+      } catch (...) {
+      }
       QApplication::restoreOverrideCursor();
       QMessageBox::warning(this, "Nombre no encontrado",
                            "No existe un personaje con ese nombre.");
@@ -145,7 +146,8 @@ void LoginPage::onConnectClicked() {
     try {
       protocol.sendCommand(ExitCommandDTO{resp->playerId});
       sock.shutdown(2);
-    } catch (...) {}
+    } catch (...) {
+    }
 
     QApplication::restoreOverrideCursor();
     emit connectRequested(username, password);

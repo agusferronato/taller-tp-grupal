@@ -1,6 +1,8 @@
 #include "Gameloop.h"
 
 #include "LoginPlayerCommandDTO.h"
+#include "PlayerClass.h"
+#include "Race.h"
 #include "RegisterPlayerCommandDTO.h"
 
 #include <iostream>
@@ -50,13 +52,14 @@ void Gameloop::run() {
 void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
                         Queue<ClientCommandDTO> &sendingQueue,
                         const ClientData &clientData) {
-  Race race = Race::Human; // generico
   if (std::holds_alternative<ClientDataRegister>(clientData)) {
     const ClientDataRegister registerData =
         std::get<ClientDataRegister>(clientData);
-    race = RaceUtils::stringToRace(registerData.race);
-    sendingQueue.push(RegisterPlayerCommandDTO{registerData.username, race,
-                                               registerData.playerClass});
+    Race race = RaceUtils::stringToRace(registerData.race);
+    PlayerClass playerClass =
+        PlayerClassUtils::stringToPlayerClass(registerData.playerClass);
+    sendingQueue.push(
+        RegisterPlayerCommandDTO{registerData.username, race, playerClass});
   } else if (std::holds_alternative<ClientDataLogin>(clientData)) {
     const ClientDataLogin loginData = std::get<ClientDataLogin>(clientData);
     sendingQueue.push(LoginPlayerCommandDTO{loginData.username});
@@ -82,17 +85,15 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
       }
       myPlayerId = resp->playerId;
       registered = true;
-      race = resp->race;
     } else {
       deferredEvents.push_back(std::move(event));
     }
   }
 
-  gameView = std::make_unique<GameWindow>(myPlayerId, 820, 400);
+  gameView = std::make_unique<GameWindow>(myPlayerId);
 
   gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
-                                          receptionQueue, sendingQueue,
-                                          race);
+                                          receptionQueue, sendingQueue);
   gameController = std::make_unique<GameController>(gameModel.get());
 
   for (auto &deferred : deferredEvents) {

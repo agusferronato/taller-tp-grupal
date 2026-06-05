@@ -16,7 +16,6 @@ TEST(PersistenceTest, CreateAndExists) {
 
   PlayerData data{};
   data.setName("Gandalf");
-  data.setPassword("secreta");
   data.x = 100;
   data.y = 200;
   data.direction = static_cast<uint8_t>(Direction::Down);
@@ -35,7 +34,6 @@ TEST(PersistenceTest, LoadAfterCreate) {
 
   PlayerData data{};
   data.setName("Gandalf");
-  data.setPassword("secreta");
   data.setRace("Elfo");
   data.setPlayerClass("Mago");
   data.x = 100;
@@ -57,8 +55,7 @@ TEST(PersistenceTest, LoadAfterCreate) {
 
   auto loaded = repo.load("Gandalf");
   EXPECT_EQ(std::string(loaded.name), "Gandalf");
-  EXPECT_EQ(std::string(loaded.password), "secreta");
-  EXPECT_EQ(loaded.race, "Elfo");
+  EXPECT_STREQ(loaded.race, "Elfo");
   EXPECT_EQ(std::string(loaded.playerClass), "Mago");
   EXPECT_EQ(loaded.x, 100);
   EXPECT_EQ(loaded.y, 200);
@@ -121,45 +118,39 @@ TEST(PersistenceTest, CreateDuplicateIsIgnored) {
 }
 
 TEST(PersistenceTest, PlayerDataToFromRoundTrip) {
-  PlayerInfo player(1, 10, 20, Direction::Right);
-  player.name = "Test";
-  player.password = "pass";
-  player.race = Race::Elf;
-  player.playerClass = "Mago";
-  player.level = 3;
-  player.hp = 50;
-  player.maxHp = 80;
-  player.mana = 30;
-  player.maxMana = 60;
-  player.experience = 500;
-  player.gold = 200;
-  player.strength = 18;
-  player.agility = 15;
-  player.constitution = 20;
-  player.intelligence = 12;
+  PlayerData original{};
+  original.setName("Test");
+  original.setRace(RaceUtils::raceToString(Race::Elf));
+  original.setPlayerClass(
+      PlayerClassUtils::playerClassToString(PlayerClass::Mage));
+  original.x = 10;
+  original.y = 20;
+  original.direction = static_cast<uint8_t>(Direction::Right);
+  original.level = 5;
+  original.hp = 60;
+  original.maxHp = 100;
+  original.mana = 40;
+  original.maxMana = 80;
+  original.experience = 1500;
+  original.gold = 300;
 
+  Character player(1, original);
   auto data = player.toPlayerData();
-  PlayerInfo restored(0, 0, 0, Direction::Down);
-  restored.fromPlayerData(data);
+  Character restored(0, data);
 
-  EXPECT_EQ(restored.name, "Test");
-  EXPECT_EQ(restored.password, "pass");
-  EXPECT_EQ(restored.race, Race::Elf);
-  EXPECT_EQ(restored.playerClass, "Mago");
-  EXPECT_EQ(restored.x, 10);
-  EXPECT_EQ(restored.y, 20);
-  EXPECT_EQ(restored.direction, Direction::Right);
-  EXPECT_EQ(restored.level, 3);
-  EXPECT_EQ(restored.hp, 50);
-  EXPECT_EQ(restored.maxHp, 80);
-  EXPECT_EQ(restored.mana, 30);
-  EXPECT_EQ(restored.maxMana, 60);
-  EXPECT_EQ(restored.experience, 500);
-  EXPECT_EQ(restored.gold, 200);
-  EXPECT_EQ(restored.strength, 18);
-  EXPECT_EQ(restored.agility, 15);
-  EXPECT_EQ(restored.constitution, 20);
-  EXPECT_EQ(restored.intelligence, 12);
+  EXPECT_EQ(restored.getName(), "Test");
+  EXPECT_EQ(restored.getRace(), Race::Elf);
+  EXPECT_EQ(restored.getPlayerClass(), PlayerClass::Mage);
+  EXPECT_EQ(restored.getX(), 10);
+  EXPECT_EQ(restored.getY(), 20);
+  EXPECT_EQ(restored.getDirection(), Direction::Right);
+  EXPECT_EQ(restored.getLevel(), 5u);
+  EXPECT_EQ(restored.getHp(), 60u);
+  EXPECT_EQ(restored.getMaxHp(), 100u);
+  EXPECT_EQ(restored.getMana(), 40u);
+  EXPECT_EQ(restored.getMaxMana(), 80u);
+  EXPECT_EQ(restored.getExperience(), 1500u);
+  EXPECT_EQ(restored.getGold(), 300u);
 }
 
 TEST(PersistenceTest, DataSurvivesRepoRecreation) {

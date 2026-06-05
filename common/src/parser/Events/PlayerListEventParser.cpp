@@ -20,6 +20,7 @@ void PlayerListEventParser::serialize(std::vector<uint8_t> &bytes,
     utils.appendBytes(player.y, bytes);
     utils.appendBytes(static_cast<uint8_t>(player.direction), bytes);
     utils.appendBytes(static_cast<uint8_t>(player.race), bytes);
+    utils.appendBytes(static_cast<uint8_t>(player.playerClass), bytes);
     utils.appendBytes(player.playerName, bytes);
     utils.appendBytes(player.hp, bytes);
     utils.appendBytes(player.maxHp, bytes);
@@ -43,6 +44,7 @@ ServerEventDTO PlayerListEventParser::deserialize(Protocol &protocol) {
     Direction direction = static_cast<Direction>(protocol.getUint8());
 
     Race race = static_cast<Race>(protocol.getUint8());
+    PlayerClass playerClass = static_cast<PlayerClass>(protocol.getUint8());
     std::string playerName = protocol.getStringData();
     uint32_t hp = protocol.getUint32();
     uint32_t maxHp = protocol.getUint32();
@@ -52,7 +54,7 @@ ServerEventDTO PlayerListEventParser::deserialize(Protocol &protocol) {
     uint32_t level = protocol.getUint32();
     uint32_t experience = protocol.getUint32();
 
-    players.push_back(PlayerInfoDTO{playerId, x, y, direction, race,
+    players.push_back(PlayerInfoDTO{playerId, x, y, direction, race, playerClass,
                                     std::move(playerName), hp, maxHp, mana,
                                     maxMana, gold, level, experience});
   }

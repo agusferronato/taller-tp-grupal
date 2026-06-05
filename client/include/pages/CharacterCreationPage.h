@@ -13,9 +13,8 @@ class CharacterCreationPage : public BackgroundPage {
   Q_OBJECT
 
 public:
-  explicit CharacterCreationPage(const QString &hostname,
-                                  const QString &port,
-                                  QWidget *parent = nullptr);
+  explicit CharacterCreationPage(const QString &hostname, const QString &port,
+                                 QWidget *parent = nullptr);
 
 signals:
   void characterCreated(const QString &username, const QString &password,

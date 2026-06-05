@@ -1,20 +1,8 @@
 {
-   SDL_GL_TLS_leak
+   SDL_DBus_init_leak
    Memcheck:Leak
-   match-leak-kinds: definite
-   fun:realloc
-   fun:real_realloc
-   fun:SDL_realloc_REAL
-   fun:SDL_TLSSet_REAL
-   fun:SDL_GL_CreateContext_REAL
-   fun:GL_CreateRenderer
-   fun:SDL_CreateRenderer_REAL
-}
-
-{
-   SDL_DBus_all
-   Memcheck:Leak
-   match-leak-kinds: definite,indirect,possible
+   match-leak-kinds: definite,indirect
+   fun:calloc
    ...
    obj:/usr/lib/x86_64-linux-gnu/libdbus-1.so*
    ...
@@ -23,21 +11,23 @@
 }
 
 {
-   SDL_IBus_all
+   SDL_IBus_connection_leak
    Memcheck:Leak
-   match-leak-kinds: definite,indirect,possible
+   match-leak-kinds: definite,indirect
    ...
    fun:IBus_SetupConnection
    ...
 }
 
 {
-   DBus_auth_indirect_leftover
+   Qt_Wayland_proxy_leak
    Memcheck:Leak
-   match-leak-kinds: indirect
-   fun:realloc
+   match-leak-kinds: definite
+   fun:calloc
    ...
-   obj:/usr/lib/x86_64-linux-gnu/libdbus-1.so*
+   obj:/usr/lib/x86_64-linux-gnu/libwayland-client.so*
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libQt6WaylandClient.so*
    ...
 }
 
@@ -47,5 +37,98 @@
    writev(vector[0])
    fun:__writev
    fun:writev
-   obj:/usr/lib/x86_64-linux-gnu/libxcb.so*
+   obj:/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0
+   obj:/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0
+   obj:/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0
+   obj:/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0
+   fun:xcb_wait_for_reply
+   fun:_ZN14QXcbConnection28initializeScreensFromMonitorEP21xcb_screen_iterator_tiPP10QXcbScreenb
+   fun:_ZN14QXcbConnection17initializeScreensEb
+   fun:_ZN14QXcbConnectionC1EP19QXcbNativeInterfacebjPKc
+   fun:_ZN15QXcbIntegrationC1ERK5QListI7QStringERiPPc
+   obj:/usr/lib/x86_64-linux-gnu/qt6/plugins/platforms/libqxcb.so
+   fun:_ZN22QGuiApplicationPrivate25createPlatformIntegrationEv
+}
+
+{
+   Qt_Wayland_invalid_read_lock
+   Memcheck:Addr4
+   fun:pthread_mutex_lock@@GLIBC_2.2.5
+   fun:wl_event_queue_destroy
+   fun:_ZN15QtWaylandClient15QWaylandDisplayD1Ev
+   fun:_ZN15QtWaylandClient19QWaylandIntegrationD1Ev
+   fun:_ZN15QtWaylandClient19QWaylandIntegrationD0Ev
+   fun:_ZN22QGuiApplicationPrivateD1Ev
+   fun:_ZN19QApplicationPrivateD0Ev
+   fun:main
+}
+
+{
+   Qt_Wayland_invalid_read_lock_full
+   Memcheck:Addr4
+   fun:__pthread_mutex_lock_full
+   fun:wl_event_queue_destroy
+   fun:_ZN15QtWaylandClient15QWaylandDisplayD1Ev
+   fun:_ZN15QtWaylandClient19QWaylandIntegrationD1Ev
+   fun:_ZN15QtWaylandClient19QWaylandIntegrationD0Ev
+   fun:_ZN22QGuiApplicationPrivateD1Ev
+   fun:_ZN19QApplicationPrivateD0Ev
+   fun:main
+}
+
+{
+   Qt_Wayland_invalid_unlock
+   Memcheck:Addr4
+   fun:__pthread_mutex_unlock_usercnt
+   fun:pthread_mutex_unlock@@GLIBC_2.2.5
+   fun:_ZN15QtWaylandClient15QWaylandDisplayD1Ev
+   fun:_ZN15QtWaylandClient19QWaylandIntegrationD1Ev
+   fun:_ZN15QtWaylandClient19QWaylandIntegrationD0Ev
+   fun:_ZN22QGuiApplicationPrivateD1Ev
+   fun:_ZN19QApplicationPrivateD0Ev
+   fun:main
+}
+
+{
+   Qt_IBus_QDBus_thread_tls_possible_lost
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:calloc
+   fun:allocate_dtv
+   fun:_dl_allocate_tls
+   fun:allocate_stack
+   fun:pthread_create@@GLIBC_2.34
+   fun:_ZN7QThread5startENS_8PriorityE
+   fun:_ZN15QDBusConnection12connectToBusERK7QStringS2_
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/qt6/plugins/platforminputcontexts/libibusplatforminputcontextplugin.so*
+   ...
+}
+
+{
+   glib_gio_thread_tls_possible_lost
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:calloc
+   fun:allocate_dtv
+   fun:_dl_allocate_tls
+   fun:allocate_stack
+   fun:pthread_create@@GLIBC_2.34
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libglib-2.0.so*
+   ...
+}
+
+{
+   SDL_DBus_init_realloc_leak
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:realloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libdbus-1.so*
+   ...
+   fun:SDL_DBus_Init_Spinlocked
+   ...
 }
