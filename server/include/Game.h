@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <optional>
 
 #include "ClientMessage.h"
 #include <set>
@@ -42,11 +43,11 @@ private:
   std::list<ServerEventDTO> messagesToSend;
   bool keepRunning = true;
 
-  std::unordered_map<std::string, uint32_t> playerIdByName;
-
+  
   uint32_t nextPlayerId{1};
   int nextSpawnX{0};
   std::unordered_map<uint32_t, std::unique_ptr<Character>> players;
+  std::unordered_map<std::string, uint32_t> playerIdByName;
   std::vector<Colisionable *> colisionables;
   std::unordered_map<uint32_t, uint32_t> connectionToPlayer;
   std::unordered_map<uint32_t, uint32_t> playerToConnection;
@@ -95,6 +96,9 @@ private:
   void saveAllPlayers();
 
   void appearNPCs();
+
+  std::optional<uint32_t> findPlayerIdByName(const std::string& name) const;
+  std::string getPlayerName(uint32_t playerId) const;
 };
 
 #endif

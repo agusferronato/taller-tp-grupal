@@ -151,7 +151,8 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
   players[newId] = std::move(player);
   connectionToPlayer[connectionId] = newId;
   playerToConnection[newId] = connectionId;
-
+  playerIdByName[name] = newId;
+  
   senderQueueMonitor.markAsRegistered(connectionId);
 
   senderQueueMonitor.sendToClient(connectionId,
@@ -220,6 +221,7 @@ void Game::exitPlayer(uint32_t playerId) {
     playerToConnection.erase(connIt);
   }
 
+  playerIdByName.erase(it->second->getName());
   players.erase(it);
 }
 
@@ -356,9 +358,9 @@ void Game::saveAllPlayers() {
 }
 
 void Game::sendGlobalChatMessage(uint32_t playerId,
-                                 const std::string &message) {
+                                 const std::string& message) {
   messagesToSend.push_back(
-      GlobalChatMessageEventDTO{std::to_string(playerId), message});
+      GlobalChatMessageEventDTO{getPlayerName(playerId), message});
 }
 
 void Game::appearNPCs() {
@@ -366,4 +368,18 @@ void Game::appearNPCs() {
   for (auto &biome : biomes) {
     biome->NPCgenerationStrategy(*this);
   }
+}
+
+std::optional<uint32_t> Game::findPlayerIdByName(const std::string& name) const {
+  auto it = playerIdByName.find(name);
+  if (it == playerIdByName.end())
+    return std::nullopt;
+  return it->second;
+}
+
+std::string Game::getPlayerName(uint32_t playerId) const {
+  auto it = players.find(playerId);
+  if (it == players.end())
+    return "Player " + std::to_string(playerId);
+  return it->second->getName();
 }
