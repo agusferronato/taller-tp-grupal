@@ -125,7 +125,7 @@ void GameModel::handle(const ChatMessageEventDTO &) {}
 void GameModel::handle(const PrivateMessageEventDTO &) {}
 
 void GameModel::handle(const GlobalChatMessageEventDTO &event) {
-  chatMessages.push_back(event.message);
+  chatMessages.push_back(event.playerName + ": " + event.message);
 
   while (chatMessages.size() > 100) {
     chatMessages.pop_front();
