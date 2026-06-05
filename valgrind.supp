@@ -88,3 +88,47 @@
    fun:_ZN19QApplicationPrivateD0Ev
    fun:main
 }
+
+{
+   Qt_IBus_QDBus_thread_tls_possible_lost
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:calloc
+   fun:allocate_dtv
+   fun:_dl_allocate_tls
+   fun:allocate_stack
+   fun:pthread_create@@GLIBC_2.34
+   fun:_ZN7QThread5startENS_8PriorityE
+   fun:_ZN15QDBusConnection12connectToBusERK7QStringS2_
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/qt6/plugins/platforminputcontexts/libibusplatforminputcontextplugin.so*
+   ...
+}
+
+{
+   glib_gio_thread_tls_possible_lost
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:calloc
+   fun:allocate_dtv
+   fun:_dl_allocate_tls
+   fun:allocate_stack
+   fun:pthread_create@@GLIBC_2.34
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libglib-2.0.so*
+   ...
+}
+
+{
+   SDL_DBus_init_realloc_leak
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:realloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libdbus-1.so*
+   ...
+   fun:SDL_DBus_Init_Spinlocked
+   ...
+}
