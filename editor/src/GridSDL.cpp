@@ -179,8 +179,6 @@ void GridSDL::mousePressEvent(QMouseEvent *event) {
     switch (actionToPerform) {
         case Action::SelectTexture:
             grid->tryPlaceHoverTexture();
-            grid->clearHoverTexture();
-            actionToPerform = Action::InteractMap; 
             break;
         case Action::SelectBiome:
             grid->setInitBiomePosition(biomeSelected);

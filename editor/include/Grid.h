@@ -52,7 +52,7 @@ private:
 
   std::set<std::tuple<int, int, int>> collidableCells;
 
-  std::vector<std::map<
+  std::vector<std::multimap<
     std::pair<int, int>, 
     std::shared_ptr<Tile>>
   > tilesToRender;
@@ -117,7 +117,8 @@ private:
   void updateSelectedBiome();
 
   void renderBiomes(SDL2pp::Renderer &renderer);
-  bool thereAreAssignedTextures(TextureMap &textureMap, int texture_id);
+
+  void eraseTileFromRender(std::shared_ptr<Tile> tile);
 
   void renderCollidableCells(SDL2pp::Renderer &renderer);
 

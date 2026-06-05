@@ -2,7 +2,7 @@
 
 Grid::Grid(Camera &camera, SDL2pp::Renderer &renderer)
     : tilesToRender(
-          std::vector<std::map<std::pair<int, int>, std::shared_ptr<Tile>>>(3)),
+          std::vector<std::multimap<std::pair<int, int>, std::shared_ptr<Tile>>>(3)),
       camera(camera), downloader("map.toml"), font("fonts/Timeless.ttf", 16),
       colissionTexture(renderer, "assets/colision.png") {}
 
@@ -66,6 +66,7 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap &textureMap) {
     renderCollidableCells(renderer);
 
   renderHover(renderer);
+  renderHoverAndSelection(renderer);
 }
 
 void Grid::renderCollidableCells(SDL2pp::Renderer &renderer) {
@@ -129,13 +130,13 @@ void Grid::setMousePosition(int x, int y) {
 
     if (hoverTile) {
         int p = hoverTile->getPriority();
-        std::pair<int, int> oldKey = {hoverTile->getMaxI(), hoverTile->getMaxJ()};
 
-        tilesToRender[p].erase(oldKey);
+        eraseTileFromRender(hoverTile);
 
         hoverTile->updatePosition(item_hover_i, item_hover_j);
 
-        std::pair<int, int> newKey = {hoverTile->getMaxI(), hoverTile->getMaxJ()};
+
+        std::pair<int, int> newKey = {hoverTile->getMaxJ(), hoverTile->getMaxI()};
         tilesToRender[p].insert({newKey, hoverTile});
     }
 
@@ -215,7 +216,21 @@ void Grid::renderBiomes(SDL2pp::Renderer &renderer) {
   }
 }
 
+void Grid::eraseTileFromRender(std::shared_ptr<Tile> tile) {
 
+    int p = tile->getPriority();
+    std::pair<int,int> key = {tile->getMaxJ(), tile->getMaxI()};
+    
+    
+    auto [begin, end] = tilesToRender[p].equal_range(key);
+    for (auto it = begin; it != end; ++it) {
+        if (it->second->getId() == tile->getId()) {
+            tilesToRender[p].erase(it);
+            return;
+        }
+    }
+    
+}
 
 std::shared_ptr<Tile> Grid::createTileInstance(TextureMap &textureMap, int texture_id, int start_i, int start_j) {
     TextureInMap &txtInMap = textureMap.getTexture(texture_id);
@@ -224,7 +239,7 @@ std::shared_ptr<Tile> Grid::createTileInstance(TextureMap &textureMap, int textu
     int rows = std::ceil((float)txt.GetHeight() / GRID_SIZE_PX);
     int columns = std::ceil((float)txt.GetWidth() / GRID_SIZE_PX);
 
-    auto tile = std::make_shared<Tile>(-1, texture_id, txtInMap.data.priority, start_i, start_j, txt.GetWidth(), txt.GetHeight());
+    auto tile = std::make_shared<Tile>(next_instance_id++, texture_id, txtInMap.data.priority, start_i, start_j, txt.GetWidth(), txt.GetHeight());
 
     int spare_y = txt.GetHeight();
     float collidablePercentage = txtInMap.data.collidablePercentage;
@@ -261,6 +276,10 @@ std::map<int, BiomeGrid>& Grid::getBiomes() {
 
 
 void Grid::setHoverTexture(TextureMap &textureMap, int texture_id) {
+
+    if (hoverTile) 
+        eraseTileFromRender(hoverTile);
+
     active_texture_id = texture_id;
     hoverTile = createTileInstance(textureMap, texture_id, item_hover_i, item_hover_j);
 }
@@ -275,11 +294,14 @@ bool Grid::checkCollisions(const std::shared_ptr<Tile>& tile) {
 
     if (!tile) return false;
 
-    std::map<std::pair<int, int>, std::shared_ptr<Tile>>& tiles = tilesToRender[tile->getPriority()];  
+    std::multimap<std::pair<int, int>, std::shared_ptr<Tile>>& tiles = tilesToRender[tile->getPriority()];  
 
     for (const auto& [_, placedTile] : tiles) {
 
+        if (placedTile->getId() == tile->getId()) continue;
+
         for (const auto& cell : tile->getCollidableCells()) {
+
             for (const auto& placedCell : placedTile->getCollidableCells()) {
                 if (
                     std::get<0>(cell) == std::get<0>(placedCell) 
@@ -341,6 +363,7 @@ bool Grid::selectElementAt(int i, int j) {
 
 
 void Grid::deleteSelectedTexture() {
+
     if (selectedTile) {
 
         txtOrigins.remove_if([this](const TileOrigin& origin) {
@@ -353,13 +376,7 @@ void Grid::deleteSelectedTexture() {
             collidableCells.erase(cell);
         }
 
-        int p = selectedTile->getPriority();
-        std::pair<int, int> key = {selectedTile->getMaxJ(), selectedTile->getMaxI()};
-        
-        auto it = tilesToRender[p].find(key);
-        if (it != tilesToRender[p].end() && it->second->getId() == selectedTile->getId()) {
-            tilesToRender[p].erase(it);
-        }
+        eraseTileFromRender(selectedTile);
         selectedTile = nullptr;
 
     }
