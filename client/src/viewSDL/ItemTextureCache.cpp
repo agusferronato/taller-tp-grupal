@@ -7,10 +7,19 @@ void ItemTextureCache::load(SDL2pp::Renderer &renderer) {
   tryLoad(renderer, 4, "assets/items/arcoSimple.png");
   tryLoad(renderer, 5, "assets/items/arcoComp.png");
   tryLoad(renderer, 12, "assets/items/tunica.png");
-  tryLoad(renderer, 16, "assets/items/escudo1.png");
-  tryLoad(renderer, 17, "assets/items/escudo2.png");
-  tryLoad(renderer, 18, "assets/items/pocion1.png");
-  tryLoad(renderer, 19, "assets/items/pocion2.png");
+  tryLoad(renderer, 16, "assets/items/escudo2.png");
+  tryLoad(renderer, 17, "assets/items/escudo1.png");
+  tryLoad(renderer, 18, "assets/items/pocion2.png");
+  tryLoad(renderer, 19, "assets/items/pocion1.png");
+  tryLoad(renderer, 6, "assets/items/varaF.png");
+  tryLoad(renderer, 7, "assets/items/flauta.png");
+  tryLoad(renderer, 8, "assets/items/baculoN.png");
+  tryLoad(renderer, 9, "assets/items/baculoE.png");
+  tryLoad(renderer, 10, "assets/items/1030.png");
+  tryLoad(renderer, 11, "assets/items/1032.png");
+  tryLoad(renderer, 13, "assets/items/capucha.png");
+  tryLoad(renderer, 14, "assets/items/casco.png");
+  tryLoad(renderer, 15, "assets/items/sombrero.png");
 }
 
 void ItemTextureCache::tryLoad(SDL2pp::Renderer &renderer, uint8_t itemId,

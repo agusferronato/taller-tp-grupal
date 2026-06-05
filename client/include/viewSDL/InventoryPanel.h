@@ -8,7 +8,6 @@
 #include <string>
 #include <unordered_map>
 
-#include "ItemDef.h"
 #include "ItemTextureCache.h"
 #include "ClientPlayer.h"
 
@@ -44,14 +43,11 @@ private:
 
   std::unique_ptr<SDL2pp::Texture> baseTex;
   std::unique_ptr<SDL2pp::Font> slotFont;
-  std::unique_ptr<SDL2pp::Font> itemFont;
 
   SlotRect getEquipSlotRect(int idx) const;
   SlotRect getInventorySlotRect(int row, int col) const;
 
   void renderItemIcon(int slotX, int slotY, uint8_t itemId);
-  void tryLoadItemSprite(uint8_t itemId, const std::string &path);
-  void drawBorderRect(int x, int y, int w, int h, SDL_Color color);
 
   static constexpr int SLOT_W = 32;
   static constexpr int SLOT_H = 32;
