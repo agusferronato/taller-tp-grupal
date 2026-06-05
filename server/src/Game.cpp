@@ -369,8 +369,9 @@ void Game::atack(uint32_t playerId, int16_t x, int16_t y) {
     return;
   }
   auto atacker = it->second.get();
-  // [TODO] validar distancia del ataque
-  // depsachar
+  if (!atacker->assertAtackDistance(x, y)) {
+    return;
+  }
   auto targetPlayer = findPlayerByCoordinates(x, y);
   if (targetPlayer != nullptr) {
     playerAtackPlayer(*atacker, *targetPlayer);
@@ -405,8 +406,11 @@ void Game::playerAtackPlayer(Character &atacker, Character &target) {
   }
   uint32_t damage = calculateDamage(atacker);
   damage = target.takeDamage(damage);
+  // [TODO] exp del ataque
   if (target.getHp() == 0) {
+    // auto [exp, oro] = taget.kill();
     // [TODO] muerte del jugador
+    /* [TODO] perdido inventario */
   } else {
     senderQueueMonitor.sendToClient(
         playerToConnection[atacker.getId()],
@@ -426,6 +430,7 @@ void Game::playerAtackPlayer(Character &atacker, Character &target) {
 void Game::playerAtackNPC(Character &atacker, NPC &target) {
   uint32_t damage = calculateDamage(atacker);
   // [TODO] aplicar daño al npc
+  /* [TODO] exp del ataque*/
   if (false) {
     // [TODO] muerte del npc
   } else {
