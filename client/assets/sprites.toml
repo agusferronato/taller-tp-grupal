@@ -84,8 +84,20 @@ transparent = true
 
 [[sprites]]
 id = 209
+path = "assets/equipable/tunica.png"
+layout_type = "Tunic"
+transparent = true
+
+[[sprites]]
+id = 215
 path = "assets/equipable/1030.png"
-layout_type = "EquipableGrid"
+layout_type = "Body"
+transparent = true
+
+[[sprites]]
+id = 216
+path = "assets/equipable/1032.png"
+layout_type = "Body"
 transparent = true
 
 [[sprites]]

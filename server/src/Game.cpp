@@ -39,9 +39,9 @@ void Game::run() {
   biomes = std::move(mapLoader.GetBiomes());
   cities = mapLoader.GetCities();
 
-  inventoryManager.addGroundItem(16, 64, 32);
-  inventoryManager.addGroundItem(1, 96, 32);
-  inventoryManager.addGroundItem(18, 128, 32);
+  for (uint8_t id = 1; id <= 19; ++id) {
+    inventoryManager.addGroundItem(id, (id - 1) * 64, 32);
+  }
 
   ConstantRateLoop rateloop(FPS_SERVER);
   CommandFactory factory;

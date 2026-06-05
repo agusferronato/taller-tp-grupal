@@ -11,7 +11,6 @@ void InventoryPanel::loadTextures() {
   SDL2pp::Surface baseSurf("assets/HUD/UserInventory/base.png");
   baseTex = std::make_unique<SDL2pp::Texture>(renderer, baseSurf);
   slotFont = std::make_unique<SDL2pp::Font>("fonts/Vera.ttf", 9);
-  itemFont = std::make_unique<SDL2pp::Font>("fonts/Vera.ttf", 11);
 }
 
 SlotRect InventoryPanel::getEquipSlotRect(int idx) const {
@@ -23,74 +22,16 @@ SlotRect InventoryPanel::getInventorySlotRect(int row, int col) const {
   return {INV_PANEL_X + INV_X[col], y, SLOT_W, SLOT_H};
 }
 
-void InventoryPanel::drawBorderRect(int x, int y, int w, int h,
-                                     SDL_Color color) {
-  renderer.SetDrawColor(color.r, color.g, color.b, color.a);
-  SDL2pp::Rect top(x, y, w, 1);
-  renderer.FillRect(top);
-  SDL2pp::Rect bottom(x, y + h - 1, w, 1);
-  renderer.FillRect(bottom);
-  SDL2pp::Rect left(x, y, 1, h);
-  renderer.FillRect(left);
-  SDL2pp::Rect right(x + w - 1, y, 1, h);
-  renderer.FillRect(right);
-}
-
 void InventoryPanel::renderItemIcon(int slotX, int slotY, uint8_t itemId) {
   if (itemId == 0)
     return;
 
   SDL2pp::Texture *tex = itemTextureCache.get(itemId);
-  if (tex) {
-    renderer.Copy(*tex, SDL2pp::NullOpt,
-                  SDL2pp::Rect(slotX, slotY, SLOT_W, SLOT_H));
+  if (!tex)
     return;
-  }
 
-  const ItemDef &def = ITEM_TABLE[itemId];
-
-  SDL_Color color{180, 150, 100, 255};
-  switch (def.type) {
-  case ItemType::Weapon:
-    color = {200, 80, 80, 255};
-    break;
-  case ItemType::Armor:
-    color = {80, 120, 200, 255};
-    break;
-  case ItemType::Helmet:
-    color = {80, 200, 80, 255};
-    break;
-  case ItemType::Shield:
-    color = {180, 180, 80, 255};
-    break;
-  case ItemType::Staff:
-    color = {200, 130, 80, 255};
-    break;
-  case ItemType::PotionHp:
-    color = {200, 60, 60, 255};
-    break;
-  case ItemType::PotionMana:
-    color = {60, 100, 220, 255};
-    break;
-  }
-
-  SDL2pp::Rect bg(slotX + 1, slotY + 1, SLOT_W - 2, SLOT_H - 2);
-  renderer.SetDrawColor(30, 30, 30, 200);
-  renderer.FillRect(bg);
-
-  drawBorderRect(slotX + 1, slotY + 1, SLOT_W - 2, SLOT_H - 2, color);
-
-  std::string label;
-  label += def.name[0];
-  try {
-    SDL2pp::Surface surf = itemFont->RenderUTF8_Solid(label, color);
-    SDL2pp::Texture tex(renderer, surf);
-    int tx = slotX + (SLOT_W - surf.GetWidth()) / 2;
-    int ty = slotY + (SLOT_H - surf.GetHeight()) / 2;
-    renderer.Copy(tex, SDL2pp::NullOpt,
-                  SDL2pp::Rect(tx, ty, surf.GetWidth(), surf.GetHeight()));
-  } catch (...) {
-  }
+  renderer.Copy(*tex, SDL2pp::NullOpt,
+                SDL2pp::Rect(slotX, slotY, SLOT_W, SLOT_H));
 }
 
 void InventoryPanel::render(const ClientPlayer &player) {
