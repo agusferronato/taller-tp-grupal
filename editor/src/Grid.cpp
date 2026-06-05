@@ -129,13 +129,13 @@ void Grid::setMousePosition(int x, int y) {
 
     if (hoverTile) {
         int p = hoverTile->getPriority();
-        std::pair<int, int> oldKey = {hoverTile->getMaxJ(), hoverTile->getMaxI()};
+        std::pair<int, int> oldKey = {hoverTile->getMaxI(), hoverTile->getMaxJ()};
 
         tilesToRender[p].erase(oldKey);
 
         hoverTile->updatePosition(item_hover_i, item_hover_j);
 
-        std::pair<int, int> newKey = {hoverTile->getMaxJ(), hoverTile->getMaxI()};
+        std::pair<int, int> newKey = {hoverTile->getMaxI(), hoverTile->getMaxJ()};
         tilesToRender[p].insert({newKey, hoverTile});
     }
 
@@ -263,9 +263,6 @@ std::map<int, BiomeGrid>& Grid::getBiomes() {
 void Grid::setHoverTexture(TextureMap &textureMap, int texture_id) {
     active_texture_id = texture_id;
     hoverTile = createTileInstance(textureMap, texture_id, item_hover_i, item_hover_j);
-    
-    auto key = std::pair<int, int>(hoverTile->getMaxI(), hoverTile->getMaxJ());
-    tilesToRender[hoverTile->getPriority()][key] = hoverTile;
 }
 
 void Grid::clearHoverTexture() {
@@ -320,7 +317,7 @@ bool Grid::selectElementAt(int i, int j) {
     selectedTile = nullptr;
     selectedBiomeId = -1;
 
-    for (int p = tilesToRender.size(); p >= 0; --p) {
+    for (int p = tilesToRender.size() - 1; p >= 0; --p) {
         for (auto const& [_, tile] : tilesToRender[p]) {
 
             for (const auto& item : tile->getItems()) {
@@ -329,7 +326,6 @@ bool Grid::selectElementAt(int i, int j) {
                     return true;
                 }
             }
-
         }
     }
 
