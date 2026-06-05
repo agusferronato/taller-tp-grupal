@@ -15,35 +15,16 @@ Receiver::Receiver(Socket &peer, Queue<ClientMessage> &gameloopQueue,
 void Receiver::kill() { keepRunning = false; }
 
 void Receiver::run() {
-
   while (keepRunning) {
-
     try {
       auto command = protocol.receiveCommand();
-
-      auto *move = std::get_if<MoveCommandDTO>(&command);
-      if (move) {
-        lastPlayerId = move->playerId;
-      }
-      auto *stop = std::get_if<PlayerStopCommandDTO>(&command);
-      if (stop) {
-        lastPlayerId = stop->playerId;
-      }
-      auto *exit = std::get_if<ExitCommandDTO>(&command);
-      if (exit) {
-        lastPlayerId = exit->playerId;
-      }
 
       gameloopQueue.push(ClientMessage{std::move(command), connectionId});
 
     } catch (const CommunicationEnded &e) {
       if (keepRunning) {
-        if (lastPlayerId > 0) {
-          gameloopQueue.push(
-              ClientMessage{ExitCommandDTO{lastPlayerId}, connectionId});
-        } else {
-          gameloopQueue.push(ClientMessage{ExitCommandDTO{0}, connectionId});
-        }
+        gameloopQueue.push(
+            ClientMessage{ExitCommandDTO{}, connectionId});
       }
       break;
 
