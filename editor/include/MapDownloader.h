@@ -5,7 +5,7 @@
 #include <map>
 #include <set>
 #include <string>
-#include <tuple>
+#include <utility>
 #include <vector>
 
 class GridSDL;
@@ -16,14 +16,11 @@ struct BiomeGrid;
 
 class MapDownloader {
 
-private:
-  const std::string path;
-
 public:
-  explicit MapDownloader(const std::string &path);
-
-  void saveMap(GridSDL &gridSDL, std::list<TileOrigin> &txtOrigins, std::set<std::tuple<int, int, int>> &collidableCells, const std::map<int, BiomeGrid> &biomes);
-
+  void saveMap(GridSDL &gridSDL, const std::string &path,
+               std::list<TileOrigin> &txtOrigins,
+               std::set<std::pair<int, int>> &collidableCells,
+               const std::map<int, BiomeGrid> &biomes);
 };
 
 #endif

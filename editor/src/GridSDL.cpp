@@ -114,7 +114,10 @@ void GridSDL::initSDL() {
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
     textureMap = std::make_unique<TextureMap>(TextureMap(*renderer));
     camera = std::make_unique<Camera>(this->width(), this->height());
-    grid = std::make_unique<Grid>(*camera, *renderer);
+    grid = std::make_unique<Grid>(*camera, *renderer, textureMap->getMaxPriority() + 1);
+
+    if (!initMapPath.empty())
+      grid->loadMap(initMapPath, *textureMap);
 
     timer.start(16);
 
@@ -123,7 +126,13 @@ void GridSDL::initSDL() {
   }
 }
 
-void GridSDL::saveMap() { grid->saveMap(*this); }
+void GridSDL::loadMapOnInit(const std::string &mapPath) {
+  initMapPath = mapPath;
+}
+
+void GridSDL::saveMap(const std::string &path) {
+  grid->saveMap(*this, path);
+}
 
 
 void GridSDL::changeCollidableCellsVisibility() {
@@ -218,7 +227,7 @@ void GridSDL::mousePressEvent(QMouseEvent *event) {
 
     switch (actionToPerform) {
         case Action::SelectTexture:
-            grid->tryPlaceHoverTexture();
+            grid->tryPlaceHoverTexture(*textureMap);
             break;
         case Action::SelectBiome:
             grid->setInitBiomePosition(biomeSelected);
