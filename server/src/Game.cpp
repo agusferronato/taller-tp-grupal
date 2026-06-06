@@ -377,11 +377,13 @@ void Game::atack(uint32_t playerId, int16_t x, int16_t y) {
     playerAtackNPC(*atacker, *targetNPC);
     return;
   }
+  
   auto targetPlayer = findPlayerByCoordinates(x, y);
   if (targetPlayer != nullptr) {
     playerAtackPlayer(*atacker, *targetPlayer);
     return;
   }
+
 }
 
 void Game::appearNPCs() {
@@ -465,7 +467,7 @@ uint32_t Game::calculateDamage(Character &atacker) {
   return damage;
 }
 
-bool Game::validAtack(Character &atacker, Character &target) {
+bool Game::validAtack([[maybe_unused]] Character &atacker, [[maybe_unused]] Character &target) {
   return !atacker.isNewbie() && !target.isNewbie() &&
          abs(static_cast<int>(atacker.getLevel()) -
              static_cast<int>(target.getLevel())) <= 10;
