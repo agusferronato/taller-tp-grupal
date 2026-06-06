@@ -5,6 +5,7 @@
 #include <SDL2pp/Texture.hh>
 
 #include <vector>
+#include <algorithm>
 
 // Si el espacio para hacer wrap es menor a este valor, se ignora el espacio y
 // se hace wrap en la palabra completa. De esta manera se evitan lineas con muy
@@ -26,7 +27,7 @@ void GameChatView::render(SDL2pp::Renderer &renderer,
                           const SDL2pp::Rect &messagesRect,
                           const SDL2pp::Rect &inputRect,
                           const std::deque<std::string> &messages,
-                          const std::string &input, bool active, int scrollOffset) {
+                          const std::string &input, bool active) {
   renderer.SetDrawBlendMode(SDL_BLENDMODE_BLEND);
 
   renderBackgrounds(renderer, messagesRect, inputRect);
@@ -40,13 +41,13 @@ void GameChatView::render(SDL2pp::Renderer &renderer,
   std::vector<std::string> visualLines =
       buildVisualLines(messages, maxTextWidth);
 
-  renderMessages(renderer, messagesRect, visualLines, scrollOffset);
+  renderMessages(renderer, messagesRect, visualLines);
   renderInput(renderer, inputRect, input, active);
 }
 
 void GameChatView::renderBackgrounds(SDL2pp::Renderer &renderer,
                                      const SDL2pp::Rect &messagesRect,
-                                     const SDL2pp::Rect &inputRect) {
+                                     const SDL2pp::Rect &inputRect) const {
   renderer.SetDrawColor(0, 0, 0, 255);
   renderer.FillRect(messagesRect);
   renderer.FillRect(inputRect);
@@ -67,15 +68,18 @@ GameChatView::buildVisualLines(const std::deque<std::string> &messages,
   return visualLines;
 }
 
-void GameChatView::renderMessages(SDL2pp::Renderer &renderer,
-                                  const SDL2pp::Rect &messagesRect,
-                                  const std::vector<std::string> &visualLines,
-                                  int scrollOffset) {
+void GameChatView::renderMessages(
+    SDL2pp::Renderer& renderer,
+    const SDL2pp::Rect& messagesRect,
+    const std::vector<std::string>& visualLines) const {
+
+  int visibleLines = calculateVisibleLines(messagesRect);
+  int maxScrollOffset = std::max(0, static_cast<int>(visualLines.size()) - visibleLines);
+  int safeOffset = std::clamp(scrollOffset, 0, maxScrollOffset);
 
   int y = messagesRect.GetY() + messagesRect.GetH() - CHAT_PADDING_Y;
   
-  for (auto it = visualLines.rbegin() + scrollOffset; it != visualLines.rend(); ++it) {
-
+  for (auto it = visualLines.rbegin() + safeOffset; it != visualLines.rend(); ++it) {
     SDL2pp::Surface surf =
         font->RenderUTF8_Solid(*it, SDL_Color{220, 220, 220, 255});
 
@@ -87,14 +91,16 @@ void GameChatView::renderMessages(SDL2pp::Renderer &renderer,
       break;
 
     renderer.Copy(tex, SDL2pp::NullOpt,
-                  SDL2pp::Rect(messagesRect.GetX() + CHAT_PADDING_X_LEFT, y,
-                               surf.GetWidth(), surf.GetHeight()));
+                  SDL2pp::Rect(messagesRect.GetX() + CHAT_PADDING_X_LEFT,
+                               y,
+                               surf.GetWidth(),
+                               surf.GetHeight()));
   }
 }
 
 void GameChatView::renderInput(SDL2pp::Renderer &renderer,
                                const SDL2pp::Rect &inputRect,
-                               const std::string &input, bool active) {
+                               const std::string &input, bool active) const {
   std::string inputLine = active ? "> " + input + "_" : "> " + input;
 
   SDL2pp::Surface surf =
@@ -190,4 +196,31 @@ int GameChatView::measureTextWidth(const std::string &text) const {
   }
 
   return w;
+}
+
+int GameChatView::calculateVisibleLines(
+    const SDL2pp::Rect& messagesRect) const {
+  if (!font)
+    return 0;
+
+  SDL2pp::Surface surf =
+      font->RenderUTF8_Solid("Ay", SDL_Color{255, 255, 255, 255});
+
+  int lineHeight = surf.GetHeight() + LINE_SPACING;
+  int availableHeight = messagesRect.GetH() - 2 * CHAT_PADDING_Y;
+
+  if (lineHeight <= 0)
+    return 0;
+
+  return availableHeight / lineHeight;
+}
+
+void GameChatView::scrollChatUp() {
+  ++scrollOffset;
+}
+
+void GameChatView::scrollChatDown() {
+  if (scrollOffset > 0) {
+    --scrollOffset;
+  }
 }

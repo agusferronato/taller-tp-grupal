@@ -67,7 +67,6 @@ private:
   std::deque<std::string> chatMessages;
   std::string currentChatInput;
   bool chatActive{false};
-  int chatScrollOffset{0};
 
   std::unique_ptr<TextureManager> textureManager;
 
@@ -134,7 +133,10 @@ public:
                   const std::list<TileOrigin> &origins);
 
   void setChatState(const std::deque<std::string> &messages,
-                    const std::string &input, bool active, int chatScrollOffset);
+                    const std::string &input, bool active);
+
+  void scrollChatUp();
+  void scrollChatDown();
 
 private:
   void renderHUD();

@@ -26,7 +26,6 @@ private:
   std::deque<std::string> chatMessages;
   std::string currentChatInput;
   bool chatActive = false;
-  int chatScrollOffset = 0;
 
   GameWindow *gameView;
 

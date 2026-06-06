@@ -4,6 +4,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <string>
+#include <algorithm>
 
 #include "NPCEntity.h"
 #include "Player.h"
@@ -219,11 +220,10 @@ std::string GameWindow::headPathForRace(const std::string &race) const {
 }
 
 void GameWindow::setChatState(const std::deque<std::string> &messages,
-                              const std::string &input, bool active, int chatScrollOffset) {
+                              const std::string &input, bool active) {
   this->chatMessages = messages;
   this->currentChatInput = input;
   this->chatActive = active;
-  this->chatScrollOffset = chatScrollOffset;
 }
 
 // Layout and rendering helpers
@@ -313,7 +313,7 @@ void GameWindow::renderChat(const Layout &layout) {
     return;
 
   chatView->render(*renderer, layout.chatMessagesRect, layout.chatInputRect,
-                   chatMessages, currentChatInput, chatActive, chatScrollOffset);
+                   chatMessages, currentChatInput, chatActive);
 }
 
 void GameWindow::renderText(int x, int y, const std::string &text,
@@ -498,6 +498,14 @@ void GameWindow::renderCenteredTextInRect(const SDL2pp::Rect &rect,
   renderer->Copy(tex, SDL2pp::NullOpt,
                  SDL2pp::Rect(x, y, surf.GetWidth(), surf.GetHeight()));
 }
+
+void GameWindow::scrollChatUp() {
+  chatView->scrollChatUp();
+}
+void GameWindow::scrollChatDown() {
+  chatView->scrollChatDown();
+}
+
 
 // WIP
 void GameWindow::renderInventoryPanel([[maybe_unused]] const Layout &layout) {}

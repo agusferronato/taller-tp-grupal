@@ -138,7 +138,7 @@ void GameModel::handle(const GlobalChatMessageEventDTO &event) {
 }
 
 void GameModel::updateChatView() {
-  gameView->setChatState(chatMessages, currentChatInput, chatActive, chatScrollOffset);
+  gameView->setChatState(chatMessages, currentChatInput, chatActive);
 }
 
 const std::deque<std::string> &GameModel::getChatMessages() const {
@@ -226,17 +226,11 @@ PlayerStatsInfo GameModel::playerStatsFrom(const PlayerAppearedEventDTO &info) {
 }
 
 void GameModel::scrollChatUp() {
-  ++chatScrollOffset;
+  gameView->scrollChatUp();
   updateChatView();
 }
 
 void GameModel::scrollChatDown() {
-  if (chatScrollOffset > 0) {
-    --chatScrollOffset;
-  }
+  gameView->scrollChatDown();
   updateChatView();
-}
-
-int GameModel::getChatScrollOffset() const {
-  return chatScrollOffset;
 }
