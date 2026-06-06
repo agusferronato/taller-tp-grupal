@@ -42,6 +42,8 @@ enum class EventOpcode : uint8_t {
   TextureInfoEvent,
   PrivateMessageEvent,
   GlobalChatMessageEvent,
+  NPCMovedEvent,
+  NPCStoppedEvent,
 };
 
 #endif // PROTOCOL_CODES_H

@@ -1,6 +1,7 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
+#include "City.h"
 #include "Colisionable.h"
 #include "Direction.h"
 #include "Player.h"
@@ -12,6 +13,8 @@
 #include "PlayerMovedEventDTO.h"
 #include "Race.h"
 #include <cstdint>
+#include <list>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -70,7 +73,7 @@ public:
   bool colisionaCon(int targetX, int targetY, int ancho,
                     int alto) const override;
 
-  bool 
+  bool isInCity(std::list<City>& cities, int gridSize, int maxSize);
   int getX() const override;
   int getY() const override;
   int getAncho() const override;

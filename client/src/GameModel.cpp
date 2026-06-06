@@ -4,6 +4,8 @@
 #include "InventoryUpdateEventDTO.h"
 #include "NPC.h"
 #include "NPCAppearedEventDTO.h"
+#include "NPCMovedEventDTO.h"
+#include "NPCStoppedEventDTO.h"
 #include "NPCType.h"
 #include "NpcDefeatedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
@@ -184,6 +186,20 @@ void GameModel::submitChat() {
   currentChatInput.clear();
   chatActive = false;
   updateChatView();
+}
+
+void GameModel::handle(const NPCMovedEventDTO &event) {
+  auto it = npcs.find(event.npcId);
+  if (it != npcs.end()) {
+    it->second->updateCoordinates(event.x, event.y, event.direction);
+  }
+}
+
+void GameModel::handle(const NPCStoppedEventDTO &event) {
+  auto it = npcs.find(event.npcId);
+  if (it != npcs.end()) {
+    it->second->stopMoving();
+  }
 }
 
 void GameModel::handle(const NpcDefeatedEventDTO &event) {

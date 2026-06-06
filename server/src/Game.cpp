@@ -6,6 +6,8 @@
 #include "MapLoader.h"
 #include "MoveCommandDTO.h"
 #include "NPCAppearedEventDTO.h"
+#include "NPCMovedEventDTO.h"
+#include "NPCStoppedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerInfoEventDTO.h"
 #include "PlayerListEventDTO.h"
@@ -127,6 +129,15 @@ void Game::registerPlayer(const std::string &name, const Race race,
   senderQueueMonitor.sendToClient(connectionId,
                                   PlayerListEventDTO{std::move(playerList)});
 
+  for (auto& npc : npcs) {
+    senderQueueMonitor.sendToClient(
+        connectionId,
+        NPCAppearedEventDTO{npc->getId(),
+                            static_cast<uint8_t>(npc->getType()),
+                            static_cast<int16_t>(npc->getX()),
+                            static_cast<int16_t>(npc->getY())});
+  }
+
   messagesToSend.push_back(players[newId]->toPlayerAppeared());
 }
 
@@ -179,6 +190,15 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
   }
   senderQueueMonitor.sendToClient(connectionId,
                                   PlayerListEventDTO{std::move(playerList)});
+
+  for (auto& npc : npcs) {
+    senderQueueMonitor.sendToClient(
+        connectionId,
+        NPCAppearedEventDTO{npc->getId(),
+                            static_cast<uint8_t>(npc->getType()),
+                            static_cast<int16_t>(npc->getX()),
+                            static_cast<int16_t>(npc->getY())});
+  }
 
   messagesToSend.push_back(players[newId]->toPlayerAppeared());
 }
@@ -290,6 +310,7 @@ void Game::appearNPC(std::unique_ptr<NPC> &&npc) {
   npc->setPixelPosition(px, py);
 
   uint16_t id = nextNPCId++;
+  npc->setId(id);
   messagesToSend.push_back(
       NPCAppearedEventDTO{id, static_cast<uint8_t>(npc->getType()),
                           static_cast<int16_t>(px), static_cast<int16_t>(py)});
@@ -373,18 +394,34 @@ void Game::appearNPCs() {
 
 void Game::makeNPCsfollowPlayers()
 {
-
   for (auto& npc : npcs) {
+    Character* target = nullptr;
 
     for (auto& [_, player] : players) {
+      if (player->isInCity(cities, gridSize, maxSize))
+        continue;
 
-      if (player->isInNPCRange(npc) && !player->isInCity(biomes)) 
-        npc->updatePosition(*this, *player);
-
+      int dx = npc->getX() - player->getX();
+      int dy = npc->getY() - player->getY();
+      if (abs(dx) <= npc->getRange() && abs(dy) <= npc->getRange()) {
+        target = player.get();
+        break;
+      }
     }
 
+    if (target) {
+      if (npc->updatePosition(*target)) {
+        messagesToSend.push_back(
+            NPCMovedEventDTO{npc->getId(),
+                             static_cast<int16_t>(npc->getX()),
+                             static_cast<int16_t>(npc->getY()),
+                             npc->getDirection()});
+      }
+    } else {
+      if (npc->getIsMoving()) {
+        npc->stop();
+        messagesToSend.push_back(NPCStoppedEventDTO{npc->getId()});
+      }
+    }
   }
-
-
-
 }

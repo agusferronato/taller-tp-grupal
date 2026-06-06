@@ -70,6 +70,8 @@ private:
   void handle(const TextureInfoEventDTO &event);
   void handle(const PlayerListEventDTO &event);
   void handle(const ChatMessageEventDTO &event);
+  void handle(const NPCMovedEventDTO &event);
+  void handle(const NPCStoppedEventDTO &event);
   void handle(const NpcDefeatedEventDTO &event);
   void handle(const RegisterPlayerEventDTO &event);
   void handle(const PrivateMessageEventDTO &event);
