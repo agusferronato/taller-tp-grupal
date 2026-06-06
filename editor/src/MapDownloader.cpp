@@ -5,11 +5,10 @@
 #include <fstream>
 #include <toml++/toml.hpp>
 
-MapDownloader::MapDownloader(const std::string &path) : path(path) {}
-
 void MapDownloader::saveMap(
-    GridSDL &gridSDL, std::list<TileOrigin> &txtOrigins,
-    std::set<std::tuple<int, int, int>> &collidableCells,
+    GridSDL &gridSDL, const std::string &path,
+    std::list<TileOrigin> &txtOrigins,
+    std::set<std::pair<int, int>> &collidableCells,
     const std::map<int, BiomeGrid> &biomes) {
 
   toml::table tbl;
@@ -32,8 +31,7 @@ void MapDownloader::saveMap(
   tbl.emplace("textures", std::move(textures_arr));
 
   toml::array coll_arr;
-  for (auto &cell : collidableCells) {
-    auto [i, j, _] = cell;
+  for (auto &[i, j] : collidableCells) {
     toml::table cell_tbl;
     cell_tbl.emplace("i", i);
     cell_tbl.emplace("j", j);

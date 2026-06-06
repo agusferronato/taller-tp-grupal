@@ -20,6 +20,9 @@ TextureMap::TextureMap(SDL2pp::Renderer &renderer) {
         data.collidablePercentage =
             entry["collidable_percentage"].value_or(1.0f);
 
+        if (data.priority > maxPriority)
+            maxPriority = data.priority;
+
         SDL2pp::Surface surface(data.path);
         if (data.transparent) {
           surface.SetColorKey(true, SDL_MapRGB(surface.Get()->format, 0, 0, 0));
