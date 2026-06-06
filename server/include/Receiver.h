@@ -22,7 +22,6 @@ private:
   uint32_t connectionId;
   Protocol protocol;
   bool keepRunning = true;
-  uint32_t lastPlayerId{0};
 
 public:
   Receiver(Socket &peer, Queue<ClientMessage> &gameloopQueue,
