@@ -6,8 +6,8 @@
 #include "parser/Commands/MeditateParser.h"
 #include "parser/Commands/MoveCommandParser.h"
 #include "parser/Commands/PlayerStopCommandParser.h"
-#include "parser/Commands/RegisterPlayerParser.h"
 #include "parser/Commands/PrivateMessageCommandParser.h"
+#include "parser/Commands/RegisterPlayerParser.h"
 #include "parser/Commands/TakeItemCommandParser.h"
 #include "parser/Commands/UnequipCommandParser.h"
 #include "parser/Events/ChatMessageEventParser.h"
@@ -23,13 +23,14 @@
 #include "parser/Events/PlayerMovedEventParser.h"
 #include "parser/Events/PlayerRemovedEventParser.h"
 #include "parser/Events/PlayerStoppedEventParser.h"
+#include "parser/Events/PrivateMessageEventParser.h"
 #include "parser/Events/RegisterPlayerEventParser.h"
 #include "parser/Events/TextureInfoEventParser.h"
-#include "parser/Events/PrivateMessageEventParser.h"
-#include "parser/Events/GlobalChatMessageEventParser.h"
-#include "parser/Commands/GlobalChatMessageCommandParser.h"
 #include "protocol/Protocol.h"
 #include "protocol/ProtocolCodes.h"
+#include <AtackCommandParser.h>
+#include <GlobalChatMessageCommandParser.h>
+#include <GlobalChatMessageEventParser.h>
 
 void registerAllParsers(Protocol &protocol) {
   protocol.registerCommandParser(
@@ -55,11 +56,10 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerCommandParser(
       static_cast<uint8_t>(ClientCommandOpCode::ExitCommand),
       std::make_unique<ExitParser>());
-      
+
   protocol.registerCommandParser(
       static_cast<uint8_t>(ClientCommandOpCode::PrivateMessageCommand),
       std::make_unique<PrivateMessageCommandParser>());
-
 
   protocol.registerCommandParser(
       static_cast<uint8_t>(ClientCommandOpCode::EquipCommand),
@@ -80,6 +80,10 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerCommandParser(
       static_cast<uint8_t>(ClientCommandOpCode::GlobalChatMessageCommand),
       std::make_unique<GlobalChatMessageCommandParser>());
+
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::AtackCommand),
+      std::make_unique<AtackCommandParser>());
 
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::ChatMessageEvent),

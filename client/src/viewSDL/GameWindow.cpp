@@ -503,3 +503,7 @@ void GameWindow::drawBar(int x, int y, int w, int h, uint32_t cur,
   renderer->SetDrawColor(fg.r, fg.g, fg.b, fg.a);
   renderer->FillRect(fillRect);
 }
+
+std::pair<int, int> GameWindow::screenToWorld(int mouseX, int mouseY) {
+  return camera.mouseToWorld(mouseX, mouseY);
+}

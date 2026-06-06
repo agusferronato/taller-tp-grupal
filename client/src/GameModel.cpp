@@ -88,6 +88,12 @@ void GameModel::stopMyPlayer() {
   sendingQueue.push(PlayerStopCommandDTO{myPlayerID});
 }
 
+void GameModel::atack(int mouseX, int mouseY) {
+  auto [worldX, worldY] = gameView->screenToWorld(mouseX, mouseY);
+  sendingQueue.push(AtackCommandDTO{myPlayerID, static_cast<int16_t>(worldX),
+                                    static_cast<int16_t>(worldY)});
+}
+
 void GameModel::handle(const PlayerMovedEventDTO &moved) {
   uint32_t pid = moved.playerId;
   int16_t x = moved.x;
@@ -285,4 +291,13 @@ PlayerStatsInfo GameModel::playerStatsFrom(const PlayerAppearedEventDTO &info) {
                         stats.race = info.race,
                         stats.playerClass = info.playerClass};
   return stats;
+}
+
+void GameModel::handleLeftMouseClick(int mouseX, int mouseY) {
+  atack(mouseX, mouseY);
+}
+
+void GameModel::handleRightMouseClick(int mouseX, int mouseY) {
+  (void)mouseX;
+  (void)mouseY;
 }

@@ -28,15 +28,25 @@ void GameController::handleEvent(const SDL_Event &event) {
     handleKeyUp(event.key.keysym.sym);
     break;
 
-  case SDL_MOUSEBUTTONDOWN:
-    gameModel->handleInventoryClick(event.button.x, event.button.y,
-                                    event.button.button);
-    break;
-
   case SDL_TEXTINPUT:
     if (gameModel->isChatActive()) {
       gameModel->appendChatText(event.text.text);
     }
+    break;
+
+  case SDL_MOUSEBUTTONDOWN:
+    handleMouseDown(event.button);
+    break;
+  }
+}
+
+void GameController::handleMouseDown(const SDL_MouseButtonEvent &buttonEvent) {
+  switch (buttonEvent.button) {
+  case SDL_BUTTON_LEFT:
+    gameModel->handleLeftMouseClick(buttonEvent.x, buttonEvent.y);
+    break;
+  case SDL_BUTTON_RIGHT:
+    gameModel->handleRightMouseClick(buttonEvent.x, buttonEvent.y);
     break;
   }
 }
