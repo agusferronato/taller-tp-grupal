@@ -273,7 +273,7 @@ void GameWindow::renderEntitiesByPriority(unsigned int it) {
 
       for (auto *entity : sortedEntities) {
         if (!entity->rendered() &&
-            entity->get_y() + 1.25 * entity->get_h() < y_max &&
+            entity->get_y() + entity->get_h() < y_max &&
             entity->hasPriority(i)) {
           entity->render(*renderer, camera, it);
         }
@@ -300,7 +300,7 @@ void GameWindow::renderEntitiesByPriority(unsigned int it) {
     }
   }
 
-  for (auto &[key, entity] : entities) {
+  for (auto & entity : sortedEntities) {
     if (!entity->rendered()) {
       entity->render(*renderer, camera, it);
     }

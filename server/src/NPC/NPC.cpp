@@ -4,9 +4,9 @@
 bool NPC::colisionaCon(int targetX, int targetY, int targetAncho,
                        int targetAlto) const {
     return !(targetX + targetAncho <= x ||
-             targetX >= x + ancho ||
+             targetX >= x + getAncho() ||
              targetY + targetAlto <= y ||
-             targetY >= y + alto);
+             targetY >= y + getAlto());
 } 
 
 bool NPC::updatePosition(const Character& character) {

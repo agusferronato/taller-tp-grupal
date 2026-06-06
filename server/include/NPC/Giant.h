@@ -9,7 +9,7 @@ public:
     NPCType getType() override { return NPCType::GiantT; }
 
     int getAncho() const override { return 32; };
-    int getAlto() const override { return 64; };
+    int getAlto() const override { return 128; };
     int getRange() const override { return 128; };
 
 };

@@ -15,8 +15,6 @@ protected:
     Position gridPosition;
     int range{128};
     int x, y;
-    int ancho{32};
-    int alto{32};
     Direction direction{Direction::Down};
     bool isMoving{false};
 
