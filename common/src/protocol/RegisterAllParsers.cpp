@@ -13,6 +13,8 @@
 #include "parser/Events/ChatMessageEventParser.h"
 #include "parser/Events/InventoryUpdateEventParser.h"
 #include "parser/Events/NPCAppearedEventParser.h"
+#include "parser/Events/NPCMovedEventParser.h"
+#include "parser/Events/NPCStoppedEventParser.h"
 #include "parser/Events/NpcDefeatedEventParser.h"
 #include "parser/Events/PlayerAppearedEventParser.h"
 #include "parser/Events/PlayerInfoEventParser.h"
@@ -133,4 +135,12 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::GlobalChatMessageEvent),
       std::make_unique<GlobalChatMessageEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::NPCMovedEvent),
+      std::make_unique<NPCMovedEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::NPCStoppedEvent),
+      std::make_unique<NPCStoppedEventParser>());
 }

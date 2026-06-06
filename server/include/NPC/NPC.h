@@ -1,16 +1,21 @@
 #ifndef NPC_H
 #define NPC_H
 
-#include "Position.h"
+#include "Direction.h"
 #include "NPCType.h"
+#include "Position.h"
 
+class Character;
 
 class NPC {
 
 protected:
+    uint16_t id;
     Position gridPosition;
     int range{128};
     int x, y;
+    Direction direction{Direction::Down};
+    bool isMoving{false};
     static constexpr int ANCHO = 32;
     static constexpr int ALTO = 32;
 
@@ -22,45 +27,20 @@ public:
 
     virtual NPCType getType() = 0;
 
+    void setId(uint16_t newId) { id = newId; }
+    uint16_t getId() const { return id; }
     const Position& getPosition() const { return gridPosition; }
     int getX() const { return x; }
     int getY() const { return y; }
     int getAncho() const { return ANCHO; }
     int getAlto() const { return ALTO; }
+    int getRange() const { return range; }
+    Direction getDirection() const { return direction; }
+    bool getIsMoving() const { return isMoving; }
     void setPixelPosition(int px, int py) { x = px; y = py; }
+    void stop() { isMoving = false; }
 
-
-    void updatePosition(Game& game, Character& character) {
-
-        if (abs(x - character.getX()) <= range && abs(y - character.getY()) <= range) {
-
-            int vx =  character.getX() - x;
-            int vy = character.getY() - y;
-            int norm = vx*vx + vy*vy;
-            if (norm == 0) return;
-
-            float cos_a = (float)vx / norm; 
-
-            if (cos_a > 0.71f) {
-                
-                // right
-                /*
-                this->x += 1; 
-                game.moveNPCTo(direction = left, *this);
-                */
-
-            } else if (cos_a < -0.71f) {
-                //left
-            } else if (vy > 0) {
-                //down
-            } else {
-                //up
-            }
-
-        }
-
-    }
-
+    bool updatePosition(const Character& character);
 
 };
 
