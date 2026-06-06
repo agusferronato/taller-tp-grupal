@@ -377,13 +377,12 @@ void Game::atack(uint32_t playerId, int16_t x, int16_t y) {
     playerAtackNPC(*atacker, *targetNPC);
     return;
   }
-  
+
   auto targetPlayer = findPlayerByCoordinates(x, y);
   if (targetPlayer != nullptr) {
     playerAtackPlayer(*atacker, *targetPlayer);
     return;
   }
-
 }
 
 void Game::appearNPCs() {
@@ -467,11 +466,14 @@ uint32_t Game::calculateDamage(Character &atacker) {
   return damage;
 }
 
-bool Game::validAtack([[maybe_unused]] Character &atacker, [[maybe_unused]] Character &target) {
-  return !atacker.isNewbie() && !target.isNewbie() &&
-         abs(static_cast<int>(atacker.getLevel()) -
-             static_cast<int>(target.getLevel())) <= 10;
+bool Game::validAtack(Character &atacker, Character &target) {
+  bool newbie = !(atacker.isNewbie() || target.isNewbie());
+  bool fairplay = abs(static_cast<int>(atacker.getLevel()) -
+                      static_cast<int>(target.getLevel())) <= 10;
+  bool notSelf = atacker.getId() != target.getId();
   // [TODO] validar si esta en ciudad
+  bool notInCity = true;
+  return newbie && fairplay && notSelf && notInCity;
 }
 
 Character *Game::findPlayerByCoordinates(int16_t x, int16_t y) {
