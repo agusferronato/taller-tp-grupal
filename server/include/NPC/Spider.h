@@ -8,8 +8,8 @@ public:
     Spider(Position position) : NPC(position) { }
     NPCType getType() override { return NPCType::SpiderT; }
 
-    int getAncho() const override { return 32; };
-    int getAlto() const override { return 32; };
+    int getAncho() const override { return 48; };
+    int getAlto() const override { return 48; };
     int getRange() const override { return 128; };
 };
 

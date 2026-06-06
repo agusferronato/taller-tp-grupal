@@ -9,7 +9,7 @@ public:
     NPCType getType() override { return NPCType::SpecialSpiderT; }
 
     int getAncho() const override { return 96; };
-    int getAlto() const override { return 32; };
+    int getAlto() const override { return 64; };
     int getRange() const override { return 128; };
 };
 
