@@ -24,6 +24,7 @@ private:
   void initToolBar();
 
 signals:
+  void interactionModeSelected();
   void saveMap();
   void biomeSelected(Biome biome);
   void collisionVisibilityChanged();

@@ -42,6 +42,8 @@ void Editor::initEditor() {
 
   connect(gridSDL, &GridSDL::mapSavedSuccesfully, this,
           &Editor::onSavedMapSuccesfully);
+
+  connect(toolBar, &ToolBar::interactionModeSelected, gridSDL, &GridSDL::setInteractionMode);
 }
 
 void Editor::onSaveMapButtonClick() { this->gridSDL->saveMap(); }

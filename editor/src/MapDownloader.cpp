@@ -10,7 +10,7 @@ MapDownloader::MapDownloader(const std::string &path) : path(path) {}
 void MapDownloader::saveMap(
     GridSDL &gridSDL, std::list<TileOrigin> &txtOrigins,
     std::set<std::tuple<int, int, int>> &collidableCells,
-    const std::vector<BiomeGrid> &biomes) {
+    const std::map<int, BiomeGrid> &biomes) {
 
   toml::table tbl;
 
@@ -43,7 +43,7 @@ void MapDownloader::saveMap(
 
   toml::array biomes_arr;
   toml::array cities_arr;
-  for (auto &b : biomes) {
+  for (auto &[_, b] : biomes) {
     if (!b.initialized)
       continue;
     toml::table b_tbl;

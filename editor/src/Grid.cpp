@@ -2,96 +2,10 @@
 
 Grid::Grid(Camera &camera, SDL2pp::Renderer &renderer)
     : tilesToRender(
-          std::vector<std::map<std::pair<int, int>, std::vector<GridItem>>>(3)),
+          std::vector<std::multimap<std::pair<int, int>, std::shared_ptr<Tile>>>(3)),
       camera(camera), downloader("map.toml"), font("fonts/Timeless.ttf", 16),
       colissionTexture(renderer, "assets/colision.png") {}
 
-void Grid::setGridTexture(TextureMap &textureMap, int texture_id) {
-
-  if (thereAreAssignedTextures(textureMap, texture_id))
-    return;
-
-  TextureInMap &txtInMap = textureMap.getTexture(texture_id);
-  SDL2pp::Texture &txt = txtInMap.txt;
-
-  int rows = std::ceil((float)txt.GetHeight() / GRID_SIZE_PX);
-  int columns = std::ceil((float)txt.GetWidth() / GRID_SIZE_PX);
-
-  int spare_y = txt.GetHeight();
-
-  txtOrigins.push_back(
-      {txtInMap.data.priority, texture_id, item_hover_i, item_hover_j});
-
-  float collidablePercentage = txtInMap.data.collidablePercentage;
-  int offset = std::floor((1 - collidablePercentage) * rows);
-
-  std::vector<GridItem> gridItemList;
-
-  int max_row, max_col;
-
-  for (int j = item_hover_j; j < item_hover_j + rows; j++) {
-
-    int spare_x = txt.GetWidth();
-
-    for (int i = item_hover_i; i < item_hover_i + columns; i++) {
-
-      GridItem tile;
-
-      tile.texture_id = texture_id;
-
-      tile.x_start = (i - item_hover_i) * GRID_SIZE_PX;
-      tile.y_start = (j - item_hover_j) * GRID_SIZE_PX;
-
-      tile.x_end = tile.x_start + std::min(GRID_SIZE_PX, spare_x);
-      tile.y_end = tile.y_start + std::min(GRID_SIZE_PX, spare_y);
-
-      tile.i = i;
-      tile.j = j;
-
-      gridItemList.push_back(std::move(tile));
-
-      SDL2pp::Rect rect = {tile.x_start, tile.y_start,
-                           tile.x_end - tile.x_start,
-                           tile.y_end - tile.y_start};
-
-      if (j >= item_hover_j + offset &&
-          getAlphaChannelWeight(txtInMap.surface, rect) > 0.15) {
-        collidableCells.insert({i, j, txtInMap.data.priority});
-      }
-
-      max_col = i;
-      spare_x -= GRID_SIZE_PX;
-    }
-
-    spare_y -= GRID_SIZE_PX;
-
-    max_row = j;
-  }
-
-  auto key = std::make_pair(max_row, max_col);
-  tilesToRender[txtInMap.data.priority][key] = std::move(gridItemList);
-}
-
-bool Grid::thereAreAssignedTextures(TextureMap &textureMap, int texture_id) {
-
-  TextureInMap &txtInMap = textureMap.getTexture(texture_id);
-  SDL2pp::Texture &txt = txtInMap.txt;
-
-  int rows = std::ceil((float)txt.GetHeight() / GRID_SIZE_PX);
-  int columns = std::ceil((float)txt.GetWidth() / GRID_SIZE_PX);
-
-  for (int j = item_hover_j; j < item_hover_j + rows; j++) {
-
-    for (int i = item_hover_i; i < item_hover_i + columns; i++) {
-
-      if (collidableCells.find({i, j, txtInMap.data.priority}) !=
-          collidableCells.end())
-        return true;
-    }
-  }
-
-  return false;
-}
 
 float Grid::getAlphaChannelWeight(SDL2pp::Surface &surface,
                                   SDL2pp::Rect region) {
@@ -127,21 +41,25 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap &textureMap) {
 
   for (auto &priority : tilesToRender) {
 
-    for (auto &[_, items] : priority) {
+    for (auto &[_, tile] : priority) {
 
-      for (auto &item : items) {
+      bool isHover = hoverTile && tile->getId() == hoverTile->getId();
 
-        SDL2pp::Rect dstRect = camera.toScreen(
-            (item.i - MAX_SIZE / 2) * GRID_SIZE_PX,
-            (item.j - MAX_SIZE / 2) * GRID_SIZE_PX, GRID_SIZE_PX, GRID_SIZE_PX);
+        for (auto &item : tile->getItems()) {
+            SDL2pp::Rect dstRect = camera.toScreen(
+                (item.i - MAX_SIZE / 2) * GRID_SIZE_PX,
+                (item.j - MAX_SIZE / 2) * GRID_SIZE_PX, GRID_SIZE_PX, GRID_SIZE_PX);
 
-        SDL2pp::Rect srcRect = {item.x_start, item.y_start,
-                                item.x_end - item.x_start,
-                                item.y_end - item.y_start};
+            SDL2pp::Rect srcRect = {item.x_start, item.y_start,
+                                    item.x_end - item.x_start,
+                                    item.y_end - item.y_start};
 
-        renderer.Copy(textureMap.getTexture(item.texture_id).txt, srcRect,
-                      dstRect);
-      }
+            SDL2pp::Texture &tex = textureMap.getTexture(item.texture_id).txt;
+
+            if (isHover) tex.SetAlphaMod(160);
+            renderer.Copy(tex, srcRect, dstRect);
+            if (isHover) tex.SetAlphaMod(255);
+        }
     }
   }
 
@@ -152,6 +70,7 @@ void Grid::render(SDL2pp::Renderer &renderer, TextureMap &textureMap) {
     renderCollidableCells(renderer);
 
   renderHover(renderer);
+  renderHoverAndSelection(renderer);
 }
 
 void Grid::renderCollidableCells(SDL2pp::Renderer &renderer) {
@@ -203,60 +122,68 @@ void Grid::renderHover(SDL2pp::Renderer &renderer) {
 }
 
 void Grid::setMousePosition(int x, int y) {
-  hover_init = true;
-  int worldX = camera.get_x() + x;
-  int worldY = camera.get_y() + y;
 
-  item_hover_i = (int)std::floor((float)worldX / GRID_SIZE_PX) + MAX_SIZE / 2;
-  item_hover_j = (int)std::floor((float)worldY / GRID_SIZE_PX) + MAX_SIZE / 2;
+    int worldX = camera.get_x() + x;
+    int worldY = camera.get_y() + y;
 
-  item_hover_i = std::clamp(item_hover_i, 0, MAX_SIZE - 1);
-  item_hover_j = std::clamp(item_hover_j, 0, MAX_SIZE - 1);
+    item_hover_i = (int)std::floor((float)worldX / GRID_SIZE_PX) + MAX_SIZE / 2;
+    item_hover_j = (int)std::floor((float)worldY / GRID_SIZE_PX) + MAX_SIZE / 2;
+
+    item_hover_i = std::clamp(item_hover_i, 0, MAX_SIZE - 1);
+    item_hover_j = std::clamp(item_hover_j, 0, MAX_SIZE - 1); 
+
+    if (hoverTile) {
+        int p = hoverTile->getPriority();
+
+        eraseTileFromRender(hoverTile);
+
+        hoverTile->updatePosition(item_hover_i, item_hover_j);
+
+
+        std::pair<int, int> newKey = {hoverTile->getMaxJ(), hoverTile->getMaxI()};
+        tilesToRender[p].insert({newKey, hoverTile});
+    }
+
 }
 
 void Grid::saveMap(GridSDL &gridSDL) {
   this->downloader.saveMap(gridSDL, txtOrigins, collidableCells, biomes);
 }
 
+
 void Grid::setInitBiomePosition(Biome biome) {
-
-  biomeSelected = true;
-
-  biomes.push_back(BiomeGrid{
-      biome,
-      biomeParser.getBiomeAsString(biome),
-      biomeParser.getBiomeColor(biome),
-      false,
-      item_hover_i,
-      item_hover_j,
-      item_hover_i,
-      item_hover_j,
-      item_hover_i,
-      item_hover_j,
-  });
+    isPlacingBiome = true;
+    currentBiomePlacingId = next_instance_id++;
+    
+    biomes[currentBiomePlacingId] = BiomeGrid{
+        currentBiomePlacingId, biome, biomeParser.getBiomeAsString(biome), biomeParser.getBiomeColor(biome),
+        false, item_hover_i, item_hover_j, item_hover_i, item_hover_j, item_hover_i, item_hover_j
+    };
 }
 
 void Grid::releaseBiomeSelection() {
-  biomeSelected = false;
-  biomes[biomes.size() - 1].initialized = true;
+    if (isPlacingBiome) {
+        isPlacingBiome = false;
+        biomes[currentBiomePlacingId].initialized = true;
+    }
 }
 
 void Grid::updateSelectedBiome() {
 
-  if (!biomeSelected)
+  if (!isPlacingBiome)
     return;
 
-  BiomeGrid &biomeSelectedGrid = biomes[biomes.size() - 1];
-
-  biomeSelectedGrid.i_init = std::min(biomeSelectedGrid.i_start, item_hover_i);
-  biomeSelectedGrid.i_end = std::max(biomeSelectedGrid.i_start, item_hover_i);
-  biomeSelectedGrid.j_init = std::min(biomeSelectedGrid.j_start, item_hover_j);
-  biomeSelectedGrid.j_end = std::max(biomeSelectedGrid.j_start, item_hover_j);
+  biomes[currentBiomePlacingId].i_init = std::min(biomes[currentBiomePlacingId].i_start, item_hover_i);
+  biomes[currentBiomePlacingId].i_end = std::max(biomes[currentBiomePlacingId].i_start, item_hover_i);
+  biomes[currentBiomePlacingId].j_init = std::min(biomes[currentBiomePlacingId].j_start, item_hover_j);
+  biomes[currentBiomePlacingId].j_end = std::max(biomes[currentBiomePlacingId].j_start, item_hover_j);
 }
+
+
 
 void Grid::renderBiomes(SDL2pp::Renderer &renderer) {
 
-  for (auto &biome : biomes) {
+  for (auto &[_, biome] : biomes) {
 
     for (int i = biome.i_init; i <= biome.i_end; i++) {
       for (int j = biome.j_init; j <= biome.j_end; j++) {
@@ -291,4 +218,229 @@ void Grid::renderBiomes(SDL2pp::Renderer &renderer) {
           SDL2pp::Rect(cornerRect.x + 16, cornerRect.y - th + 32, tw, th));
     }
   }
+}
+
+void Grid::eraseTileFromRender(std::shared_ptr<Tile> tile) {
+
+    int p = tile->getPriority();
+    std::pair<int,int> key = {tile->getMaxJ(), tile->getMaxI()};
+    
+    
+    auto [begin, end] = tilesToRender[p].equal_range(key);
+    for (auto it = begin; it != end; ++it) {
+        if (it->second->getId() == tile->getId()) {
+            tilesToRender[p].erase(it);
+            return;
+        }
+    }
+    
+}
+
+std::shared_ptr<Tile> Grid::createTileInstance(TextureMap &textureMap, int texture_id, int start_i, int start_j) {
+    TextureInMap &txtInMap = textureMap.getTexture(texture_id);
+    SDL2pp::Texture &txt = txtInMap.txt;
+
+    int rows = std::ceil((float)txt.GetHeight() / GRID_SIZE_PX);
+    int columns = std::ceil((float)txt.GetWidth() / GRID_SIZE_PX);
+
+    auto tile = std::make_shared<Tile>(next_instance_id++, texture_id, txtInMap.data.priority, start_i, start_j, txt.GetWidth(), txt.GetHeight());
+
+    int spare_y = txt.GetHeight();
+    float collidablePercentage = txtInMap.data.collidablePercentage;
+    int offset = std::floor((1 - collidablePercentage) * rows);
+
+    for (int j = start_j; j < start_j + rows; j++) {
+        int spare_x = txt.GetWidth();
+        for (int i = start_i; i < start_i + columns; i++) {
+            GridItem item;
+            item.texture_id = texture_id;
+            item.x_start = (i - start_i) * GRID_SIZE_PX;
+            item.y_start = (j - start_j) * GRID_SIZE_PX;
+            item.x_end = item.x_start + std::min(GRID_SIZE_PX, spare_x);
+            item.y_end = item.y_start + std::min(GRID_SIZE_PX, spare_y);
+            item.i = i;
+            item.j = j;
+            tile->addItem(item);
+
+            SDL2pp::Rect rect = {item.x_start, item.y_start, item.x_end - item.x_start, item.y_end - item.y_start};
+            if (j >= start_j + offset && getAlphaChannelWeight(txtInMap.surface, rect) > 0.15) {
+                tile->addCollidable(i, j);
+            }
+            spare_x -= GRID_SIZE_PX;
+        }
+        spare_y -= GRID_SIZE_PX;
+    }
+    return tile;
+}
+
+
+std::map<int, BiomeGrid>& Grid::getBiomes() {
+    return biomes;
+}
+
+
+void Grid::setHoverTexture(TextureMap &textureMap, int texture_id) {
+
+    if (hoverTile) 
+        eraseTileFromRender(hoverTile);
+
+    active_texture_id = texture_id;
+    hoverTile = createTileInstance(textureMap, texture_id, item_hover_i, item_hover_j);
+}
+
+void Grid::clearHoverTexture() {
+    hoverTile = nullptr;
+    active_texture_id = 0;
+} 
+
+
+bool Grid::checkCollisions(const std::shared_ptr<Tile>& tile) {
+
+    if (!tile) return false;
+
+    std::multimap<std::pair<int, int>, std::shared_ptr<Tile>>& tiles = tilesToRender[tile->getPriority()];  
+
+    for (const auto& [_, placedTile] : tiles) {
+
+        if (placedTile->getId() == tile->getId()) continue;
+
+        for (const auto& cell : tile->getCollidableCells()) {
+
+            for (const auto& placedCell : placedTile->getCollidableCells()) {
+                if (
+                    std::get<0>(cell) == std::get<0>(placedCell) 
+                    && std::get<1>(cell) == std::get<1>(placedCell)
+                ) 
+                    return true; 
+            }
+        }
+    }
+    return false;
+
+}
+
+void Grid::tryPlaceHoverTexture() {
+    if (!hoverTile || checkCollisions(hoverTile)) return;
+
+    txtOrigins.push_back({
+        hoverTile->getPriority(), 
+        hoverTile->getTextureId(), 
+        hoverTile->getOriginI(), 
+        hoverTile->getOriginY()
+    });
+
+    for(auto cell : hoverTile->getCollidableCells()) {
+        collidableCells.insert(cell);
+    }
+
+    hoverTile = nullptr; 
+    active_texture_id = 0;
+}
+
+
+bool Grid::selectElementAt(int i, int j) {
+
+    selectedTile = nullptr;
+    selectedBiomeId = -1;
+
+    for (int p = tilesToRender.size() - 1; p >= 0; --p) {
+        for (auto const& [_, tile] : tilesToRender[p]) {
+
+            for (const auto& item : tile->getItems()) {
+                if (item.i == i && item.j == j) {
+                    selectedTile = tile;
+                    return true;
+                }
+            }
+        }
+    }
+
+    for (auto const& [id, biome] : biomes) {
+        if (biome.initialized && i >= biome.i_init && i <= biome.i_end && j >= biome.j_init && j <= biome.j_end) {
+            selectedBiomeId = id;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+void Grid::deleteSelectedTexture() {
+
+    if (selectedTile) {
+
+        txtOrigins.remove_if([this](const TileOrigin& origin) {
+            return origin.x == selectedTile->getOriginI() && 
+                   origin.y == selectedTile->getOriginY() &&
+                   origin.texture_id == selectedTile->getTextureId();
+        });
+
+        for (const auto& cell : selectedTile->getCollidableCells()) {
+            collidableCells.erase(cell);
+        }
+
+        eraseTileFromRender(selectedTile);
+        selectedTile = nullptr;
+
+    }
+}
+
+void Grid::startMovingSelectedTexture() {
+
+    if (selectedTile) {
+
+        hoverTile = selectedTile;
+        active_texture_id = selectedTile->getTextureId();
+
+        txtOrigins.remove_if([this](const TileOrigin& origin) {
+            return origin.x == selectedTile->getOriginI() && 
+                   origin.y == selectedTile->getOriginY() &&
+                   origin.texture_id == selectedTile->getTextureId();
+        });
+
+        for(auto cell : selectedTile->getCollidableCells()) {
+            collidableCells.erase(cell);
+        }
+
+        selectedTile = nullptr;
+    }
+
+}
+
+void Grid::deleteSelectedBiome() {
+    if (selectedBiomeId != -1) {
+        biomes.erase(selectedBiomeId);
+        selectedBiomeId = -1;
+    }
+}
+
+
+void Grid::renderHoverAndSelection(SDL2pp::Renderer &renderer) {
+
+    if (selectedTile) {
+        int min_i = selectedTile->getMinI();
+        int min_j = selectedTile->getMinJ();
+        int max_i = selectedTile->getMaxI();
+        int max_j = selectedTile->getMaxJ();
+
+        SDL2pp::Rect dstRect = camera.toScreen(
+            (min_i - MAX_SIZE / 2) * GRID_SIZE_PX,
+            (min_j - MAX_SIZE / 2) * GRID_SIZE_PX,
+            (max_i - min_i + 1) * GRID_SIZE_PX,
+            (max_j - min_j + 1) * GRID_SIZE_PX
+        );
+
+        SDL_SetRenderDrawBlendMode(renderer.Get(), SDL_BLENDMODE_BLEND);
+
+        renderer.SetDrawColor(55, 138, 221, 35);
+        renderer.FillRect(dstRect);
+
+        renderer.SetDrawColor(55, 138, 221, 220);
+        renderer.DrawRect(dstRect);
+
+        SDL2pp::Rect inner = {dstRect.x + 1, dstRect.y + 1, dstRect.w - 2, dstRect.h - 2};
+        renderer.SetDrawColor(55, 138, 221, 80);
+        renderer.DrawRect(inner);
+    }
 }
