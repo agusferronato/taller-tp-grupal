@@ -43,6 +43,7 @@ public:
   Sprite getEquipableSprite(const std::string &type, int textureId,
                             Direction dir, unsigned int it);
   Sprite getZombieSprite(int txtID, Direction dir, unsigned int it);
+  SDL2pp::Texture *getItemIcon(uint8_t itemId) const;
 };
 
 #endif

@@ -4,6 +4,7 @@
 #include <SDL2pp/SDL2pp.hh>
 
 #include "ClientPlayer.h"
+#include "EquipParser.h"
 #include "RenderableEntity.h"
 #include "TextureManager.h"
 
@@ -24,6 +25,7 @@ private:
   const ClientPlayer &player;
   TextureManager &textureManager;
   SDL2pp::Font &nameFont;
+  EquipParser equipParser;
 
   void renderBody(SDL2pp::Renderer &renderer, Camera &camera, unsigned int it);
   void renderHead(SDL2pp::Renderer &renderer, Camera &camera);

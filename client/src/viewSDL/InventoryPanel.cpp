@@ -4,8 +4,8 @@
 #include <unordered_map>
 
 InventoryPanel::InventoryPanel(SDL2pp::Renderer &renderer,
-                               const ItemTextureCache &itemTextureCache)
-    : renderer(renderer), itemTextureCache(itemTextureCache) {}
+                               const TextureManager &textureManager)
+    : renderer(renderer), textureManager(textureManager) {}
 
 void InventoryPanel::loadTextures() {
   SDL2pp::Surface baseSurf("assets/HUD/UserInventory/base.png");
@@ -26,7 +26,7 @@ void InventoryPanel::renderItemIcon(int slotX, int slotY, uint8_t itemId) {
   if (itemId == 0)
     return;
 
-  SDL2pp::Texture *tex = itemTextureCache.get(itemId);
+  SDL2pp::Texture *tex = textureManager.getItemIcon(itemId);
   if (!tex)
     return;
 

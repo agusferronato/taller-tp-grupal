@@ -195,3 +195,99 @@ transparent = true
 id = 112
 path = "assets/special_golem.png"
 transparent = true
+
+# Item icons (for inventory panel)
+[[sprites]]
+id = 300
+path = "assets/items/espada.png"
+transparent = true
+
+[[sprites]]
+id = 301
+path = "assets/items/hacha.png"
+transparent = true
+
+[[sprites]]
+id = 302
+path = "assets/items/martillo.png"
+transparent = true
+
+[[sprites]]
+id = 303
+path = "assets/items/arcoSimple.png"
+transparent = true
+
+[[sprites]]
+id = 304
+path = "assets/items/arcoComp.png"
+transparent = true
+
+[[sprites]]
+id = 305
+path = "assets/items/varaF.png"
+transparent = true
+
+[[sprites]]
+id = 306
+path = "assets/items/flauta.png"
+transparent = true
+
+[[sprites]]
+id = 307
+path = "assets/items/baculoN.png"
+transparent = true
+
+[[sprites]]
+id = 308
+path = "assets/items/baculoE.png"
+transparent = true
+
+[[sprites]]
+id = 309
+path = "assets/items/1030.png"
+transparent = true
+
+[[sprites]]
+id = 310
+path = "assets/items/1032.png"
+transparent = true
+
+[[sprites]]
+id = 311
+path = "assets/items/tunica.png"
+transparent = true
+
+[[sprites]]
+id = 312
+path = "assets/items/capucha.png"
+transparent = true
+
+[[sprites]]
+id = 313
+path = "assets/items/casco.png"
+transparent = true
+
+[[sprites]]
+id = 314
+path = "assets/items/sombrero.png"
+transparent = true
+
+[[sprites]]
+id = 315
+path = "assets/items/escudo2.png"
+transparent = true
+
+[[sprites]]
+id = 316
+path = "assets/items/escudo1.png"
+transparent = true
+
+[[sprites]]
+id = 317
+path = "assets/items/pocion2.png"
+transparent = true
+
+[[sprites]]
+id = 318
+path = "assets/items/pocion1.png"
+transparent = true

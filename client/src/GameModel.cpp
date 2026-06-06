@@ -167,8 +167,6 @@ void GameModel::registerPlayers() {
 }
 
 void GameModel::handle(const InventoryUpdateEventDTO &inv) {
-  if (inv.playerId != myPlayerID)
-    return;
   auto it = players.find(inv.playerId);
   if (it == players.end())
     return;
