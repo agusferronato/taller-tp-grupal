@@ -10,6 +10,7 @@
 class GameChatView {
 private:
   SDL2pp::Font *font;
+  int scrollOffset = 0;
 
   void renderBackgrounds(SDL2pp::Renderer &renderer,
                          const SDL2pp::Rect &messagesRect,
@@ -20,7 +21,8 @@ private:
 
   void renderMessages(SDL2pp::Renderer &renderer,
                       const SDL2pp::Rect &messagesRect,
-                      const std::vector<std::string> &visualLines);
+                      const std::vector<std::string> &visualLines,
+                      int scrollOffset);
 
   void renderInput(SDL2pp::Renderer &renderer, const SDL2pp::Rect &inputRect,
                    const std::string &input, bool active);
@@ -37,7 +39,7 @@ public:
   void render(SDL2pp::Renderer &renderer, const SDL2pp::Rect &messagesRect,
               const SDL2pp::Rect &inputRect,
               const std::deque<std::string> &messages, const std::string &input,
-              bool active);
+              bool active, int scrollOffset);
 };
 
 #endif

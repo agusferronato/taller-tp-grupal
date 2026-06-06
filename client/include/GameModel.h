@@ -26,6 +26,7 @@ private:
   std::deque<std::string> chatMessages;
   std::string currentChatInput;
   bool chatActive = false;
+  int chatScrollOffset = 0;
 
   GameWindow *gameView;
 
@@ -51,6 +52,9 @@ public:
   void appendChatText(const char *text);
   void backspaceChat();
   void submitChat();
+  void scrollChatUp();
+  void scrollChatDown();
+  int getChatScrollOffset() const;
 
 private:
   void registerPlayers();

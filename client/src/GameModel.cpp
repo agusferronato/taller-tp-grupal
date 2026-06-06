@@ -18,6 +18,9 @@
 #include <iostream>
 #include <stdexcept>
 
+static constexpr int MAX_NUMBER_OF_MESSAGES = 100;
+
+
 GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
                      Queue<ServerEventDTO> &receptionQueue,
                      Queue<ClientCommandDTO> &sendingQueue)
@@ -127,7 +130,7 @@ void GameModel::handle(const PrivateMessageEventDTO &) {}
 void GameModel::handle(const GlobalChatMessageEventDTO &event) {
   chatMessages.push_back(event.playerName + ": " + event.message);
 
-  while (chatMessages.size() > 100) {
+  while (chatMessages.size() > MAX_NUMBER_OF_MESSAGES) {
     chatMessages.pop_front();
   }
 
@@ -135,7 +138,7 @@ void GameModel::handle(const GlobalChatMessageEventDTO &event) {
 }
 
 void GameModel::updateChatView() {
-  gameView->setChatState(chatMessages, currentChatInput, chatActive);
+  gameView->setChatState(chatMessages, currentChatInput, chatActive, chatScrollOffset);
 }
 
 const std::deque<std::string> &GameModel::getChatMessages() const {
@@ -220,4 +223,20 @@ PlayerStatsInfo GameModel::playerStatsFrom(const PlayerAppearedEventDTO &info) {
                         stats.race = info.race,
                         stats.playerClass = info.playerClass};
   return stats;
+}
+
+void GameModel::scrollChatUp() {
+  ++chatScrollOffset;
+  updateChatView();
+}
+
+void GameModel::scrollChatDown() {
+  if (chatScrollOffset > 0) {
+    --chatScrollOffset;
+  }
+  updateChatView();
+}
+
+int GameModel::getChatScrollOffset() const {
+  return chatScrollOffset;
 }

@@ -219,10 +219,11 @@ std::string GameWindow::headPathForRace(const std::string &race) const {
 }
 
 void GameWindow::setChatState(const std::deque<std::string> &messages,
-                              const std::string &input, bool active) {
-  chatMessages = messages;
-  currentChatInput = input;
-  chatActive = active;
+                              const std::string &input, bool active, int chatScrollOffset) {
+  this->chatMessages = messages;
+  this->currentChatInput = input;
+  this->chatActive = active;
+  this->chatScrollOffset = chatScrollOffset;
 }
 
 // Layout and rendering helpers
@@ -312,7 +313,7 @@ void GameWindow::renderChat(const Layout &layout) {
     return;
 
   chatView->render(*renderer, layout.chatMessagesRect, layout.chatInputRect,
-                   chatMessages, currentChatInput, chatActive);
+                   chatMessages, currentChatInput, chatActive, chatScrollOffset);
 }
 
 void GameWindow::renderText(int x, int y, const std::string &text,
@@ -371,10 +372,6 @@ void GameWindow::renderPlayerStats(const Layout &layout) {
   int xpY = y + 84;
   int xpW = 227;
   int xpH = 20;
-  // int xpX = x + 20 + 2;
-  // int xpY = y + 84 + 2;
-  // int xpW = 227 - 2;
-  // int xpH = 20 - 2;
 
   drawBar(xpX, xpY, xpW, xpH, xpCur, xpMax, SDL_Color{60, 180, 60, 255},
           SDL_Color{20, 20, 20, 255});
