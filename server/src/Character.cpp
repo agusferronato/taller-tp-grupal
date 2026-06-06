@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "Formulas.h"
 #include "PlayerClass.h"
 #include "Race.h"
 #include <algorithm>
@@ -90,7 +91,9 @@ std::pair<int, int> Character::getTargetPosition(Direction dir) const {
   return {targetX, targetY};
 }
 
-void Character::takeDamage(uint32_t damage) { player.takeDamage(damage); }
+uint32_t Character::takeDamage(uint32_t damage) {
+  return player.takeDamage(damage);
+}
 
 void Character::heal(uint32_t amount) { player.heal(amount); }
 
@@ -150,4 +153,24 @@ PlayerMovedEventDTO Character::toPlayerMoved() const {
 
 std::pair<int, int> Character::getTargetPosition() const {
   return getTargetPosition(player.getDirection());
+}
+
+uint32_t Character::getDamage() const { return player.atack(); }
+
+bool Character::tryParry() const {
+  return Formulas::calcularEsquivo(player.getAgility(), rand() % 2);
+}
+
+bool Character::assertAtackDistance(int16_t targetX, int16_t targetY) const {
+  (void)targetX;
+  (void)targetY;
+  // [TODO] validar distancia del ataque con arma cuerpo a cuerpo o a distancia
+  return true;
+}
+
+uint32_t Character::dropGoldOnDeath() {
+  uint32_t perdido =
+      Formulas::calcularOroPerdidoMuerte(player.getGold(), player.getLevel());
+  player.removeGold(perdido);
+  return perdido;
 }
