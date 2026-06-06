@@ -10,7 +10,7 @@ private:
 
 public:
   EventOpcode getCode() const { return opCode; }
-  uint16_t npcId;
+  uint32_t npcId;
   uint8_t npcType;
   int16_t x;
   int16_t y;

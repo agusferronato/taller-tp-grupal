@@ -1,6 +1,14 @@
 #include "NPC.h"
 #include "Character.h"
 
+bool NPC::colisionaCon(int targetX, int targetY, int targetAncho,
+                       int targetAlto) const {
+    return !(targetX + targetAncho <= x ||
+             targetX >= x + ancho ||
+             targetY + targetAlto <= y ||
+             targetY >= y + alto);
+} 
+
 bool NPC::updatePosition(const Character& character) {
     int dx = character.getX() - x;
     int dy = character.getY() - y;
@@ -10,7 +18,7 @@ bool NPC::updatePosition(const Character& character) {
             isMoving = false;
         }
         return false;
-    }
+    } 
 
     Direction dir;
     if (abs(dx) > abs(dy)) {

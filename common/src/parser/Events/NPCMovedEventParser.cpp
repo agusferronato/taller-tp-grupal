@@ -15,7 +15,7 @@ void NPCMovedEventParser::serialize(std::vector<uint8_t> &bytes,
 }
 
 ServerEventDTO NPCMovedEventParser::deserialize(Protocol &protocol) {
-  uint16_t npcId = protocol.getUint16();
+  uint32_t npcId = protocol.getUint32();
   int16_t x = protocol.getInt16();
   int16_t y = protocol.getInt16();
   Direction direction = static_cast<Direction>(protocol.getUint8());

@@ -89,7 +89,7 @@ public:
 
   bool thereIsACollidableEntityAt(Position position);
   void appearNPC(std::unique_ptr<NPC> &&npc);
-  uint16_t nextNPCId{1};
+  uint32_t nextNPCId{1};
 
 private:
   void execute(ClientMessage clientMessage);
@@ -101,6 +101,7 @@ private:
 
   void makeNPCsfollowPlayers();
 
+  bool checkIfItCollides(Colisionable* entity);
 };
 
 #endif

@@ -12,6 +12,6 @@ void NPCStoppedEventParser::serialize(std::vector<uint8_t> &bytes,
 }
 
 ServerEventDTO NPCStoppedEventParser::deserialize(Protocol &protocol) {
-  uint16_t npcId = protocol.getUint16();
+  uint32_t npcId = protocol.getUint32();
   return NPCStoppedEventDTO{npcId};
 }

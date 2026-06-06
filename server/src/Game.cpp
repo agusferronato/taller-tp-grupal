@@ -51,9 +51,10 @@ void Game::run() {
       auto command = factory.create(msg.dto);
       command->execute(*this, msg.connectionId);
     }
-    movePlayers();
+
 
     makeNPCsfollowPlayers();
+    movePlayers();
 
     appearNPCs();
     sendMessages();
@@ -293,14 +294,6 @@ bool Game::thereIsACollidableEntityAt(Position position) {
       return true;
   }
 
-  for (auto &npc : npcs) {
-    if (!(cellX + gridSize <= npc->getX() ||
-          cellX >= npc->getX() + npc->getAncho() ||
-          cellY + gridSize <= npc->getY() ||
-          cellY >= npc->getY() + npc->getAlto()))
-      return true;
-  }
-
   return false;
 }
 
@@ -310,60 +303,34 @@ void Game::appearNPC(std::unique_ptr<NPC> &&npc) {
   int py = (npc->getPosition().column - center) * gridSize;
   npc->setPixelPosition(px, py);
 
-  uint16_t id = nextNPCId++;
+  uint32_t id = nextNPCId++;
   npc->setId(id);
+
+  colisionables.push_back(npc.get());
+
   messagesToSend.push_back(
       NPCAppearedEventDTO{id, static_cast<uint8_t>(npc->getType()),
                           static_cast<int16_t>(px), static_cast<int16_t>(py)});
 
-  std::cout << "NPC of type " << (int)npc->getType() << std::endl;
   npcs.push_back(std::move(npc));
 }
 
 void Game::movePlayers() {
   for (auto &[playerID, info] : players) {
-    if (!info->isMoving()) {
+    if (!info->isMoving())
       continue;
-    }
 
     auto [targetX, targetY] = info->getTargetPosition();
 
-    bool blocked = false;
-    for (auto &col : colisionables) {
-      if (col == info.get())
-        continue;
-      if (col->colisionaCon(targetX, targetY, info->getAncho(),
-                            info->getAlto())) {
-        blocked = true;
-        break;
-      }
-    }
-    if (blocked)
-      continue;
-
-    {
-      int start_i = floorDiv(targetX, gridSize) + maxSize / 2;
-      int end_i =
-          floorDiv(targetX + info->getAncho() - 1, gridSize) + maxSize / 2;
-      int start_j = floorDiv(targetY, gridSize) + maxSize / 2;
-      int end_j =
-          floorDiv(targetY + info->getAlto() - 1, gridSize) + maxSize / 2;
-      bool tileBlocked = false;
-      for (int i = start_i; i <= end_i; i++) {
-        for (int j = start_j; j <= end_j; j++) {
-          if (collidableCells.count({i, j, 0})) {
-            tileBlocked = true;
-            break;
-          }
-        }
-        if (tileBlocked)
-          break;
-      }
-      if (tileBlocked)
-        continue;
-    }
+    int origX = info->getX();
+    int origY = info->getY();
 
     info->move(targetX, targetY);
+
+    if (checkIfItCollides(info.get())) {
+      info->move(origX, origY);
+      continue;
+    }
 
     messagesToSend.push_back(info->toPlayerMoved());
   }
@@ -393,6 +360,28 @@ void Game::appearNPCs() {
   }
 }
 
+bool Game::checkIfItCollides(Colisionable* entity) {
+    for (auto& col : colisionables) {
+        if (col == entity) continue;
+        if (col->colisionaCon(entity->getX(), entity->getY(),
+                              entity->getAncho(), entity->getAlto()))
+            return true;
+    }
+
+    int start_i = floorDiv(entity->getX(), gridSize) + maxSize / 2;
+    int end_i = floorDiv(entity->getX() + entity->getAncho(), gridSize) + maxSize / 2;
+    int start_j = floorDiv(entity->getY(), gridSize) + maxSize / 2;
+    int end_j = floorDiv(entity->getY() + entity->getAlto(), gridSize) + maxSize / 2;
+    for (int i = start_i; i <= end_i; i++) {
+        for (int j = start_j; j <= end_j; j++) {
+            if (collidableCells.count({i, j, 0}))
+                return true;
+        }
+    }
+
+    return false;
+}
+
 void Game::makeNPCsfollowPlayers()
 {
   for (auto& npc : npcs) {
@@ -411,12 +400,21 @@ void Game::makeNPCsfollowPlayers()
     }
 
     if (target) {
+      int oldX = npc->getX();
+      int oldY = npc->getY();
+
       if (npc->updatePosition(*target)) {
-        messagesToSend.push_back(
-            NPCMovedEventDTO{npc->getId(),
-                             static_cast<int16_t>(npc->getX()),
-                             static_cast<int16_t>(npc->getY()),
-                             npc->getDirection()});
+        if (checkIfItCollides(npc.get())) {
+          npc->setPixelPosition(oldX, oldY);
+          npc->stop();
+          messagesToSend.push_back(NPCStoppedEventDTO{npc->getId()});
+        } else {
+          messagesToSend.push_back(
+              NPCMovedEventDTO{npc->getId(),
+                               static_cast<int16_t>(npc->getX()),
+                               static_cast<int16_t>(npc->getY()),
+                               npc->getDirection()});
+        }
       }
     } else {
       if (npc->getIsMoving()) {

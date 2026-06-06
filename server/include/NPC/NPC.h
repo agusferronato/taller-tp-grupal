@@ -1,44 +1,51 @@
 #ifndef NPC_H
 #define NPC_H
 
+#include "Colisionable.h"
 #include "Direction.h"
 #include "NPCType.h"
 #include "Position.h"
 
 class Character;
 
-class NPC {
+class NPC : public Colisionable {
 
 protected:
-    uint16_t id;
+    uint32_t id;
     Position gridPosition;
     int range{128};
     int x, y;
+    int ancho{32};
+    int alto{32};
     Direction direction{Direction::Down};
     bool isMoving{false};
-    static constexpr int ANCHO = 32;
-    static constexpr int ALTO = 32;
 
 public:
 
-    NPC(Position pos) : gridPosition(pos), x(0), y(0) { }
+    NPC(Position pos)
+        : gridPosition(pos), x(0), y(0) {}
 
     virtual ~NPC() = default;
 
     virtual NPCType getType() = 0;
 
-    void setId(uint16_t newId) { id = newId; }
-    uint16_t getId() const { return id; }
+    void setId(uint32_t newId) { id = newId; }
+    uint32_t getId() const { return id; }
     const Position& getPosition() const { return gridPosition; }
-    int getX() const { return x; }
-    int getY() const { return y; }
-    int getAncho() const { return ANCHO; }
-    int getAlto() const { return ALTO; }
-    int getRange() const { return range; }
+    int getX() const override { return x; }
+    int getY() const override { return y; }
+
+    virtual int getAncho() const = 0;
+    virtual int getAlto() const = 0;
+    virtual int getRange() const = 0;
+
     Direction getDirection() const { return direction; }
     bool getIsMoving() const { return isMoving; }
     void setPixelPosition(int px, int py) { x = px; y = py; }
     void stop() { isMoving = false; }
+
+    bool colisionaCon(int targetX, int targetY, int targetAncho,
+                      int targetAlto) const override;
 
     bool updatePosition(const Character& character);
 
