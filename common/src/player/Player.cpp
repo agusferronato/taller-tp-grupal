@@ -32,6 +32,7 @@ void Player::move(int newX, int newY) {
 }
 
 uint32_t Player::takeDamage(uint32_t damage) {
+  // [TODO] calcular defensa real con armaduras
   uint32_t defence =
       Formulas::calcularDefensa(0, 0, 0, 0, 0, 0, rand(), rand(), rand());
   uint32_t actualDamage = damage > defence ? damage - defence : 0;
@@ -60,5 +61,6 @@ void Player::removeGold(uint32_t amount) {
 }
 
 uint32_t Player::atack() const {
+  // [TODO] calcular daño real con armas
   return Formulas::calcularDaño(stats.getStrength(), 0, 0, rand());
 }
