@@ -227,3 +227,12 @@ PlayerStatsInfo GameModel::playerStatsFrom(const PlayerAppearedEventDTO &info) {
                         stats.playerClass = info.playerClass};
   return stats;
 }
+
+void GameModel::handleLeftMouseClick(int mouseX, int mouseY) {
+  atack(mouseX, mouseY);
+}
+
+void GameModel::handleRightMouseClick(int mouseX, int mouseY) {
+  (void)mouseX;
+  (void)mouseY;
+}
