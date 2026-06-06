@@ -69,6 +69,8 @@ public:
   // Colisionable interface
   bool colisionaCon(int targetX, int targetY, int ancho,
                     int alto) const override;
+
+  bool 
   int getX() const override;
   int getY() const override;
   int getAncho() const override;

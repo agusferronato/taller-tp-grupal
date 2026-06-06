@@ -49,6 +49,9 @@ void Game::run() {
       command->execute(*this, msg.connectionId);
     }
     movePlayers();
+
+    makeNPCsfollowPlayers();
+
     appearNPCs();
     sendMessages();
 
@@ -366,4 +369,22 @@ void Game::appearNPCs() {
   for (auto &biome : biomes) {
     biome->NPCgenerationStrategy(*this);
   }
+}
+
+void Game::makeNPCsfollowPlayers()
+{
+
+  for (auto& npc : npcs) {
+
+    for (auto& [_, player] : players) {
+
+      if (player->isInNPCRange(npc) && !player->isInCity(biomes)) 
+        npc->updatePosition(*this, *player);
+
+    }
+
+  }
+
+
+
 }
