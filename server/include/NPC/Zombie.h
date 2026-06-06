@@ -14,6 +14,10 @@ public:
         return NPCType::ZombieT;
     }
 
+    int getAncho() const override { return 32; };
+    int getAlto() const override { return 32; };
+    int getRange() const override { return 128; };
+
 };
 
 

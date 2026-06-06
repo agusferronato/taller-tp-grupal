@@ -4,9 +4,14 @@
 #include "NPC.h"
 
 class Elf : public NPC {
+
 public:
     Elf(Position position) : NPC(position) { }
     NPCType getType() override { return NPCType::ElfT; }
+
+    int getAncho() const override { return 32; };
+    int getAlto() const override { return 32; };
+    int getRange() const override { return 128; };
 };
 
 #endif

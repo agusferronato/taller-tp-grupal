@@ -106,7 +106,7 @@ bool Character::colisionaCon(int targetX, int targetY, int ancho,
   return !(targetX + ancho <= player.getX() ||
            targetX >= player.getX() + ANCHO ||
            targetY + alto <= player.getY() || targetY >= player.getY() + ALTO);
-}
+} 
 
 bool Character::isInCity(std::list<City> &cities, int gridSize, int maxSize)
 {
