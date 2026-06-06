@@ -93,20 +93,17 @@ void TextureManager::loadLayoutsFromToml(const std::string &path) {
   }
 
   // Load equipable frames (weapons, armor, helmets, shields)
-  for (auto &[key, val] : tbl) {
-    std::string keyStr(key.str());
-    if (keyStr == "Body" || keyStr == "Head" || keyStr == "Zombie" ||
-        keyStr == "Skeleton" || keyStr == "Spider" || keyStr == "Golem" ||
-        keyStr == "GreatReamer" || keyStr == "Giant" || keyStr == "Elf" ||
-        keyStr == "SpecialSpider" || keyStr == "SpecialSkeleton" ||
-        keyStr == "Orc")
-      continue;
-    if (auto *section = val.as_table()) {
+  auto loadEquipable = [&](const char *key) {
+    if (auto *section = tbl[key].as_table()) {
       auto frames = parseBodyFrames(*section);
-      equipableFrames.erase(keyStr);
-      equipableFrames.emplace(keyStr, BodyLayout(frames));
+      equipableFrames.erase(key);
+      equipableFrames.emplace(key, BodyLayout(frames));
     }
-  }
+  };
+
+  loadEquipable("Tunic");
+  loadEquipable("EquipableGrid");
+  loadEquipable("Helmet");
 
   // Load NPC body frames
   auto registerBody = [&](const char* key, TextureLayoutType type) {
@@ -173,4 +170,11 @@ Sprite TextureManager::getEquipableSprite(const std::string &type,
   auto &layout = equipableFrames.at(type);
   SpriteData frame = layout.getLayout(dir, it);
   return Sprite{textures.at(textureId), frame.x, frame.y, frame.w, frame.h};
+}
+
+SDL2pp::Texture *TextureManager::getItemIcon(uint8_t itemId) const {
+  auto it = textures.find(299 + itemId);
+  if (it != textures.end())
+    return const_cast<SDL2pp::Texture *>(&it->second);
+  return nullptr;
 }

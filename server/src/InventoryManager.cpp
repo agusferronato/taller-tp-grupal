@@ -142,6 +142,7 @@ void InventoryManager::addGroundItem(uint8_t itemId, int x, int y) {
 
 bool InventoryManager::isOnGroundItem(int px, int py,
                                        const GroundItem &gi) const {
-  return gi.x >= px && gi.x < px + Character::ANCHO && gi.y >= py &&
-         gi.y < py + Character::ALTO;
+  constexpr int margin = 16;
+  return gi.x >= px - margin && gi.x < px + Character::ANCHO + margin &&
+         gi.y >= py - margin && gi.y < py + Character::ALTO + margin;
 }

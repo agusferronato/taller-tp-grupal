@@ -70,10 +70,8 @@ void GameWindow::initResources() {
   textureManager->loadLayoutsFromToml("assets/layouts.toml");
   textureManager->loadTexturesFromToml("assets/sprites.toml");
 
-  invPanel = std::make_unique<InventoryPanel>(*renderer, itemTextureCache);
+  invPanel = std::make_unique<InventoryPanel>(*renderer, *textureManager);
   invPanel->loadTextures();
-
-  itemTextureCache.load(*renderer);
 }
 
 GameWindow::Layout GameWindow::getLayout() const {
@@ -247,80 +245,92 @@ void GameWindow::renderChat(const Layout &layout) {
 }
 
 void GameWindow::renderPlayerHeader(const Layout &layout) {
-  if (!myPlayerEntity || !titleFont)
+  if (!titleFont)
     return;
 
-  const auto &player = myPlayerEntity->getPlayer();
+  SDL2pp::Surface surf =
+      titleFont->RenderUTF8_Blended("Argentum", SDL_Color{255, 255, 255, 255});
 
-  SDL2pp::Surface titleSurf =
-      titleFont->RenderUTF8_Blended("Argentum", kTitleColor);
-  SDL2pp::Texture titleTex(*renderer, titleSurf);
+  SDL2pp::Texture tex(*renderer, surf);
 
-  int titleX = layout.rightTopRect.GetX() +
-               (layout.rightTopRect.GetW() - titleSurf.GetWidth()) / 2;
-  int titleY = layout.rightTopRect.GetY() + 12;
+  int x = layout.rightTopRect.GetX() + 24 +
+          (layout.rightTopRect.GetW() - surf.GetWidth()) / 2;
 
-  renderer->Copy(titleTex, SDL2pp::NullOpt,
-                 SDL2pp::Rect(titleX, titleY, titleSurf.GetWidth(),
-                              titleSurf.GetHeight()));
+  int y = layout.rightTopRect.GetY() + 18;
 
-  if (player.getName().empty() || !uiFont)
-    return;
-
-  SDL2pp::Surface nameSurf =
-      uiFont->RenderUTF8_Solid(player.getName(), kHighlightText);
-  SDL2pp::Texture nameTex(*renderer, nameSurf);
-
-  int nameX = layout.rightTopRect.GetX() +
-              (layout.rightTopRect.GetW() - nameSurf.GetWidth()) / 2;
-  int nameY = titleY + titleSurf.GetHeight() + 10;
-
-  renderer->Copy(nameTex, SDL2pp::NullOpt,
-                 SDL2pp::Rect(nameX, nameY, nameSurf.GetWidth(),
-                              nameSurf.GetHeight()));
+  renderer->Copy(tex, SDL2pp::NullOpt,
+                 SDL2pp::Rect(x, y, surf.GetWidth(), surf.GetHeight()));
 }
 
 void GameWindow::renderPlayerStats(const Layout &layout) {
-  if (!myPlayerEntity)
+ if (!myPlayerEntity)
     return;
+  const ClientPlayer &p = myPlayerEntity->getPlayer();
 
-  const auto &player = myPlayerEntity->getPlayer();
+  int xpCur = 357;  // placeholder, reemplazar por xp actual
+  int xpMax = 1000; // placeholder, reemplazar por xp total para subir de nivel
+  // Para el nivel maximo se podria hacer que la barra aparezca siempre llena
+  // por ejemplo
 
-  int textX = layout.rightTopRect.GetX() + 20;
-  int textY = layout.rightTopRect.GetY() + 70;
+  int x = layout.rightTopRect.GetX();
+  int y = layout.rightTopRect.GetY();
 
-  renderText(textX, textY,
-             "Nivel " + std::to_string(player.getLevel()), kPrimaryText);
-  renderText(textX, textY + 22,
-             "Oro " + std::to_string(player.getGold()), kHighlightText);
+  renderText(x + 40, y + 28, std::to_string(p.getLevel()),
+             SDL_Color{255, 255, 200, 255});
+
+  int xpX = x + 20;
+  int xpY = y + 84;
+  int xpW = 227;
+  int xpH = 20;
+  // int xpX = x + 20 + 2;
+  // int xpY = y + 84 + 2;
+  // int xpW = 227 - 2;
+  // int xpH = 20 - 2;
+
+  drawBar(xpX, xpY, xpW, xpH, xpCur, xpMax, SDL_Color{60, 180, 60, 255},
+          SDL_Color{20, 20, 20, 255});
+
+  SDL2pp::Rect xpBarRect(xpX, xpY, xpW, xpH);
+  renderCenteredTextInRect(
+      xpBarRect, std::to_string(xpCur) + " / " + std::to_string(xpMax),
+      SDL_Color{255, 255, 255, 255});
 }
 
 void GameWindow::renderVitals(const Layout &layout) {
   if (!myPlayerEntity)
     return;
 
-  const auto &player = myPlayerEntity->getPlayer();
+  const auto &p = myPlayerEntity->getPlayer();
 
-  int barX = layout.bottomRightRect.GetX() + 20;
-  int barY = layout.bottomRightRect.GetY() + 24;
-  int barW = layout.bottomRightRect.GetW() - 40;
-  int barH = 16;
+  int x = layout.bottomRightRect.GetX();
+  int y = layout.bottomRightRect.GetY();
 
-  renderText(barX, layout.bottomRightRect.GetY() + 8, "Salud", kPrimaryText);
-  drawBar(barX, barY, barW, barH, player.getHp(), player.getMaxHp(), kHpFill,
-          kHpBg);
+  int spanW = layout.bottomRightRect.GetW() - 40;
+  int barX = x + 20;
+  int barW = spanW;
+  int barH = 20;
 
-  renderText(barX, barY + barH + 10, "Maná", kPrimaryText);
-  drawBar(barX, barY + barH + 18, barW, barH, player.getMana(),
-          player.getMaxMana(), kManaFill, kManaBg);
+  if (barW < 20)
+    barW = 20;
 
-  renderText(barX, barY + 2 * (barH + 18), "Experiencia", kPrimaryText);
-  uint32_t expMax =
-      1000 * static_cast<uint32_t>(std::pow(static_cast<double>(player.getLevel()), 1.5));
-  if (expMax == 0)
-    expMax = 1;
-  drawBar(barX, barY + 2 * (barH + 18) + 10, barW, barH, player.getExperience(),
-          expMax, kExpFill, kExpBg);
+  int hpY = y + 30;
+  drawBar(barX, hpY, barW, barH, p.getHp(), p.getMaxHp(), kHpFill, kHpBg);
+
+  SDL2pp::Rect hpBarRect(barX, hpY, barW, barH);
+  renderCenteredTextInRect(
+      hpBarRect,
+      std::to_string(p.getHp()) + " / " + std::to_string(p.getMaxHp()),
+      SDL_Color{255, 255, 255, 255});
+
+  int manaY = y + 74;
+  drawBar(barX, manaY, barW, barH, p.getMana(), p.getMaxMana(), kManaFill,
+          kManaBg);
+
+  SDL2pp::Rect manaBarRect(barX, manaY, barW, barH);
+  renderCenteredTextInRect(
+      manaBarRect,
+      std::to_string(p.getMana()) + " / " + std::to_string(p.getMaxMana()),
+      SDL_Color{255, 255, 255, 255});
 }
 
 void GameWindow::renderCommonGround() {
@@ -339,7 +349,7 @@ void GameWindow::renderCommonGround() {
 
 void GameWindow::renderGroundItems() {
   for (const auto &[id, item] : groundItems) {
-    SDL2pp::Texture *tex = itemTextureCache.get(item.itemId);
+    SDL2pp::Texture *tex = textureManager->getItemIcon(item.itemId);
     if (!tex)
       continue;
 
@@ -460,13 +470,29 @@ void GameWindow::renderText(int x, int y, const std::string &text,
                  SDL2pp::Rect(x, y, surf.GetWidth(), surf.GetHeight()));
 }
 
+void GameWindow::renderCenteredTextInRect(const SDL2pp::Rect &rect,
+                                          const std::string &text,
+                                          SDL_Color color) {
+  if (!font)
+    return;
+
+  SDL2pp::Surface surf = font->RenderUTF8_Solid(text, color);
+  SDL2pp::Texture tex(*renderer, surf);
+
+  int x = rect.GetX() + (rect.GetW() - surf.GetWidth()) / 2;
+  int y = rect.GetY() + (rect.GetH() - surf.GetHeight()) / 2;
+
+  renderer->Copy(tex, SDL2pp::NullOpt,
+                 SDL2pp::Rect(x, y, surf.GetWidth(), surf.GetHeight()));
+}
+
 void GameWindow::drawBar(int x, int y, int w, int h, uint32_t cur,
                          uint32_t max, SDL_Color fg, SDL_Color bg) {
   SDL2pp::Rect bgRect(x, y, w, h);
   renderer->SetDrawColor(bg.r, bg.g, bg.b, bg.a);
   renderer->FillRect(bgRect);
 
-  if (max == 0 || cur == 0)
+  if (max == 0)
     return;
 
   int fillW = static_cast<int>((static_cast<double>(cur) / max) * w);

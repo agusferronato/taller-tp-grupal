@@ -20,7 +20,7 @@
 #include "GameChatView.h"
 #include "GroundItemsListEventDTO.h"
 #include "InventoryPanel.h"
-#include "ItemTextureCache.h"
+
 #include "MapData.h"
 #include "NPCParser.h"
 #include "Player.h"
@@ -77,7 +77,7 @@ private:
   NPCParser npcParser;
   std::unique_ptr<TextureMapper> textureMapper;
   std::unique_ptr<InventoryPanel> invPanel;
-  ItemTextureCache itemTextureCache;
+
   std::unordered_map<uint32_t, GroundItemInfoDTO> groundItems;
 
   int maxSize, gridSize, commonGroundTextureId;
@@ -127,6 +127,8 @@ private:
   void getSortedEntities(std::vector<RenderableEntity *> &);
   Layout getLayout() const;
   void renderText(int x, int y, const std::string &text, SDL_Color color);
+  void renderCenteredTextInRect(const SDL2pp::Rect &rect,
+                                const std::string &text, SDL_Color color);
   void drawBar(int x, int y, int w, int h, uint32_t cur, uint32_t max,
                SDL_Color fg, SDL_Color bg);
 };

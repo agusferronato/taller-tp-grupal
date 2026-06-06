@@ -8,7 +8,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "ItemTextureCache.h"
+#include "TextureManager.h"
 #include "ClientPlayer.h"
 
 struct SlotRect {
@@ -31,7 +31,7 @@ constexpr int INV_PANEL_Y = 128;
 class InventoryPanel {
 public:
   InventoryPanel(SDL2pp::Renderer &renderer,
-                 const ItemTextureCache &itemTextureCache);
+                 const TextureManager &textureManager);
 
   void loadTextures();
   void render(const ClientPlayer &player);
@@ -39,7 +39,7 @@ public:
 
 private:
   SDL2pp::Renderer &renderer;
-  const ItemTextureCache &itemTextureCache;
+  const TextureManager &textureManager;
 
   std::unique_ptr<SDL2pp::Texture> baseTex;
   std::unique_ptr<SDL2pp::Font> slotFont;

@@ -13,10 +13,10 @@
 class ClientPlayer {
 
 public:
-  static constexpr int Width = 32;
-  static constexpr int Height = 32;
-  static constexpr int HeadWidth = 24;
-  static constexpr int HeadHeight = 24;
+  static constexpr int Width = 20;
+  static constexpr int Height = 37;
+  static constexpr int HeadWidth = 18;
+  static constexpr int HeadHeight = 18;
 
 private:
   uint32_t id;
