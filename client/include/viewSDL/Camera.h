@@ -32,9 +32,10 @@ public:
   float getY() const { return y; }
   int getViewportX() const { return viewportX; }
   int getViewportY() const { return viewportY; }
-  std::pair<int, int> mouseToWord(int mouseX, int mouseY) const {
-    return std::make_pair(mouseX + static_cast<int>(x),
-                          mouseY + static_cast<int>(y));
+  std::pair<int, int> mouseToWorld(int mouseX, int mouseY) const {
+  return std::make_pair(
+      static_cast<int>(mouseX - viewportX + x),
+      static_cast<int>(mouseY - viewportY + y));
   }
 
   SDL2pp::Rect toScreen(float wx, float wy, int w, int h) const {
