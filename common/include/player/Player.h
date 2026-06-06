@@ -31,13 +31,14 @@ public:
   void startMoving(Direction dir);
   void stopMoving();
   void move(int newX, int newY);
-  void takeDamage(uint32_t damage);
+  uint32_t takeDamage(uint32_t damage);
   uint32_t heal(uint32_t amount);
   bool useMana(uint32_t amount);
   bool gainExperience(uint32_t amount);
   bool expentGold(uint32_t amount);
   void earnGold(uint32_t);
-  uint32_t atack();
+  void removeGold(uint32_t amount);
+  uint32_t atack() const;
 
   bool isMoving() const { return moving; }
   Direction getDirection() const { return direction; }

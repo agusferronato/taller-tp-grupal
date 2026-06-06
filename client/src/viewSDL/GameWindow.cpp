@@ -504,3 +504,7 @@ void GameWindow::renderCenteredTextInRect(const SDL2pp::Rect &rect,
 
 // WIP
 void GameWindow::renderInventoryPanel([[maybe_unused]] const Layout &layout) {}
+
+std::pair<int, int> GameWindow::screenToWorld(int mouseX, int mouseY) {
+  return camera.mouseToWorld(mouseX, mouseY);
+}
