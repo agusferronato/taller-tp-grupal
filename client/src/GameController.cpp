@@ -34,11 +34,18 @@ void GameController::handleEvent(const SDL_Event &event) {
     break;
 
   case SDL_MOUSEBUTTONDOWN:
-    if (event.button.button == SDL_BUTTON_LEFT) {
-      int mouseX = event.button.x;
-      int mouseY = event.button.y;
-      gameModel->atack(mouseX, mouseY);
-    }
+    handleMouseDown(event.button);
+    break;
+  }
+}
+
+void GameController::handleMouseDown(const SDL_MouseButtonEvent &buttonEvent) {
+  switch (buttonEvent.button) {
+  case SDL_BUTTON_LEFT:
+    gameModel->atack(buttonEvent.x, buttonEvent.y);
+    break;
+  case SDL_BUTTON_RIGHT:
+    // Handle right-click if needed
     break;
   }
 }
