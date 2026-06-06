@@ -17,6 +17,7 @@ private:
   PlayerClass playerClass;
   int x, y;
   bool moving;
+  bool death;
   PlayerStats stats;
   Inventory inventory;
 
