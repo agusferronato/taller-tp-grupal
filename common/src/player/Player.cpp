@@ -5,12 +5,12 @@ Player::Player(std::string name, Direction direction, int x, int y,
                const PlayerStatsInfo &statsInfo)
     : name(std::move(name)), race(statsInfo.race), direction(direction),
       playerClass(statsInfo.playerClass), x(x), y(y), moving(false),
-      stats(statsInfo) {}
+      death(false), stats(statsInfo) {}
 
 Player::Player(std::string name, Race race, Direction direction,
                PlayerClass playerClass, int x, int y)
     : name(std::move(name)), race(race), direction(direction),
-      playerClass(playerClass), x(x), y(y), moving(false),
+      playerClass(playerClass), x(x), y(y), moving(false), death(false),
       stats(race, playerClass) {}
 
 void Player::updateStats(uint32_t hp, uint32_t maxHp, uint32_t mana,
