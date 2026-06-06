@@ -467,13 +467,20 @@ uint32_t Game::calculateDamage(Character &atacker) {
 }
 
 bool Game::validAtack(Character &atacker, Character &target) {
-  bool newbie = !(atacker.isNewbie() || target.isNewbie());
-  bool fairplay = abs(static_cast<int>(atacker.getLevel()) -
-                      static_cast<int>(target.getLevel())) <= 10;
-  bool notSelf = atacker.getId() != target.getId();
-  // [TODO] validar si esta en ciudad
-  bool notInCity = true;
-  return newbie && fairplay && notSelf && notInCity;
+  if (atacker.isNewbie() || target.isNewbie()) {
+    return false;
+  }
+  if (abs(static_cast<int>(atacker.getLevel()) -
+          static_cast<int>(target.getLevel())) > 10) {
+    return false;
+  }
+  for (const auto &city : cities) {
+    if (city.contains(atacker.getX(), atacker.getY()) ||
+        city.contains(target.getX(), target.getY())) {
+      return false;
+    }
+  }
+  return true;
 }
 
 Character *Game::findPlayerByCoordinates(int16_t x, int16_t y) {
