@@ -61,9 +61,12 @@ private:
   std::list<City> cities;
   std::list<std::unique_ptr<NPC>> npcs;
 
+  std::string mapPath;
+
 public:
   Game(Queue<ClientMessage> &gameloopQueue,
-       SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository);
+       SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository,
+       const std::string &mapPath);
 
   virtual void run() override;
 

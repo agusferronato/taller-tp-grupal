@@ -12,9 +12,10 @@ class Server {
 
 private:
   Socket socket;
+  std::string mapPath;
 
 public:
-  explicit Server(const char *port);
+  Server(const char *port, const char *mapPath);
 
   Server(const Server &) = delete;
   Server &operator=(const Server &) = delete;

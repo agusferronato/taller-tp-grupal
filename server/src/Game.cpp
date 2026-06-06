@@ -23,12 +23,13 @@
 static int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
 
 Game::Game(Queue<ClientMessage> &gameloopQueue,
-           SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository)
+           SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository,
+           const std::string &mapPath)
     : gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor),
-      repository(repository) {}
+      repository(repository), mapPath(mapPath) {}
 
 void Game::run() {
-  MapLoader mapLoader("map.toml");
+  MapLoader mapLoader(mapPath);
   maxSize = mapLoader.GetMaxSize();
   gridSize = mapLoader.GetGridSize();
   commonGroundTextureId = mapLoader.GetCommonGroundTextureId();
