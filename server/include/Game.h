@@ -95,6 +95,9 @@ private:
   void saveAllPlayers();
 
   void appearNPCs();
+
+  void makeNPCsfollowPlayers();
+
 };
 
 #endif
