@@ -1,7 +1,9 @@
 #include <algorithm>
 #include <cctype>
+#include <cmath>
 
 #include "ConstantRateLoop.h"
+#include "Formulas.h"
 #include "Game.h"
 #include "MapLoader.h"
 #include "MoveCommandDTO.h"
@@ -406,8 +408,152 @@ void Game::sendGlobalChatMessage(uint32_t playerId,
       GlobalChatMessageEventDTO{std::move(senderName), message});
 }
 
+void Game::atack(uint32_t playerId, int16_t x, int16_t y) {
+  auto it = players.find(playerId);
+  if (it == players.end()) {
+    return;
+  }
+  auto atacker = it->second.get();
+  if (!atacker->assertAtackDistance(x, y)) {
+    return;
+  }
+  auto targetNPC = findNPCByCoordinates(x, y);
+  if (targetNPC != nullptr) {
+    playerAtackNPC(*atacker, *targetNPC);
+    return;
+  }
+  
+  auto targetPlayer = findPlayerByCoordinates(x, y);
+  if (targetPlayer != nullptr) {
+    playerAtackPlayer(*atacker, *targetPlayer);
+    return;
+  }
+
+}
+
 void Game::appearNPCs() {
   for (auto &biome : biomes) {
     biome->NPCgenerationStrategy(*this);
+  }
+}
+
+void Game::playerAtackPlayer(Character &atacker, Character &target) {
+  if (!validAtack(atacker, target)) {
+    return;
+  }
+  uint32_t damage = calculateDamage(atacker);
+  bool critico = (damage != atacker.getDamage());
+
+  if (!critico && target.tryParry()) {
+    senderQueueMonitor.sendToClient(
+        playerToConnection[atacker.getId()],
+        ChatMessageEventDTO{"Sistema", "Atacaste a " + target.getName() +
+                                           " pero el lo esquivo"});
+    senderQueueMonitor.sendToClient(
+        playerToConnection[target.getId()],
+        ChatMessageEventDTO{"Sistema",
+                            atacker.getName() +
+                                " trato de atacarte pero lo esquivaste"});
+    return;
+  }
+  damage = target.takeDamage(damage);
+
+  uint32_t xp = Formulas::calcularExperiencia(damage, atacker.getLevel(),
+                                              target.getLevel());
+  atacker.gainExperience(xp);
+
+  if (target.getHp() == 0) {
+    uint32_t oro = target.dropGoldOnDeath();
+    atacker.addGold(oro);
+    uint32_t xpMuerte = Formulas::calcularExperienciaMuerte(
+        target.getMaxHp(), atacker.getLevel(), target.getLevel(),
+        (std::rand() % 100) / 100.0);
+    atacker.gainExperience(xpMuerte);
+    // [TODO] volver fanstasma el target
+  } else {
+    senderQueueMonitor.sendToClient(
+        playerToConnection[atacker.getId()],
+        ChatMessageEventDTO{
+            "Sistema", "Atacaste a " + target.getName() + " y le hiciste " +
+                           std::to_string(damage) + " de daño!"});
+    senderQueueMonitor.sendToClient(
+        playerToConnection[target.getId()],
+        ChatMessageEventDTO{"Sistema",
+                            "Recibiste un ataque de " + atacker.getName() +
+                                " y te hicieron " + std::to_string(damage) +
+                                " de daño!"});
+  }
+  messagesToSend.push_back(atacker.toPlayerInfoEvent());
+  messagesToSend.push_back(target.toPlayerInfoEvent());
+}
+
+void Game::playerAtackNPC(Character &atacker, NPC &target) {
+  uint32_t damage = calculateDamage(atacker);
+  // [TODO] aplicar daño al npc
+  /* [TODO] exp del ataque*/
+  if (false) {
+    // [TODO] muerte del npc
+  } else {
+    senderQueueMonitor.sendToClient(
+        playerToConnection[atacker.getId()],
+        ChatMessageEventDTO{
+            "Sistema", "Atacaste a un " + npcName(target) + " y le hiciste " +
+                           std::to_string(damage) + " de daño!"});
+  }
+  messagesToSend.push_back(atacker.toPlayerInfoEvent());
+}
+
+uint32_t Game::calculateDamage(Character &atacker) {
+  uint32_t damage = atacker.getDamage();
+  if (Formulas::calcularCritico(std::rand())) {
+    return damage * 2;
+  }
+  return damage;
+}
+
+bool Game::validAtack([[maybe_unused]] Character &atacker, [[maybe_unused]] Character &target) {
+  return !atacker.isNewbie() && !target.isNewbie() &&
+         abs(static_cast<int>(atacker.getLevel()) -
+             static_cast<int>(target.getLevel())) <= 10;
+  // [TODO] validar si esta en ciudad
+}
+
+Character *Game::findPlayerByCoordinates(int16_t x, int16_t y) {
+  for (auto &[pid, player] : players) {
+    if (player->colisionaCon(x, y, player->getAncho(), player->getAlto())) {
+      return player.get();
+    }
+  }
+  return nullptr;
+}
+
+NPC *Game::findNPCByCoordinates(int16_t x, int16_t y) {
+  for (auto &npc : npcs) {
+    if (x >= npc->getX() && x < npc->getX() + npc->getAncho() &&
+        y >= npc->getY() && y < npc->getY() + npc->getAlto()) {
+      return npc.get();
+    }
+  }
+  return nullptr;
+}
+
+const std::string Game::npcName(NPC &npc) {
+  switch (npc.getType()) {
+  case NPCType::ZombieT:
+    return "Zombie";
+  case NPCType::SpiderT:
+    return "Spider";
+  case NPCType::ElfT:
+    return "Elf";
+  case NPCType::SkeletonT:
+    return "Skeleton";
+  case NPCType::OrcT:
+    return "Orc";
+  case NPCType::GiantT:
+    return "Giant";
+  case NPCType::GolemT:
+    return "Golem";
+  default:
+    return "NPC";
   }
 }

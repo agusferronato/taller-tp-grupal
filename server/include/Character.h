@@ -73,7 +73,7 @@ public:
   uint8_t getEquippedShield() const { return player.getEquippedShield(); }
 
   // Stats management (delegates to Player)
-  void takeDamage(uint32_t damage);
+  uint32_t takeDamage(uint32_t damage);
   void heal(uint32_t amount);
   void addMana(uint32_t amount) { player.addMana(amount); }
   void gainExperience(uint32_t xp);
@@ -87,6 +87,12 @@ public:
   int getY() const override;
   int getAncho() const override;
   int getAlto() const override;
+
+  bool isNewbie() const { return player.getLevel() < 13; }
+  uint32_t getDamage() const;
+  bool tryParry() const;
+  bool assertAtackDistance(int16_t targetX, int16_t targetY) const;
+  uint32_t dropGoldOnDeath();
 
 private:
   uint32_t id;

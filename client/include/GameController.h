@@ -22,6 +22,7 @@ private:
   void handleKeyDown(const SDL_Keycode &key);
   void handleKeyUp(const SDL_Keycode &key);
   std::optional<Direction> getDirectionFromKey(const SDL_Keycode &key) const;
+  void handleMouseDown(const SDL_MouseButtonEvent &buttonEvent);
 };
 
 #endif
