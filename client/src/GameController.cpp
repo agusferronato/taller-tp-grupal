@@ -33,6 +33,16 @@ void GameController::handleEvent(const SDL_Event &event) {
     }
     break;
 
+  case SDL_MOUSEWHEEL:
+    if (gameModel->isChatActive()) {
+      if (event.wheel.y > 0) {
+        gameModel->scrollChatUp();
+      } else if (event.wheel.y < 0) {
+        gameModel->scrollChatDown();
+      }
+    }
+    break;
+
   }
 }
 

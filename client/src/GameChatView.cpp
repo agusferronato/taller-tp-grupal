@@ -26,7 +26,7 @@ void GameChatView::render(SDL2pp::Renderer &renderer,
                           const SDL2pp::Rect &messagesRect,
                           const SDL2pp::Rect &inputRect,
                           const std::deque<std::string> &messages,
-                          const std::string &input, bool active) {
+                          const std::string &input, bool active, int scrollOffset) {
   renderer.SetDrawBlendMode(SDL_BLENDMODE_BLEND);
 
   renderBackgrounds(renderer, messagesRect, inputRect);
@@ -40,7 +40,7 @@ void GameChatView::render(SDL2pp::Renderer &renderer,
   std::vector<std::string> visualLines =
       buildVisualLines(messages, maxTextWidth);
 
-  renderMessages(renderer, messagesRect, visualLines);
+  renderMessages(renderer, messagesRect, visualLines, scrollOffset);
   renderInput(renderer, inputRect, input, active);
 }
 
@@ -69,11 +69,12 @@ GameChatView::buildVisualLines(const std::deque<std::string> &messages,
 
 void GameChatView::renderMessages(SDL2pp::Renderer &renderer,
                                   const SDL2pp::Rect &messagesRect,
-                                  const std::vector<std::string> &visualLines) {
+                                  const std::vector<std::string> &visualLines,
+                                  int scrollOffset) {
 
   int y = messagesRect.GetY() + messagesRect.GetH() - CHAT_PADDING_Y;
-
-  for (auto it = visualLines.rbegin(); it != visualLines.rend(); ++it) {
+  
+  for (auto it = visualLines.rbegin() + scrollOffset; it != visualLines.rend(); ++it) {
 
     SDL2pp::Surface surf =
         font->RenderUTF8_Solid(*it, SDL_Color{220, 220, 220, 255});
