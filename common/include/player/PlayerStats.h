@@ -28,6 +28,8 @@ private:
   uint32_t agility;
   uint32_t constitution;
   uint32_t intelligence;
+  Race race;
+  PlayerClass playerClass;
 
 public:
   explicit PlayerStats(const PlayerStatsInfo &info);
@@ -53,6 +55,8 @@ public:
   uint32_t getIntelligence() const { return intelligence; }
 
   void takeDamage(uint32_t damage);
+  bool addExperience(uint32_t xp);
+  void setGold(uint32_t amount);
 };
 
 #endif

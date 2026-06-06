@@ -78,6 +78,7 @@ public:
   uint32_t getDamage() const;
   bool tryParry() const;
   bool assertAtackDistance(int16_t targetX, int16_t targetY) const;
+  uint32_t dropGoldOnDeath();
 
 private:
   uint32_t id;

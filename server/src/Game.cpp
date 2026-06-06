@@ -372,13 +372,15 @@ void Game::atack(uint32_t playerId, int16_t x, int16_t y) {
   if (!atacker->assertAtackDistance(x, y)) {
     return;
   }
-  auto targetPlayer = findPlayerByCoordinates(x, y);
-  if (targetPlayer != nullptr) {
-    playerAtackPlayer(*atacker, *targetPlayer);
-  }
   auto targetNPC = findNPCByCoordinates(x, y);
   if (targetNPC != nullptr) {
     playerAtackNPC(*atacker, *targetNPC);
+    return;
+  }
+  auto targetPlayer = findPlayerByCoordinates(x, y);
+  if (targetPlayer != nullptr) {
+    playerAtackPlayer(*atacker, *targetPlayer);
+    return;
   }
 }
 
@@ -390,9 +392,13 @@ void Game::appearNPCs() {
 }
 
 void Game::playerAtackPlayer(Character &atacker, Character &target) {
-  if (validAtack(atacker, target)) {
+  if (!validAtack(atacker, target)) {
     return;
-  } else if (target.tryParry()) {
+  }
+  uint32_t damage = calculateDamage(atacker);
+  bool critico = (damage != atacker.getDamage());
+
+  if (!critico && target.tryParry()) {
     senderQueueMonitor.sendToClient(
         playerToConnection[atacker.getId()],
         ChatMessageEventDTO{"Sistema", "Atacaste a " + target.getName() +
@@ -404,13 +410,20 @@ void Game::playerAtackPlayer(Character &atacker, Character &target) {
                                 " trato de atacarte pero lo esquivaste"});
     return;
   }
-  uint32_t damage = calculateDamage(atacker);
   damage = target.takeDamage(damage);
-  // [TODO] exp del ataque
+
+  uint32_t xp = Formulas::calcularExperiencia(damage, atacker.getLevel(),
+                                              target.getLevel());
+  atacker.gainExperience(xp);
+
   if (target.getHp() == 0) {
-    // auto [exp, oro] = taget.kill();
-    // [TODO] muerte del jugador
-    /* [TODO] perdido inventario */
+    uint32_t oro = target.dropGoldOnDeath();
+    atacker.addGold(oro);
+    uint32_t xpMuerte = Formulas::calcularExperienciaMuerte(
+        target.getMaxHp(), atacker.getLevel(), target.getLevel(),
+        (std::rand() % 100) / 100.0);
+    atacker.gainExperience(xpMuerte);
+    // [TODO] volver fanstasma el target
   } else {
     senderQueueMonitor.sendToClient(
         playerToConnection[atacker.getId()],
@@ -423,8 +436,9 @@ void Game::playerAtackPlayer(Character &atacker, Character &target) {
                             "Recibiste un ataque de " + atacker.getName() +
                                 " y te hicieron " + std::to_string(damage) +
                                 " de daño!"});
-    messagesToSend.push_back(target.toPlayerInfoEvent());
   }
+  messagesToSend.push_back(atacker.toPlayerInfoEvent());
+  messagesToSend.push_back(target.toPlayerInfoEvent());
 }
 
 void Game::playerAtackNPC(Character &atacker, NPC &target) {
@@ -440,6 +454,7 @@ void Game::playerAtackNPC(Character &atacker, NPC &target) {
             "Sistema", "Atacaste a un " + npcName(target) + " y le hiciste " +
                            std::to_string(damage) + " de daño!"});
   }
+  messagesToSend.push_back(atacker.toPlayerInfoEvent());
 }
 
 uint32_t Game::calculateDamage(Character &atacker) {
@@ -451,8 +466,9 @@ uint32_t Game::calculateDamage(Character &atacker) {
 }
 
 bool Game::validAtack(Character &atacker, Character &target) {
-  return atacker.isNewbie() || target.isNewbie() ||
-         abs(atacker.getLevel() - target.getLevel()) <= 10;
+  return !atacker.isNewbie() && !target.isNewbie() &&
+         abs(static_cast<int>(atacker.getLevel()) -
+             static_cast<int>(target.getLevel())) <= 10;
   // [TODO] validar si esta en ciudad
 }
 

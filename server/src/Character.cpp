@@ -167,3 +167,10 @@ bool Character::assertAtackDistance(int16_t targetX, int16_t targetY) const {
   // [TODO] validar distancia del ataque con arma cuerpo a cuerpo o a distancia
   return true;
 }
+
+uint32_t Character::dropGoldOnDeath() {
+  uint32_t perdido =
+      Formulas::calcularOroPerdidoMuerte(player.getGold(), player.getLevel());
+  player.removeGold(perdido);
+  return perdido;
+}
