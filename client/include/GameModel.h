@@ -57,7 +57,7 @@ public:
   void handleRightMouseClick(int mouseX, int mouseY);
 
 private:
-  void atack(int mouseX, int mouseY);
+  void attack(int mouseX, int mouseY);
 
 public:
   // Chat

@@ -64,13 +64,13 @@ void Player::removeGold(uint32_t amount) {
   }
 }
 
-uint32_t Player::atack() const {
+uint32_t Player::attack() const {
   const auto &weapon = ITEM_TABLE[getEquippedWeapon()];
   return Formulas::calcularDaño(stats.getStrength(), weapon.minDamage,
                                 weapon.maxDamage, rand());
 }
 
-bool Player::assertAtackDistance(int16_t targetX, int16_t targetY) const {
+bool Player::assertAttackDistance(int16_t targetX, int16_t targetY) const {
   int16_t dx = std::abs(targetX - x);
   int16_t dy = std::abs(targetY - y);
   if (dx <= 64 && dy <= 64) {

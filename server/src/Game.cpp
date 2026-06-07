@@ -424,24 +424,24 @@ void Game::sendGlobalChatMessage(uint32_t playerId,
       GlobalChatMessageEventDTO{std::move(senderName), message});
 }
 
-void Game::atack(uint32_t playerId, int16_t x, int16_t y) {
+void Game::attack(uint32_t playerId, int16_t x, int16_t y) {
   auto it = players.find(playerId);
   if (it == players.end()) {
     return;
   }
-  auto atacker = it->second.get();
-  if (!atacker->assertAtackDistance(x, y)) {
+  auto attacker = it->second.get();
+  if (!attacker->assertAttackDistance(x, y)) {
     return;
   }
   auto targetNPC = findNPCByCoordinates(x, y);
   if (targetNPC != nullptr) {
-    playerAtackNPC(*atacker, *targetNPC);
+    playerAttackNPC(*attacker, *targetNPC);
     return;
   }
 
   auto targetPlayer = findPlayerByCoordinates(x, y);
   if (targetPlayer != nullptr) {
-    playerAtackPlayer(*atacker, *targetPlayer);
+    playerAttackPlayer(*attacker, *targetPlayer);
     return;
   }
 }
@@ -585,95 +585,95 @@ void Game::makeCitiesEntitiesFollowPlayers() {
   }
 }
 
-void Game::playerAtackPlayer(Character &atacker, Character &target) {
-  if (!validAtack(atacker, target)) {
+void Game::playerAttackPlayer(Character &attacker, Character &target) {
+  if (!validAttack(attacker, target)) {
     return;
   }
-  uint32_t damage = calculateDamage(atacker);
-  bool critico = (damage != atacker.getDamage());
+  uint32_t damage = calculateDamage(attacker);
+  bool critico = (damage != attacker.getDamage());
 
   if (!critico && target.tryParry()) {
     senderQueueMonitor.sendToClient(
-        playerToConnection[atacker.getId()],
+        playerToConnection[attacker.getId()],
         ChatMessageEventDTO{"Sistema", "Atacaste a " + target.getName() +
                                            " pero el lo esquivo"});
     senderQueueMonitor.sendToClient(
         playerToConnection[target.getId()],
         ChatMessageEventDTO{"Sistema",
-                            atacker.getName() +
+                            attacker.getName() +
                                 " trato de atacarte pero lo esquivaste"});
     return;
   }
   damage = target.takeDamage(damage);
 
-  uint32_t xp = Formulas::calcularExperiencia(damage, atacker.getLevel(),
+  uint32_t xp = Formulas::calcularExperiencia(damage, attacker.getLevel(),
                                               target.getLevel());
-  atacker.gainExperience(xp);
+  attacker.gainExperience(xp);
 
   if (target.getHp() == 0) {
     uint32_t oro = target.dropGoldOnDeath();
-    atacker.addGold(oro);
+    attacker.addGold(oro);
     uint32_t xpMuerte = Formulas::calcularExperienciaMuerte(
-        target.getMaxHp(), atacker.getLevel(), target.getLevel(),
+        target.getMaxHp(), attacker.getLevel(), target.getLevel(),
         (std::rand() % 100) / 100.0);
-    atacker.gainExperience(xpMuerte);
+    attacker.gainExperience(xpMuerte);
     killPlayer(target);
   } else {
     senderQueueMonitor.sendToClient(
-        playerToConnection[atacker.getId()],
+        playerToConnection[attacker.getId()],
         ChatMessageEventDTO{
             "Sistema", "Atacaste a " + target.getName() + " y le hiciste " +
                            std::to_string(damage) + " de daño!"});
     senderQueueMonitor.sendToClient(
         playerToConnection[target.getId()],
         ChatMessageEventDTO{"Sistema",
-                            "Recibiste un ataque de " + atacker.getName() +
+                            "Recibiste un ataque de " + attacker.getName() +
                                 " y te hicieron " + std::to_string(damage) +
                                 " de daño!"});
   }
-  messagesToSend.push_back(atacker.toPlayerInfoEvent());
+  messagesToSend.push_back(attacker.toPlayerInfoEvent());
   messagesToSend.push_back(target.toPlayerInfoEvent());
 }
 
-void Game::playerAtackNPC(Character &atacker, NPC &target) {
-  uint32_t damage = calculateDamage(atacker);
+void Game::playerAttackNPC(Character &attacker, NPC &target) {
+  uint32_t damage = calculateDamage(attacker);
   // [TODO] aplicar daño al npc
   /* [TODO] exp del ataque*/
   if (false) {
     // [TODO] muerte del npc
   } else {
     senderQueueMonitor.sendToClient(
-        playerToConnection[atacker.getId()],
+        playerToConnection[attacker.getId()],
         ChatMessageEventDTO{
             "Sistema", "Atacaste a un " + target.getName() + " y le hiciste " +
                            std::to_string(damage) + " de daño!"});
   }
-  messagesToSend.push_back(atacker.toPlayerInfoEvent());
+  messagesToSend.push_back(attacker.toPlayerInfoEvent());
 }
 
-uint32_t Game::calculateDamage(Character &atacker) {
-  uint32_t damage = atacker.getDamage();
+uint32_t Game::calculateDamage(Character &attacker) {
+  uint32_t damage = attacker.getDamage();
   if (Formulas::calcularCritico(std::rand())) {
     return damage * 2;
   }
   return damage;
 }
 
-bool Game::validAtack(Character &atacker, Character &target) {
-  if (atacker.isNewbie() || target.isNewbie()) {
+bool Game::validAttack(Character &attacker, Character &target) {
+  if (attacker.isNewbie() || target.isNewbie()) {
     return false;
   }
-  if (abs(static_cast<int>(atacker.getLevel()) -
+  if (abs(static_cast<int>(attacker.getLevel()) -
           static_cast<int>(target.getLevel())) > 10) {
     return false;
   }
   for (const auto &city : cities) {
-    if (city.contains(atacker.getX(), atacker.getY(), gridSize, maxSize) ||
+    if (city.contains(attacker.getX(), attacker.getY(), gridSize, maxSize) ||
         city.contains(target.getX(), target.getY(), gridSize, maxSize)) {
       return false;
     }
   }
-  if (atacker.isDead() || target.isDead()) {
+  if (attacker.isDead() || target.isDead()) {
     return false;
   }
   return true;
