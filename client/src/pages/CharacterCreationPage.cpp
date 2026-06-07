@@ -78,16 +78,6 @@ CharacterCreationPage::CharacterCreationPage(const QString &hostname,
                               darkInputFocusStyle + "}");
   formLayout->addRow(usernameEdit);
 
-  passwordEdit = new QLineEdit(this);
-  passwordEdit->setPlaceholderText("Contrasena");
-  passwordEdit->setEchoMode(QLineEdit::Password);
-  passwordEdit->setObjectName("charPasswordEdit");
-  passwordEdit->setStyleSheet("QLineEdit {" + darkInputStyle +
-                              "}"
-                              "QLineEdit:focus {" +
-                              darkInputFocusStyle + "}");
-  formLayout->addRow(passwordEdit);
-
   raceGroup = new QButtonGroup(this);
   raceGroup->setExclusive(true);
 
@@ -180,7 +170,7 @@ CharacterCreationPage::CharacterCreationPage(const QString &hostname,
   createBtn->setObjectName("createCharBtn");
   createBtn->setFixedSize(300, 70);
   createBtn->setStyleSheet("QPushButton {"
-                           "  border-image: url(assets/boton_play.png) stretch;"
+                           "  border-image: url(assets/menu/boton_play.png) stretch;"
                            "  background: transparent;"
                            "  border: none;"
                            "  color: white;"
@@ -198,7 +188,7 @@ CharacterCreationPage::CharacterCreationPage(const QString &hostname,
   backBtn->setObjectName("backBtn");
   backBtn->setFixedSize(300, 70);
   backBtn->setStyleSheet("QPushButton {"
-                         "  border-image: url(assets/boton_volver.png) stretch;"
+                          "  border-image: url(assets/menu/boton_volver.png) stretch;"
                          "  background: transparent;"
                          "  border: none;"
                          "}");
@@ -258,6 +248,6 @@ void CharacterCreationPage::onCreateClicked() {
 
   QApplication::restoreOverrideCursor();
 
-  emit characterCreated(username, passwordEdit->text(), selectedRace,
+  emit characterCreated(username,  selectedRace,
                         classCombo->currentText());
 }

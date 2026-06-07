@@ -55,13 +55,27 @@ public:
   void move(int newX, int newY) { player.move(newX, newY); }
 
   // Inventory (delegates to Player)
+  bool addItem(uint8_t itemId) { return player.addItem(itemId); }
   bool equipItem(uint8_t slot) { return player.equipItem(slot); }
   bool unequipSlot(EquipSlot slot) { return player.unequipSlot(slot); }
   bool removeItem(uint8_t slot) { return player.removeItem(slot); }
 
+  Inventory &getInventory() { return player.getInventory(); }
+  const Inventory &getInventory() const { return player.getInventory(); }
+
+  // Inventory getters
+  const std::array<uint8_t, MAX_INVENTORY_SLOTS> &getInventoryItems() const {
+    return player.getInventoryItems();
+  }
+  uint8_t getEquippedWeapon() const { return player.getEquippedWeapon(); }
+  uint8_t getEquippedArmor() const { return player.getEquippedArmor(); }
+  uint8_t getEquippedHelmet() const { return player.getEquippedHelmet(); }
+  uint8_t getEquippedShield() const { return player.getEquippedShield(); }
+
   // Stats management (delegates to Player)
   uint32_t takeDamage(uint32_t damage);
   void heal(uint32_t amount);
+  void addMana(uint32_t amount) { player.addMana(amount); }
   void gainExperience(uint32_t xp);
   void addGold(uint32_t amount);
   void spendGold(uint32_t amount);
