@@ -2,10 +2,16 @@
 #define PRIEST_H
 
 #include "CityEntity.h"
+#include <Store.h>
 
 class Priest : public CityEntity {
+
+private:
+    Store store;
+
+
 public:
-    Priest(Position position) : CityEntity(position) {}
+    Priest(Position position) : CityEntity(position) { }
 
     CityEntityType getCityEntityType() override {
         return CityEntityType::Priest;
