@@ -13,7 +13,6 @@ public:
 
     int getAncho() const override { return 32; }
     int getAlto() const override { return 64; }
-    int getRange() const override { return 128; }
 };
 
 #endif
