@@ -4,7 +4,7 @@
 #include <QVBoxLayout>
 
 BackgroundPage::BackgroundPage(QWidget *parent) : QWidget(parent) {
-  background.load("assets/fondo_inicio.png");
+  background.load("assets/menu/fondo_inicio.png");
   fog.load("assets/fog.png");
 
   if (!fog.isNull()) {

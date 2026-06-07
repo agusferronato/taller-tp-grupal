@@ -17,7 +17,7 @@ public:
                                  QWidget *parent = nullptr);
 
 signals:
-  void characterCreated(const QString &username, const QString &password,
+  void characterCreated(const QString &username,
                         const QString &race, const QString &playerClass);
   void backToMenuRequested();
 
@@ -27,7 +27,6 @@ private slots:
 private:
   QLabel *titleLabel;
   QLineEdit *usernameEdit;
-  QLineEdit *passwordEdit;
   QButtonGroup *raceGroup;
   QString selectedRace;
   QComboBox *classCombo;

@@ -11,6 +11,9 @@
 #include "parser/Commands/TakeItemCommandParser.h"
 #include "parser/Commands/UnequipCommandParser.h"
 #include "parser/Events/ChatMessageEventParser.h"
+#include "parser/Events/GroundItemAppearedEventParser.h"
+#include "parser/Events/GroundItemRemovedEventParser.h"
+#include "parser/Events/GroundItemsListEventParser.h"
 #include "parser/Events/InventoryUpdateEventParser.h"
 #include "parser/Events/NPCAppearedEventParser.h"
 #include "parser/Events/NpcDefeatedEventParser.h"
@@ -129,6 +132,18 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::TextureInfoEvent),
       std::make_unique<TextureInfoEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::GroundItemAppearedEvent),
+      std::make_unique<GroundItemAppearedEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::GroundItemRemovedEvent),
+      std::make_unique<GroundItemRemovedEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::GroundItemsListEvent),
+      std::make_unique<GroundItemsListEventParser>());
 
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::PrivateMessageEvent),
