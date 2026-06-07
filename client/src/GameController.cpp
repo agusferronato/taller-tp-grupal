@@ -4,7 +4,8 @@
 #include "PlayerStoppedEventDTO.h"
 #include "WindowClosed.h"
 
-GameController::GameController(GameModel *gameModel) : gameModel(gameModel) {}
+GameController::GameController(GameModel *gameModel, Audio *audio)
+    : audio(audio), gameModel(gameModel) {}
 
 void GameController::update() {
   SDL_Event event;
@@ -95,6 +96,11 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
   if (direction.has_value()) {
     pressedLastMovementKey = key;
     gameModel->moveMyPlayer(direction.value());
+    return;
+  }
+
+  if (key == SDLK_m) {
+    audio->nextTrack();
   }
 }
 

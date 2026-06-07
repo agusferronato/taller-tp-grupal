@@ -94,7 +94,9 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
 
   gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
                                           receptionQueue, sendingQueue);
-  gameController = std::make_unique<GameController>(gameModel.get());
+  audio = std::make_unique<Audio>();
+  gameController = std::make_unique<GameController>(gameModel.get(), audio.get());
+  audio->startMusic();
 
   for (auto &deferred : deferredEvents) {
     receptionQueue.push(std::move(deferred));
