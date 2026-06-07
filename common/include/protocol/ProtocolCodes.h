@@ -51,6 +51,7 @@ enum class EventOpcode : uint8_t {
   CityEntityAppearedEvent,
   CityEntityMovedEvent,
   CityEntityStoppedEvent,
+  AttackReceivedEvent,
 };
 
 #endif // PROTOCOL_CODES_H

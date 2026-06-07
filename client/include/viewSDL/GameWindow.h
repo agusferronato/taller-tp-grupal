@@ -14,6 +14,7 @@
 #include <utility>
 #include <vector>
 
+#include "BloodOverlay.h"
 #include "Camera.h"
 #include "ClientPlayer.h"
 #include "EntityType.h"
@@ -64,6 +65,7 @@ private:
   std::unique_ptr<SDL2pp::Texture> userStatsBackground;
 
   std::unique_ptr<TextureManager> textureManager;
+  std::unique_ptr<BloodOverlay> bloodOverlay;
 
   Camera camera;
   uint32_t myPlayerID;

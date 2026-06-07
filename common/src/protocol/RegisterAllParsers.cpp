@@ -10,6 +10,7 @@
 #include "parser/Commands/RegisterPlayerParser.h"
 #include "parser/Commands/TakeItemCommandParser.h"
 #include "parser/Commands/UnequipCommandParser.h"
+#include "parser/Events/AttackReceivedEventParser.h"
 #include "parser/Events/ChatMessageEventParser.h"
 #include "parser/Events/GroundItemAppearedEventParser.h"
 #include "parser/Events/GroundItemRemovedEventParser.h"
@@ -177,4 +178,8 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::CityEntityStoppedEvent),
       std::make_unique<CityEntityStoppedEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::AttackReceivedEvent),
+      std::make_unique<AttackReceivedEventParser>());
 }

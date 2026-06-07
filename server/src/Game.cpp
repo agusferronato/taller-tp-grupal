@@ -25,6 +25,7 @@
 #include "TextureInfoEventDTO.h"
 #include "command/CommandFactory.h"
 #include "GroundItemsListEventDTO.h"
+#include "AttackReceivedEventDTO.h"
 #include "InventoryUpdateEventDTO.h"
 #include "GlobalChatMessageEventDTO.h"
 #include <NPCType.h>
@@ -526,6 +527,9 @@ void Game::makeNPCsfollowPlayers()
 
       if (npc->updatePosition(*target)) {
         if (checkIfItCollides(npc.get())) {
+
+          tryAttack(*npc, *target);
+
           npc->setPixelPosition(oldX, oldY);
           npc->stop();
           messagesToSend.push_back(NPCStoppedEventDTO{npc->getId()});
@@ -545,6 +549,40 @@ void Game::makeNPCsfollowPlayers()
     }
   }
 }
+
+
+
+
+void Game::tryAttack(NPC& npc, Character& target) {
+
+  if (!npc.collidesWith(target) || !npc.reachesAttackCounter())
+    return;
+
+  if (target.tryParry()) {
+    senderQueueMonitor.sendToClient(
+        playerToConnection[target.getId()],
+        ChatMessageEventDTO{"Sistema",
+                            npc.getName() +
+                                " trato de atacarte pero lo esquivaste"});
+    return;
+  }
+
+  uint32_t damage = target.takeDamage(npc.getDamage());
+
+  if (target.getHp() <= 0) {
+    return;
+  }
+
+  senderQueueMonitor.sendToClient(
+      playerToConnection[target.getId()],
+      AttackReceivedEventDTO{damage});
+  messagesToSend.push_back(target.toPlayerInfoEvent());
+}
+
+
+
+
+
 
 void Game::makeCitiesEntitiesFollowPlayers() {
     for (auto& city : cities) {
@@ -589,6 +627,21 @@ void Game::makeCitiesEntitiesFollowPlayers() {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 void Game::playerAtackPlayer(Character &atacker, Character &target) {
@@ -651,7 +704,7 @@ void Game::playerAtackNPC(Character &atacker, NPC &target) {
     senderQueueMonitor.sendToClient(
         playerToConnection[atacker.getId()],
         ChatMessageEventDTO{
-            "Sistema", "Atacaste a un " + npcName(target) + " y le hiciste " +
+            "Sistema", "Atacaste a un " + target.getName() + " y le hiciste " +
                            std::to_string(damage) + " de daño!"});
   }
   messagesToSend.push_back(atacker.toPlayerInfoEvent());
@@ -691,23 +744,3 @@ NPC *Game::findNPCByCoordinates(int16_t x, int16_t y) {
   return nullptr;
 }
 
-const std::string Game::npcName(NPC &npc) {
-  switch (npc.getType()) {
-  case NPCType::ZombieT:
-    return "Zombie";
-  case NPCType::SpiderT:
-    return "Spider";
-  case NPCType::ElfT:
-    return "Elf";
-  case NPCType::SkeletonT:
-    return "Skeleton";
-  case NPCType::OrcT:
-    return "Orc";
-  case NPCType::GiantT:
-    return "Giant";
-  case NPCType::GolemT:
-    return "Golem";
-  default:
-    return "NPC";
-  }
-}

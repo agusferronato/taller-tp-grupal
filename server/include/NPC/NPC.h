@@ -1,6 +1,7 @@
 #ifndef NPC_H
 #define NPC_H
 
+#include <string>
 #include "Colisionable.h"
 #include "Direction.h"
 #include "NPCType.h"
@@ -14,6 +15,7 @@ protected:
     uint32_t id;
     Position gridPosition;
     int range{128};
+    int attackCounter{0};
     int x, y;
     Direction direction{Direction::Down};
     bool isMoving{false};
@@ -46,6 +48,15 @@ public:
                       int targetAlto) const override;
 
     bool updatePosition(const Character& character);
+
+
+    virtual uint32_t getDamage() = 0;
+    bool collidesWith(Character &character);
+    bool reachesAttackCounter();
+
+    virtual int getAttackCounterMax() = 0;
+
+    virtual std::string getName() = 0;
 
 };
 

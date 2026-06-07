@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <toml++/toml.hpp>
 
+#include "AttackLayout.h"
 #include "BodyLayout.h"
 #include "HeadLayout.h"
 
@@ -127,6 +128,19 @@ void TextureManager::loadLayoutsFromToml(const std::string &path) {
   registerBody("Priest",         TextureLayoutType::Priest);
   registerBody("Trader",         TextureLayoutType::Trader);
   registerBody("Banker",         TextureLayoutType::Banker);
+
+  if (auto *attack = tbl["Attack"].as_table()) {
+    std::vector<SpriteData> frames;
+    if (auto *arr = (*attack)["frames"].as_array()) {
+      for (auto &elem : *arr) {
+        auto &pt = *elem.as_table();
+        frames.push_back({pt["x"].value_or(0), pt["y"].value_or(0),
+                          pt["w"].value_or(0), pt["h"].value_or(0)});
+      }
+    }
+    texturesFrames.erase(TextureLayoutType::Attack);
+    texturesFrames.emplace(TextureLayoutType::Attack, AttackLayout(frames));
+  }
 }
 
 Sprite TextureManager::getBodySprite(uint32_t bodyID, Direction dir,
@@ -173,6 +187,15 @@ Sprite TextureManager::getEquipableSprite(const std::string &type,
   auto &layout = equipableFrames.at(type);
   SpriteData frame = layout.getLayout(dir, it);
   return Sprite{textures.at(textureId), frame.x, frame.y, frame.w, frame.h};
+}
+
+TextureManager::AttackFrameResult TextureManager::getAttackFrame(
+    int textureId, unsigned int it) {
+  auto &layout =
+      std::get<AttackLayout>(texturesFrames.at(TextureLayoutType::Attack));
+  int frame = 0;
+  SpriteData sd = layout.getLayout(it, frame);
+  return {{textures.at(textureId), sd.x, sd.y, sd.w, sd.h}, frame};
 }
 
 SDL2pp::Texture *TextureManager::getItemIcon(uint8_t itemId) const {

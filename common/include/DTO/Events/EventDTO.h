@@ -3,6 +3,7 @@
 
 #include <variant>
 
+#include "AttackReceivedEventDTO.h"
 #include "ChatMessageEventDTO.h"
 #include "GroundItemAppearedEventDTO.h"
 #include "GroundItemRemovedEventDTO.h"
@@ -27,6 +28,7 @@
 #include "CityEntityStoppedEventDTO.h"
 
 using ServerEventDTO = std::variant<
+    AttackReceivedEventDTO,
     ChatMessageEventDTO,
     NPCAppearedEventDTO,
     NpcDefeatedEventDTO,

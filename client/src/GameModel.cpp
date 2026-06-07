@@ -1,4 +1,5 @@
 #include "GameModel.h"
+#include "AttackReceivedEventDTO.h"
 #include "ChatMessageEventDTO.h"
 #include "DropItemCommandDTO.h"
 #include "EquipCommandDTO.h"
@@ -310,6 +311,13 @@ void GameModel::handle(const CityEntityStoppedEventDTO &event) {
     if (it != cityEntities.end()) {
         it->second->stopMoving();
     }
+}
+
+void GameModel::handle(const AttackReceivedEventDTO &event) {
+  (void)event;
+  auto it = players.find(myPlayerID);
+  if (it != players.end())
+    it->second->setBeingAttacked(true);
 }
 
 void GameModel::handle(const RegisterPlayerEventDTO &) {}

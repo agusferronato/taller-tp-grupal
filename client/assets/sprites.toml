@@ -306,3 +306,8 @@ transparent = true
 id = 20
 path = "assets/comerciante.png"
 transparent = true
+
+[[sprites]]
+id = 350
+path = "assets/ataque/ataque_cuerpo.png"
+transparent = true
