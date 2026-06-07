@@ -24,9 +24,9 @@ private slots:
   void showLogin();
   void showCharacterCreation();
   void onNewGame();
-  void onStartGame(const QString &username, const QString &password);
-  void onCharacterCreated(const QString &username, const QString &password,
-                          const QString &race, const QString &playerClass);
+  void onStartGame(const QString &username);
+  void onCharacterCreated(const QString &username, const QString &race,
+                          const QString &playerClass);
 
 private:
   void setupPages();

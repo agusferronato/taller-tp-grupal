@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Formulas.h"
 
 Player::Player(std::string name, Direction direction, int x, int y,
                const PlayerStatsInfo &statsInfo)
@@ -30,10 +31,35 @@ void Player::move(int newX, int newY) {
   y = newY;
 }
 
-void Player::takeDamage(uint32_t) {}
+uint32_t Player::takeDamage(uint32_t damage) {
+  uint32_t defence =
+      Formulas::calcularDefensa(0, 0, 0, 0, 0, 0, rand(), rand(), rand());
+  uint32_t actualDamage = damage > defence ? damage - defence : 0;
+  stats.takeDamage(actualDamage);
+  return actualDamage;
+}
+
 uint32_t Player::heal(uint32_t) { return 0; }
 bool Player::useMana(uint32_t) { return false; }
-bool Player::gainExperience(uint32_t) { return false; }
-bool Player::expentGold(uint32_t) { return false; }
-void Player::earnGold(uint32_t) {}
-uint32_t Player::atack() { return 0; }
+void Player::addMana(uint32_t amount) { stats.addMana(amount); }
+bool Player::gainExperience(uint32_t xp) { return stats.addExperience(xp); }
+bool Player::expentGold(uint32_t amount) {
+  if (stats.getGold() < amount)
+    return false;
+  stats.setGold(stats.getGold() - amount);
+  return true;
+}
+void Player::earnGold(uint32_t amount) {
+  stats.setGold(stats.getGold() + amount);
+}
+void Player::removeGold(uint32_t amount) {
+  if (amount >= stats.getGold()) {
+    stats.setGold(0);
+  } else {
+    stats.setGold(stats.getGold() - amount);
+  }
+}
+
+uint32_t Player::atack() const {
+  return Formulas::calcularDaño(stats.getStrength(), 0, 0, rand());
+}

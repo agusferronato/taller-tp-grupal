@@ -15,7 +15,7 @@ public:
                      QWidget *parent = nullptr);
 
 signals:
-  void connectRequested(const QString &username, const QString &password);
+  void connectRequested(const QString &username);
   void backToMenuRequested();
 
 private slots:
@@ -24,7 +24,6 @@ private slots:
 private:
   QLabel *titleLabel;
   QLineEdit *usernameEdit;
-  QLineEdit *passwordEdit;
   QPushButton *connectBtn;
   QPushButton *backBtn;
   QString hostname;
