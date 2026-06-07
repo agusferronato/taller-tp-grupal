@@ -504,6 +504,37 @@ void Game::createCityEntities() {
     }
 }
 
+
+
+
+void Game::tryAttack(NPC& npc, Character& target) {
+
+  if (!npc.collidesWith(target) || !npc.reachesAttackCounter())
+    return;
+
+  if (target.tryParry()) {
+    senderQueueMonitor.sendToClient(
+        playerToConnection[target.getId()],
+        ChatMessageEventDTO{"Sistema",
+                            npc.getName() +
+                                " trato de atacarte pero lo esquivaste"});
+    return;
+  }
+
+  uint32_t damage = target.takeDamage(npc.getDamage());
+
+  if (target.getHp() <= 0) {
+    return;
+  }
+
+  senderQueueMonitor.sendToClient(
+      playerToConnection[target.getId()],
+      AttackReceivedEventDTO{damage});
+  messagesToSend.push_back(target.toPlayerInfoEvent());
+}
+
+
+
 void Game::makeNPCsfollowPlayers()
 {
   for (auto& npc : npcs) {
@@ -551,39 +582,6 @@ void Game::makeNPCsfollowPlayers()
 }
 
 
-
-
-void Game::tryAttack(NPC& npc, Character& target) {
-
-  if (!npc.collidesWith(target) || !npc.reachesAttackCounter())
-    return;
-
-  if (target.tryParry()) {
-    senderQueueMonitor.sendToClient(
-        playerToConnection[target.getId()],
-        ChatMessageEventDTO{"Sistema",
-                            npc.getName() +
-                                " trato de atacarte pero lo esquivaste"});
-    return;
-  }
-
-  uint32_t damage = target.takeDamage(npc.getDamage());
-
-  if (target.getHp() <= 0) {
-    return;
-  }
-
-  senderQueueMonitor.sendToClient(
-      playerToConnection[target.getId()],
-      AttackReceivedEventDTO{damage});
-  messagesToSend.push_back(target.toPlayerInfoEvent());
-}
-
-
-
-
-
-
 void Game::makeCitiesEntitiesFollowPlayers() {
     for (auto& city : cities) {
         for (auto* cityEntity : city.getEntities()) {
@@ -617,6 +615,11 @@ void Game::makeCitiesEntitiesFollowPlayers() {
                                                     static_cast<int16_t>(cityEntity->getY()),
                                                     cityEntity->getDirection()});
                     }
+                } else {
+                  if (cityEntity->getIsMoving()) {
+                    cityEntity->stop();
+                    messagesToSend.push_back(CityEntityStoppedEventDTO{cityEntity->getId()});
+                  }
                 }
             } else {
                 if (cityEntity->getIsMoving()) {

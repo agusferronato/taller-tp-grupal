@@ -33,7 +33,7 @@ public:
 
     virtual int getAncho() const = 0;
     virtual int getAlto() const = 0;
-    virtual int getRange() const = 0;
+    inline int getRange() { return range; }
 
     Direction getDirection() const { return direction; }
     bool getIsMoving() const { return isMoving; }
