@@ -2,11 +2,12 @@
 #define ORC_H
 
 #include "NPC.h"
+#include "string"
 
 class Orc : public NPC {
 public:
-    Orc(Position position) : NPC(position) { }
-    NPCType getType() override { return NPCType::OrcT; }
+  explicit Orc(Position position) : NPC(position) {}
+  NPCType getType() override { return NPCType::OrcT; }
 
     int getAncho() const override { return 48; };
     int getAlto() const override { return 96; };

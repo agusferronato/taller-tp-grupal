@@ -2,12 +2,13 @@
 #define ELF_H
 
 #include "NPC.h"
+#include "string"
 
 class Elf : public NPC {
 
 public:
-    Elf(Position position) : NPC(position) { }
-    NPCType getType() override { return NPCType::ElfT; }
+  explicit Elf(Position position) : NPC(position) {}
+  NPCType getType() override { return NPCType::ElfT; }
 
     int getAncho() const override { return 32; };
     int getAlto() const override { return 32; };

@@ -2,11 +2,12 @@
 #define SPECIALGOLEM_H
 
 #include "NPC.h"
+#include "string"
 
 class SpecialGolem : public NPC {
 public:
-    SpecialGolem(Position position) : NPC(position) { }
-    NPCType getType() override { return NPCType::SpecialGolemT; }
+  explicit SpecialGolem(Position position) : NPC(position) {}
+  NPCType getType() override { return NPCType::SpecialGolemT; }
 
     int getAncho() const override { return 32; };
     int getAlto() const override { return 96; };

@@ -8,6 +8,7 @@
 #include "Race.h"
 #include <string>
 #include <utility>
+#include <vector>
 
 class Player {
 private:
@@ -17,6 +18,7 @@ private:
   PlayerClass playerClass;
   int x, y;
   bool moving;
+  bool death;
   PlayerStats stats;
   Inventory inventory;
 
@@ -39,7 +41,7 @@ public:
   bool expentGold(uint32_t amount);
   void earnGold(uint32_t);
   void removeGold(uint32_t amount);
-  uint32_t atack() const;
+  uint32_t attack() const;
 
   bool isMoving() const { return moving; }
   Direction getDirection() const { return direction; }
@@ -81,6 +83,10 @@ public:
   void setEquippedArmor(uint8_t id) { inventory.setArmor(id); }
   void setEquippedHelmet(uint8_t id) { inventory.setHelmet(id); }
   void setEquippedShield(uint8_t id) { inventory.setShield(id); }
+
+  bool assertAttackDistance(int16_t targetX, int16_t targetY) const;
+  std::vector<uint8_t> die();
+  bool isDead() const { return death; }
 };
 
 #endif

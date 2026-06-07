@@ -6,6 +6,7 @@
 #include "Direction.h"
 #include "NPCType.h"
 #include "Position.h"
+#include <string>
 
 class Character;
 
@@ -21,33 +22,34 @@ protected:
     bool isMoving{false};
 
 public:
+  explicit NPC(Position pos) : gridPosition(pos), x(0), y(0) {}
 
-    NPC(Position pos)
-        : gridPosition(pos), x(0), y(0) {}
+  virtual ~NPC() = default;
 
-    virtual ~NPC() = default;
+  virtual NPCType getType() = 0;
 
-    virtual NPCType getType() = 0;
+  void setId(uint32_t newId) { id = newId; }
+  uint32_t getId() const { return id; }
+  const Position &getPosition() const { return gridPosition; }
+  int getX() const override { return x; }
+  int getY() const override { return y; }
 
-    void setId(uint32_t newId) { id = newId; }
-    uint32_t getId() const { return id; }
-    const Position& getPosition() const { return gridPosition; }
-    int getX() const override { return x; }
-    int getY() const override { return y; }
+  virtual int getAncho() const = 0;
+  virtual int getAlto() const = 0;
+  virtual int getRange() const = 0;
 
-    virtual int getAncho() const = 0;
-    virtual int getAlto() const = 0;
-    virtual int getRange() const = 0;
+  Direction getDirection() const { return direction; }
+  bool getIsMoving() const { return isMoving; }
+  void setPixelPosition(int px, int py) {
+    x = px;
+    y = py;
+  }
+  void stop() { isMoving = false; }
 
-    Direction getDirection() const { return direction; }
-    bool getIsMoving() const { return isMoving; }
-    void setPixelPosition(int px, int py) { x = px; y = py; }
-    void stop() { isMoving = false; }
+  bool colisionaCon(int targetX, int targetY, int targetAncho,
+                    int targetAlto) const override;
 
-    bool colisionaCon(int targetX, int targetY, int targetAncho,
-                      int targetAlto) const override;
-
-    bool updatePosition(const Character& character);
+  bool updatePosition(const Character &character);
 
 
     virtual uint32_t getDamage() = 0;
@@ -60,7 +62,4 @@ public:
 
 };
 
-
 #endif
-
-

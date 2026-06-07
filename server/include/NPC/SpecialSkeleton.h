@@ -2,11 +2,12 @@
 #define SPECIALSKELETON_H
 
 #include "NPC.h"
+#include "string"
 
 class SpecialSkeleton : public NPC {
 public:
-    SpecialSkeleton(Position position) : NPC(position) { }
-    NPCType getType() override { return NPCType::SpecialSkeletonT; }
+  explicit SpecialSkeleton(Position position) : NPC(position) {}
+  NPCType getType() override { return NPCType::SpecialSkeletonT; }
 
     int getAncho() const override { return 32; };
     int getAlto() const override { return 64; };

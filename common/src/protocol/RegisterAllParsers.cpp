@@ -12,6 +12,9 @@
 #include "parser/Commands/UnequipCommandParser.h"
 #include "parser/Events/AttackReceivedEventParser.h"
 #include "parser/Events/ChatMessageEventParser.h"
+#include "parser/Events/CityEntityAppearedEventParser.h"
+#include "parser/Events/CityEntityMovedEventParser.h"
+#include "parser/Events/CityEntityStoppedEventParser.h"
 #include "parser/Events/GroundItemAppearedEventParser.h"
 #include "parser/Events/GroundItemRemovedEventParser.h"
 #include "parser/Events/GroundItemsListEventParser.h"
@@ -20,9 +23,6 @@
 #include "parser/Events/NPCMovedEventParser.h"
 #include "parser/Events/NPCStoppedEventParser.h"
 #include "parser/Events/NpcDefeatedEventParser.h"
-#include "parser/Events/CityEntityAppearedEventParser.h"
-#include "parser/Events/CityEntityMovedEventParser.h"
-#include "parser/Events/CityEntityStoppedEventParser.h"
 #include "parser/Events/PlayerAppearedEventParser.h"
 #include "parser/Events/PlayerInfoEventParser.h"
 #include "parser/Events/PlayerListEventParser.h"
@@ -34,7 +34,7 @@
 #include "parser/Events/TextureInfoEventParser.h"
 #include "protocol/Protocol.h"
 #include "protocol/ProtocolCodes.h"
-#include <AtackCommandParser.h>
+#include <AttackCommandParser.h>
 #include <GlobalChatMessageCommandParser.h>
 #include <GlobalChatMessageEventParser.h>
 
@@ -88,8 +88,8 @@ void registerAllParsers(Protocol &protocol) {
       std::make_unique<GlobalChatMessageCommandParser>());
 
   protocol.registerCommandParser(
-      static_cast<uint8_t>(ClientCommandOpCode::AtackCommand),
-      std::make_unique<AtackCommandParser>());
+      static_cast<uint8_t>(ClientCommandOpCode::AttackCommand),
+      std::make_unique<AttackCommandParser>());
 
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::ChatMessageEvent),
@@ -159,9 +159,8 @@ void registerAllParsers(Protocol &protocol) {
       static_cast<uint8_t>(EventOpcode::GlobalChatMessageEvent),
       std::make_unique<GlobalChatMessageEventParser>());
 
-  protocol.registerEventParser(
-      static_cast<uint8_t>(EventOpcode::NPCMovedEvent),
-      std::make_unique<NPCMovedEventParser>());
+  protocol.registerEventParser(static_cast<uint8_t>(EventOpcode::NPCMovedEvent),
+                               std::make_unique<NPCMovedEventParser>());
 
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::NPCStoppedEvent),
