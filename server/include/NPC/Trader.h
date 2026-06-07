@@ -4,6 +4,11 @@
 #include "CityEntity.h"
 
 class Trader : public CityEntity {
+
+private:
+    Store store;
+
+
 public:
     Trader(Position position) : CityEntity(position) {}
 
@@ -16,3 +21,4 @@ public:
 };
 
 #endif
+
