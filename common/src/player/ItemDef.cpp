@@ -1,7 +1,7 @@
 #include "ItemDef.h"
 
 const std::array<ItemDef, MAX_ITEM_TYPES> ITEM_TABLE = {{
-    {0, "", ItemType::Weapon, 0, 0, 0, 0, 0, 0, false},
+    {0, "", ItemType::Weapon, 1, 1, 0, 0, 0, 0, false},
     {1, "Espada", ItemType::Weapon, 2, 5, 0, 0, 0, 0, false},
     {2, "Hacha", ItemType::Weapon, 4, 5, 0, 0, 0, 0, false},
     {3, "Martillo", ItemType::Weapon, 1, 9, 0, 0, 0, 0, false},
