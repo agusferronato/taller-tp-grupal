@@ -69,3 +69,13 @@ uint32_t Player::atack() const {
   return Formulas::calcularDaño(stats.getStrength(), weapon.minDamage,
                                 weapon.maxDamage, rand());
 }
+
+bool Player::assertAtackDistance(int16_t targetX, int16_t targetY) const {
+  int16_t dx = std::abs(targetX - x);
+  int16_t dy = std::abs(targetY - y);
+  if (dx <= 64 && dy <= 64) {
+    return true;
+  }
+  const auto &weapon = ITEM_TABLE[getEquippedWeapon()];
+  return weapon.isRange;
+}

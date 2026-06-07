@@ -82,6 +82,8 @@ public:
   void setEquippedArmor(uint8_t id) { inventory.setArmor(id); }
   void setEquippedHelmet(uint8_t id) { inventory.setHelmet(id); }
   void setEquippedShield(uint8_t id) { inventory.setShield(id); }
+
+  bool assertAtackDistance(int16_t targetX, int16_t targetY) const;
 };
 
 #endif
