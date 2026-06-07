@@ -425,6 +425,7 @@ void Game::playerAtackPlayer(Character &atacker, Character &target) {
         (std::rand() % 100) / 100.0);
     atacker.gainExperience(xpMuerte);
     // [TODO] volver fanstasma el target
+    // [TODO] soltar items
   } else {
     senderQueueMonitor.sendToClient(
         playerToConnection[atacker.getId()],
