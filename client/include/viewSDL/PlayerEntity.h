@@ -27,11 +27,17 @@ private:
   SDL2pp::Font &nameFont;
   EquipParser equipParser;
 
+  void renderAlive(SDL2pp::Renderer &renderer, Camera &camera, unsigned int it);
+  void renderDead(SDL2pp::Renderer &renderer, Camera &camera, unsigned int it);
+
   void renderBody(SDL2pp::Renderer &renderer, Camera &camera, unsigned int it);
   void renderHead(SDL2pp::Renderer &renderer, Camera &camera);
   void renderName(SDL2pp::Renderer &renderer, Camera &camera);
   void renderEquipable(SDL2pp::Renderer &renderer, Camera &camera,
                        unsigned int it);
+  void renderGhostBody(SDL2pp::Renderer &renderer, Camera &camera,
+                       unsigned int it);
+  void renderGhostHead(SDL2pp::Renderer &renderer, Camera &camera);
   int get_head_x(Camera &camera);
   int get_head_y(Camera &camera);
   int getRaceBodyID(Race race) const;
