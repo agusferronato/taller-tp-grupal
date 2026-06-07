@@ -1,10 +1,31 @@
 #include "Grid.h"
 
-Grid::Grid(Camera &camera, SDL2pp::Renderer &renderer)
+Grid::Grid(Camera &camera, SDL2pp::Renderer &renderer, int max_priority)
     : tilesToRender(
-          std::vector<std::multimap<std::pair<int, int>, std::shared_ptr<Tile>>>(3)),
-      camera(camera), downloader("map.toml"), font("fonts/Timeless.ttf", 16),
+          std::vector<std::multimap<std::pair<int, int>, std::shared_ptr<Tile>>>(max_priority)),
+      camera(camera), font("fonts/Timeless.ttf", 16),
       colissionTexture(renderer, "assets/colision.png") {}
+
+void Grid::loadMap(const std::string &mapPath, TextureMap &textureMap) {
+    std::list<TileOrigin> loadedOrigins;
+    std::set<std::pair<int, int>> loadedCells;
+    std::map<int, BiomeGrid> loadedBiomes;
+
+    if (!mapLoader.loadMap(mapPath, loadedOrigins, loadedCells, loadedBiomes))
+        return;
+
+    txtOrigins = std::move(loadedOrigins);
+    collidableCells = std::move(loadedCells);
+    biomes = std::move(loadedBiomes);
+
+    for (auto &origin : txtOrigins) {
+        auto tile = createTileInstance(textureMap, origin.texture_id, origin.x, origin.y);
+        int p = tile->getPriority();
+        std::pair<int, int> key = {tile->getMaxJ(), tile->getMaxI()};
+        tilesToRender[p].insert({key, std::move(tile)});
+    }
+}
+
 
 
 float Grid::getAlphaChannelWeight(SDL2pp::Surface &surface,
@@ -30,7 +51,7 @@ float Grid::getAlphaChannelWeight(SDL2pp::Surface &surface,
 
       alpha += a;
     }
-  }
+  } 
 
   return static_cast<float>(alpha) / (totalPixels * 255.0f);
 }
@@ -77,7 +98,7 @@ void Grid::renderCollidableCells(SDL2pp::Renderer &renderer) {
 
   colissionTexture.SetAlphaMod(80);
 
-  for (auto &[i, j, _] : collidableCells) {
+  for (auto &[i, j] : collidableCells) {
 
     SDL2pp::Rect dstRect = camera.toScreen((i - MAX_SIZE / 2) * GRID_SIZE_PX,
                                            (j - MAX_SIZE / 2) * GRID_SIZE_PX,
@@ -146,8 +167,8 @@ void Grid::setMousePosition(int x, int y) {
 
 }
 
-void Grid::saveMap(GridSDL &gridSDL) {
-  this->downloader.saveMap(gridSDL, txtOrigins, collidableCells, biomes);
+void Grid::saveMap(GridSDL &gridSDL, const std::string &path) {
+    downloader.saveMap(gridSDL, path, txtOrigins, collidableCells, biomes);
 }
 
 
@@ -225,7 +246,6 @@ void Grid::eraseTileFromRender(std::shared_ptr<Tile> tile) {
     int p = tile->getPriority();
     std::pair<int,int> key = {tile->getMaxJ(), tile->getMaxI()};
     
-    
     auto [begin, end] = tilesToRender[p].equal_range(key);
     for (auto it = begin; it != end; ++it) {
         if (it->second->getId() == tile->getId()) {
@@ -289,6 +309,10 @@ void Grid::setHoverTexture(TextureMap &textureMap, int texture_id) {
 }
 
 void Grid::clearHoverTexture() {
+
+    if (hoverTile) 
+        eraseTileFromRender(hoverTile);
+
     hoverTile = nullptr;
     active_texture_id = 0;
 } 
@@ -319,7 +343,7 @@ bool Grid::checkCollisions(const std::shared_ptr<Tile>& tile) {
 
 }
 
-void Grid::tryPlaceHoverTexture() {
+void Grid::tryPlaceHoverTexture(TextureMap& textureMap) {
     if (!hoverTile || checkCollisions(hoverTile)) return;
 
     txtOrigins.push_back({
@@ -333,8 +357,7 @@ void Grid::tryPlaceHoverTexture() {
         collidableCells.insert(cell);
     }
 
-    hoverTile = nullptr; 
-    active_texture_id = 0;
+    hoverTile = createTileInstance(textureMap, active_texture_id, item_hover_i, item_hover_j);
 }
 
 

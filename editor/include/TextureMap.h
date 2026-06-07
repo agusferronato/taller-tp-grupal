@@ -18,11 +18,13 @@ class TextureMap {
 
 private:
   std::map<int, TextureInMap> textures;
+  int maxPriority{0};
 
 public:
   explicit TextureMap(SDL2pp::Renderer &renderer);
 
   TextureInMap &getTexture(int texture_id);
+  int getMaxPriority() const { return maxPriority; }
 };
 
 #endif

@@ -19,6 +19,21 @@ std::string BiomeDataParser::getBiomeAsString(Biome biome) {
   }
 }
 
+Biome BiomeDataParser::getBiomeByStr(std::string& asString) {
+
+  if (asString == "City")
+    return Biome::City;
+  
+  if (asString == "Desert")
+    return Biome::Desert;
+
+  if (asString == "Dungeon")
+    return Biome::Dungeon;
+
+  return Biome::Forest;
+
+}
+
 SDL2pp::Color BiomeDataParser::getBiomeColor(Biome biome) {
   switch (biome) {
   case Biome::City:

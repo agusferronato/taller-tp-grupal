@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "City.h"
 #include "Formulas.h"
 #include "PlayerClass.h"
 #include "Race.h"
@@ -76,16 +77,16 @@ std::pair<int, int> Character::getTargetPosition(Direction dir) const {
   int targetY = player.getY();
   switch (dir) {
   case Direction::Up:
-    targetY -= 1;
+    targetY -= 2;
     break;
   case Direction::Down:
-    targetY += 1;
+    targetY += 2;
     break;
   case Direction::Left:
-    targetX -= 1;
+    targetX -= 2;
     break;
   case Direction::Right:
-    targetX += 1;
+    targetX += 2;
     break;
   }
   return {targetX, targetY};
@@ -108,6 +109,16 @@ bool Character::colisionaCon(int targetX, int targetY, int ancho,
   return !(targetX + ancho <= player.getX() ||
            targetX >= player.getX() + ANCHO ||
            targetY + alto <= player.getY() || targetY >= player.getY() + ALTO);
+} 
+
+bool Character::isInCity(std::list<City> &cities, int gridSize, int maxSize)
+{
+  for (auto& city : cities) {
+    if (city.contains(player.getX(), player.getY(), gridSize, maxSize)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 int Character::getX() const { return player.getX(); }

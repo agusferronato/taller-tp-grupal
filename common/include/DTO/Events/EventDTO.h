@@ -20,16 +20,35 @@
 #include "TextureInfoEventDTO.h"
 #include "PrivateMessageEventDTO.h"
 #include "GlobalChatMessageEventDTO.h"
+#include "NPCMovedEventDTO.h"
+#include "NPCStoppedEventDTO.h"
+#include "CityEntityAppearedEventDTO.h"
+#include "CityEntityMovedEventDTO.h"
+#include "CityEntityStoppedEventDTO.h"
 
-using ServerEventDTO =
-    std::variant<ChatMessageEventDTO, GroundItemAppearedEventDTO,
-                 GroundItemRemovedEventDTO, GroundItemsListEventDTO,
-                 NPCAppearedEventDTO, NpcDefeatedEventDTO,
-                 PlayerMovedEventDTO, RegisterPlayerEventDTO,
-                 PlayerListEventDTO, PlayerAppearedEventDTO,
-                 PlayerInfoEventDTO, PlayerStoppedEventDTO,
-                 PlayerRemovedEventDTO, InventoryUpdateEventDTO,
-                 TextureInfoEventDTO, PrivateMessageEventDTO,
-                 GlobalChatMessageEventDTO>;
+using ServerEventDTO = std::variant<
+    ChatMessageEventDTO,
+    NPCAppearedEventDTO,
+    NpcDefeatedEventDTO,
+    NPCMovedEventDTO,
+    NPCStoppedEventDTO,
+    PlayerMovedEventDTO,
+    RegisterPlayerEventDTO,
+    PlayerListEventDTO,
+    PlayerAppearedEventDTO,
+    PlayerStoppedEventDTO,
+    TextureInfoEventDTO,
+    PrivateMessageEventDTO,
+    PlayerInfoEventDTO,
+    PlayerRemovedEventDTO,
+    InventoryUpdateEventDTO,
+    GlobalChatMessageEventDTO,
+    CityEntityAppearedEventDTO,
+    CityEntityMovedEventDTO,
+    CityEntityStoppedEventDTO,
+    GroundItemAppearedEventDTO,
+    GroundItemRemovedEventDTO,
+    GroundItemsListEventDTO
+>;
 
 #endif // EVENT_DTO_H

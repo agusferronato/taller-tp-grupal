@@ -46,13 +46,16 @@ private:
 
   int texture_id{0};
 
+  std::string initMapPath;
+
 public:
   explicit GridSDL(QWidget *parent = nullptr);
   ~GridSDL() override;
 
   void initSDL();
+  void loadMapOnInit(const std::string &mapPath);
 
-  void saveMap();
+  void saveMap(const std::string &path);
 
 private:
 

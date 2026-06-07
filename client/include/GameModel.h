@@ -5,6 +5,8 @@
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "Direction.h"
+#include "CityEntityModel.h"
+#include "CityEntityType.h"
 #include "GroundItemManager.h"
 #include "NPC.h"
 #include "Queue.h"
@@ -23,6 +25,7 @@ private:
   uint32_t myPlayerID;
   std::unordered_map<uint32_t, std::unique_ptr<ClientPlayer>> players;
   std::unordered_map<uint32_t, std::unique_ptr<NPC>> npcs;
+  std::unordered_map<uint32_t, std::unique_ptr<CityEntityModel>> cityEntities;
 
   GroundItemManager groundItemManager;
 
@@ -80,12 +83,17 @@ private:
   void handle(const PlayerAppearedEventDTO &event);
   void handle(const PlayerStoppedEventDTO &event);
   void handle(const PlayerRemovedEventDTO &event);
+  void handle(const CityEntityAppearedEventDTO &event);
+  void handle(const CityEntityMovedEventDTO &event);
+  void handle(const CityEntityStoppedEventDTO &event);
   void handle(const PlayerInfoEventDTO &event);
   void handle(const InventoryUpdateEventDTO &event);
   void handle(const NPCAppearedEventDTO &event);
   void handle(const TextureInfoEventDTO &event);
   void handle(const PlayerListEventDTO &event);
   void handle(const ChatMessageEventDTO &event);
+  void handle(const NPCMovedEventDTO &event);
+  void handle(const NPCStoppedEventDTO &event);
   void handle(const NpcDefeatedEventDTO &event);
   void handle(const RegisterPlayerEventDTO &event);
   void handle(const GroundItemAppearedEventDTO &event);
