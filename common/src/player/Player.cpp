@@ -32,9 +32,12 @@ void Player::move(int newX, int newY) {
 }
 
 uint32_t Player::takeDamage(uint32_t damage) {
-  // [TODO] calcular defensa real con armaduras
-  uint32_t defence =
-      Formulas::calcularDefensa(0, 0, 0, 0, 0, 0, rand(), rand(), rand());
+  const auto &armor = ITEM_TABLE[getEquippedArmor()];
+  const auto &shield = ITEM_TABLE[getEquippedShield()];
+  const auto &helmet = ITEM_TABLE[getEquippedHelmet()];
+  uint32_t defence = Formulas::calcularDefensa(
+      armor.minDefense, armor.maxDefense, shield.minDefense, shield.maxDefense,
+      helmet.minDefense, helmet.maxDefense, rand(), rand(), rand());
   uint32_t actualDamage = damage > defence ? damage - defence : 0;
   stats.takeDamage(actualDamage);
   return actualDamage;
@@ -62,6 +65,7 @@ void Player::removeGold(uint32_t amount) {
 }
 
 uint32_t Player::atack() const {
-  // [TODO] calcular daño real con armas
-  return Formulas::calcularDaño(stats.getStrength(), 0, 0, rand());
+  const auto &weapon = ITEM_TABLE[getEquippedWeapon()];
+  return Formulas::calcularDaño(stats.getStrength(), weapon.minDamage,
+                                weapon.maxDamage, rand());
 }
