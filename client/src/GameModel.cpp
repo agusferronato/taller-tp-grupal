@@ -3,7 +3,6 @@
 #include "DropItemCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "GameWindow.h"
-#include "UnequipCommandDTO.h"
 #include "GlobalChatMessageCommandDTO.h"
 #include "GlobalChatMessageEventDTO.h"
 #include "GroundItemAppearedEventDTO.h"
@@ -26,6 +25,7 @@
 #include "Race.h"
 #include "RegisterPlayerEventDTO.h"
 #include "TextureInfoEventDTO.h"
+#include "UnequipCommandDTO.h"
 #include <iostream>
 #include <stdexcept>
 
@@ -46,22 +46,21 @@ void GameModel::updateStateFromServer() {
   gameView->updateGroundItems(groundItemManager.getAll());
 }
 
-void GameModel::handleInventoryClick(int screenX, int screenY,
-                                     uint8_t button) {
+void GameModel::handleInventoryClick(int screenX, int screenY, uint8_t button) {
   ClickTarget target = gameView->hitTestInventory(screenX, screenY);
   if (target.type == ClickTargetType::None)
     return;
 
   if (target.type == ClickTargetType::Equipment) {
-    sendingQueue.push(UnequipCommandDTO{myPlayerID,
-                                        static_cast<uint8_t>(target.index)});
+    sendingQueue.push(
+        UnequipCommandDTO{myPlayerID, static_cast<uint8_t>(target.index)});
   } else if (target.type == ClickTargetType::Inventory) {
     if (button == SDL_BUTTON_RIGHT) {
-      sendingQueue.push(DropItemCommandDTO{myPlayerID,
-                                           static_cast<uint8_t>(target.index)});
+      sendingQueue.push(
+          DropItemCommandDTO{myPlayerID, static_cast<uint8_t>(target.index)});
     } else {
-      sendingQueue.push(EquipCommandDTO{myPlayerID,
-                                        static_cast<uint8_t>(target.index)});
+      sendingQueue.push(
+          EquipCommandDTO{myPlayerID, static_cast<uint8_t>(target.index)});
     }
   }
 }
@@ -292,24 +291,25 @@ void GameModel::handle(const NPCAppearedEventDTO &event) {
 }
 
 void GameModel::handle(const CityEntityAppearedEventDTO &event) {
-    auto entity = std::make_unique<CityEntityModel>(event.x, event.y, event.direction);
-    CityEntityType type = static_cast<CityEntityType>(event.type);
-    gameView->addCityEntity(event.entityId, *entity, type);
-    cityEntities[event.entityId] = std::move(entity);
+  auto entity =
+      std::make_unique<CityEntityModel>(event.x, event.y, event.direction);
+  CityEntityType type = static_cast<CityEntityType>(event.type);
+  gameView->addCityEntity(event.entityId, *entity, type);
+  cityEntities[event.entityId] = std::move(entity);
 }
 
 void GameModel::handle(const CityEntityMovedEventDTO &event) {
-    auto it = cityEntities.find(event.entityId);
-    if (it != cityEntities.end()) {
-        it->second->updateCoordinates(event.x, event.y, event.direction);
-    }
+  auto it = cityEntities.find(event.entityId);
+  if (it != cityEntities.end()) {
+    it->second->updateCoordinates(event.x, event.y, event.direction);
+  }
 }
 
 void GameModel::handle(const CityEntityStoppedEventDTO &event) {
-    auto it = cityEntities.find(event.entityId);
-    if (it != cityEntities.end()) {
-        it->second->stopMoving();
-    }
+  auto it = cityEntities.find(event.entityId);
+  if (it != cityEntities.end()) {
+    it->second->stopMoving();
+  }
 }
 
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
@@ -346,4 +346,12 @@ void GameModel::handleRightMouseClick(int mouseX, int mouseY) {
   handleInventoryClick(mouseX, mouseY, SDL_BUTTON_RIGHT);
   (void)mouseX;
   (void)mouseY;
+}
+
+void GameModel::handle(const PlayerDieEventDTO &event) {
+  auto it = players.find(event.playerId);
+  if (it == players.end()) {
+    return;
+  }
+  // [TODO] volver fantasma en gameview
 }
