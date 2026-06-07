@@ -90,6 +90,7 @@ public:
   bool thereIsACollidableEntityAt(Position position);
   void appearNPC(std::unique_ptr<NPC> &&npc);
   uint32_t nextNPCId{1};
+  uint32_t nextCityEntityId{1};
 
 private:
   void execute(ClientMessage clientMessage);
@@ -100,8 +101,12 @@ private:
   void appearNPCs();
 
   void makeNPCsfollowPlayers();
+  void makeCitiesEntitiesFollowPlayers();
 
   bool checkIfItCollides(Colisionable* entity);
+
+  void createCityEntities();
+
 };
 
 #endif

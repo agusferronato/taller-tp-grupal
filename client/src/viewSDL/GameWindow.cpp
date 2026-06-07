@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "CityEntityModel.h"
+#include "CityEntityRenderable.h"
 #include "NPCEntity.h"
 #include "Player.h"
 #include "PlayerEntity.h"
@@ -207,6 +209,19 @@ void GameWindow::addNpc(uint32_t ID, NPC &npc, NPCType npcType) {
   auto entity = std::make_unique<NPCEntity>(npc, *textureManager,
                                             info.textureId, info.layoutType);
   addEntity(EntityType::Npc, ID, std::move(entity));
+}
+
+void GameWindow::addCityEntity(uint32_t ID, CityEntityModel &entity,
+                                CityEntityType entityType) {
+    CityEntityInfo info = cityEntityParser.getInfo(entityType);
+    auto renderable = std::make_unique<CityEntityRenderable>(
+        entity, *textureManager, *font, info.textureId, info.layoutType,
+        info.name);
+    addEntity(EntityType::CityEntity, ID, std::move(renderable));
+}
+
+void GameWindow::removeCityEntity(uint32_t ID) {
+    removeEntity(EntityType::CityEntity, ID);
 }
 
 std::string GameWindow::headPathForRace(const std::string &race) const {

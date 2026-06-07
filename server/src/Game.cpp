@@ -8,6 +8,9 @@
 #include "NPCAppearedEventDTO.h"
 #include "NPCMovedEventDTO.h"
 #include "NPCStoppedEventDTO.h"
+#include "CityEntityAppearedEventDTO.h"
+#include "CityEntityMovedEventDTO.h"
+#include "CityEntityStoppedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerInfoEventDTO.h"
 #include "PlayerListEventDTO.h"
@@ -37,7 +40,8 @@ void Game::run() {
   collidableCells = mapLoader.GetCollidableCells();
 
   biomes = std::move(mapLoader.GetBiomes());
-  cities = mapLoader.GetCities();
+  cities = std::move(mapLoader.GetCities());
+  createCityEntities();  
 
   ConstantRateLoop rateloop(FPS_SERVER);
   CommandFactory factory;
@@ -54,6 +58,7 @@ void Game::run() {
 
 
     makeNPCsfollowPlayers();
+    makeCitiesEntitiesFollowPlayers();
     movePlayers();
 
     appearNPCs();
@@ -140,6 +145,18 @@ void Game::registerPlayer(const std::string &name, const Race race,
                             static_cast<int16_t>(npc->getY())});
   }
 
+  for (auto& city : cities) {
+    for (auto* entity : city.getEntities()) {
+      senderQueueMonitor.sendToClient(
+          connectionId,
+          CityEntityAppearedEventDTO{entity->getId(),
+              static_cast<uint8_t>(entity->getCityEntityType()),
+              static_cast<int16_t>(entity->getX()),
+              static_cast<int16_t>(entity->getY()),
+              entity->getDirection()});
+    }
+  }
+
   messagesToSend.push_back(players[newId]->toPlayerAppeared());
 }
 
@@ -200,6 +217,18 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
                             static_cast<uint8_t>(npc->getType()),
                             static_cast<int16_t>(npc->getX()),
                             static_cast<int16_t>(npc->getY())});
+  }
+
+  for (auto& city : cities) {
+    for (auto* entity : city.getEntities()) {
+      senderQueueMonitor.sendToClient(
+          connectionId,
+          CityEntityAppearedEventDTO{entity->getId(),
+              static_cast<uint8_t>(entity->getCityEntityType()),
+              static_cast<int16_t>(entity->getX()),
+              static_cast<int16_t>(entity->getY()),
+              entity->getDirection()});
+    }
   }
 
   messagesToSend.push_back(players[newId]->toPlayerAppeared());
@@ -382,6 +411,29 @@ bool Game::checkIfItCollides(Colisionable* entity) {
     return false;
 }
 
+void Game::createCityEntities() {
+    for (auto& city : cities) {
+        city.createEntities(*this);
+
+        for (auto* entity : city.getEntities()) {
+            int center = maxSize / 2;
+            int px = (entity->getPosition().row - center) * gridSize;
+            int py = (entity->getPosition().column - center) * gridSize;
+            entity->setPixelPosition(px, py);
+
+            uint32_t id = nextCityEntityId++;
+            entity->setId(id);
+            colisionables.push_back(entity);
+
+            messagesToSend.push_back(
+                CityEntityAppearedEventDTO{id,
+                    static_cast<uint8_t>(entity->getCityEntityType()),
+                    static_cast<int16_t>(px), static_cast<int16_t>(py),
+                    entity->getDirection()});
+        }
+    }
+}
+
 void Game::makeNPCsfollowPlayers()
 {
   for (auto& npc : npcs) {
@@ -423,4 +475,48 @@ void Game::makeNPCsfollowPlayers()
       }
     }
   }
+}
+
+void Game::makeCitiesEntitiesFollowPlayers() {
+    for (auto& city : cities) {
+        for (auto* cityEntity : city.getEntities()) {
+            Character* target = nullptr;
+
+            for (auto& [_, player] : players) {
+                if (!city.contains(player->getX(), player->getY(), gridSize, maxSize))
+                    continue;
+
+                int dx = cityEntity->getX() - player->getX();
+                int dy = cityEntity->getY() - player->getY();
+                if (abs(dx) <= cityEntity->getRange() && abs(dy) <= cityEntity->getRange()) {
+                    target = player.get();
+                    break;
+                }
+            }
+
+            if (target) {
+                int oldX = cityEntity->getX();
+                int oldY = cityEntity->getY();
+
+                if (cityEntity->updatePosition(*target)) {
+                    if (checkIfItCollides(cityEntity)) {
+                        cityEntity->setPixelPosition(oldX, oldY);
+                        cityEntity->stop();
+                        messagesToSend.push_back(CityEntityStoppedEventDTO{cityEntity->getId()});
+                    } else {
+                        messagesToSend.push_back(
+                            CityEntityMovedEventDTO{cityEntity->getId(),
+                                                    static_cast<int16_t>(cityEntity->getX()),
+                                                    static_cast<int16_t>(cityEntity->getY()),
+                                                    cityEntity->getDirection()});
+                    }
+                }
+            } else {
+                if (cityEntity->getIsMoving()) {
+                    cityEntity->stop();
+                    messagesToSend.push_back(CityEntityStoppedEventDTO{cityEntity->getId()});
+                }
+            }
+        }
+    }
 }

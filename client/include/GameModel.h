@@ -5,6 +5,8 @@
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "Direction.h"
+#include "CityEntityModel.h"
+#include "CityEntityType.h"
 #include "NPC.h"
 #include "Queue.h"
 #include <deque> //Double ended queue for chat messages
@@ -22,6 +24,7 @@ private:
   uint32_t myPlayerID;
   std::unordered_map<uint32_t, std::unique_ptr<ClientPlayer>> players;
   std::unordered_map<uint32_t, std::unique_ptr<NPC>> npcs;
+  std::unordered_map<uint32_t, std::unique_ptr<CityEntityModel>> cityEntities;
 
   std::deque<std::string> chatMessages;
   std::string currentChatInput;
@@ -64,6 +67,9 @@ private:
   void handle(const PlayerAppearedEventDTO &event);
   void handle(const PlayerStoppedEventDTO &event);
   void handle(const PlayerRemovedEventDTO &event);
+  void handle(const CityEntityAppearedEventDTO &event);
+  void handle(const CityEntityMovedEventDTO &event);
+  void handle(const CityEntityStoppedEventDTO &event);
   void handle(const PlayerInfoEventDTO &event);
   void handle(const InventoryUpdateEventDTO &event);
   void handle(const NPCAppearedEventDTO &event);

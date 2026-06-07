@@ -3,6 +3,6 @@
 
 #include <cstdint>
 
-enum class EntityType : uint8_t { Player, Npc };
+enum class EntityType : uint8_t { Player, Npc, CityEntity };
 
 #endif
