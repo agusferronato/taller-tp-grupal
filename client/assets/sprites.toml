@@ -85,3 +85,18 @@ transparent = true
 id = 17
 path = "assets/cabezas/elfo.png"
 transparent = true
+
+[[sprites]]
+id = 18
+path = "assets/banquero.png"
+transparent = true
+
+[[sprites]]
+id = 19
+path = "assets/sacerdote.png"
+transparent = true
+
+[[sprites]]
+id = 20
+path = "assets/comerciante.png"
+transparent = true

@@ -44,6 +44,9 @@ enum class EventOpcode : uint8_t {
   GlobalChatMessageEvent,
   NPCMovedEvent,
   NPCStoppedEvent,
+  CityEntityAppearedEvent,
+  CityEntityMovedEvent,
+  CityEntityStoppedEvent,
 };
 
 #endif // PROTOCOL_CODES_H

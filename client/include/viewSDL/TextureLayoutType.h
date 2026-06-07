@@ -3,6 +3,6 @@
 
 enum class TextureLayoutType { Body, Head, Zombie, Skeleton, Spider, Golem,
                                GreatReamer, Giant, Elf, SpecialSpider,
-                               SpecialSkeleton, Orc };
+                               SpecialSkeleton, Orc, Priest, Trader, Banker };
 
 #endif

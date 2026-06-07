@@ -214,6 +214,27 @@ void GameModel::handle(const NPCAppearedEventDTO &event) {
   npcs[event.npcId] = std::move(npc);
 }
 
+void GameModel::handle(const CityEntityAppearedEventDTO &event) {
+    auto entity = std::make_unique<CityEntityModel>(event.x, event.y, event.direction);
+    CityEntityType type = static_cast<CityEntityType>(event.type);
+    gameView->addCityEntity(event.entityId, *entity, type);
+    cityEntities[event.entityId] = std::move(entity);
+}
+
+void GameModel::handle(const CityEntityMovedEventDTO &event) {
+    auto it = cityEntities.find(event.entityId);
+    if (it != cityEntities.end()) {
+        it->second->updateCoordinates(event.x, event.y, event.direction);
+    }
+}
+
+void GameModel::handle(const CityEntityStoppedEventDTO &event) {
+    auto it = cityEntities.find(event.entityId);
+    if (it != cityEntities.end()) {
+        it->second->stopMoving();
+    }
+}
+
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
 
 PlayerStatsInfo GameModel::playerStatsFrom(const PlayerInfoDTO &info) {
