@@ -91,7 +91,7 @@ public:
   void dropItem(uint32_t playerId, uint8_t inventorySlot);
   void takeItem(uint32_t playerId);
   void sendGlobalChatMessage(uint32_t playerId, const std::string &message);
-  void atack(uint32_t playerId, int16_t x, int16_t y);
+  void attack(uint32_t playerId, int16_t x, int16_t y);
 
   bool thereIsACollidableEntityAt(Position position);
   void appearNPC(std::unique_ptr<NPC> &&npc);
@@ -113,10 +113,10 @@ private:
 
   void createCityEntities();
 
-  void playerAtackPlayer(Character &atacker, Character &target);
-  void playerAtackNPC(Character &atacker, NPC &target);
-  uint32_t calculateDamage(Character &atacker);
-  bool validAtack(Character &atacker, Character &target);
+  void playerAttackPlayer(Character &attacker, Character &target);
+  void playerAttackNPC(Character &attacker, NPC &target);
+  uint32_t calculateDamage(Character &attacker);
+  bool validAttack(Character &attacker, Character &target);
   Character *findPlayerByCoordinates(int16_t x, int16_t y);
   NPC *findNPCByCoordinates(int16_t x, int16_t y);
   int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }

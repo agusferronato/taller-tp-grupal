@@ -89,10 +89,10 @@ void GameModel::stopMyPlayer() {
   sendingQueue.push(PlayerStopCommandDTO{myPlayerID});
 }
 
-void GameModel::atack(int mouseX, int mouseY) {
+void GameModel::attack(int mouseX, int mouseY) {
   auto [worldX, worldY] = gameView->screenToWorld(mouseX, mouseY);
-  sendingQueue.push(AtackCommandDTO{myPlayerID, static_cast<int16_t>(worldX),
-                                    static_cast<int16_t>(worldY)});
+  sendingQueue.push(AttackCommandDTO{myPlayerID, static_cast<int16_t>(worldX),
+                                     static_cast<int16_t>(worldY)});
 }
 
 void GameModel::handle(const PlayerMovedEventDTO &moved) {
@@ -339,13 +339,11 @@ PlayerStatsInfo GameModel::playerStatsFrom(const PlayerAppearedEventDTO &info) {
 void GameModel::handleLeftMouseClick(int mouseX, int mouseY) {
   handleInventoryClick(mouseX, mouseY, SDL_BUTTON_LEFT);
 
-  atack(mouseX, mouseY);
+  attack(mouseX, mouseY);
 }
 
 void GameModel::handleRightMouseClick(int mouseX, int mouseY) {
   handleInventoryClick(mouseX, mouseY, SDL_BUTTON_RIGHT);
-  (void)mouseX;
-  (void)mouseY;
 }
 
 void GameModel::handle(const PlayerDieEventDTO &event) {

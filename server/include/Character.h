@@ -98,7 +98,7 @@ public:
   bool isDead() const { return player.isDead(); }
   uint32_t getDamage() const;
   bool tryParry() const;
-  bool assertAtackDistance(int16_t targetX, int16_t targetY) const;
+  bool assertAttackDistance(int16_t targetX, int16_t targetY) const;
   uint32_t dropGoldOnDeath();
   std::vector<uint8_t> die();
 

@@ -165,14 +165,14 @@ std::pair<int, int> Character::getTargetPosition() const {
   return getTargetPosition(player.getDirection());
 }
 
-uint32_t Character::getDamage() const { return player.atack(); }
+uint32_t Character::getDamage() const { return player.attack(); }
 
 bool Character::tryParry() const {
   return Formulas::calcularEsquivo(player.getAgility(), rand() % 2);
 }
 
-bool Character::assertAtackDistance(int16_t targetX, int16_t targetY) const {
-  return player.assertAtackDistance(targetX, targetY);
+bool Character::assertAttackDistance(int16_t targetX, int16_t targetY) const {
+  return player.assertAttackDistance(targetX, targetY);
 }
 
 uint32_t Character::dropGoldOnDeath() {
