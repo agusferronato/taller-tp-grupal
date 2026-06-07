@@ -179,7 +179,6 @@ int PlayerEntity::getRaceHeadID(Race race) const {
 void PlayerEntity::renderGhostBody(SDL2pp::Renderer &renderer, Camera &camera,
                                    unsigned int it) {
   unsigned int animationIt = player.getIsMoving() ? it : 0;
-  // [TODO] hacer transparente (fantasma)
   int bodyID = getRaceBodyID(player.getRace());
   uint8_t armorSlot = player.getEquippedArmor();
 
@@ -204,7 +203,9 @@ void PlayerEntity::renderGhostBody(SDL2pp::Renderer &renderer, Camera &camera,
   int ox = (ClientPlayer::Width - src.w) / 2; // centra horizontalmente
   SDL2pp::Rect dst = camera.toScreen(player.get_x() + ox, player.get_y(), src.w,
                                      ClientPlayer::Height);
+  src.txt.SetAlphaMod(128); // 50% de transparencia
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
+  src.txt.SetAlphaMod(255); // Restaurar opacidad
 }
 
 void PlayerEntity::renderGhostHead(SDL2pp::Renderer &renderer, Camera &camera) {
@@ -213,8 +214,9 @@ void PlayerEntity::renderGhostHead(SDL2pp::Renderer &renderer, Camera &camera) {
 
   int head_x = get_head_x(camera);
   int head_y = get_head_y(camera);
-  // [TODO] hacer transparente (fantasma)
+  src.txt.SetAlphaMod(128); // 50% de transparencia
   SDL2pp::Rect dst{head_x, head_y, ClientPlayer::HeadWidth,
                    ClientPlayer::HeadHeight};
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
+  src.txt.SetAlphaMod(255); // Restaurar opacidad
 }
