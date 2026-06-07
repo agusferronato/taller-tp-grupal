@@ -17,6 +17,7 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
 class Character : public Colisionable {
 public:
@@ -87,7 +88,7 @@ public:
   bool colisionaCon(int targetX, int targetY, int ancho,
                     int alto) const override;
 
-  bool isInCity(std::list<City>& cities, int gridSize, int maxSize);
+  bool isInCity(std::list<City> &cities, int gridSize, int maxSize);
   int getX() const override;
   int getY() const override;
   int getAncho() const override;
@@ -98,6 +99,7 @@ public:
   bool tryParry() const;
   bool assertAtackDistance(int16_t targetX, int16_t targetY) const;
   uint32_t dropGoldOnDeath();
+  std::vector<uint8_t> die();
 
 private:
   uint32_t id;

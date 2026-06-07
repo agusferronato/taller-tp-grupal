@@ -79,3 +79,36 @@ bool Player::assertAtackDistance(int16_t targetX, int16_t targetY) const {
   const auto &weapon = ITEM_TABLE[getEquippedWeapon()];
   return weapon.isRange;
 }
+
+std::vector<uint8_t> Player::die() {
+  death = true;
+  std::vector<uint8_t> droppedItems;
+  for (int i = 0; i < MAX_INVENTORY_SLOTS; i++) {
+    uint8_t itemId = inventory.getItems()[i];
+    if (itemId != EMPTY_ITEM) {
+      inventory.removeItem(i);
+      droppedItems.push_back(itemId);
+    }
+  }
+  uint8_t weaponId = inventory.getWeapon();
+  if (weaponId != EMPTY_ITEM) {
+    inventory.setWeapon(EMPTY_ITEM);
+    droppedItems.push_back(weaponId);
+  }
+  uint8_t armorId = inventory.getArmor();
+  if (armorId != EMPTY_ITEM) {
+    inventory.setArmor(EMPTY_ITEM);
+    droppedItems.push_back(armorId);
+  }
+  uint8_t helmetId = inventory.getHelmet();
+  if (helmetId != EMPTY_ITEM) {
+    inventory.setHelmet(EMPTY_ITEM);
+    droppedItems.push_back(helmetId);
+  }
+  uint8_t shieldId = inventory.getShield();
+  if (shieldId != EMPTY_ITEM) {
+    inventory.setShield(EMPTY_ITEM);
+    droppedItems.push_back(shieldId);
+  }
+  return droppedItems;
+}

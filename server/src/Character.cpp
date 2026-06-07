@@ -181,3 +181,5 @@ uint32_t Character::dropGoldOnDeath() {
   player.removeGold(perdido);
   return perdido;
 }
+
+std::vector<uint8_t> Character::die() { return player.die(); }
