@@ -48,8 +48,12 @@ void GameChatView::render(SDL2pp::Renderer &renderer,
 void GameChatView::renderBackgrounds(SDL2pp::Renderer &renderer,
                                      const SDL2pp::Rect &messagesRect,
                                      const SDL2pp::Rect &inputRect) const {
-  renderer.SetDrawColor(0, 0, 0, 255);
+  // renderer.SetDrawColor(0, 0, 0, 255);
+  // renderer.FillRect(messagesRect);
+  // renderer.FillRect(inputRect);
+  renderer.SetDrawColor(12, 16, 26, 210);
   renderer.FillRect(messagesRect);
+  renderer.SetDrawColor(18, 24, 38, 235);
   renderer.FillRect(inputRect);
 }
 

@@ -1,6 +1,14 @@
 #include "GameModel.h"
 #include "ChatMessageEventDTO.h"
+#include "DropItemCommandDTO.h"
+#include "EquipCommandDTO.h"
 #include "GameWindow.h"
+#include "UnequipCommandDTO.h"
+#include "GlobalChatMessageCommandDTO.h"
+#include "GlobalChatMessageEventDTO.h"
+#include "GroundItemAppearedEventDTO.h"
+#include "GroundItemRemovedEventDTO.h"
+#include "GroundItemsListEventDTO.h"
 #include "InventoryUpdateEventDTO.h"
 #include "NPC.h"
 #include "NPCAppearedEventDTO.h"
@@ -12,6 +20,7 @@
 #include "PlayerMovedEventDTO.h"
 #include "PlayerRemovedEventDTO.h"
 #include "PlayerStoppedEventDTO.h"
+#include "PrivateMessageEventDTO.h"
 #include "Race.h"
 #include "RegisterPlayerEventDTO.h"
 #include "TextureInfoEventDTO.h"
@@ -34,6 +43,44 @@ void GameModel::updateStateFromServer() {
   while (receptionQueue.try_pop(event)) {
     std::visit([this](const auto &e) { handle(e); }, event);
   }
+
+  gameView->updateGroundItems(groundItemManager.getAll());
+}
+
+void GameModel::handleInventoryClick(int screenX, int screenY,
+                                     uint8_t button) {
+  ClickTarget target = gameView->hitTestInventory(screenX, screenY);
+  if (target.type == ClickTargetType::None)
+    return;
+
+  if (target.type == ClickTargetType::Equipment) {
+    sendingQueue.push(UnequipCommandDTO{myPlayerID,
+                                        static_cast<uint8_t>(target.index)});
+  } else if (target.type == ClickTargetType::Inventory) {
+    if (button == SDL_BUTTON_RIGHT) {
+      sendingQueue.push(DropItemCommandDTO{myPlayerID,
+                                           static_cast<uint8_t>(target.index)});
+    } else {
+      sendingQueue.push(EquipCommandDTO{myPlayerID,
+                                        static_cast<uint8_t>(target.index)});
+    }
+  }
+}
+
+void GameModel::takeItem() {
+  sendingQueue.push(TakeItemCommandDTO{myPlayerID});
+}
+
+void GameModel::dropItem(uint8_t slot) {
+  sendingQueue.push(DropItemCommandDTO{myPlayerID, slot});
+}
+
+void GameModel::equipItem(uint8_t slot) {
+  sendingQueue.push(EquipCommandDTO{myPlayerID, slot});
+}
+
+void GameModel::unequipItem(uint8_t equipSlot) {
+  sendingQueue.push(UnequipCommandDTO{myPlayerID, equipSlot});
 }
 
 void GameModel::moveMyPlayer(Direction direction) {
@@ -42,6 +89,12 @@ void GameModel::moveMyPlayer(Direction direction) {
 
 void GameModel::stopMyPlayer() {
   sendingQueue.push(PlayerStopCommandDTO{myPlayerID});
+}
+
+void GameModel::atack(int mouseX, int mouseY) {
+  auto [worldX, worldY] = gameView->screenToWorld(mouseX, mouseY);
+  sendingQueue.push(AtackCommandDTO{myPlayerID, static_cast<int16_t>(worldX),
+                                    static_cast<int16_t>(worldY)});
 }
 
 void GameModel::handle(const PlayerMovedEventDTO &moved) {
@@ -122,9 +175,24 @@ void GameModel::registerPlayers() {
   }
 }
 
-void GameModel::handle(const InventoryUpdateEventDTO &) {}
+void GameModel::handle(const InventoryUpdateEventDTO &inv) {
+  auto it = players.find(inv.playerId);
+  if (it == players.end())
+    return;
+  it->second->setInventory(inv.items);
+  it->second->setEquippedWeapon(inv.equippedWeapon);
+  it->second->setEquippedArmor(inv.equippedArmor);
+  it->second->setEquippedHelmet(inv.equippedHelmet);
+  it->second->setEquippedShield(inv.equippedShield);
+}
 void GameModel::handle(const PlayerListEventDTO &) {}
-void GameModel::handle(const ChatMessageEventDTO &) {}
+void GameModel::handle(const ChatMessageEventDTO &event) {
+  chatMessages.push_back(event.message);
+  while (chatMessages.size() > 100) {
+    chatMessages.pop_front();
+  }
+  updateChatView();
+}
 void GameModel::handle(const PrivateMessageEventDTO &) {}
 
 void GameModel::handle(const GlobalChatMessageEventDTO &event) {
@@ -188,6 +256,15 @@ void GameModel::submitChat() {
   chatActive = false;
   updateChatView();
 }
+void GameModel::handle(const GroundItemAppearedEventDTO &e) {
+  groundItemManager.add(e.groundItemId, e.itemId, e.x, e.y);
+}
+void GameModel::handle(const GroundItemRemovedEventDTO &e) {
+  groundItemManager.remove(e.groundItemId);
+}
+void GameModel::handle(const GroundItemsListEventDTO &e) {
+  groundItemManager.setAll(e.items);
+}
 
 void GameModel::handle(const NpcDefeatedEventDTO &event) {
   gameView->removeEntity(EntityType::Npc, event.npcId);
@@ -233,4 +310,12 @@ void GameModel::scrollChatUp() {
 void GameModel::scrollChatDown() {
   gameView->scrollChatDown();
   updateChatView();
+}
+void GameModel::handleLeftMouseClick(int mouseX, int mouseY) {
+  atack(mouseX, mouseY);
+}
+
+void GameModel::handleRightMouseClick(int mouseX, int mouseY) {
+  (void)mouseX;
+  (void)mouseY;
 }
