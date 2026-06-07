@@ -4,7 +4,7 @@
 #include <QVBoxLayout>
 
 MainMenuPage::MainMenuPage(QWidget *parent) : BackgroundPage(parent) {
-  logoPixmap.load("assets/logo.png");
+  logoPixmap.load("assets/menu/logo.png");
 
   auto *layout = new QVBoxLayout(this);
   layout->setAlignment(Qt::AlignCenter);
@@ -23,7 +23,7 @@ MainMenuPage::MainMenuPage(QWidget *parent) : BackgroundPage(parent) {
   continueBtn->setFixedSize(300, 70);
   continueBtn->setStyleSheet(
       "QPushButton {"
-      "  border-image: url(assets/boton_continue_game.png) stretch;"
+      "  border-image: url(assets/menu/boton_continue_game.png) stretch;"
       "  background: transparent;"
       "  border: none;"
       "}");
@@ -34,7 +34,7 @@ MainMenuPage::MainMenuPage(QWidget *parent) : BackgroundPage(parent) {
   newGameBtn->setFixedSize(300, 70);
   newGameBtn->setStyleSheet(
       "QPushButton {"
-      "  border-image: url(assets/boton_new_game.png) stretch;"
+      "  border-image: url(assets/menu/boton_new_game.png) stretch;"
       "  background: transparent;"
       "  border: none;"
       "}");
@@ -44,7 +44,7 @@ MainMenuPage::MainMenuPage(QWidget *parent) : BackgroundPage(parent) {
   quitBtn->setObjectName("quitBtn");
   quitBtn->setFixedSize(300, 70);
   quitBtn->setStyleSheet("QPushButton {"
-                         "  border-image: url(assets/boton_exit.png) stretch;"
+                          "  border-image: url(assets/menu/boton_exit.png) stretch;"
                          "  background: transparent;"
                          "  border: none;"
                          "}");
