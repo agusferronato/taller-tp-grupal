@@ -351,5 +351,5 @@ void GameModel::handle(const PlayerDieEventDTO &event) {
   if (it == players.end()) {
     return;
   }
-  // [TODO] volver fantasma en gameview
+  it->second->die();
 }
