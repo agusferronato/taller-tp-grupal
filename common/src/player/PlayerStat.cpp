@@ -73,3 +73,13 @@ void PlayerStats::setGold(uint32_t amount) { gold = amount; }
 void PlayerStats::takeDamage(uint32_t damage) {
   health = damage > health ? 0 : health - damage;
 }
+
+void PlayerStats::earnGold(uint32_t amount) {
+  uint32_t max = Formulas::calcularOroMax(level);
+  max *= 1.5; // 50% de exceso permitido
+  if (amount + gold > max) {
+    gold = max;
+  } else {
+    gold += amount;
+  }
+}

@@ -63,6 +63,8 @@ public:
   uint8_t getEquippedHelmet() const { return player.getEquippedHelmet(); }
   uint8_t getEquippedShield() const { return player.getEquippedShield(); }
   const Inventory &getInventory() const { return player.getInventory(); }
+  void die();
+  bool isDead() const;
 };
 
 #endif
