@@ -121,7 +121,7 @@ private:
   NPC *findNPCByCoordinates(int16_t x, int16_t y);
   int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
 
-  void killPlayer(uint32_t playerId);
+  void killPlayer(Character &dyingPlayer);
 };
 
 #endif

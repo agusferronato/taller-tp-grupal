@@ -8,6 +8,7 @@
 #include "Race.h"
 #include <string>
 #include <utility>
+#include <vector>
 
 class Player {
 private:
@@ -84,6 +85,8 @@ public:
   void setEquippedShield(uint8_t id) { inventory.setShield(id); }
 
   bool assertAtackDistance(int16_t targetX, int16_t targetY) const;
+  std::vector<uint8_t> die();
+  bool isDead() const { return death; }
 };
 
 #endif

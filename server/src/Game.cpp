@@ -612,7 +612,7 @@ void Game::playerAtackPlayer(Character &atacker, Character &target) {
         target.getMaxHp(), atacker.getLevel(), target.getLevel(),
         (std::rand() % 100) / 100.0);
     atacker.gainExperience(xpMuerte);
-    killPlayer(target.getId());
+    killPlayer(target);
   } else {
     senderQueueMonitor.sendToClient(
         playerToConnection[atacker.getId()],
@@ -689,13 +689,18 @@ NPC *Game::findNPCByCoordinates(int16_t x, int16_t y) {
   return nullptr;
 }
 
-void Game::killPlayer(uint32_t playerId) {
-  auto it = players.find(playerId);
-  if (it == players.end()) {
-    return;
+void Game::killPlayer(Character &dyingPlayer) {
+  dyingPlayer.dropGoldOnDeath();
+  // [TODO] volver fanstasma el target con el dyingPlayer->die()
+  auto items = dyingPlayer.die();
+  int16_t x = dyingPlayer.getX();
+  int16_t y = dyingPlayer.getY();
+  for (auto itemId : items) {
+    inventoryManager.addGroundItem(itemId, x, y);
   }
-  auto &player = it->second;
-  player->dropGoldOnDeath();
-  // [TODO] volver fanstasma el target
-  // [TODO] soltar items al suelo
+  // [TODO] broadcast muerte del player DTO
 }
+
+// [TODO] fanstama no puede hagarar items
+
+// [TODO] fantasma no puede ser atacado ni atacar
