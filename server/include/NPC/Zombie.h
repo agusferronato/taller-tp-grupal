@@ -18,6 +18,9 @@ public:
     int getAlto() const override { return 64; };
     int getRange() const override { return 128; };
 
+    std::string getName() override { return "Zombie"; }
+    int getAttackCounterMax() override { return 130; }
+    uint32_t getDamage() override { return 1; }
 };
 
 

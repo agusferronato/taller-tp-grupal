@@ -107,6 +107,7 @@ private:
   void appearNPCs();
 
   void makeNPCsfollowPlayers();
+  void tryAttack(NPC &npc, Character &target);
   void makeCitiesEntitiesFollowPlayers();
 
   bool checkIfItCollides(Colisionable* entity);

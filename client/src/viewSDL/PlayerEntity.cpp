@@ -11,9 +11,47 @@ void PlayerEntity::render(SDL2pp::Renderer &renderer, Camera &camera,
   renderHead(renderer, camera);
   renderEquipable(renderer, camera, it);
   renderName(renderer, camera);
+  renderAttackEffect(renderer, camera, it);
 
   wasRendered = true;
 }
+
+
+
+void PlayerEntity::renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera,
+                              unsigned int it) {
+  (void)it;
+
+  if (!player.isBeingAttacked()) {
+    attackNextFrame = -1;
+    return;
+  }
+
+  if (attackNextFrame == -1) {
+    attackNextFrame = 0;
+  }
+
+  auto result = textureManager.getAttackFrame(350, attackNextFrame);
+  Sprite &src = result.sprite;
+
+  attackNextFrame++;
+
+  const int totalTicks = 24;
+  if (attackNextFrame >= totalTicks) {
+    player.stopAttackEffect();
+    attackNextFrame = -1;
+    return;
+  }
+
+  SDL2pp::Rect dst = camera.toScreen(player.get_x() - 16, player.get_y() - 32, 64, 64);
+
+  renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
+}
+
+
+
+
+
 
 void PlayerEntity::renderBody(SDL2pp::Renderer &renderer, Camera &camera,
                               unsigned int it) {

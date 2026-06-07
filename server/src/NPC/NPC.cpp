@@ -42,3 +42,26 @@ bool NPC::updatePosition(const Character& character) {
 
     return true;
 }
+
+
+
+
+bool NPC::collidesWith(Character& character) {
+    return colisionaCon(
+        character.getX(),
+        character.getY(),
+        character.getAncho(),
+        character.getAlto()
+    );
+}
+
+bool NPC::reachesAttackCounter()
+{
+    if (attackCounter < getAttackCounterMax()) {
+        attackCounter++;
+        return false;
+    }
+
+    attackCounter = 0;
+    return true;
+}

@@ -100,6 +100,7 @@ private:
   void handle(const GroundItemRemovedEventDTO &event);
   void handle(const GroundItemsListEventDTO &event);
   void handle(const PrivateMessageEventDTO &event);
+  void handle(const AttackReceivedEventDTO &event);
   void handle(const GlobalChatMessageEventDTO &event);
 };
 

@@ -11,6 +11,10 @@ public:
     int getAncho() const override { return 48; };
     int getAlto() const override { return 96; };
     int getRange() const override { return 128; };
+
+    std::string getName() override { return "Orc"; }
+    int getAttackCounterMax() override { return 200; }
+    uint32_t getDamage() override { return 2; }
 };
 
 #endif

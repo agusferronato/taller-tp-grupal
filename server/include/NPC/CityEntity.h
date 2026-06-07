@@ -13,7 +13,7 @@ class CityEntity : public Colisionable {
 protected:
     uint32_t id;
     Position gridPosition;
-    int range{128};
+    int range{80};
     int x, y;
     Direction direction{Direction::Down};
     bool isMoving{false};
