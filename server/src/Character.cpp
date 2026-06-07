@@ -109,11 +109,10 @@ bool Character::colisionaCon(int targetX, int targetY, int ancho,
   return !(targetX + ancho <= player.getX() ||
            targetX >= player.getX() + ANCHO ||
            targetY + alto <= player.getY() || targetY >= player.getY() + ALTO);
-} 
+}
 
-bool Character::isInCity(std::list<City> &cities, int gridSize, int maxSize)
-{
-  for (auto& city : cities) {
+bool Character::isInCity(std::list<City> &cities, int gridSize, int maxSize) {
+  for (auto &city : cities) {
     if (city.contains(player.getX(), player.getY(), gridSize, maxSize)) {
       return true;
     }
@@ -173,10 +172,7 @@ bool Character::tryParry() const {
 }
 
 bool Character::assertAtackDistance(int16_t targetX, int16_t targetY) const {
-  (void)targetX;
-  (void)targetY;
-  // [TODO] validar distancia del ataque con arma cuerpo a cuerpo o a distancia
-  return true;
+  return player.assertAtackDistance(targetX, targetY);
 }
 
 uint32_t Character::dropGoldOnDeath() {

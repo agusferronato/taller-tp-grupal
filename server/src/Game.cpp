@@ -612,8 +612,7 @@ void Game::playerAtackPlayer(Character &atacker, Character &target) {
         target.getMaxHp(), atacker.getLevel(), target.getLevel(),
         (std::rand() % 100) / 100.0);
     atacker.gainExperience(xpMuerte);
-    // [TODO] volver fanstasma el target
-    // [TODO] soltar items
+    killPlayer(target.getId());
   } else {
     senderQueueMonitor.sendToClient(
         playerToConnection[atacker.getId()],
@@ -688,4 +687,15 @@ NPC *Game::findNPCByCoordinates(int16_t x, int16_t y) {
     }
   }
   return nullptr;
+}
+
+void Game::killPlayer(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end()) {
+    return;
+  }
+  auto &player = it->second;
+  player->dropGoldOnDeath();
+  // [TODO] volver fanstasma el target
+  // [TODO] soltar items al suelo
 }
