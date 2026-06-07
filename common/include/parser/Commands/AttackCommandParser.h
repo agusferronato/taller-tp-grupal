@@ -1,10 +1,10 @@
-#ifndef ATACK_COMMAND_PARSER_H
-#define ATACK_COMMAND_PARSER_H
+#ifndef ATTACK_COMMAND_PARSER_H
+#define ATTACK_COMMAND_PARSER_H
 
 #include "ClientCommandParser.h"
 #include <vector>
 
-class AtackCommandParser : public ClientCommandParser {
+class AttackCommandParser : public ClientCommandParser {
 public:
   void serialize(std::vector<uint8_t> &bytes,
                  const ClientCommandDTO &dto) override;
