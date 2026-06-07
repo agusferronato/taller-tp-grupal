@@ -54,7 +54,7 @@ bool Player::expentGold(uint32_t amount) {
   return true;
 }
 void Player::earnGold(uint32_t amount) {
-  stats.setGold(stats.getGold() + amount);
+  stats.earnGold(stats.getGold() + amount);
 }
 void Player::removeGold(uint32_t amount) {
   if (amount >= stats.getGold()) {
