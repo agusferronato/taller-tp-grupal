@@ -12,6 +12,8 @@
 #include "InventoryUpdateEventDTO.h"
 #include "NPC.h"
 #include "NPCAppearedEventDTO.h"
+#include "NPCMovedEventDTO.h"
+#include "NPCStoppedEventDTO.h"
 #include "NPCType.h"
 #include "NpcDefeatedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
@@ -263,6 +265,20 @@ void GameModel::handle(const GroundItemsListEventDTO &e) {
   groundItemManager.setAll(e.items);
 }
 
+void GameModel::handle(const NPCMovedEventDTO &event) {
+  auto it = npcs.find(event.npcId);
+  if (it != npcs.end()) {
+    it->second->updateCoordinates(event.x, event.y, event.direction);
+  }
+}
+
+void GameModel::handle(const NPCStoppedEventDTO &event) {
+  auto it = npcs.find(event.npcId);
+  if (it != npcs.end()) {
+    it->second->stopMoving();
+  }
+}
+
 void GameModel::handle(const NpcDefeatedEventDTO &event) {
   gameView->removeEntity(EntityType::Npc, event.npcId);
   npcs.erase(event.npcId);
@@ -273,6 +289,27 @@ void GameModel::handle(const NPCAppearedEventDTO &event) {
   NPCType npcType = static_cast<NPCType>(event.npcType);
   gameView->addNpc(event.npcId, *npc, npcType);
   npcs[event.npcId] = std::move(npc);
+}
+
+void GameModel::handle(const CityEntityAppearedEventDTO &event) {
+    auto entity = std::make_unique<CityEntityModel>(event.x, event.y, event.direction);
+    CityEntityType type = static_cast<CityEntityType>(event.type);
+    gameView->addCityEntity(event.entityId, *entity, type);
+    cityEntities[event.entityId] = std::move(entity);
+}
+
+void GameModel::handle(const CityEntityMovedEventDTO &event) {
+    auto it = cityEntities.find(event.entityId);
+    if (it != cityEntities.end()) {
+        it->second->updateCoordinates(event.x, event.y, event.direction);
+    }
+}
+
+void GameModel::handle(const CityEntityStoppedEventDTO &event) {
+    auto it = cityEntities.find(event.entityId);
+    if (it != cityEntities.end()) {
+        it->second->stopMoving();
+    }
 }
 
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
@@ -300,10 +337,13 @@ PlayerStatsInfo GameModel::playerStatsFrom(const PlayerAppearedEventDTO &info) {
 }
 
 void GameModel::handleLeftMouseClick(int mouseX, int mouseY) {
+  handleInventoryClick(mouseX, mouseY, SDL_BUTTON_LEFT);
+
   atack(mouseX, mouseY);
 }
 
 void GameModel::handleRightMouseClick(int mouseX, int mouseY) {
+  handleInventoryClick(mouseX, mouseY, SDL_BUTTON_RIGHT);
   (void)mouseX;
   (void)mouseY;
 }

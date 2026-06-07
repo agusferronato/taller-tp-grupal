@@ -10,7 +10,7 @@ private:
 
 public:
   EventOpcode getCode() const { return opCode; }
-  uint8_t npcId;
+  uint32_t npcId;
 };
 
 #endif // NPC_DEFEATED_EVENT_DTO_H

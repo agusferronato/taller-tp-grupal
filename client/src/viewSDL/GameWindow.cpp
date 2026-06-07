@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "CityEntityModel.h"
+#include "CityEntityRenderable.h"
 #include "NPCEntity.h"
 #include "PlayerEntity.h"
 
@@ -132,6 +134,11 @@ void GameWindow::show(unsigned int it) {
   renderer->SetDrawColor(12, 16, 24, 255);
   renderer->FillRect(layout.gameRect);
 
+  if (myPlayerEntity) {
+    camera.follow(myPlayerEntity->get_x(), myPlayerEntity->get_y(),
+                  ClientPlayer::Width, ClientPlayer::Height);
+  }
+
   renderWorld(it);
   renderUIBackgrounds(layout);
   renderHUD(layout);
@@ -140,12 +147,45 @@ void GameWindow::show(unsigned int it) {
   renderer->Present();
 }
 
-void GameWindow::renderWorld(unsigned int it) {
-  if (myPlayerEntity) {
-    camera.follow(myPlayerEntity->get_x(), myPlayerEntity->get_y(),
-                  ClientPlayer::Width, ClientPlayer::Height);
+
+void GameWindow::addPlayer(uint32_t ID, const ClientPlayer &player) {
+  if (ID == myPlayerID) {
+    setMyPlayer(player, ID);
+    return;
   }
 
+  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
+  addEntity(EntityType::Player, ID, std::move(entity));
+}
+
+void GameWindow::removePlayer(uint32_t ID) {
+  removeEntity(EntityType::Player, ID);
+}
+
+
+void GameWindow::addCityEntity(uint32_t ID, CityEntityModel &entity,
+                                CityEntityType entityType) {
+    CityEntityInfo info = cityEntityParser.getInfo(entityType);
+    auto renderable = std::make_unique<CityEntityRenderable>(
+        entity, *textureManager, *font, info.textureId, info.layoutType,
+        info.name);
+    addEntity(EntityType::CityEntity, ID, std::move(renderable));
+}
+
+void GameWindow::removeCityEntity(uint32_t ID) {
+    removeEntity(EntityType::CityEntity, ID);
+}
+
+
+void GameWindow::setChatState(const std::deque<std::string> &messages,
+                              const std::string &input, bool active) {
+  chatMessages = messages;
+  currentChatInput = input;
+  chatActive = active;
+}
+
+
+void GameWindow::renderWorld(unsigned int it) {
   renderCommonGround();
   renderGroundItems();
 
@@ -161,7 +201,7 @@ void GameWindow::renderWorld(unsigned int it) {
 
       for (auto *entity : sortedEntities) {
         if (!entity->rendered() &&
-            entity->get_y() + 1.25 * entity->get_h() < yMax &&
+            entity->get_y() + entity->get_h() < yMax &&
             entity->hasPriority(i)) {
           entity->render(*renderer, camera, it);
         }
@@ -187,7 +227,7 @@ void GameWindow::renderWorld(unsigned int it) {
     }
   }
 
-  for (auto *entity : sortedEntities) {
+  for (auto & entity : sortedEntities) {
     if (!entity->rendered()) {
       entity->render(*renderer, camera, it);
     }
@@ -401,19 +441,6 @@ void GameWindow::setMapData(int maxSize_, int gridSize_,
   tilesToRender = textureMapper->getTilesToRender();
 }
 
-void GameWindow::addPlayer(uint32_t ID, const ClientPlayer &player) {
-  if (ID == myPlayerID) {
-    setMyPlayer(player, ID);
-    return;
-  }
-
-  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
-  addEntity(EntityType::Player, ID, std::move(entity));
-}
-
-void GameWindow::removePlayer(uint32_t ID) {
-  removeEntity(EntityType::Player, ID);
-}
 
 void GameWindow::addNpc(uint32_t ID, NPC &npc, NPCType npcType) {
   NPCInfo info = npcParser.getInfo(npcType);
@@ -433,12 +460,6 @@ void GameWindow::updateGroundItems(
   groundItems = items;
 }
 
-void GameWindow::setChatState(const std::deque<std::string> &messages,
-                              const std::string &input, bool active) {
-  chatMessages = messages;
-  currentChatInput = input;
-  chatActive = active;
-}
 
 void GameWindow::getSortedEntities(
     std::vector<RenderableEntity *> &sortedEntities) {

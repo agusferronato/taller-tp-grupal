@@ -65,9 +65,12 @@ private:
   std::list<City> cities;
   std::list<std::unique_ptr<NPC>> npcs;
 
+  std::string mapPath;
+
 public:
   Game(Queue<ClientMessage> &gameloopQueue,
-       SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository);
+       SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository,
+       const std::string &mapPath);
 
   virtual void run() override;
 
@@ -92,7 +95,8 @@ public:
 
   bool thereIsACollidableEntityAt(Position position);
   void appearNPC(std::unique_ptr<NPC> &&npc);
-  uint16_t nextNPCId{1};
+  uint32_t nextNPCId{1};
+  uint32_t nextCityEntityId{1};
 
 private:
   void execute(ClientMessage clientMessage);
@@ -102,6 +106,13 @@ private:
 
   void appearNPCs();
 
+  void makeNPCsfollowPlayers();
+  void makeCitiesEntitiesFollowPlayers();
+
+  bool checkIfItCollides(Colisionable* entity);
+
+  void createCityEntities();
+
   void playerAtackPlayer(Character &atacker, Character &target);
   void playerAtackNPC(Character &atacker, NPC &target);
   uint32_t calculateDamage(Character &atacker);
@@ -109,6 +120,10 @@ private:
   Character *findPlayerByCoordinates(int16_t x, int16_t y);
   NPC *findNPCByCoordinates(int16_t x, int16_t y);
   const std::string npcName(NPC &npc);
+
+  int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
+
+
 };
 
 #endif

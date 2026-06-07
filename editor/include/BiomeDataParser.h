@@ -9,6 +9,7 @@ class BiomeDataParser {
 
 public:
   std::string getBiomeAsString(Biome biome);
+  Biome getBiomeByStr(std::string &asString);
   SDL2pp::Color getBiomeColor(Biome biome);
 };
 
