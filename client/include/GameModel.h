@@ -7,6 +7,7 @@
 #include "Direction.h"
 #include "CityEntityModel.h"
 #include "CityEntityType.h"
+#include "GroundItemManager.h"
 #include "NPC.h"
 #include "Queue.h"
 #include <deque> //Double ended queue for chat messages
@@ -26,6 +27,8 @@ private:
   std::unordered_map<uint32_t, std::unique_ptr<NPC>> npcs;
   std::unordered_map<uint32_t, std::unique_ptr<CityEntityModel>> cityEntities;
 
+  GroundItemManager groundItemManager;
+
   std::deque<std::string> chatMessages;
   std::string currentChatInput;
   bool chatActive = false;
@@ -42,6 +45,19 @@ public:
   /*update State From Controller*/
   void moveMyPlayer(Direction direction);
   void stopMyPlayer();
+  void handleInventoryClick(int screenX, int screenY, uint8_t button);
+  void takeItem();
+  void dropItem(uint8_t slot);
+  void equipItem(uint8_t slot);
+  void unequipItem(uint8_t equipSlot);
+  const GroundItemManager &getGroundItemManager() const {
+    return groundItemManager;
+  }
+  void handleLeftMouseClick(int mouseX, int mouseY);
+  void handleRightMouseClick(int mouseX, int mouseY);
+
+private:
+  void atack(int mouseX, int mouseY);
 
 public:
   // Chat
@@ -80,6 +96,9 @@ private:
   void handle(const NPCStoppedEventDTO &event);
   void handle(const NpcDefeatedEventDTO &event);
   void handle(const RegisterPlayerEventDTO &event);
+  void handle(const GroundItemAppearedEventDTO &event);
+  void handle(const GroundItemRemovedEventDTO &event);
+  void handle(const GroundItemsListEventDTO &event);
   void handle(const PrivateMessageEventDTO &event);
   void handle(const GlobalChatMessageEventDTO &event);
 };

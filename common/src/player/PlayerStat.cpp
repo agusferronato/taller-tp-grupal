@@ -28,7 +28,16 @@ void PlayerStats::updateStats(uint32_t hp, uint32_t maxHp, uint32_t mana,
   this->experience = experience;
 }
 
-void PlayerStats::initStats(Race race, PlayerClass playerClass) {
+void PlayerStats::addMana(uint32_t amount) {
+  uint32_t newMana = mana + amount;
+  if (newMana > maxMana)
+    newMana = maxMana;
+  mana = newMana;
+}
+
+void PlayerStats::initStats(Race race_, PlayerClass playerClass_) {
+  race = race_;
+  playerClass = playerClass_;
   auto [strengthRace, agilityRace, constitutionRace, intelligenceRace] =
       Formulas::getRaceStats(race);
   auto [strengthClass, agilityClass, constitutionClass, intelligenceClass] =
@@ -41,4 +50,26 @@ void PlayerStats::initStats(Race race, PlayerClass playerClass) {
 
   maxHealth = Formulas::calcularVidaMax(constitution, race, playerClass, level);
   maxMana = Formulas::calcularManaMax(intelligence, race, playerClass, level);
+}
+
+bool PlayerStats::addExperience(uint32_t xp) {
+  experience += xp;
+  uint32_t limite = Formulas::calcularLimiteXP(level);
+  if (experience >= limite) {
+    experience -= limite;
+    level++;
+    maxHealth =
+        Formulas::calcularVidaMax(constitution, race, playerClass, level);
+    maxMana = Formulas::calcularManaMax(intelligence, race, playerClass, level);
+    health = maxHealth;
+    mana = maxMana;
+    return true;
+  }
+  return false;
+}
+
+void PlayerStats::setGold(uint32_t amount) { gold = amount; }
+
+void PlayerStats::takeDamage(uint32_t damage) {
+  health = damage > health ? 0 : health - damage;
 }

@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "ClientMessage.h"
+#include <optional>
 #include <set>
 #include <tuple>
 
@@ -18,10 +19,11 @@
 #include "Character.h"
 #include "City.h"
 #include "Colisionable.h"
+#include "Direction.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
-#include "Direction.h"
 #include "Inventory.h"
+#include "InventoryManager.h"
 #include "ItemDef.h"
 #include "MapData.h"
 #include "NPC.h"
@@ -50,6 +52,8 @@ private:
   std::vector<Colisionable *> colisionables;
   std::unordered_map<uint32_t, uint32_t> connectionToPlayer;
   std::unordered_map<uint32_t, uint32_t> playerToConnection;
+
+  InventoryManager inventoryManager{players, messagesToSend};
 
   int maxSize;
   int gridSize;
@@ -85,7 +89,9 @@ public:
   void equipItem(uint32_t playerId, uint8_t inventorySlot);
   void unequipSlot(uint32_t playerId, uint8_t equipSlot);
   void dropItem(uint32_t playerId, uint8_t inventorySlot);
+  void takeItem(uint32_t playerId);
   void sendGlobalChatMessage(uint32_t playerId, const std::string &message);
+  void atack(uint32_t playerId, int16_t x, int16_t y);
 
   bool thereIsACollidableEntityAt(Position position);
   void appearNPC(std::unique_ptr<NPC> &&npc);
@@ -106,6 +112,17 @@ private:
   bool checkIfItCollides(Colisionable* entity);
 
   void createCityEntities();
+
+  void playerAtackPlayer(Character &atacker, Character &target);
+  void playerAtackNPC(Character &atacker, NPC &target);
+  uint32_t calculateDamage(Character &atacker);
+  bool validAtack(Character &atacker, Character &target);
+  Character *findPlayerByCoordinates(int16_t x, int16_t y);
+  NPC *findNPCByCoordinates(int16_t x, int16_t y);
+  const std::string npcName(NPC &npc);
+
+  int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
+
 
 };
 
