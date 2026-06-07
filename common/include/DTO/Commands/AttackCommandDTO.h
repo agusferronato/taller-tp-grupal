@@ -1,13 +1,13 @@
-#ifndef ATACK_COMMAND_DTO_H
-#define ATACK_COMMAND_DTO_H
+#ifndef ATTACK_COMMAND_DTO_H
+#define ATTACK_COMMAND_DTO_H
 
 #include "protocol/ProtocolCodes.h"
 #include <cstdint>
 
-struct AtackCommandDTO {
+struct AttackCommandDTO {
 private:
   static constexpr ClientCommandOpCode opCode =
-      ClientCommandOpCode::AtackCommand;
+      ClientCommandOpCode::AttackCommand;
 
 public:
   ClientCommandOpCode getCode() const { return opCode; }

@@ -23,7 +23,7 @@ enum class ClientCommandOpCode : uint8_t {
   DropItemCommand,
   TakeItemCommand,
   GlobalChatMessageCommand,
-  AtackCommand,
+  AttackCommand,
 };
 
 // Opcodes para eventos enviados por el servidor a los clientes
@@ -52,6 +52,7 @@ enum class EventOpcode : uint8_t {
   CityEntityMovedEvent,
   CityEntityStoppedEvent,
   AttackReceivedEvent,
+  PlayerDieEvent
 };
 
 #endif // PROTOCOL_CODES_H

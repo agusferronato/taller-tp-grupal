@@ -1,12 +1,12 @@
 #ifndef GAMEMODEL_H
 #define GAMEMODEL_H
 
+#include "CityEntityModel.h"
+#include "CityEntityType.h"
 #include "ClientPlayer.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "Direction.h"
-#include "CityEntityModel.h"
-#include "CityEntityType.h"
 #include "GroundItemManager.h"
 #include "NPC.h"
 #include "Queue.h"
@@ -57,7 +57,7 @@ public:
   void handleRightMouseClick(int mouseX, int mouseY);
 
 private:
-  void atack(int mouseX, int mouseY);
+  void attack(int mouseX, int mouseY);
 
 public:
   // Chat
@@ -102,6 +102,7 @@ private:
   void handle(const PrivateMessageEventDTO &event);
   void handle(const AttackReceivedEventDTO &event);
   void handle(const GlobalChatMessageEventDTO &event);
+  void handle(const PlayerDieEventDTO &event);
 };
 
 #endif
