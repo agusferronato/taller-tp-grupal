@@ -15,7 +15,7 @@ void NpcDefeatedEventParser::serialize(std::vector<uint8_t> &bytes,
 }
 
 ServerEventDTO NpcDefeatedEventParser::deserialize(Protocol &protocol) {
-  uint8_t npcId = protocol.getUint8();
+  uint32_t npcId = protocol.getUint32();
 
   return NpcDefeatedEventDTO{npcId};
 }

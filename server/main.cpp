@@ -3,18 +3,18 @@
 
 #include "Server.h"
 
-#define EXPECTED_ARGS 1
+#define EXPECTED_ARGS 2
 
 int main(int argc, char *argv[]) {
 
   if (argc != EXPECTED_ARGS + 1) {
     std::cerr << "Bad program call. The following call is expected:"
-              << "./server <port>" << std::endl;
+              << "./server <port> <mapPath>" << std::endl;
     return 1;
   }
 
   try {
-    Server server(argv[1]);
+    Server server(argv[1], argv[2]);
     server.run();
   }
 
