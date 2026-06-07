@@ -183,7 +183,13 @@ void GameModel::handle(const InventoryUpdateEventDTO &inv) {
   it->second->setEquippedShield(inv.equippedShield);
 }
 void GameModel::handle(const PlayerListEventDTO &) {}
-void GameModel::handle(const ChatMessageEventDTO &) {}
+void GameModel::handle(const ChatMessageEventDTO &event) {
+  chatMessages.push_back(event.message);
+  while (chatMessages.size() > 100) {
+    chatMessages.pop_front();
+  }
+  updateChatView();
+}
 void GameModel::handle(const PrivateMessageEventDTO &) {}
 
 void GameModel::handle(const GlobalChatMessageEventDTO &event) {
