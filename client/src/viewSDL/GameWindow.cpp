@@ -41,7 +41,6 @@ GameWindow::GameWindow(uint32_t myPlayerID)
       std::make_unique<SDL2pp::Renderer>(*window, -1, SDL_RENDERER_ACCELERATED);
   renderer->SetLogicalSize(960, 540);
   renderer->SetDrawBlendMode(SDL_BLENDMODE_BLEND);
-
   initResources();
 }
 
