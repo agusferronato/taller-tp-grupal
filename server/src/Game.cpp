@@ -336,7 +336,12 @@ void Game::dropItem(uint32_t playerId, uint8_t inventorySlot) {
   inventoryManager.dropItem(playerId, inventorySlot);
 }
 
-void Game::takeItem(uint32_t playerId) { inventoryManager.takeItem(playerId); }
+void Game::takeItem(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end() || it->second->isDead())
+    return;
+  inventoryManager.takeItem(playerId);
+}
 
 bool Game::thereIsACollidableEntityAt(Position position) {
   int center = maxSize / 2;
@@ -668,6 +673,9 @@ bool Game::validAtack(Character &atacker, Character &target) {
       return false;
     }
   }
+  if (atacker.isDead() || target.isDead()) {
+    return false;
+  }
   return true;
 }
 
@@ -691,16 +699,11 @@ NPC *Game::findNPCByCoordinates(int16_t x, int16_t y) {
 
 void Game::killPlayer(Character &dyingPlayer) {
   dyingPlayer.dropGoldOnDeath();
-  // [TODO] volver fanstasma el target con el dyingPlayer->die()
   auto items = dyingPlayer.die();
   int16_t x = dyingPlayer.getX();
   int16_t y = dyingPlayer.getY();
   for (auto itemId : items) {
     inventoryManager.addGroundItem(itemId, x, y);
   }
-  // [TODO] broadcast muerte del player DTO
+  messagesToSend.push_back(PlayerDieEventDTO{dyingPlayer.getId()});
 }
-
-// [TODO] fanstama no puede hagarar items
-
-// [TODO] fantasma no puede ser atacado ni atacar

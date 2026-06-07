@@ -19,3 +19,7 @@ void ClientPlayer::updateStats(uint32_t hp, uint32_t maxHp, uint32_t mana,
                                uint32_t experience) {
   player.updateStats(hp, maxHp, mana, maxMana, gold, level, experience);
 }
+
+void ClientPlayer::die() { player.die(); }
+
+bool ClientPlayer::isDead() const { return player.isDead(); }

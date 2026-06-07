@@ -95,6 +95,7 @@ public:
   int getAlto() const override;
 
   bool isNewbie() const { return player.getLevel() < 13; }
+  bool isDead() const { return player.isDead(); }
   uint32_t getDamage() const;
   bool tryParry() const;
   bool assertAtackDistance(int16_t targetX, int16_t targetY) const;
