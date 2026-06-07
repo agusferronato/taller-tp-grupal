@@ -41,6 +41,7 @@ uint32_t Player::takeDamage(uint32_t damage) {
 
 uint32_t Player::heal(uint32_t) { return 0; }
 bool Player::useMana(uint32_t) { return false; }
+void Player::addMana(uint32_t amount) { stats.addMana(amount); }
 bool Player::gainExperience(uint32_t xp) { return stats.addExperience(xp); }
 bool Player::expentGold(uint32_t amount) {
   if (stats.getGold() < amount)

@@ -34,6 +34,7 @@ public:
   uint32_t takeDamage(uint32_t damage);
   uint32_t heal(uint32_t amount);
   bool useMana(uint32_t amount);
+  void addMana(uint32_t amount);
   bool gainExperience(uint32_t amount);
   bool expentGold(uint32_t amount);
   void earnGold(uint32_t);
@@ -59,6 +60,9 @@ public:
   uint32_t getConstitution() const { return stats.getConstitution(); }
   uint32_t getIntelligence() const { return stats.getIntelligence(); }
 
+  Inventory &getInventory() { return inventory; }
+  const Inventory &getInventory() const { return inventory; }
+  bool addItem(uint8_t itemId) { return inventory.addItem(itemId); }
   bool equipItem(uint8_t slotIndex) { return inventory.equipItem(slotIndex); }
   bool unequipSlot(EquipSlot slot) { return inventory.unequipSlot(slot); }
   bool removeItem(uint8_t slotIndex) { return inventory.removeItem(slotIndex); }

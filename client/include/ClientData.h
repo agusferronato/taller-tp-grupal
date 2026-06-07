@@ -6,6 +6,7 @@
 
 struct ClientDataRegister {
   std::string username;
+  std::string character_name;
   std::string race;
   std::string playerClass;
 };
