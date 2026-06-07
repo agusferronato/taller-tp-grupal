@@ -124,6 +124,9 @@ void TextureManager::loadLayoutsFromToml(const std::string &path) {
   registerBody("SpecialSpider",  TextureLayoutType::SpecialSpider);
   registerBody("SpecialSkeleton",TextureLayoutType::SpecialSkeleton);
   registerBody("Orc",            TextureLayoutType::Orc);
+  registerBody("Priest",         TextureLayoutType::Priest);
+  registerBody("Trader",         TextureLayoutType::Trader);
+  registerBody("Banker",         TextureLayoutType::Banker);
 }
 
 Sprite TextureManager::getBodySprite(uint32_t bodyID, Direction dir,

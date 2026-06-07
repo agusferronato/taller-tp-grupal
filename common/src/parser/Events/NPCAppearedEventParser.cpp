@@ -18,7 +18,7 @@ void NPCAppearedEventParser::serialize(std::vector<uint8_t> &bytes,
 }
 
 ServerEventDTO NPCAppearedEventParser::deserialize(Protocol &protocol) {
-  uint16_t npcId = protocol.getUint16();
+  uint32_t npcId = protocol.getUint32();
   uint8_t npcType = protocol.getUint8();
   int16_t x = protocol.getInt16();
   int16_t y = protocol.getInt16();
