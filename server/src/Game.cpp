@@ -674,7 +674,7 @@ bool Game::validAtack(Character &atacker, Character &target) {
 
 Character *Game::findPlayerByCoordinates(int16_t x, int16_t y) {
   for (auto &[pid, player] : players) {
-    if (player->colisionaCon(x, y, player->getAncho(), player->getAlto())) {
+    if (player->colisionaCon(x, y, 16, 16)) {
       return player.get();
     }
   }
@@ -683,8 +683,7 @@ Character *Game::findPlayerByCoordinates(int16_t x, int16_t y) {
 
 NPC *Game::findNPCByCoordinates(int16_t x, int16_t y) {
   for (auto &npc : npcs) {
-    if (x >= npc->getX() && x < npc->getX() + npc->getAncho() &&
-        y >= npc->getY() && y < npc->getY() + npc->getAlto()) {
+    if (npc->colisionaCon(x, y, 16, 16)) {
       return npc.get();
     }
   }
