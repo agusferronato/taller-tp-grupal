@@ -20,6 +20,7 @@ Character::Character(uint32_t id, const PlayerData &data)
   player.setEquippedArmor(data.equippedArmor);
   player.setEquippedHelmet(data.equippedHelmet);
   player.setEquippedShield(data.equippedShield);
+  player.joinClan(data.clanId);
 }
 
 PlayerData Character::toPlayerData() const {
@@ -47,6 +48,7 @@ PlayerData Character::toPlayerData() const {
   data.equippedArmor = player.getEquippedArmor();
   data.equippedHelmet = player.getEquippedHelmet();
   data.equippedShield = player.getEquippedShield();
+  data.clanId = player.getClanId();
   return data;
 }
 
