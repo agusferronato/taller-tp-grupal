@@ -10,6 +10,9 @@
 #include <utility>
 
 class Player {
+public:
+  static constexpr uint32_t NO_CLAN = 0;
+
 private:
   std::string name;
   Race race;
@@ -19,6 +22,7 @@ private:
   bool moving;
   PlayerStats stats;
   Inventory inventory;
+  uint32_t clanId{NO_CLAN};
 
 public:
   Player(std::string name, Race race, Direction direction,
@@ -81,6 +85,12 @@ public:
   void setEquippedArmor(uint8_t id) { inventory.setArmor(id); }
   void setEquippedHelmet(uint8_t id) { inventory.setHelmet(id); }
   void setEquippedShield(uint8_t id) { inventory.setShield(id); }
+
+  uint32_t getClanId() const { return clanId; }
+  bool hasClan() const { return clanId != NO_CLAN; }
+  void joinClan(uint32_t clanId) { this->clanId = clanId; }
+  void leaveClan() { this->clanId = NO_CLAN; }
+
 };
 
 #endif
