@@ -19,9 +19,9 @@
 #include "Character.h"
 #include "City.h"
 #include "Colisionable.h"
-#include "Direction.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
+#include "Direction.h"
 #include "Inventory.h"
 #include "InventoryManager.h"
 #include "ItemDef.h"
@@ -109,7 +109,7 @@ private:
   void makeNPCsfollowPlayers();
   void makeCitiesEntitiesFollowPlayers();
 
-  bool checkIfItCollides(Colisionable* entity);
+  bool checkIfItCollides(Colisionable *entity);
 
   void createCityEntities();
 
@@ -119,11 +119,7 @@ private:
   bool validAtack(Character &atacker, Character &target);
   Character *findPlayerByCoordinates(int16_t x, int16_t y);
   NPC *findNPCByCoordinates(int16_t x, int16_t y);
-  const std::string npcName(NPC &npc);
-
   int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
-
-
 };
 
 #endif

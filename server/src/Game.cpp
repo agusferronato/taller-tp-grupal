@@ -641,7 +641,7 @@ void Game::playerAtackNPC(Character &atacker, NPC &target) {
     senderQueueMonitor.sendToClient(
         playerToConnection[atacker.getId()],
         ChatMessageEventDTO{
-            "Sistema", "Atacaste a un " + npcName(target) + " y le hiciste " +
+            "Sistema", "Atacaste a un " + target.getName() + " y le hiciste " +
                            std::to_string(damage) + " de daño!"});
   }
   messagesToSend.push_back(atacker.toPlayerInfoEvent());
@@ -689,25 +689,4 @@ NPC *Game::findNPCByCoordinates(int16_t x, int16_t y) {
     }
   }
   return nullptr;
-}
-
-const std::string Game::npcName(NPC &npc) {
-  switch (npc.getType()) {
-  case NPCType::ZombieT:
-    return "Zombie";
-  case NPCType::SpiderT:
-    return "Spider";
-  case NPCType::ElfT:
-    return "Elf";
-  case NPCType::SkeletonT:
-    return "Skeleton";
-  case NPCType::OrcT:
-    return "Orc";
-  case NPCType::GiantT:
-    return "Giant";
-  case NPCType::GolemT:
-    return "Golem";
-  default:
-    return "NPC";
-  }
 }
