@@ -5,7 +5,7 @@ Player::Player(std::string name, Direction direction, int x, int y,
                const PlayerStatsInfo &statsInfo)
     : name(std::move(name)), race(statsInfo.race), direction(direction),
       playerClass(statsInfo.playerClass), x(x), y(y), moving(false),
-      death(false), stats(statsInfo) {}
+      death(statsInfo.health == 0), stats(statsInfo) {}
 
 Player::Player(std::string name, Race race, Direction direction,
                PlayerClass playerClass, int x, int y)
@@ -82,6 +82,7 @@ bool Player::assertAttackDistance(int16_t targetX, int16_t targetY) const {
 
 std::vector<uint8_t> Player::die() {
   death = true;
+  stats.die();
   std::vector<uint8_t> droppedItems;
   for (int i = 0; i < MAX_INVENTORY_SLOTS; i++) {
     uint8_t itemId = inventory.getItems()[i];
