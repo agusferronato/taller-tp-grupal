@@ -13,8 +13,9 @@ void GameChatView::render(SDL2pp::Renderer& renderer,
                           bool active) {
   renderer.SetDrawBlendMode(SDL_BLENDMODE_BLEND);
 
-  renderer.SetDrawColor(0, 0, 0, 255);
+  renderer.SetDrawColor(12, 16, 26, 210);
   renderer.FillRect(messagesRect);
+  renderer.SetDrawColor(18, 24, 38, 235);
   renderer.FillRect(inputRect);
 
   if (!font)

@@ -1,5 +1,6 @@
 #include "GameController.h"
 
+#include "ChatCommandParser.h"
 #include "PlayerStoppedEventDTO.h"
 #include "WindowClosed.h"
 
@@ -26,20 +27,49 @@ void GameController::handleEvent(const SDL_Event &event) {
   case SDL_KEYUP:
     handleKeyUp(event.key.keysym.sym);
     break;
-    
+
   case SDL_TEXTINPUT:
     if (gameModel->isChatActive()) {
       gameModel->appendChatText(event.text.text);
     }
     break;
 
+  case SDL_MOUSEBUTTONDOWN:
+    handleMouseDown(event.button);
+    break;
+  }
+}
+
+void GameController::handleMouseDown(const SDL_MouseButtonEvent &buttonEvent) {
+  switch (buttonEvent.button) {
+  case SDL_BUTTON_LEFT:
+    gameModel->handleLeftMouseClick(buttonEvent.x, buttonEvent.y);
+    break;
+  case SDL_BUTTON_RIGHT:
+    gameModel->handleRightMouseClick(buttonEvent.x, buttonEvent.y);
+    break;
   }
 }
 
 void GameController::handleKeyDown(const SDL_Keycode &key) {
   if (gameModel->isChatActive()) {
     if (key == SDLK_RETURN) {
-      gameModel->submitChat();
+      ChatCommand cmd =
+          ChatCommandParser::parse(gameModel->getCurrentChatInput());
+      if (cmd.type != ChatCommandType::None) {
+        if (cmd.type == ChatCommandType::Tomar) {
+          gameModel->takeItem();
+        } else if (cmd.type == ChatCommandType::Tirar) {
+          gameModel->dropItem(static_cast<uint8_t>(cmd.arg));
+        } else if (cmd.type == ChatCommandType::Equipar) {
+          gameModel->equipItem(static_cast<uint8_t>(cmd.arg));
+        } else if (cmd.type == ChatCommandType::Desequipar) {
+          gameModel->unequipItem(static_cast<uint8_t>(cmd.arg));
+        }
+        gameModel->closeChat();
+      } else {
+        gameModel->submitChat();
+      }
       return;
     }
 

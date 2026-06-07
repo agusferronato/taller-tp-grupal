@@ -20,24 +20,6 @@ bool Inventory::removeItem(uint8_t slotIndex) {
   if (items[slotIndex] == EMPTY_ITEM)
     return false;
 
-  uint8_t itemId = items[slotIndex];
-  const ItemDef &def = ITEM_TABLE[itemId];
-
-  if (def.type == ItemType::PotionHp || def.type == ItemType::PotionMana) {
-    items[slotIndex] = EMPTY_ITEM;
-    return true;
-  }
-
-  EquipSlot eslot = slotForType(def.type);
-  if (isSlotOccupied(eslot)) {
-    uint8_t *eq = (eslot == EquipSlot::Weapon)   ? &equippedWeapon
-                  : (eslot == EquipSlot::Armor)  ? &equippedArmor
-                  : (eslot == EquipSlot::Helmet) ? &equippedHelmet
-                                                 : &equippedShield;
-    if (*eq == itemId)
-      *eq = EMPTY_ITEM;
-  }
-
   items[slotIndex] = EMPTY_ITEM;
   return true;
 }
@@ -53,44 +35,43 @@ uint8_t Inventory::findItem(uint8_t itemId) const {
 bool Inventory::equipItem(uint8_t slotIndex) {
   if (slotIndex >= MAX_INVENTORY_SLOTS)
     return false;
-  uint8_t itemId = items[slotIndex];
-  if (itemId == EMPTY_ITEM)
+  uint8_t newItemId = items[slotIndex];
+  if (newItemId == EMPTY_ITEM)
     return false;
 
-  const ItemDef &def = ITEM_TABLE[itemId];
+  const ItemDef &def = ITEM_TABLE[newItemId];
 
-  if (def.type == ItemType::PotionHp) {
-    items[slotIndex] = EMPTY_ITEM;
-    return true;
-  }
-  if (def.type == ItemType::PotionMana) {
-    items[slotIndex] = EMPTY_ITEM;
-    return true;
+  // Pociones se consumen en InventoryManager, no se equipan.
+  if (def.type == ItemType::PotionHp || def.type == ItemType::PotionMana) {
+    return false;
   }
 
   EquipSlot eslot = slotForType(def.type);
-  if (eslot == EquipSlot::Weapon || eslot == EquipSlot::Shield) {
-    if (def.type == ItemType::Staff && isSlotOccupied(EquipSlot::Weapon)) {
-      const ItemDef &wep = ITEM_TABLE[equippedWeapon];
-      if (wep.type == ItemType::Weapon)
-        return false;
-    }
-    if (def.type == ItemType::Weapon && isSlotOccupied(EquipSlot::Weapon)) {
-      const ItemDef &wep = ITEM_TABLE[equippedWeapon];
-      if (wep.type == ItemType::Staff)
-        return false;
-    }
+
+  uint8_t *equippedVar = nullptr;
+  switch (eslot) {
+  case EquipSlot::Weapon:
+    equippedVar = &equippedWeapon;
+    break;
+  case EquipSlot::Armor:
+    equippedVar = &equippedArmor;
+    break;
+  case EquipSlot::Helmet:
+    equippedVar = &equippedHelmet;
+    break;
+  case EquipSlot::Shield:
+    equippedVar = &equippedShield;
+    break;
   }
 
-  if (isSlotOccupied(eslot))
-    unequipSlotRaw(eslot);
+  if (!equippedVar)
+    return false;
 
-  uint8_t *eq = (eslot == EquipSlot::Weapon)   ? &equippedWeapon
-                : (eslot == EquipSlot::Armor)  ? &equippedArmor
-                : (eslot == EquipSlot::Helmet) ? &equippedHelmet
-                                               : &equippedShield;
-  *eq = itemId;
-  items[slotIndex] = EMPTY_ITEM;
+  // Realizar el intercambio (swap)
+  uint8_t oldItemId = *equippedVar;
+  *equippedVar = newItemId;
+  items[slotIndex] = oldItemId;
+
   return true;
 }
 

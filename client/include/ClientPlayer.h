@@ -2,6 +2,7 @@
 #define CLIENT_PLAYER_H
 
 #include "Direction.h"
+#include "Inventory.h"
 #include "InventoryConstants.h"
 #include "Player.h"
 #include "Race.h"
@@ -12,10 +13,10 @@
 class ClientPlayer {
 
 public:
-  static constexpr int Width = 32;
-  static constexpr int Height = 32;
-  static constexpr int HeadWidth = 24;
-  static constexpr int HeadHeight = 24;
+  static constexpr int Width = 20;
+  static constexpr int Height = 37;
+  static constexpr int HeadWidth = 18;
+  static constexpr int HeadHeight = 18;
 
 private:
   uint32_t id;
@@ -32,6 +33,14 @@ public:
   void updateStats(uint32_t hp, uint32_t maxHp, uint32_t mana, uint32_t maxMana,
                    uint32_t gold, uint32_t level, uint32_t experience);
 
+  void setInventory(const std::array<uint8_t, MAX_INVENTORY_SLOTS> &items) {
+    player.setInventoryItems(items);
+  }
+  void setEquippedWeapon(uint8_t id) { player.setEquippedWeapon(id); }
+  void setEquippedArmor(uint8_t id) { player.setEquippedArmor(id); }
+  void setEquippedHelmet(uint8_t id) { player.setEquippedHelmet(id); }
+  void setEquippedShield(uint8_t id) { player.setEquippedShield(id); }
+
   /* View */
   bool getIsMoving() const { return player.isMoving(); }
   Direction getDirection() const { return player.getDirection(); }
@@ -46,6 +55,14 @@ public:
   uint32_t getGold() const { return player.getGold(); }
   uint32_t getLevel() const { return player.getLevel(); }
   uint32_t getExperience() const { return player.getExperience(); }
+
+  const Player &getPlayer() const { return player; }
+
+  uint8_t getEquippedWeapon() const { return player.getEquippedWeapon(); }
+  uint8_t getEquippedArmor() const { return player.getEquippedArmor(); }
+  uint8_t getEquippedHelmet() const { return player.getEquippedHelmet(); }
+  uint8_t getEquippedShield() const { return player.getEquippedShield(); }
+  const Inventory &getInventory() const { return player.getInventory(); }
 };
 
 #endif
