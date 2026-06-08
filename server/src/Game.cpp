@@ -6,6 +6,9 @@
 #include "ConstantRateLoop.h"
 #include "Formulas.h"
 #include "Game.h"
+#include "GlobalChatMessageEventDTO.h"
+#include "GroundItemsListEventDTO.h"
+#include "InventoryUpdateEventDTO.h"
 #include "MapLoader.h"
 #include "MoveCommandDTO.h"
 #include "NPCAppearedEventDTO.h"
@@ -20,16 +23,14 @@
 #include "RegisterPlayerEventDTO.h"
 #include "TextureInfoEventDTO.h"
 #include "command/CommandFactory.h"
-#include "GroundItemsListEventDTO.h"
-#include "InventoryUpdateEventDTO.h"
-#include "GlobalChatMessageEventDTO.h"
 
 static int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
 
 Game::Game(Queue<ClientMessage> &gameloopQueue,
-           SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository)
+           SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository,
+           ClanManager &clanManager)
     : gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor),
-      repository(repository) {}
+      repository(repository), clanManager(clanManager) {}
 
 void Game::run() {
   MapLoader mapLoader("map.toml");
@@ -66,6 +67,7 @@ void Game::run() {
       for (auto &[id, player] : players) {
         repository.save(player->getName(), player->toPlayerData());
       }
+      clanManager.persist();
       saveCounter = 0;
     }
 
@@ -79,6 +81,7 @@ void Game::run() {
   }
 
   saveAllPlayers();
+  clanManager.persist();
 }
 
 void Game::kill() { keepRunning = false; }
@@ -141,17 +144,15 @@ void Game::registerPlayer(const std::string &name, const Race race,
 
   messagesToSend.push_back(InventoryUpdateEventDTO{
       newId, players[newId]->getInventoryItems(),
-      players[newId]->getEquippedWeapon(),
-      players[newId]->getEquippedArmor(),
+      players[newId]->getEquippedWeapon(), players[newId]->getEquippedArmor(),
       players[newId]->getEquippedHelmet(),
       players[newId]->getEquippedShield()});
 
   {
     std::vector<GroundItemInfoDTO> groundItemList;
     for (const auto &gi : inventoryManager.getGroundItems()) {
-      groundItemList.push_back(
-          {gi.id, gi.itemId, static_cast<int16_t>(gi.x),
-           static_cast<int16_t>(gi.y)});
+      groundItemList.push_back({gi.id, gi.itemId, static_cast<int16_t>(gi.x),
+                                static_cast<int16_t>(gi.y)});
     }
     senderQueueMonitor.sendToClient(
         connectionId, GroundItemsListEventDTO{std::move(groundItemList)});
@@ -177,13 +178,21 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
   uint32_t newId = nextPlayerId++;
 
   auto player = std::make_unique<Character>(newId, data);
+  uint32_t savedClanId = player->getClanId();
+  if (savedClanId != 0) {
+    const Clan *clan = clanManager.getClan(savedClanId);
+    if (clan == nullptr || !clan->hasMember(player->getName())) {
+      player->leaveClan();
+      repository.save(player->getName(), player->toPlayerData());
+    }
+  }
 
   colisionables.push_back(player.get());
   players[newId] = std::move(player);
   connectionToPlayer[connectionId] = newId;
   playerToConnection[newId] = connectionId;
   playerIdByName[name] = newId;
-  
+
   senderQueueMonitor.markAsRegistered(connectionId);
 
   senderQueueMonitor.sendToClient(connectionId,
@@ -213,17 +222,15 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   messagesToSend.push_back(InventoryUpdateEventDTO{
       newId, players[newId]->getInventoryItems(),
-      players[newId]->getEquippedWeapon(),
-      players[newId]->getEquippedArmor(),
+      players[newId]->getEquippedWeapon(), players[newId]->getEquippedArmor(),
       players[newId]->getEquippedHelmet(),
       players[newId]->getEquippedShield()});
 
   {
     std::vector<GroundItemInfoDTO> groundItemList;
     for (const auto &gi : inventoryManager.getGroundItems()) {
-      groundItemList.push_back(
-          {gi.id, gi.itemId, static_cast<int16_t>(gi.x),
-           static_cast<int16_t>(gi.y)});
+      groundItemList.push_back({gi.id, gi.itemId, static_cast<int16_t>(gi.x),
+                                static_cast<int16_t>(gi.y)});
     }
     senderQueueMonitor.sendToClient(
         connectionId, GroundItemsListEventDTO{std::move(groundItemList)});
@@ -294,9 +301,7 @@ void Game::dropItem(uint32_t playerId, uint8_t inventorySlot) {
   inventoryManager.dropItem(playerId, inventorySlot);
 }
 
-void Game::takeItem(uint32_t playerId) {
-  inventoryManager.takeItem(playerId);
-}
+void Game::takeItem(uint32_t playerId) { inventoryManager.takeItem(playerId); }
 
 void Game::createClan(uint32_t playerId, const std::string &clanName) {
   auto playerIt = players.find(playerId);
@@ -304,10 +309,13 @@ void Game::createClan(uint32_t playerId, const std::string &clanName) {
     return;
   }
 
-  ClanCreateResult result = clanManager.createClan(clanName, playerId);
+  const std::string &playerName = playerIt->second->getName();
+  ClanCreateResult result = clanManager.createClan(clanName, playerName);
   if (result == ClanCreateResult::Success) {
     uint32_t clanId = clanManager.getClanIdByName(clanName);
     playerIt->second->joinClan(clanId);
+    repository.save(playerIt->second->getName(),
+                    playerIt->second->toPlayerData());
     sendToPlayer(playerId,
                  ChatMessageEventDTO{"Clan", "Fundaste el clan " + clanName});
     return;
@@ -325,23 +333,28 @@ void Game::createClan(uint32_t playerId, const std::string &clanName) {
 }
 
 void Game::requestJoinClan(uint32_t playerId, const std::string &clanName) {
-  if (players.find(playerId) == players.end()) {
+  auto playerIt = players.find(playerId);
+  if (playerIt == players.end()) {
     return;
   }
 
   ClanJoinRequestResult result =
-      clanManager.requestJoinClan(clanName, playerId);
+      clanManager.requestJoinClan(clanName, playerIt->second->getName());
   if (result == ClanJoinRequestResult::Success) {
-    sendToPlayer(playerId, ChatMessageEventDTO{
-                               "Clan", "Solicitud enviada al clan " + clanName});
+    sendToPlayer(
+        playerId,
+        ChatMessageEventDTO{"Clan", "Solicitud enviada al clan " + clanName});
 
     uint32_t clanId = clanManager.getClanIdByName(clanName);
     const Clan *clan = clanManager.getClan(clanId);
     if (clan != nullptr) {
-      sendToPlayer(clan->founderId,
-                   ChatMessageEventDTO{
-                       "Clan", getPlayerName(playerId) +
-                                   " solicito unirse al clan " + clanName});
+      auto founderId = findPlayerIdByName(clan->founderName);
+      if (founderId.has_value()) {
+        sendToPlayer(founderId.value(),
+                     ChatMessageEventDTO{
+                         "Clan", playerIt->second->getName() +
+                                     " solicito unirse al clan " + clanName});
+      }
     }
     return;
   }
@@ -363,6 +376,11 @@ void Game::requestJoinClan(uint32_t playerId, const std::string &clanName) {
 
 void Game::acceptClanRequest(uint32_t founderId,
                              const std::string &playerName) {
+  auto founderIt = players.find(founderId);
+  if (founderIt == players.end()) {
+    return;
+  }
+
   auto targetPlayerId = findPlayerIdByName(playerName);
   if (!targetPlayerId.has_value()) {
     sendToPlayer(founderId,
@@ -370,24 +388,26 @@ void Game::acceptClanRequest(uint32_t founderId,
     return;
   }
 
-  uint32_t clanId = clanManager.getClanId(founderId);
+  const std::string &founderName = founderIt->second->getName();
+  uint32_t clanId = clanManager.getClanId(founderName);
   const Clan *clan = clanManager.getClan(clanId);
   std::string clanName = clan != nullptr ? clan->name : "";
 
   ClanAcceptResult result =
-      clanManager.acceptJoinRequest(founderId, targetPlayerId.value());
+      clanManager.acceptJoinRequest(founderName, playerName);
   if (result == ClanAcceptResult::Success) {
     auto playerIt = players.find(targetPlayerId.value());
     if (playerIt != players.end()) {
       playerIt->second->joinClan(clanId);
+      repository.save(playerIt->second->getName(),
+                      playerIt->second->toPlayerData());
     }
 
     sendToPlayer(targetPlayerId.value(),
-                 ChatMessageEventDTO{"Clan",
-                                     "Bienvenido al clan " + clanName});
+                 ChatMessageEventDTO{"Clan", "Bienvenido al clan " + clanName});
     sendToClan(clanId,
                ChatMessageEventDTO{"Clan", "El jugador " + playerName +
-                                                " se unio al clan"},
+                                               " se unio al clan"},
                targetPlayerId.value());
     return;
   }
@@ -409,6 +429,11 @@ void Game::acceptClanRequest(uint32_t founderId,
 
 void Game::rejectClanRequest(uint32_t founderId,
                              const std::string &playerName) {
+  auto founderIt = players.find(founderId);
+  if (founderIt == players.end()) {
+    return;
+  }
+
   auto targetPlayerId = findPlayerIdByName(playerName);
   if (!targetPlayerId.has_value()) {
     sendToPlayer(founderId,
@@ -417,10 +442,9 @@ void Game::rejectClanRequest(uint32_t founderId,
   }
 
   ClanRejectResult result =
-      clanManager.rejectJoinRequest(founderId, targetPlayerId.value());
+      clanManager.rejectJoinRequest(founderIt->second->getName(), playerName);
   if (result == ClanRejectResult::Success) {
-    sendToPlayer(founderId,
-                 ChatMessageEventDTO{"Clan", "Solicitud rechazada"});
+    sendToPlayer(founderId, ChatMessageEventDTO{"Clan", "Solicitud rechazada"});
     sendToPlayer(targetPlayerId.value(),
                  ChatMessageEventDTO{"Clan", "Tu solicitud fue rechazada"});
     return;
@@ -438,6 +462,11 @@ void Game::rejectClanRequest(uint32_t founderId,
 }
 
 void Game::banClanPlayer(uint32_t founderId, const std::string &playerName) {
+  auto founderIt = players.find(founderId);
+  if (founderIt == players.end()) {
+    return;
+  }
+
   auto targetPlayerId = findPlayerIdByName(playerName);
   if (!targetPlayerId.has_value()) {
     sendToPlayer(founderId,
@@ -445,20 +474,22 @@ void Game::banClanPlayer(uint32_t founderId, const std::string &playerName) {
     return;
   }
 
-  uint32_t clanId = clanManager.getClanId(founderId);
-  ClanBanResult result =
-      clanManager.banPlayer(founderId, targetPlayerId.value());
+  const std::string &founderName = founderIt->second->getName();
+  uint32_t clanId = clanManager.getClanId(founderName);
+  ClanBanResult result = clanManager.banPlayer(founderName, playerName);
   if (result == ClanBanResult::Success) {
     auto playerIt = players.find(targetPlayerId.value());
     if (playerIt != players.end()) {
       playerIt->second->leaveClan();
+      repository.save(playerIt->second->getName(),
+                      playerIt->second->toPlayerData());
     }
 
     sendToPlayer(targetPlayerId.value(),
                  ChatMessageEventDTO{"Clan", "Fuiste baneado del clan"});
     sendToClan(clanId,
                ChatMessageEventDTO{"Clan", "El jugador " + playerName +
-                                                " fue baneado del clan"},
+                                               " fue baneado del clan"},
                targetPlayerId.value());
     return;
   }
@@ -477,6 +508,11 @@ void Game::banClanPlayer(uint32_t founderId, const std::string &playerName) {
 }
 
 void Game::kickClanMember(uint32_t founderId, const std::string &playerName) {
+  auto founderIt = players.find(founderId);
+  if (founderIt == players.end()) {
+    return;
+  }
+
   auto targetPlayerId = findPlayerIdByName(playerName);
   if (!targetPlayerId.has_value()) {
     sendToPlayer(founderId,
@@ -484,20 +520,22 @@ void Game::kickClanMember(uint32_t founderId, const std::string &playerName) {
     return;
   }
 
-  uint32_t clanId = clanManager.getClanId(founderId);
-  ClanKickResult result =
-      clanManager.kickMember(founderId, targetPlayerId.value());
+  const std::string &founderName = founderIt->second->getName();
+  uint32_t clanId = clanManager.getClanId(founderName);
+  ClanKickResult result = clanManager.kickMember(founderName, playerName);
   if (result == ClanKickResult::Success) {
     auto playerIt = players.find(targetPlayerId.value());
     if (playerIt != players.end()) {
       playerIt->second->leaveClan();
+      repository.save(playerIt->second->getName(),
+                      playerIt->second->toPlayerData());
     }
 
     sendToPlayer(targetPlayerId.value(),
                  ChatMessageEventDTO{"Clan", "Fuiste expulsado del clan"});
     sendToClan(clanId,
                ChatMessageEventDTO{"Clan", "El jugador " + playerName +
-                                                " fue expulsado del clan"},
+                                               " fue expulsado del clan"},
                targetPlayerId.value());
     return;
   }
@@ -521,16 +559,18 @@ void Game::leaveClan(uint32_t playerId) {
     return;
   }
 
-  uint32_t clanId = clanManager.getClanId(playerId);
-  ClanLeaveResult result = clanManager.leaveClan(playerId);
+  const std::string &playerName = playerIt->second->getName();
+  uint32_t clanId = clanManager.getClanId(playerName);
+  ClanLeaveResult result = clanManager.leaveClan(playerName);
   if (result == ClanLeaveResult::Success) {
-    std::string playerName = playerIt->second->getName();
     playerIt->second->leaveClan();
+    repository.save(playerIt->second->getName(),
+                    playerIt->second->toPlayerData());
 
     sendToPlayer(playerId, ChatMessageEventDTO{"Clan", "Saliste del clan"});
     sendToClan(clanId,
                ChatMessageEventDTO{"Clan", "El jugador " + playerName +
-                                                " salio del clan"},
+                                               " salio del clan"},
                playerId);
     return;
   }
@@ -545,17 +585,19 @@ void Game::leaveClan(uint32_t playerId) {
 }
 
 void Game::reviewClan(uint32_t playerId) {
-  if (players.find(playerId) == players.end()) {
+  auto playerIt = players.find(playerId);
+  if (playerIt == players.end()) {
     return;
   }
 
-  if (!clanManager.hasClan(playerId)) {
+  const std::string &playerName = playerIt->second->getName();
+  if (!clanManager.hasClan(playerName)) {
     sendToPlayer(playerId,
                  ChatMessageEventDTO{"Clan", "No perteneces a un clan"});
     return;
   }
 
-  uint32_t clanId = clanManager.getClanId(playerId);
+  uint32_t clanId = clanManager.getClanId(playerName);
   const Clan *clan = clanManager.getClan(clanId);
   if (clan == nullptr) {
     sendToPlayer(playerId,
@@ -565,35 +607,35 @@ void Game::reviewClan(uint32_t playerId) {
 
   std::ostringstream members;
   members << "Miembros de " << clan->name << ": ";
-  std::vector<uint32_t> memberIds = clanManager.getMembers(clanId);
-  for (size_t i = 0; i < memberIds.size(); ++i) {
+  std::vector<std::string> memberNames = clanManager.getMembers(clanId);
+  for (size_t i = 0; i < memberNames.size(); ++i) {
     if (i > 0) {
       members << ", ";
     }
-    members << getPlayerName(memberIds[i]);
+    members << memberNames[i];
   }
   sendToPlayer(playerId, ChatMessageEventDTO{"Clan", members.str()});
 
-  if (!clanManager.isFounder(playerId)) {
+  if (!clanManager.isFounder(playerName)) {
     return;
   }
 
-  std::vector<uint32_t> pendingIds = clanManager.getPendingRequests(clanId);
+  std::vector<std::string> pendingNames =
+      clanManager.getPendingRequests(clanId);
   std::ostringstream pending;
   pending << "Pedidos pendientes: ";
-  if (pendingIds.empty()) {
+  if (pendingNames.empty()) {
     pending << "ninguno";
   } else {
-    for (size_t i = 0; i < pendingIds.size(); ++i) {
+    for (size_t i = 0; i < pendingNames.size(); ++i) {
       if (i > 0) {
         pending << ", ";
       }
-      pending << getPlayerName(pendingIds[i]);
+      pending << pendingNames[i];
     }
   }
   sendToPlayer(playerId, ChatMessageEventDTO{"Clan", pending.str()});
 }
-
 
 bool Game::thereIsACollidableEntityAt(Position position) {
   int center = maxSize / 2;
@@ -698,7 +740,7 @@ void Game::saveAllPlayers() {
 }
 
 void Game::sendGlobalChatMessage(uint32_t playerId,
-                                 const std::string& message) {
+                                 const std::string &message) {
   messagesToSend.push_back(
       GlobalChatMessageEventDTO{getPlayerName(playerId), message});
 }
@@ -717,13 +759,12 @@ void Game::atack(uint32_t playerId, int16_t x, int16_t y) {
     playerAtackNPC(*atacker, *targetNPC);
     return;
   }
-  
+
   auto targetPlayer = findPlayerByCoordinates(x, y);
   if (targetPlayer != nullptr) {
     playerAtackPlayer(*atacker, *targetPlayer);
     return;
   }
-
 }
 
 void Game::appearNPCs() {
@@ -732,7 +773,8 @@ void Game::appearNPCs() {
   }
 }
 
-std::optional<uint32_t> Game::findPlayerIdByName(const std::string& name) const {
+std::optional<uint32_t>
+Game::findPlayerIdByName(const std::string &name) const {
   auto it = playerIdByName.find(name);
   if (it == playerIdByName.end())
     return std::nullopt;
@@ -746,8 +788,8 @@ std::string Game::getPlayerName(uint32_t playerId) const {
   return it->second->getName();
 }
 
-std::optional<uint32_t> Game::getConnectionIdForPlayer(
-    uint32_t playerId) const {
+std::optional<uint32_t>
+Game::getConnectionIdForPlayer(uint32_t playerId) const {
   auto it = playerToConnection.find(playerId);
   if (it == playerToConnection.end()) {
     return std::nullopt;
@@ -772,15 +814,15 @@ void Game::sendToPlayers(const std::vector<uint32_t> &playerIds,
 
 void Game::sendToClan(uint32_t clanId, const ServerEventDTO &event,
                       std::optional<uint32_t> exceptPlayerId) {
-  std::vector<uint32_t> members = clanManager.getMembers(clanId);
-  if (!exceptPlayerId.has_value()) {
-    sendToPlayers(members, event);
-    return;
-  }
-
-  for (uint32_t playerId : members) {
-    if (playerId != exceptPlayerId.value()) {
-      sendToPlayer(playerId, event);
+  std::vector<std::string> members = clanManager.getMembers(clanId);
+  for (const std::string &playerName : members) {
+    auto playerId = findPlayerIdByName(playerName);
+    if (!playerId.has_value()) {
+      continue;
+    }
+    if (!exceptPlayerId.has_value() ||
+        playerId.value() != exceptPlayerId.value()) {
+      sendToPlayer(playerId.value(), event);
     }
   }
 }
@@ -859,7 +901,8 @@ uint32_t Game::calculateDamage(Character &atacker) {
   return damage;
 }
 
-bool Game::validAtack([[maybe_unused]] Character &atacker, [[maybe_unused]] Character &target) {
+bool Game::validAtack([[maybe_unused]] Character &atacker,
+                      [[maybe_unused]] Character &target) {
   return !atacker.isNewbie() && !target.isNewbie() &&
          abs(static_cast<int>(atacker.getLevel()) -
              static_cast<int>(target.getLevel())) <= 10;

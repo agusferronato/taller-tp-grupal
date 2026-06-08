@@ -8,11 +8,12 @@ void Server::run() {
   Queue<ClientMessage> gameloopQueue;
   SenderQueueMonitor senderQueueMonitor;
   PlayerRepository repository(DATA_DIR);
+  ClanManager clanManager(DATA_DIR);
 
   Acceptor acceptor(socket, gameloopQueue, senderQueueMonitor);
   acceptor.start();
 
-  Game game(gameloopQueue, senderQueueMonitor, repository);
+  Game game(gameloopQueue, senderQueueMonitor, repository, clanManager);
   game.start();
 
   std::string input;
