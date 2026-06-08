@@ -706,7 +706,7 @@ uint32_t Game::calculateDamage(Character &attacker) {
 
 bool Game::validAttack(Character &attacker, Character &target) {
   if (attacker.isNewbie() || target.isNewbie()) {
-    return false;
+    // return false;
   }
   if (abs(static_cast<int>(attacker.getLevel()) -
           static_cast<int>(target.getLevel())) > 10) {
