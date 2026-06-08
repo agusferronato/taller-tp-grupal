@@ -109,6 +109,14 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
     return {ChatCommandType::RevisarClan, 0};
   }
 
+  if (message == "/alejar-camara") {
+    return {ChatCommandType::AlejarCamara, 0};
+  }
+
+  if (message == "/camara-normal") {
+    return {ChatCommandType::CamaraNormal, 0};
+  }
+
   if (message.rfind("/clan-rechazar ", 0) == 0 && message.size() > 15) {
     std::string playerName = stripQuotes(message.substr(15));
 

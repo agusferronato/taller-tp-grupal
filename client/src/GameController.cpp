@@ -101,6 +101,10 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
           gameModel->banClanPlayer(cmd.textArg);
         } else if (cmd.type == ChatCommandType::ClanKick) {
           gameModel->kickClanMember(cmd.textArg);
+        } else if (cmd.type == ChatCommandType::AlejarCamara) {
+          gameModel->zoomOutCamera();
+        } else if (cmd.type == ChatCommandType::CamaraNormal) {
+          gameModel->resetCameraZoom();
         }
         gameModel->closeChat();
       } else {
