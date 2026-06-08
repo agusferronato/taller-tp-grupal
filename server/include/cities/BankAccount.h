@@ -35,11 +35,12 @@ public:
 
         auto it = items.find(item);
         if (it == items.end()) {
-            items.insert({
+            auto result = items.insert({
                 item,
                 ItemInBank{}
             });
-        };
+            it = result.first;
+        }
 
         it->second.amount++;
     }

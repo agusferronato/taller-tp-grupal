@@ -191,11 +191,18 @@ void GameModel::handle(const InventoryUpdateEventDTO &inv) {
 }
 void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &event) {
-  chatMessages.push_back(event.message);
-  while (chatMessages.size() > 100) {
-    chatMessages.pop_front();
-  }
-  updateChatView();
+
+  std::istringstream stream(event.message);
+    std::string line;
+    while (std::getline(stream, line, '\n')) {
+        if (line.empty()) continue;
+
+        chatMessages.push_back(line);
+        while (chatMessages.size() > 100)
+            chatMessages.pop_front();
+    }
+    updateChatView();
+    
 }
 void GameModel::handle(const PrivateMessageEventDTO &) {}
 

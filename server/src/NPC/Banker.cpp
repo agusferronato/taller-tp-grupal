@@ -48,7 +48,7 @@ void Banker::showGoldAvailable(Game& game, Character& character) {
         " de oro en tu cuenta bancaria.");
 }
 
-void Banker::listItemsAvailables(Game& game, Character& character) {
+void Banker::listItemsAvailables(Game& game, Character& character) { 
     const std::map<uint8_t, ItemInBank>& items = bank.getItems(character);
     if (items.empty()) {
         game.sendChatToPlayer(character.getId(),
@@ -56,9 +56,10 @@ void Banker::listItemsAvailables(Game& game, Character& character) {
         return;
     }
 
-    std::string msg = "Tus objetos en el banco: ";
+    std::string msg = "Tus objetos en el banco: \n";
     for (auto& [id, item] : items) {
-        msg += ITEM_TABLE[id].name + " x" + std::to_string(item.amount) + ", ";
+        msg += "    (# " + std::to_string(id) + ") " + ITEM_TABLE[id].name 
+            + " (x" + std::to_string(item.amount) + ") \n";
     }
     msg.erase(msg.size() - 2);
     game.sendChatToPlayer(character.getId(), msg);

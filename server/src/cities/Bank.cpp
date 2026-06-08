@@ -24,7 +24,7 @@ void Bank::saveGold(Character& character, uint16_t ammount) {
     createAccountIfDoesNotExists(character);
     auto account = accounts.find(character.getId());
     account->second.saveGold(ammount);
-    character.decreaseGold(ammount);
+    character.spendGold(ammount);
 }
 
 void Bank::saveItem(Character& character, uint8_t item) {

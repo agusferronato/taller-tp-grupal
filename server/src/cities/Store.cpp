@@ -19,7 +19,7 @@ void Store::buyItemWith(Character& character, uint8_t item) {
     if (!it->second.stock)
         items.erase(item);
 
-    character.decreaseGold(purchase_price);
+    character.spendGold(purchase_price);
 }
 
 void Store::sellItem(Character& character, uint8_t item) {
@@ -41,5 +41,5 @@ void Store::sellItem(Character& character, uint8_t item) {
     it->second.stock++;
 
     character.removeItemById(item);
-    character.increaseGold(it->second.sell_price);
+    character.addGold(it->second.sell_price);
 }

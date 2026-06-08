@@ -49,14 +49,15 @@ void Priest::buyItem(Game& game, Character& character, uint8_t itemId) {
 void Priest::listItems(Game& game, Character& character) {
     const auto& items = store.getItems();
     if (items.empty()) {
-        game.sendChatToPlayer(character.getId(),
+        game.sendChatToPlayer(character.getId(), 
             "El sacerdote no tiene objetos disponibles.");
         return;
     }
-    std::string msg = "Objetos del sacerdote: ";
+    std::string msg = "Objetos del sacerdote: \n";
     for (auto& [id, item] : items) {
-        msg += ITEM_TABLE[id].name + " (" + std::to_string(item.purchase_price) +
-               " oro) x" + std::to_string(item.stock) + ", ";
+        msg += "    (# " + std::to_string(id) + ") " + ITEM_TABLE[id].name 
+            + " (x" + std::to_string(item.stock) + "). Precio de compra: " 
+            + std::to_string(item.purchase_price) + " \n";
     }
     msg.erase(msg.size() - 2);
     game.sendChatToPlayer(character.getId(), msg);

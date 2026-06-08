@@ -192,13 +192,6 @@ bool Character::hasMoney(uint16_t amount) const {
   return player.getGold() >= amount;
 }
 
-void Character::decreaseGold(uint16_t amount) {
-  player.removeGold(amount);
-}
-
-void Character::increaseGold(uint16_t amount) {
-  player.earnGold(amount);
-}
 
 void Character::removeItemById(uint8_t itemId) {
   uint8_t slot = player.getInventory().findItem(itemId);
