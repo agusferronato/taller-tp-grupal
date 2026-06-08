@@ -130,12 +130,6 @@ path = "assets/equipable/escudo2.png"
 layout_type = "EquipableGrid"
 transparent = true
 
-# NPC sprites (from dev branch)
-[[sprites]]
-id = 100
-path = "assets/11402.png"
-transparent = true
-
 [[sprites]]
 id = 101
 path = "assets/zombie.png"

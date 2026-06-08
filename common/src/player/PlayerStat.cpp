@@ -83,3 +83,8 @@ void PlayerStats::earnGold(uint32_t amount) {
     gold += amount;
   }
 }
+
+void PlayerStats::die() {
+  health = 0;
+  mana = 0;
+}

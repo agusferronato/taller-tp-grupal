@@ -63,6 +63,7 @@ public:
   void setGold(uint32_t amount);
 
   void earnGold(uint32_t amount);
+  void die();
 };
 
 #endif
