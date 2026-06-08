@@ -24,6 +24,7 @@ enum class ClientCommandOpCode : uint8_t {
   TakeItemCommand,
   GlobalChatMessageCommand,
   AttackCommand,
+  CityEntityCommand,
 };
 
 // Opcodes para eventos enviados por el servidor a los clientes

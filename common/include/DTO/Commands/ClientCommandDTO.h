@@ -4,6 +4,7 @@
 #include <variant>
 
 #include "AttackCommandDTO.h"
+#include "CityEntityCommandDTO.h"
 #include "DropItemCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "ExitCommandDTO.h"
@@ -22,6 +23,7 @@ using ClientCommandDTO =
                  MeditateCommandDTO, PrivateMessageCommandDTO, MoveCommandDTO,
                  ExitCommandDTO, PlayerStopCommandDTO, EquipCommandDTO,
                  UnequipCommandDTO, DropItemCommandDTO, TakeItemCommandDTO,
-                 GlobalChatMessageCommandDTO, AttackCommandDTO>;
+                 GlobalChatMessageCommandDTO, AttackCommandDTO,
+                 CityEntityCommandDTO>;
 
 #endif

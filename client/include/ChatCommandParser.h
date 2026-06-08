@@ -4,7 +4,23 @@
 #include <string>
 #include <cstdint>
 
-enum class ChatCommandType { None, Tomar, Tirar, Equipar, Desequipar };
+enum class ChatCommandType {
+  None,
+  Tomar,
+  Tirar,
+  Equipar,
+  Desequipar,
+  Curar,
+  Resucitar,
+  Comprar,
+  Vender,
+  Listar,
+  ConsultarOro,
+  Depositar,
+  Retirar,
+  DepositarOro,
+  RetirarOro
+};
 
 struct ChatCommand {
   ChatCommandType type;

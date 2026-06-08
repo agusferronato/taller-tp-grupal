@@ -3,6 +3,7 @@
 
 #include <map>
 #include <cstdint>
+#include <CityEntityException.h>
 
 struct ItemInBank {
     int amount{0};
@@ -46,7 +47,7 @@ public:
     
     void takeGold(uint16_t ammount) {
 
-        if (gold - ammount < 0)
+        if (ammount > gold)
             throw NoGoldAvailable();
 
         gold -= ammount;

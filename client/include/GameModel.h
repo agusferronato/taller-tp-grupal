@@ -50,6 +50,7 @@ public:
   void dropItem(uint8_t slot);
   void equipItem(uint8_t slot);
   void unequipItem(uint8_t equipSlot);
+  void sendCityEntityCommand(uint8_t cmdType, int16_t arg);
   const GroundItemManager &getGroundItemManager() const {
     return groundItemManager;
   }

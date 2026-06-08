@@ -2,6 +2,7 @@
 #include "AttackReceivedEventDTO.h"
 #include "ChatMessageEventDTO.h"
 #include "DropItemCommandDTO.h"
+#include "CityEntityCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "GameWindow.h"
 #include "GlobalChatMessageCommandDTO.h"
@@ -80,6 +81,10 @@ void GameModel::equipItem(uint8_t slot) {
 
 void GameModel::unequipItem(uint8_t equipSlot) {
   sendingQueue.push(UnequipCommandDTO{myPlayerID, equipSlot});
+}
+
+void GameModel::sendCityEntityCommand(uint8_t cmdType, int16_t arg) {
+  sendingQueue.push(CityEntityCommandDTO{myPlayerID, cmdType, arg});
 }
 
 void GameModel::moveMyPlayer(Direction direction) {
