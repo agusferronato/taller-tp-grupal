@@ -50,6 +50,9 @@ public:
   const GroundItemManager &getGroundItemManager() const {
     return groundItemManager;
   }
+
+  void createClan(const std::string &clanName);
+
   void handleLeftMouseClick(int mouseX, int mouseY);
   void handleRightMouseClick(int mouseX, int mouseY);
 

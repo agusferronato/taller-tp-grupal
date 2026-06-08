@@ -83,6 +83,10 @@ void GameModel::unequipItem(uint8_t equipSlot) {
   sendingQueue.push(UnequipCommandDTO{myPlayerID, equipSlot});
 }
 
+// void GameModel::createClan(const std::string &clanName) {
+//   // [TODO] enviar comando de fundar clan
+// }
+
 void GameModel::moveMyPlayer(Direction direction) {
   sendingQueue.push(MoveCommandDTO{myPlayerID, direction});
 }

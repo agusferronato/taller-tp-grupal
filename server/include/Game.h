@@ -34,6 +34,7 @@
 #include "Race.h"
 #include "SenderQueueMonitor.h"
 #include "Thread.h"
+#include "ClanManager.h"
 
 class Game : public Thread {
 
@@ -41,7 +42,8 @@ private:
   Queue<ClientMessage> &gameloopQueue;
   SenderQueueMonitor &senderQueueMonitor;
   PlayerRepository &repository;
-
+  ClanManager clanManager;
+  
   std::list<ServerEventDTO> messagesToSend;
   bool keepRunning = true;
 
@@ -90,6 +92,14 @@ public:
   void takeItem(uint32_t playerId);
   void sendGlobalChatMessage(uint32_t playerId, const std::string &message);
   void atack(uint32_t playerId, int16_t x, int16_t y);
+
+  void createClan(uint32_t playerId, const std::string &clanName);
+  void requestJoinClan(uint32_t playerId, const std::string &clanName);
+  void acceptClanRequest(uint32_t founderId, const std::string &playerName);
+  void rejectClanRequest(uint32_t founderId, const std::string &playerName);
+  void banClanPlayer(uint32_t founderId, const std::string &playerName);
+  void kickClanMember(uint32_t founderId, const std::string &playerName);
+  void leaveClan(uint32_t playerId);
 
   bool thereIsACollidableEntityAt(Position position);
   void appearNPC(std::unique_ptr<NPC> &&npc);
