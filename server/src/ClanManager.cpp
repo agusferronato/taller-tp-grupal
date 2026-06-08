@@ -3,8 +3,12 @@
 
 #include <utility>
 
+ClanManager::ClanManager(const std::string &dataDir) : repository(dataDir) {
+  loadFromPersistenceData(repository.load());
+}
+
 ClanCreateResult ClanManager::createClan(const std::string &name,
-                                         uint32_t founderId) {
+                                         const std::string &founderName) {
   if (name.empty()) {
     return ClanCreateResult::InvalidName;
   }
@@ -13,17 +17,18 @@ ClanCreateResult ClanManager::createClan(const std::string &name,
     return ClanCreateResult::NameAlreadyExists;
   }
 
-  if (hasClan(founderId)) {
+  if (hasClan(founderName)) {
     return ClanCreateResult::PlayerAlreadyInClan;
   }
 
   uint32_t clanId = nextClanId++;
 
-  auto [it, _] = clans.emplace(clanId, Clan{clanId, name, founderId});
+  auto [it, _] = clans.emplace(clanId, Clan{clanId, name, founderName});
   clanIdByName[name] = clanId;
-	
-  addMember(it->second, founderId);
-	
+
+  addMember(it->second, founderName);
+  persist();
+
   return ClanCreateResult::Success;
 }
 
@@ -41,8 +46,8 @@ uint32_t ClanManager::getClanIdByName(const std::string &name) const {
 
 ClanJoinRequestResult
 ClanManager::requestJoinClan(const std::string &clanName,
-                             uint32_t playerId) {
-  if (hasClan(playerId)) {
+                             const std::string &playerName) {
+  if (hasClan(playerName)) {
     return ClanJoinRequestResult::PlayerAlreadyInClan;
   }
 
@@ -55,30 +60,30 @@ ClanManager::requestJoinClan(const std::string &clanName,
     return ClanJoinRequestResult::ClanFull;
   }
 
-  if (clan->isBanned(playerId)) {
+  if (clan->isBanned(playerName)) {
     return ClanJoinRequestResult::PlayerBanned;
   }
 
-  if (clan->hasPendingRequest(playerId)) {
+  if (clan->hasPendingRequest(playerName)) {
     return ClanJoinRequestResult::AlreadyRequested;
   }
 
-  clan->pendingRequests.insert(playerId);
+  clan->pendingRequests.insert(playerName);
   return ClanJoinRequestResult::Success;
 }
 
-ClanAcceptResult ClanManager::acceptJoinRequest(uint32_t founderId,
-                                                uint32_t playerId) {
-  Clan *clan = findPlayerClan(founderId);
+ClanAcceptResult ClanManager::acceptJoinRequest(const std::string &founderName,
+                                                const std::string &playerName) {
+  Clan *clan = findPlayerClan(founderName);
   if (clan == nullptr) {
     return ClanAcceptResult::PlayerNotInClan;
   }
 
-  if (!clan->isFounder(founderId)) {
+  if (!clan->isFounder(founderName)) {
     return ClanAcceptResult::NotFounder;
   }
 
-  if (!clan->hasPendingRequest(playerId)) {
+  if (!clan->hasPendingRequest(playerName)) {
     return ClanAcceptResult::RequestNotFound;
   }
 
@@ -86,80 +91,83 @@ ClanAcceptResult ClanManager::acceptJoinRequest(uint32_t founderId,
     return ClanAcceptResult::ClanFull;
   }
 
-  if (hasClan(playerId)) {
+  if (hasClan(playerName)) {
     return ClanAcceptResult::PlayerAlreadyInClan;
   }
 
-  clan->pendingRequests.erase(playerId);
-  addMember(*clan, playerId);
+  clan->pendingRequests.erase(playerName);
+  addMember(*clan, playerName);
+  persist();
 
   return ClanAcceptResult::Success;
 }
 
-ClanRejectResult ClanManager::rejectJoinRequest(uint32_t founderId,
-                                                uint32_t playerId) {
-  Clan *clan = findPlayerClan(founderId);
+ClanRejectResult ClanManager::rejectJoinRequest(const std::string &founderName,
+                                                const std::string &playerName) {
+  Clan *clan = findPlayerClan(founderName);
   if (clan == nullptr) {
     return ClanRejectResult::PlayerNotInClan;
   }
 
-  if (!clan->isFounder(founderId)) {
+  if (!clan->isFounder(founderName)) {
     return ClanRejectResult::NotFounder;
   }
 
-  if (!clan->hasPendingRequest(playerId)) {
+  if (!clan->hasPendingRequest(playerName)) {
     return ClanRejectResult::RequestNotFound;
   }
 
-  clan->pendingRequests.erase(playerId);
+  clan->pendingRequests.erase(playerName);
   return ClanRejectResult::Success;
 }
 
-ClanBanResult ClanManager::banPlayer(uint32_t founderId, uint32_t playerId) {
-  Clan *clan = findPlayerClan(founderId);
+ClanBanResult ClanManager::banPlayer(const std::string &founderName,
+                                     const std::string &playerName) {
+  Clan *clan = findPlayerClan(founderName);
   if (clan == nullptr) {
     return ClanBanResult::PlayerNotInClan;
   }
 
-  if (!clan->isFounder(founderId)) {
+  if (!clan->isFounder(founderName)) {
     return ClanBanResult::NotFounder;
   }
 
-  if (playerId == founderId) {
+  if (playerName == founderName) {
     return ClanBanResult::CannotBanFounder;
   }
 
-  if (clan->isBanned(playerId)) {
+  if (clan->isBanned(playerName)) {
     return ClanBanResult::AlreadyBanned;
   }
 
-  clan->pendingRequests.erase(playerId);
-  auto targetIt = playerToClan.find(playerId);
-  if (targetIt != playerToClan.end() && targetIt->second == clan->id) {
-    removeMember(*clan, playerId);
+  clan->pendingRequests.erase(playerName);
+  auto targetIt = playerNameToClan.find(playerName);
+  if (targetIt != playerNameToClan.end() && targetIt->second == clan->id) {
+    removeMember(*clan, playerName);
   }
-  clan->bannedPlayers.insert(playerId);
+  clan->bannedPlayers.insert(playerName);
+  persist();
 
   return ClanBanResult::Success;
 }
 
-ClanKickResult ClanManager::kickMember(uint32_t founderId,
-                                       uint32_t playerId) {
-  Clan *clan = findPlayerClan(founderId);
+ClanKickResult ClanManager::kickMember(const std::string &founderName,
+                                       const std::string &playerName) {
+  Clan *clan = findPlayerClan(founderName);
   if (clan == nullptr) {
     return ClanKickResult::PlayerNotInClan;
   }
 
-  if (!clan->isFounder(founderId)) {
+  if (!clan->isFounder(founderName)) {
     return ClanKickResult::NotFounder;
   }
 
-  if (playerId == founderId) {
+  if (playerName == founderName) {
     return ClanKickResult::CannotKickFounder;
   }
 
-  auto targetIt = playerToClan.find(playerId);
-  if (targetIt == playerToClan.end()) {
+  auto targetIt = playerNameToClan.find(playerName);
+  if (targetIt == playerNameToClan.end()) {
     return ClanKickResult::TargetNotInClan;
   }
 
@@ -167,42 +175,44 @@ ClanKickResult ClanManager::kickMember(uint32_t founderId,
     return ClanKickResult::TargetNotInClan;
   }
 
-  removeMember(*clan, playerId);
+  removeMember(*clan, playerName);
+  persist();
   return ClanKickResult::Success;
 }
 
-ClanLeaveResult ClanManager::leaveClan(uint32_t playerId) {
-  Clan *clan = findPlayerClan(playerId);
+ClanLeaveResult ClanManager::leaveClan(const std::string &playerName) {
+  Clan *clan = findPlayerClan(playerName);
   if (clan == nullptr) {
     return ClanLeaveResult::PlayerNotInClan;
   }
 
-  if (clan->isFounder(playerId)) {
+  if (clan->isFounder(playerName)) {
     return ClanLeaveResult::FounderCannotLeave;
   }
 
-  removeMember(*clan, playerId);
+  removeMember(*clan, playerName);
+  persist();
   return ClanLeaveResult::Success;
 }
 
-bool ClanManager::sameClan(uint32_t a, uint32_t b) const {
-  auto aIt = playerToClan.find(a);
-  auto bIt = playerToClan.find(b);
+bool ClanManager::sameClan(const std::string &a, const std::string &b) const {
+  auto aIt = playerNameToClan.find(a);
+  auto bIt = playerNameToClan.find(b);
 
-  if (aIt == playerToClan.end() || bIt == playerToClan.end()) {
+  if (aIt == playerNameToClan.end() || bIt == playerNameToClan.end()) {
     return false;
   }
 
   return aIt->second == bIt->second;
 }
 
-bool ClanManager::hasClan(uint32_t playerId) const {
-  return playerToClan.find(playerId) != playerToClan.end();
+bool ClanManager::hasClan(const std::string &playerName) const {
+  return playerNameToClan.find(playerName) != playerNameToClan.end();
 }
 
-uint32_t ClanManager::getClanId(uint32_t playerId) const {
-  auto it = playerToClan.find(playerId);
-  if (it == playerToClan.end()) {
+uint32_t ClanManager::getClanId(const std::string &playerName) const {
+  auto it = playerNameToClan.find(playerName);
+  if (it == playerNameToClan.end()) {
     return Player::NO_CLAN;
   }
   return it->second;
@@ -216,7 +226,7 @@ const Clan *ClanManager::getClan(uint32_t clanId) const {
   return &it->second;
 }
 
-std::vector<uint32_t> ClanManager::getMembers(uint32_t clanId) const {
+std::vector<std::string> ClanManager::getMembers(uint32_t clanId) const {
   const Clan *clan = getClan(clanId);
   if (clan == nullptr) {
     return {};
@@ -225,7 +235,7 @@ std::vector<uint32_t> ClanManager::getMembers(uint32_t clanId) const {
   return {clan->members.begin(), clan->members.end()};
 }
 
-std::vector<uint32_t>
+std::vector<std::string>
 ClanManager::getPendingRequests(uint32_t clanId) const {
   const Clan *clan = getClan(clanId);
   if (clan == nullptr) {
@@ -235,14 +245,48 @@ ClanManager::getPendingRequests(uint32_t clanId) const {
   return {clan->pendingRequests.begin(), clan->pendingRequests.end()};
 }
 
-bool ClanManager::isFounder(uint32_t playerId) const {
-  const Clan *clan = findPlayerClan(playerId);
-  return clan != nullptr && clan->isFounder(playerId);
+bool ClanManager::isFounder(const std::string &playerName) const {
+  const Clan *clan = findPlayerClan(playerName);
+  return clan != nullptr && clan->isFounder(playerName);
 }
 
-Clan *ClanManager::findPlayerClan(uint32_t playerId) {
-  auto playerIt = playerToClan.find(playerId);
-  if (playerIt == playerToClan.end()) {
+ClanPersistenceData ClanManager::toPersistenceData() const {
+  ClanPersistenceData data;
+  data.nextClanId = nextClanId;
+  data.clans.reserve(clans.size());
+  for (const auto &[id, clan] : clans) {
+    data.clans.push_back(clan);
+  }
+  return data;
+}
+
+void ClanManager::loadFromPersistenceData(ClanPersistenceData data) {
+  clans.clear();
+  nextClanId = data.nextClanId;
+  for (auto &clan : data.clans) {
+    clan.pendingRequests.clear();
+    clans.emplace(clan.id, std::move(clan));
+  }
+  rebuildIndexes();
+}
+
+void ClanManager::rebuildIndexes() {
+  clanIdByName.clear();
+  playerNameToClan.clear();
+
+  for (auto &[id, clan] : clans) {
+    clanIdByName[clan.name] = id;
+    for (const std::string &playerName : clan.members) {
+      playerNameToClan[playerName] = id;
+    }
+  }
+}
+
+void ClanManager::persist() const { repository.save(toPersistenceData()); }
+
+Clan *ClanManager::findPlayerClan(const std::string &playerName) {
+  auto playerIt = playerNameToClan.find(playerName);
+  if (playerIt == playerNameToClan.end()) {
     return nullptr;
   }
 
@@ -254,9 +298,9 @@ Clan *ClanManager::findPlayerClan(uint32_t playerId) {
   return &clanIt->second;
 }
 
-const Clan *ClanManager::findPlayerClan(uint32_t playerId) const {
-  auto playerIt = playerToClan.find(playerId);
-  if (playerIt == playerToClan.end()) {
+const Clan *ClanManager::findPlayerClan(const std::string &playerName) const {
+  auto playerIt = playerNameToClan.find(playerName);
+  if (playerIt == playerNameToClan.end()) {
     return nullptr;
   }
 
@@ -296,12 +340,12 @@ const Clan *ClanManager::findClanByName(const std::string &name) const {
   return &clanIt->second;
 }
 
-void ClanManager::addMember(Clan &clan, uint32_t playerId) {
-  clan.members.insert(playerId);
-  playerToClan[playerId] = clan.id;
+void ClanManager::addMember(Clan &clan, const std::string &playerName) {
+  clan.members.insert(playerName);
+  playerNameToClan[playerName] = clan.id;
 }
 
-void ClanManager::removeMember(Clan &clan, uint32_t playerId) {
-  clan.members.erase(playerId);
-  playerToClan.erase(playerId);
+void ClanManager::removeMember(Clan &clan, const std::string &playerName) {
+  clan.members.erase(playerName);
+  playerNameToClan.erase(playerName);
 }

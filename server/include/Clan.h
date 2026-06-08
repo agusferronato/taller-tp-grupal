@@ -10,35 +10,31 @@ struct Clan {
 
   uint32_t id;
   std::string name;
-  uint32_t founderId;
+  std::string founderName;
 
-  std::unordered_set<uint32_t> members;
-  std::unordered_set<uint32_t> pendingRequests;
-  std::unordered_set<uint32_t> bannedPlayers;
+  std::unordered_set<std::string> members;
+  std::unordered_set<std::string> pendingRequests;
+  std::unordered_set<std::string> bannedPlayers;
 
-  Clan(uint32_t id, std::string name, uint32_t founderId)
-    : id(id),
-    name(std::move(name)),
-    founderId(founderId) {}
+  Clan(uint32_t id, std::string name, std::string founderName)
+      : id(id), name(std::move(name)), founderName(std::move(founderName)) {}
 
-  bool isFull() const {
-    return members.size() >= MAX_MEMBERS;
+  bool isFull() const { return members.size() >= MAX_MEMBERS; }
+
+  bool isFounder(const std::string &playerName) const {
+    return founderName == playerName;
   }
 
-  bool isFounder(uint32_t playerId) const {
-    return founderId == playerId;
+  bool hasMember(const std::string &playerName) const {
+    return members.contains(playerName);
   }
 
-  bool hasMember(uint32_t playerId) const {
-    return members.contains(playerId);
+  bool hasPendingRequest(const std::string &playerName) const {
+    return pendingRequests.contains(playerName);
   }
 
-  bool hasPendingRequest(uint32_t playerId) const {
-    return pendingRequests.contains(playerId);
-  }
-
-  bool isBanned(uint32_t playerId) const {
-    return bannedPlayers.contains(playerId);
+  bool isBanned(const std::string &playerName) const {
+    return bannedPlayers.contains(playerName);
   }
 };
 

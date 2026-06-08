@@ -2,6 +2,7 @@
 #define CLAN_MANAGER_H
 
 #include "Clan.h"
+#include "ClanRepository.h"
 
 #include <cstdint>
 #include <string>
@@ -48,11 +49,7 @@ enum class ClanKickResult {
   TargetNotInClan
 };
 
-enum class ClanLeaveResult {
-  Success,
-  PlayerNotInClan,
-  FounderCannotLeave
-};
+enum class ClanLeaveResult { Success, PlayerNotInClan, FounderCannotLeave };
 
 enum class ClanBanResult {
   Success,
@@ -66,40 +63,54 @@ class ClanManager {
 private:
   std::unordered_map<uint32_t, Clan> clans;
   std::unordered_map<std::string, uint32_t> clanIdByName;
-  std::unordered_map<uint32_t, uint32_t> playerToClan;
+  std::unordered_map<std::string, uint32_t> playerNameToClan;
   uint32_t nextClanId{1};
+  ClanRepository repository;
 
 public:
-  ClanCreateResult createClan(const std::string &name, uint32_t founderId);
+  explicit ClanManager(const std::string &dataDir);
+
+  ClanCreateResult createClan(const std::string &name,
+                              const std::string &founderName);
   bool clanNameExists(const std::string &name) const;
   uint32_t getClanIdByName(const std::string &name) const;
 
-  ClanJoinRequestResult requestJoinClan(const std::string &clanName, uint32_t playerId);
+  ClanJoinRequestResult requestJoinClan(const std::string &clanName,
+                                        const std::string &playerName);
 
-  ClanAcceptResult acceptJoinRequest(uint32_t founderId, uint32_t playerId);
-  ClanRejectResult rejectJoinRequest(uint32_t founderId, uint32_t playerId);
-  ClanBanResult banPlayer(uint32_t founderId, uint32_t playerId);
+  ClanAcceptResult acceptJoinRequest(const std::string &founderName,
+                                     const std::string &playerName);
+  ClanRejectResult rejectJoinRequest(const std::string &founderName,
+                                     const std::string &playerName);
+  ClanBanResult banPlayer(const std::string &founderName,
+                          const std::string &playerName);
 
-  ClanKickResult kickMember(uint32_t founderId, uint32_t playerId);
-  ClanLeaveResult leaveClan(uint32_t playerId);
+  ClanKickResult kickMember(const std::string &founderName,
+                            const std::string &playerName);
+  ClanLeaveResult leaveClan(const std::string &playerName);
 
-  bool sameClan(uint32_t a, uint32_t b) const;
-  bool hasClan(uint32_t playerId) const;
-  uint32_t getClanId(uint32_t playerId) const;
-  const Clan* getClan(uint32_t clanId) const;
-  std::vector<uint32_t> getMembers(uint32_t clanId) const;
-  std::vector<uint32_t> getPendingRequests(uint32_t clanId) const;
-  bool isFounder(uint32_t playerId) const;
+  bool sameClan(const std::string &a, const std::string &b) const;
+  bool hasClan(const std::string &playerName) const;
+  uint32_t getClanId(const std::string &playerName) const;
+  const Clan *getClan(uint32_t clanId) const;
+  std::vector<std::string> getMembers(uint32_t clanId) const;
+  std::vector<std::string> getPendingRequests(uint32_t clanId) const;
+  bool isFounder(const std::string &playerName) const;
+  void persist() const;
 
 private:
-  Clan* findPlayerClan(uint32_t playerId);
-  const Clan* findPlayerClan(uint32_t playerId) const;
+  ClanPersistenceData toPersistenceData() const;
+  void loadFromPersistenceData(ClanPersistenceData data);
+  void rebuildIndexes();
 
-  Clan* findClanByName(const std::string& name);
-  const Clan* findClanByName(const std::string& name) const;
+  Clan *findPlayerClan(const std::string &playerName);
+  const Clan *findPlayerClan(const std::string &playerName) const;
 
-  void addMember(Clan& clan, uint32_t playerId);
-  void removeMember(Clan& clan, uint32_t playerId);
+  Clan *findClanByName(const std::string &name);
+  const Clan *findClanByName(const std::string &name) const;
+
+  void addMember(Clan &clan, const std::string &playerName);
+  void removeMember(Clan &clan, const std::string &playerName);
 };
 
 #endif

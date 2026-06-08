@@ -41,7 +41,7 @@ private:
   Queue<ClientMessage> &gameloopQueue;
   SenderQueueMonitor &senderQueueMonitor;
   PlayerRepository &repository;
-  ClanManager clanManager;
+  ClanManager &clanManager;
   
   std::list<ServerEventDTO> messagesToSend;
   bool keepRunning = true;
@@ -69,7 +69,8 @@ private:
 
 public:
   Game(Queue<ClientMessage> &gameloopQueue,
-       SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository);
+       SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository,
+       ClanManager &clanManager);
 
   virtual void run() override;
 
