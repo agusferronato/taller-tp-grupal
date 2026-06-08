@@ -1,7 +1,6 @@
 #include "command/CommandFactory.h"
 
 #include "AcceptClanRequestCommandDTO.h"
-#include "AtackCommandDTO.h"
 #include "BanClanPlayerCommandDTO.h"
 #include "CreateClanCommandDTO.h"
 #include "AttackCommandDTO.h"
@@ -21,7 +20,6 @@
 #include "TakeItemCommandDTO.h"
 #include "UnequipCommandDTO.h"
 #include "command/AcceptClanRequestCommand.h"
-#include "command/AtackCommand.h"
 #include "command/BanClanPlayerCommand.h"
 #include "command/CreateClanCommand.h"
 #include "command/AttackCommand.h"

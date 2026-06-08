@@ -154,63 +154,11 @@ void GameWindow::addPlayer(uint32_t ID, const ClientPlayer &player) {
   addEntity(EntityType::Player, ID, std::move(entity));
 }
 
-void GameWindow::removePlayer(uint32_t ID) {
-  removeEntity(EntityType::Player, ID);
-}
-
-void GameWindow::addNpc(uint32_t ID, NPC &npc, NPCType npcType) {
-  NPCInfo info = npcParser.getInfo(npcType);
-
-  auto entity = std::make_unique<NPCEntity>(npc, *textureManager,
-                                            info.textureId, info.layoutType);
-
-  addEntity(EntityType::Npc, ID, std::move(entity));
-}
-
-void GameWindow::getSortedEntities(
-    std::vector<RenderableEntity *> &sortedEntities) {
-  sortedEntities.reserve(entities.size());
-
-  for (auto &[key, entity] : entities) {
-    sortedEntities.push_back(entity.get());
-  }
-
-  std::sort(sortedEntities.begin(), sortedEntities.end(),
-            [](RenderableEntity *a, RenderableEntity *b) {
-              if (a->get_y() != b->get_y())
-                return a->get_y() < b->get_y();
-              return a->get_x() < b->get_x();
-            });
-}
-
-ClickTarget GameWindow::hitTestInventory(int screenX, int screenY) const {
-  if (invPanel)
-    return invPanel->handleClick(screenX, screenY);
-
-  return {ClickTargetType::None, -1};
-}
-
-void GameWindow::updateGroundItems(
-    const std::unordered_map<uint32_t, GroundItemInfoDTO> &items) {
-  groundItems = items;
-}
-
 void GameWindow::renderInventoryPanel() {
   if (!invPanel || !myPlayerEntity)
     return;
 
   invPanel->render(myPlayerEntity->getPlayer());
-}
-
-void GameWindow::renderGroundItems() {
-  for (const auto &[id, item] : groundItems) {
-    SDL2pp::Texture *tex = textureManager->getItemIcon(item.itemId);
-    if (!tex)
-      continue;
-
-    SDL2pp::Rect dst = camera.toScreen(item.x, item.y, 32, 32);
-    renderer->Copy(*tex, SDL2pp::NullOpt, dst);
-  }
 }
 
 void GameWindow::show(unsigned int it) {
@@ -239,21 +187,9 @@ void GameWindow::show(unsigned int it) {
   renderer->Present();
 }
 
-
-void GameWindow::addPlayer(uint32_t ID, const ClientPlayer &player) {
-  if (ID == myPlayerID) {
-    setMyPlayer(player, ID);
-    return;
-  }
-
-  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
-  addEntity(EntityType::Player, ID, std::move(entity));
-}
-
 void GameWindow::removePlayer(uint32_t ID) {
   removeEntity(EntityType::Player, ID);
 }
-
 
 void GameWindow::addCityEntity(uint32_t ID, CityEntityModel &entity,
                                 CityEntityType entityType) {
@@ -266,14 +202,6 @@ void GameWindow::addCityEntity(uint32_t ID, CityEntityModel &entity,
 
 void GameWindow::removeCityEntity(uint32_t ID) {
     removeEntity(EntityType::CityEntity, ID);
-}
-
-
-void GameWindow::setChatState(const std::deque<std::string> &messages,
-                              const std::string &input, bool active) {
-  chatMessages = messages;
-  currentChatInput = input;
-  chatActive = active;
 }
 
 
@@ -478,20 +406,6 @@ void GameWindow::renderVitals() {
       SDL_Color{255, 255, 255, 255});
 }
 
-void GameWindow::renderCommonGround() {
-  for (int i = 0; i < maxSize; i++) {
-    for (int j = 0; j < maxSize; j++) {
-      SDL2pp::Rect dstRect =
-          camera.toScreen((i - maxSize / 2) * gridSize,
-                          (j - maxSize / 2) * gridSize, gridSize, gridSize);
-
-      SDL2pp::Rect srcRect = {0, 0, gridSize, gridSize};
-      renderer->Copy(textureMapper->getTexture(commonGroundTextureId), srcRect,
-                     dstRect);
-    }
-  }
-}
-
 void GameWindow::renderGroundItems() {
   for (const auto &[id, item] : groundItems) {
     SDL2pp::Texture *tex = textureManager->getItemIcon(item.itemId);
@@ -511,42 +425,6 @@ void GameWindow::clear() {
   renderer->SetDrawColor(0, 0, 0, 255);
   renderer->Clear();
 }
-
-void GameWindow::addEntity(EntityType type, uint32_t id,
-                           std::unique_ptr<RenderableEntity> entity) {
-  EntityKey key(type, id);
-  entities[key] = std::move(entity);
-}
-
-void GameWindow::removeEntity(EntityType type, uint32_t id) {
-  EntityKey key(type, id);
-  if (myPlayerEntity && type == EntityType::Player && id == myPlayerID) {
-    myPlayerEntity = nullptr;
-  }
-  entities.erase(key);
-}
-
-void GameWindow::setMyPlayer(const ClientPlayer &player, uint32_t ID) {
-  myPlayerID = ID;
-  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
-  myPlayerEntity = entity.get();
-  addEntity(EntityType::Player, ID, std::move(entity));
-}
-
-SDL2pp::Renderer &GameWindow::getRenderer() { return *renderer; }
-
-SDL2pp::Font &GameWindow::getFont() { return *font; }
-
-void GameWindow::setMapData(int maxSize_, int gridSize_,
-                             int commonGroundTextureId_,
-                             const std::list<TileOrigin> &origins) {
-  maxSize = maxSize_;
-  gridSize = gridSize_;
-  commonGroundTextureId = commonGroundTextureId_;
-  textureMapper->buildRenderGrid(origins, gridSize);
-  tilesToRender = textureMapper->getTilesToRender();
-}
-
 
 void GameWindow::addNpc(uint32_t ID, NPC &npc, NPCType npcType) {
   NPCInfo info = npcParser.getInfo(npcType);

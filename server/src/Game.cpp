@@ -30,8 +30,6 @@
 #include "command/CommandFactory.h"
 #include <NPCType.h>
 
-static int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
-
 Game::Game(Queue<ClientMessage> &gameloopQueue,
            SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository,
            ClanManager &clanManager, const std::string &mapPath)
@@ -719,6 +717,7 @@ void Game::reviewClan(uint32_t playerId) {
     }
   }
   sendToPlayer(playerId, ChatMessageEventDTO{"Clan", pending.str()});
+}
 
 bool Game::thereIsACollidableEntityAt(Position position) {
   int center = maxSize / 2;
