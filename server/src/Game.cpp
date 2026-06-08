@@ -296,6 +296,7 @@ void Game::takeItem(uint32_t playerId) {
   inventoryManager.takeItem(playerId);
 }
 
+
 bool Game::thereIsACollidableEntityAt(Position position) {
   int center = maxSize / 2;
   int cellX = (position.row - center) * gridSize;

@@ -2,6 +2,15 @@
 
 static constexpr uint8_t EQUIP_SLOT_FROM_VISUAL[4] = {0, 2, 1, 3};
 
+// Para soportar nombres de clan con espacios, se pueden escribir entre comillas. Ejemplo:
+// /fundar-clan "Los Guerreros"
+static std::string stripQuotes(std::string s) {
+  if (s.size() >= 2 && s.front() == '"' && s.back() == '"') {
+    return s.substr(1, s.size() - 2);
+  }
+  return s;
+}
+
 static int parseIntArg(const std::string &message, size_t prefixLen) {
   try {
     return std::stoi(message.substr(prefixLen));
@@ -41,6 +50,16 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
       return {ChatCommandType::Desequipar,
               static_cast<int>(EQUIP_SLOT_FROM_VISUAL[visualPos])};
     }
+    return {ChatCommandType::None, 0};
+  }
+
+  if (message.rfind("/fundar-clan ", 0) == 0 && message.size() > 13) {
+    std::string clanName = stripQuotes(message.substr(13));
+
+    if (!clanName.empty()) {
+      return {ChatCommandType::FundarClan, 0, clanName};
+    }
+
     return {ChatCommandType::None, 0};
   }
 
