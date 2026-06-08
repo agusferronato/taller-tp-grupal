@@ -216,45 +216,26 @@ int PlayerEntity::getRaceHeadID(Race race) const {
 
 void PlayerEntity::renderGhostBody(SDL2pp::Renderer &renderer, Camera &camera,
                                    unsigned int it) {
+  
   unsigned int animationIt = player.getIsMoving() ? it : 0;
-  int bodyID = getRaceBodyID(player.getRace());
-  uint8_t armorSlot = player.getEquippedArmor();
-
-  auto getSprite = [&]() -> Sprite {
-    if (armorSlot != 0) {
-      try {
-        EquipInfo info = equipParser.getInfo(armorSlot);
-        if (info.type == "Body") {
-          return textureManager.getBodySprite(
-              info.textureId, player.getDirection(), animationIt);
-        } else {
-          return textureManager.getEquipableSprite(
-              info.type, info.textureId, player.getDirection(), animationIt);
-        }
-      } catch (...) {
-      }
-    }
-    return textureManager.getBodySprite(bodyID, player.getDirection(),
-                                        animationIt);
-  };
-  Sprite src = getSprite();
-  int ox = (ClientPlayer::Width - src.w) / 2; // centra horizontalmente
+  
+  Sprite src = textureManager.getBodySprite(
+    TextureLayoutType::Ghost, 535, player.getDirection(), animationIt);
+    
+  int ox = (ClientPlayer::Width - src.w) / 2; 
   SDL2pp::Rect dst = camera.toScreen(player.get_x() + ox, player.get_y(), src.w,
                                      ClientPlayer::Height);
-  src.txt.SetAlphaMod(128); // 50% de transparencia
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
-  src.txt.SetAlphaMod(255); // Restaurar opacidad
 }
 
 void PlayerEntity::renderGhostHead(SDL2pp::Renderer &renderer, Camera &camera) {
-  Sprite src = textureManager.getHeadSprite(getRaceHeadID(player.getRace()),
-                                            player.getDirection());
+  Sprite src = textureManager.getHeadSprite(534, player.getDirection()); 
 
   int head_x = get_head_x(camera);
   int head_y = get_head_y(camera);
-  src.txt.SetAlphaMod(128); // 50% de transparencia
+
   SDL2pp::Rect dst{head_x, head_y, ClientPlayer::HeadWidth,
                    ClientPlayer::HeadHeight};
+  
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
-  src.txt.SetAlphaMod(255); // Restaurar opacidad
 }

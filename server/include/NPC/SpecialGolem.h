@@ -6,7 +6,12 @@
 
 class SpecialGolem : public NPC {
 public:
-  explicit SpecialGolem(Position position) : NPC(position) {}
+  explicit SpecialGolem(Position position) : NPC(position) {
+    level = 12 + std::rand() % 9;
+    maxHp = 150 + std::rand() % 151;
+    hp = maxHp;
+    agility = 6;
+  }
   NPCType getType() override { return NPCType::SpecialGolemT; }
 
     int getAncho() const override { return 32; };

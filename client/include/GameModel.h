@@ -104,6 +104,7 @@ private:
   void handle(const AttackReceivedEventDTO &event);
   void handle(const GlobalChatMessageEventDTO &event);
   void handle(const PlayerDieEventDTO &event);
+  void handle(const PlayerResurrectEventDTO &event);
 };
 
 #endif

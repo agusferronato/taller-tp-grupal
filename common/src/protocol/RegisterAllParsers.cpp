@@ -25,6 +25,7 @@
 #include "parser/Events/NpcDefeatedEventParser.h"
 #include "parser/Events/PlayerAppearedEventParser.h"
 #include "parser/Events/PlayerDieEventParser.h"
+#include "parser/Events/PlayerResurrectEventParser.h"
 #include "parser/Events/PlayerInfoEventParser.h"
 #include "parser/Events/PlayerListEventParser.h"
 #include "parser/Events/PlayerMovedEventParser.h"
@@ -191,4 +192,8 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::PlayerDieEvent),
       std::make_unique<PlayerDieEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::PlayerResurrectEvent),
+      std::make_unique<PlayerResurrectEventParser>());
 }

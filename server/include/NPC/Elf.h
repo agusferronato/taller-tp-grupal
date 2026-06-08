@@ -7,7 +7,12 @@
 class Elf : public NPC {
 
 public:
-  explicit Elf(Position position) : NPC(position) {}
+  explicit Elf(Position position) : NPC(position) {
+    level = 4 + std::rand() % 7;
+    maxHp = 40 + std::rand() % 51;
+    hp = maxHp;
+    agility = 10;
+  }
   NPCType getType() override { return NPCType::ElfT; }
 
     int getAncho() const override { return 32; };

@@ -6,7 +6,12 @@
 
 class Giant : public NPC {
 public:
-  explicit Giant(Position position) : NPC(position) {}
+  explicit Giant(Position position) : NPC(position) {
+    level = 15 + std::rand() % 11;
+    maxHp = 200 + std::rand() % 201;
+    hp = maxHp;
+    agility = 3;
+  }
   NPCType getType() override { return NPCType::GiantT; }
 
     int getAncho() const override { return 32; };

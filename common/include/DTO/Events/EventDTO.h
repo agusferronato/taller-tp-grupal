@@ -20,6 +20,7 @@
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerDieEventDTO.h"
 #include "PlayerInfoEventDTO.h"
+#include "PlayerResurrectEventDTO.h"
 #include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "PlayerRemovedEventDTO.h"
@@ -52,7 +53,8 @@ using ServerEventDTO = std::variant<
     GroundItemAppearedEventDTO,
     GroundItemRemovedEventDTO,
     GroundItemsListEventDTO,
-    PlayerDieEventDTO
+    PlayerDieEventDTO,
+    PlayerResurrectEventDTO
 >;
 
 

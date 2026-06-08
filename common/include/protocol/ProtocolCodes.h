@@ -53,7 +53,8 @@ enum class EventOpcode : uint8_t {
   CityEntityMovedEvent,
   CityEntityStoppedEvent,
   AttackReceivedEvent,
-  PlayerDieEvent
+  PlayerDieEvent,
+  PlayerResurrectEvent = 0x99
 };
 
 #endif // PROTOCOL_CODES_H

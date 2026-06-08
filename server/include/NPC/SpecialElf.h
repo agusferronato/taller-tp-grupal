@@ -6,7 +6,12 @@
 
 class SpecialElf : public NPC {
 public:
-  explicit SpecialElf(Position position) : NPC(position) {}
+  explicit SpecialElf(Position position) : NPC(position) {
+    level = 10 + std::rand() % 9;
+    maxHp = 90 + std::rand() % 91;
+    hp = maxHp;
+    agility = 14;
+  }
   NPCType getType() override { return NPCType::SpecialElfT; }
 
     int getAncho() const override { return 32; };

@@ -69,6 +69,7 @@ public:
   uint8_t getEquippedShield() const { return player.getEquippedShield(); }
   const Inventory &getInventory() const { return player.getInventory(); }
   void die();
+  void resurrect(int x, int y);
   bool isDead() const;
 };
 
