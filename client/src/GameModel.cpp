@@ -1,5 +1,7 @@
 #include "GameModel.h"
+#include "AcceptClanRequestCommandDTO.h"
 #include "ChatMessageEventDTO.h"
+#include "CreateClanCommandDTO.h"
 #include "DropItemCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "GameWindow.h"
@@ -10,6 +12,8 @@
 #include "GroundItemRemovedEventDTO.h"
 #include "GroundItemsListEventDTO.h"
 #include "InventoryUpdateEventDTO.h"
+#include "JoinClanCommandDTO.h"
+#include "LeaveClanCommandDTO.h"
 #include "NPC.h"
 #include "NPCAppearedEventDTO.h"
 #include "NPCType.h"
@@ -83,9 +87,21 @@ void GameModel::unequipItem(uint8_t equipSlot) {
   sendingQueue.push(UnequipCommandDTO{myPlayerID, equipSlot});
 }
 
-// void GameModel::createClan(const std::string &clanName) {
-//   // [TODO] enviar comando de fundar clan
-// }
+void GameModel::createClan(const std::string &clanName) {
+  sendingQueue.push(CreateClanCommandDTO{myPlayerID, clanName});
+}
+
+void GameModel::joinClan(const std::string &clanName) {
+  sendingQueue.push(JoinClanCommandDTO{myPlayerID, clanName});
+}
+
+void GameModel::acceptClanRequest(const std::string &playerName) {
+  sendingQueue.push(AcceptClanRequestCommandDTO{myPlayerID, playerName});
+}
+
+void GameModel::leaveClan() {
+  sendingQueue.push(LeaveClanCommandDTO{myPlayerID});
+}
 
 void GameModel::moveMyPlayer(Direction direction) {
   sendingQueue.push(MoveCommandDTO{myPlayerID, direction});

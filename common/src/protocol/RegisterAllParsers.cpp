@@ -1,7 +1,11 @@
 #include "protocol/RegisterAllParsers.h"
+#include "parser/Commands/AcceptClanRequestCommandParser.h"
+#include "parser/Commands/CreateClanCommandParser.h"
 #include "parser/Commands/DropItemCommandParser.h"
 #include "parser/Commands/EquipCommandParser.h"
 #include "parser/Commands/ExitParser.h"
+#include "parser/Commands/JoinClanCommandParser.h"
+#include "parser/Commands/LeaveClanCommandParser.h"
 #include "parser/Commands/LoginPlayerParser.h"
 #include "parser/Commands/MeditateParser.h"
 #include "parser/Commands/MoveCommandParser.h"
@@ -84,6 +88,22 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerCommandParser(
       static_cast<uint8_t>(ClientCommandOpCode::AtackCommand),
       std::make_unique<AtackCommandParser>());
+
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::CreateClanCommand),
+      std::make_unique<CreateClanCommandParser>());
+
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::JoinClanCommand),
+      std::make_unique<JoinClanCommandParser>());
+
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::AcceptClanRequestCommand),
+      std::make_unique<AcceptClanRequestCommandParser>());
+
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::LeaveClanCommand),
+      std::make_unique<LeaveClanCommandParser>());
 
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::ChatMessageEvent),

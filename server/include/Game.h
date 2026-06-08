@@ -12,7 +12,6 @@
 #include <optional>
 
 #include "ClientMessage.h"
-#include <optional>
 #include <set>
 #include <tuple>
 
@@ -115,6 +114,12 @@ private:
 
   std::optional<uint32_t> findPlayerIdByName(const std::string& name) const;
   std::string getPlayerName(uint32_t playerId) const;
+  std::optional<uint32_t> getConnectionIdForPlayer(uint32_t playerId) const;
+  void sendToPlayer(uint32_t playerId, const ServerEventDTO &event);
+  void sendToPlayers(const std::vector<uint32_t> &playerIds,
+                     const ServerEventDTO &event);
+  void sendToClan(uint32_t clanId, const ServerEventDTO &event,
+                  std::optional<uint32_t> exceptPlayerId = std::nullopt);
   
   void playerAtackPlayer(Character &atacker, Character &target);
   void playerAtackNPC(Character &atacker, NPC &target);

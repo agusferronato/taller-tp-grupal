@@ -19,12 +19,10 @@ ClanCreateResult ClanManager::createClan(const std::string &name,
 
   uint32_t clanId = nextClanId++;
 
-  Clan clan{clanId, name, founderId};
-	
-  clans.emplace(clanId, std::move(clan));
+  auto [it, _] = clans.emplace(clanId, Clan{clanId, name, founderId});
   clanIdByName[name] = clanId;
 	
-  addMember(clan, founderId);
+  addMember(it->second, founderId);
 	
   return ClanCreateResult::Success;
 }
@@ -132,6 +130,10 @@ ClanBanResult ClanManager::banPlayer(uint32_t founderId, uint32_t playerId) {
   }
 
   clan->pendingRequests.erase(playerId);
+  auto targetIt = playerToClan.find(playerId);
+  if (targetIt != playerToClan.end() && targetIt->second == clan->id) {
+    removeMember(*clan, playerId);
+  }
   clan->bannedPlayers.insert(playerId);
 
   return ClanBanResult::Success;

@@ -24,6 +24,10 @@ enum class ClientCommandOpCode : uint8_t {
   TakeItemCommand,
   GlobalChatMessageCommand,
   AtackCommand,
+  CreateClanCommand,
+  JoinClanCommand,
+  AcceptClanRequestCommand,
+  LeaveClanCommand,
 };
 
 // Opcodes para eventos enviados por el servidor a los clientes

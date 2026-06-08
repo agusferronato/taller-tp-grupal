@@ -52,6 +52,9 @@ public:
   }
 
   void createClan(const std::string &clanName);
+  void joinClan(const std::string &clanName);
+  void acceptClanRequest(const std::string &playerName);
+  void leaveClan();
 
   void handleLeftMouseClick(int mouseX, int mouseY);
   void handleRightMouseClick(int mouseX, int mouseY);
