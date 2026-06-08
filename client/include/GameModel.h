@@ -66,6 +66,8 @@ public:
   void sendPrivateMessage(const std::string &targetName,
                           const std::string &message);
   void addLocalChatMessage(std::string text, ChatMessageCategory category);
+  void zoomOutCamera();
+  void resetCameraZoom();
 
   void handleLeftMouseClick(int mouseX, int mouseY);
   void handleRightMouseClick(int mouseX, int mouseY);

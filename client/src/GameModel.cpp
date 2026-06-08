@@ -141,6 +141,14 @@ void GameModel::addLocalChatMessage(std::string text,
   updateChatView();
 }
 
+void GameModel::zoomOutCamera() {
+  gameView->zoomOutCamera();
+}
+
+void GameModel::resetCameraZoom() {
+  gameView->resetCameraZoom();
+}
+
 void GameModel::moveMyPlayer(Direction direction) {
   sendingQueue.push(MoveCommandDTO{myPlayerID, direction});
 }

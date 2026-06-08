@@ -19,7 +19,9 @@ enum class ChatCommandType {
   RevisarClan,
   ClanRechazar,
   ClanBan,
-  ClanKick
+  ClanKick,
+  AlejarCamara,
+  CamaraNormal
 };
 
 struct ChatCommand {
