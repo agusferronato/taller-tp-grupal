@@ -23,7 +23,6 @@ enum class ClientCommandOpCode : uint8_t {
   DropItemCommand,
   TakeItemCommand,
   GlobalChatMessageCommand,
-  AtackCommand,
   CreateClanCommand,
   JoinClanCommand,
   AcceptClanRequestCommand,
