@@ -235,6 +235,12 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
     senderQueueMonitor.sendToClient(
         connectionId, GroundItemsListEventDTO{std::move(groundItemList)});
   }
+
+  uint32_t clanId = players[newId]->getClanId();
+  if (clanId != 0) {
+    sendToClan(clanId, ChatMessageEventDTO{"Clan", name + " entro a Argentum"},
+               newId);
+  }
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {
@@ -263,7 +269,15 @@ void Game::exitPlayer(uint32_t playerId) {
     return;
   }
 
-  repository.save(it->second->getName(), it->second->toPlayerData());
+  const std::string playerName = it->second->getName();
+  uint32_t clanId = it->second->getClanId();
+  repository.save(playerName, it->second->toPlayerData());
+
+  if (clanId != 0) {
+    sendToClan(clanId,
+               ChatMessageEventDTO{"Clan", playerName + " salio de Argentum"},
+               playerId);
+  }
 
   colisionables.erase(
       std::remove(colisionables.begin(), colisionables.end(), it->second.get()),
@@ -277,7 +291,7 @@ void Game::exitPlayer(uint32_t playerId) {
     playerToConnection.erase(connIt);
   }
 
-  playerIdByName.erase(it->second->getName());
+  playerIdByName.erase(playerName);
   players.erase(it);
 }
 
@@ -468,7 +482,7 @@ void Game::banClanPlayer(uint32_t founderId, const std::string &playerName) {
   }
 
   auto targetPlayerId = findPlayerIdByName(playerName);
-  if (!targetPlayerId.has_value()) {
+  if (!targetPlayerId.has_value() && !repository.exists(playerName)) {
     sendToPlayer(founderId,
                  ChatMessageEventDTO{"Clan", "Jugador no encontrado"});
     return;
@@ -478,19 +492,26 @@ void Game::banClanPlayer(uint32_t founderId, const std::string &playerName) {
   uint32_t clanId = clanManager.getClanId(founderName);
   ClanBanResult result = clanManager.banPlayer(founderName, playerName);
   if (result == ClanBanResult::Success) {
-    auto playerIt = players.find(targetPlayerId.value());
-    if (playerIt != players.end()) {
+    if (targetPlayerId.has_value()) {
+      auto playerIt = players.find(targetPlayerId.value());
       playerIt->second->leaveClan();
       repository.save(playerIt->second->getName(),
                       playerIt->second->toPlayerData());
-    }
 
-    sendToPlayer(targetPlayerId.value(),
-                 ChatMessageEventDTO{"Clan", "Fuiste baneado del clan"});
-    sendToClan(clanId,
-               ChatMessageEventDTO{"Clan", "El jugador " + playerName +
-                                               " fue baneado del clan"},
-               targetPlayerId.value());
+      sendToPlayer(targetPlayerId.value(),
+                   ChatMessageEventDTO{"Clan", "Fuiste baneado del clan"});
+      sendToClan(clanId,
+                 ChatMessageEventDTO{"Clan", "El jugador " + playerName +
+                                                 " fue baneado del clan"},
+                 targetPlayerId.value());
+    } else {
+      PlayerData data = repository.load(playerName);
+      data.clanId = 0;
+      repository.save(playerName, data);
+      sendToClan(clanId,
+                 ChatMessageEventDTO{"Clan", "El jugador " + playerName +
+                                                 " fue baneado del clan"});
+    }
     return;
   }
 
@@ -514,7 +535,7 @@ void Game::kickClanMember(uint32_t founderId, const std::string &playerName) {
   }
 
   auto targetPlayerId = findPlayerIdByName(playerName);
-  if (!targetPlayerId.has_value()) {
+  if (!targetPlayerId.has_value() && !repository.exists(playerName)) {
     sendToPlayer(founderId,
                  ChatMessageEventDTO{"Clan", "Jugador no encontrado"});
     return;
@@ -524,19 +545,26 @@ void Game::kickClanMember(uint32_t founderId, const std::string &playerName) {
   uint32_t clanId = clanManager.getClanId(founderName);
   ClanKickResult result = clanManager.kickMember(founderName, playerName);
   if (result == ClanKickResult::Success) {
-    auto playerIt = players.find(targetPlayerId.value());
-    if (playerIt != players.end()) {
+    if (targetPlayerId.has_value()) {
+      auto playerIt = players.find(targetPlayerId.value());
       playerIt->second->leaveClan();
       repository.save(playerIt->second->getName(),
                       playerIt->second->toPlayerData());
-    }
 
-    sendToPlayer(targetPlayerId.value(),
-                 ChatMessageEventDTO{"Clan", "Fuiste expulsado del clan"});
-    sendToClan(clanId,
-               ChatMessageEventDTO{"Clan", "El jugador " + playerName +
-                                               " fue expulsado del clan"},
-               targetPlayerId.value());
+      sendToPlayer(targetPlayerId.value(),
+                   ChatMessageEventDTO{"Clan", "Fuiste expulsado del clan"});
+      sendToClan(clanId,
+                 ChatMessageEventDTO{"Clan", "El jugador " + playerName +
+                                                 " fue expulsado del clan"},
+                 targetPlayerId.value());
+    } else {
+      PlayerData data = repository.load(playerName);
+      data.clanId = 0;
+      repository.save(playerName, data);
+      sendToClan(clanId,
+                 ChatMessageEventDTO{"Clan", "El jugador " + playerName +
+                                                 " fue expulsado del clan"});
+    }
     return;
   }
 
@@ -820,10 +848,11 @@ void Game::sendToClan(uint32_t clanId, const ServerEventDTO &event,
     if (!playerId.has_value()) {
       continue;
     }
-    if (!exceptPlayerId.has_value() ||
-        playerId.value() != exceptPlayerId.value()) {
-      sendToPlayer(playerId.value(), event);
+    if (exceptPlayerId.has_value() &&
+        playerId.value() == exceptPlayerId.value()) {
+      continue;
     }
+    sendToPlayer(playerId.value(), event);
   }
 }
 

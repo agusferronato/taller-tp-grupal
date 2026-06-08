@@ -4,12 +4,12 @@
 #include <chrono>
 #include <list>
 #include <memory>
+#include <optional>
 #include <string>
 #include <thread>
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include <optional>
 
 #include "ClientMessage.h"
 #include <set>
@@ -18,10 +18,11 @@
 #include "Biome.h"
 #include "Character.h"
 #include "City.h"
+#include "ClanManager.h"
 #include "Colisionable.h"
-#include "Direction.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
+#include "Direction.h"
 #include "Inventory.h"
 #include "InventoryManager.h"
 #include "ItemDef.h"
@@ -33,7 +34,6 @@
 #include "Race.h"
 #include "SenderQueueMonitor.h"
 #include "Thread.h"
-#include "ClanManager.h"
 
 class Game : public Thread {
 
@@ -42,11 +42,10 @@ private:
   SenderQueueMonitor &senderQueueMonitor;
   PlayerRepository &repository;
   ClanManager &clanManager;
-  
+
   std::list<ServerEventDTO> messagesToSend;
   bool keepRunning = true;
 
-  
   uint32_t nextPlayerId{1};
   int nextSpawnX{0};
   std::unordered_map<uint32_t, std::unique_ptr<Character>> players;
@@ -114,7 +113,7 @@ private:
 
   void appearNPCs();
 
-  std::optional<uint32_t> findPlayerIdByName(const std::string& name) const;
+  std::optional<uint32_t> findPlayerIdByName(const std::string &name) const;
   std::string getPlayerName(uint32_t playerId) const;
   std::optional<uint32_t> getConnectionIdForPlayer(uint32_t playerId) const;
   void sendToPlayer(uint32_t playerId, const ServerEventDTO &event);
@@ -122,7 +121,7 @@ private:
                      const ServerEventDTO &event);
   void sendToClan(uint32_t clanId, const ServerEventDTO &event,
                   std::optional<uint32_t> exceptPlayerId = std::nullopt);
-  
+
   void playerAtackPlayer(Character &atacker, Character &target);
   void playerAtackNPC(Character &atacker, NPC &target);
   uint32_t calculateDamage(Character &atacker);
