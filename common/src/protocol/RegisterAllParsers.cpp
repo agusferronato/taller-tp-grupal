@@ -1,6 +1,7 @@
 #include "protocol/RegisterAllParsers.h"
 #include "parser/Commands/AcceptClanRequestCommandParser.h"
 #include "parser/Commands/BanClanPlayerCommandParser.h"
+#include "parser/Commands/CheatCommandParser.h"
 #include "parser/Commands/CreateClanCommandParser.h"
 #include "parser/Commands/DropItemCommandParser.h"
 #include "parser/Commands/EquipCommandParser.h"
@@ -130,6 +131,10 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerCommandParser(
       static_cast<uint8_t>(ClientCommandOpCode::KickClanMemberCommand),
       std::make_unique<KickClanMemberCommandParser>());
+
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::CheatCommand),
+      std::make_unique<CheatCommandParser>());
 
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::ChatMessageEvent),

@@ -21,7 +21,14 @@ enum class ChatCommandType {
   ClanBan,
   ClanKick,
   AlejarCamara,
-  CamaraNormal
+  CamaraNormal,
+  Morir,
+  VidaInfinita,
+  VidaNormal,
+  ManaInfinito,
+  ManaNormal,
+  Supervelocidad,
+  VelocidadNormal
 };
 
 struct ChatCommand {

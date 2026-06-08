@@ -117,6 +117,34 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
     return {ChatCommandType::CamaraNormal, 0};
   }
 
+  if (message == "/morir") {
+    return {ChatCommandType::Morir, 0};
+  }
+
+  if (message == "/vida-infinita") {
+    return {ChatCommandType::VidaInfinita, 0};
+  }
+
+  if (message == "/vida-normal") {
+    return {ChatCommandType::VidaNormal, 0};
+  }
+
+  if (message == "/mana-infinito") {
+    return {ChatCommandType::ManaInfinito, 0};
+  }
+
+  if (message == "/mana-normal") {
+    return {ChatCommandType::ManaNormal, 0};
+  }
+
+  if (message == "/supervelocidad") {
+    return {ChatCommandType::Supervelocidad, 0};
+  }
+
+  if (message == "/velocidad-normal") {
+    return {ChatCommandType::VelocidadNormal, 0};
+  }
+
   if (message.rfind("/clan-rechazar ", 0) == 0 && message.size() > 15) {
     std::string playerName = stripQuotes(message.substr(15));
 

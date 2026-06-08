@@ -1,6 +1,7 @@
 #include "GameController.h"
 
 #include "ChatCommandParser.h"
+#include "CheatType.h"
 #include "PlayerStoppedEventDTO.h"
 #include "WindowClosed.h"
 
@@ -105,6 +106,20 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
           gameModel->zoomOutCamera();
         } else if (cmd.type == ChatCommandType::CamaraNormal) {
           gameModel->resetCameraZoom();
+        } else if (cmd.type == ChatCommandType::Morir) {
+          gameModel->sendCheat(CheatType::Die);
+        } else if (cmd.type == ChatCommandType::VidaInfinita) {
+          gameModel->sendCheat(CheatType::InfiniteHealth);
+        } else if (cmd.type == ChatCommandType::VidaNormal) {
+          gameModel->sendCheat(CheatType::NormalHealth);
+        } else if (cmd.type == ChatCommandType::ManaInfinito) {
+          gameModel->sendCheat(CheatType::InfiniteMana);
+        } else if (cmd.type == ChatCommandType::ManaNormal) {
+          gameModel->sendCheat(CheatType::NormalMana);
+        } else if (cmd.type == ChatCommandType::Supervelocidad) {
+          gameModel->sendCheat(CheatType::SuperSpeed);
+        } else if (cmd.type == ChatCommandType::VelocidadNormal) {
+          gameModel->sendCheat(CheatType::NormalSpeed);
         }
         gameModel->closeChat();
       } else {

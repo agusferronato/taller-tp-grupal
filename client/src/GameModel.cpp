@@ -2,6 +2,7 @@
 #include "AcceptClanRequestCommandDTO.h"
 #include "BanClanPlayerCommandDTO.h"
 #include "ChatMessageEventDTO.h"
+#include "CheatCommandDTO.h"
 #include "CreateClanCommandDTO.h"
 #include "DropItemCommandDTO.h"
 #include "EquipCommandDTO.h"
@@ -147,6 +148,10 @@ void GameModel::zoomOutCamera() {
 
 void GameModel::resetCameraZoom() {
   gameView->resetCameraZoom();
+}
+
+void GameModel::sendCheat(CheatType cheat) {
+  sendingQueue.push(CheatCommandDTO{cheat});
 }
 
 void GameModel::moveMyPlayer(Direction direction) {
