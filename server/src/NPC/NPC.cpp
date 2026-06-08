@@ -1,5 +1,6 @@
 #include "NPC.h"
 #include "Character.h"
+#include "Formulas.h"
 
 bool NPC::colisionaCon(int targetX, int targetY, int targetAncho,
                        int targetAlto) const {
@@ -43,9 +44,6 @@ bool NPC::updatePosition(const Character& character) {
     return true;
 }
 
-
-
-
 bool NPC::collidesWith(Character& character) {
     return colisionaCon(
         character.getX(),
@@ -64,4 +62,37 @@ bool NPC::reachesAttackCounter()
 
     attackCounter = 0;
     return true;
+}
+
+uint32_t NPC::takeDamage(uint32_t damage) {
+    if (damage >= hp) {
+        hp = 0;
+    } else {
+        hp -= damage;
+    }
+    return damage;
+}
+
+bool NPC::tryParry() const {
+    return Formulas::calcularEsquivo(agility, std::rand() % 2);
+}
+
+ObjectDropped NPC::getDroppedObject() const {
+    int roll = std::rand() % 100;
+
+    if (roll < 80) {
+        return {ObjectDroppedType::None, 0};
+    } else if (roll < 88) {
+        double factor = 0.01 + (std::rand() % 100) / 100.0 * 0.19;
+        uint32_t gold = static_cast<uint32_t>(factor * maxHp);
+        return {ObjectDroppedType::Gold, gold};
+    } else if (roll < 89) {
+        uint8_t potionId = (std::rand() % 2 == 0) ? 18 : 19;
+        return {ObjectDroppedType::Item, potionId};
+    } else if (roll < 90) {
+        uint8_t itemId = 1 + std::rand() % 17;
+        return {ObjectDroppedType::Item, itemId};
+    }
+
+    return {ObjectDroppedType::None, 0};
 }

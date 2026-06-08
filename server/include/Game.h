@@ -108,6 +108,17 @@ public:
   uint32_t nextNPCId{1};
   uint32_t nextCityEntityId{1};
 
+  struct ResurrectingPlayer {
+    Character *character;
+    int priestX;
+    int priestY;
+    int counter;
+    int maxCounter;
+  };
+
+  void addResurrectingPlayer(Character &character, int priestX, int priestY,
+                             int maxCounter);
+
 private:
   void execute(ClientMessage clientMessage);
   void sendMessages();
@@ -128,6 +139,7 @@ private:
   void playerAttackNPC(Character &attacker, NPC &target);
   uint32_t calculateDamage(Character &attacker);
   bool validAttack(Character &attacker, Character &target);
+  bool validAttackToNpc(Character &attacker);
   Character *findPlayerByCoordinates(int16_t x, int16_t y);
   NPC *findNPCByCoordinates(int16_t x, int16_t y);
   int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
@@ -135,6 +147,11 @@ private:
   void killPlayer(Character &dyingPlayer);
   bool isNearEntity(CityEntity &entity, const Character &character);
   CityEntity *findNearestEntity(uint32_t playerId, CityEntityType type);
+
+  void updateResurrectingPlayers();
+  bool isResurrecting(uint32_t playerId);
+
+  std::list<ResurrectingPlayer> resurrectingPlayers;
 };
 
 #endif

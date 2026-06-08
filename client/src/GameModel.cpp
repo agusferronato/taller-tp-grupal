@@ -22,6 +22,7 @@
 #include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "PlayerRemovedEventDTO.h"
+#include "PlayerResurrectEventDTO.h"
 #include "PlayerStoppedEventDTO.h"
 #include "PrivateMessageEventDTO.h"
 #include "Race.h"
@@ -371,5 +372,19 @@ void GameModel::handle(const PlayerDieEventDTO &event) {
   if (it == players.end()) {
     return;
   }
-  it->second->die();
+  if (event.playerId == myPlayerID) {
+    it->second->die();
+  } else {
+    gameView->removePlayer(event.playerId);
+    players.erase(event.playerId);
+  }
+}
+
+void GameModel::handle(const PlayerResurrectEventDTO &event) {
+  if (event.playerId != myPlayerID)
+    return;
+  auto it = players.find(myPlayerID);
+  if (it == players.end())
+    return;
+  it->second->resurrect(event.x, event.y);
 }

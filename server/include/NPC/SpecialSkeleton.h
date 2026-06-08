@@ -6,7 +6,12 @@
 
 class SpecialSkeleton : public NPC {
 public:
-  explicit SpecialSkeleton(Position position) : NPC(position) {}
+  explicit SpecialSkeleton(Position position) : NPC(position) {
+    level = 8 + std::rand() % 8;
+    maxHp = 80 + std::rand() % 71;
+    hp = maxHp;
+    agility = 8;
+  }
   NPCType getType() override { return NPCType::SpecialSkeletonT; }
 
     int getAncho() const override { return 32; };

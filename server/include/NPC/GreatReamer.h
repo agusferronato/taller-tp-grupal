@@ -6,7 +6,12 @@
 
 class GreatReamer : public NPC {
 public:
-  explicit GreatReamer(Position position) : NPC(position) {}
+  explicit GreatReamer(Position position) : NPC(position) {
+    level = 20 + std::rand() % 11;
+    maxHp = 300 + std::rand() % 201;
+    hp = maxHp;
+    agility = 10;
+  }
   NPCType getType() override { return NPCType::GreatReamerT; }
 
     int getAncho() const override { return 64; };

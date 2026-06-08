@@ -6,7 +6,12 @@
 
 class Orc : public NPC {
 public:
-  explicit Orc(Position position) : NPC(position) {}
+  explicit Orc(Position position) : NPC(position) {
+    level = 5 + std::rand() % 8;
+    maxHp = 50 + std::rand() % 71;
+    hp = maxHp;
+    agility = 6;
+  }
   NPCType getType() override { return NPCType::OrcT; }
 
     int getAncho() const override { return 48; };

@@ -128,6 +128,7 @@ void TextureManager::loadLayoutsFromToml(const std::string &path) {
   registerBody("Priest",         TextureLayoutType::Priest);
   registerBody("Trader",         TextureLayoutType::Trader);
   registerBody("Banker",         TextureLayoutType::Banker);
+  registerBody("Ghost",         TextureLayoutType::Ghost);
 
   if (auto *attack = tbl["Attack"].as_table()) {
     std::vector<SpriteData> frames;

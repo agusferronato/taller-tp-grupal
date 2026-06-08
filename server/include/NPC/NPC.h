@@ -1,14 +1,21 @@
 #ifndef NPC_H
 #define NPC_H
 
+#include <cstdlib>
 #include <string>
 #include "Colisionable.h"
 #include "Direction.h"
 #include "NPCType.h"
 #include "Position.h"
-#include <string>
 
 class Character;
+
+enum class ObjectDroppedType : uint8_t { None, Gold, Potion, Item };
+
+struct ObjectDropped {
+    ObjectDroppedType type = ObjectDroppedType::None;
+    uint32_t value = 0;
+};
 
 class NPC : public Colisionable {
 
@@ -20,6 +27,10 @@ protected:
     int x, y;
     Direction direction{Direction::Down};
     bool isMoving{false};
+    uint32_t hp{0};
+    uint32_t maxHp{0};
+    uint32_t level{1};
+    uint32_t agility{5};
 
 public:
   explicit NPC(Position pos) : gridPosition(pos), x(0), y(0) {}
@@ -54,11 +65,20 @@ public:
 
     virtual uint32_t getDamage() = 0;
     bool collidesWith(Character &character);
+
+    uint32_t takeDamage(uint32_t damage);
+
     bool reachesAttackCounter();
 
     virtual int getAttackCounterMax() = 0;
 
     virtual std::string getName() = 0;
+
+    uint32_t getHP() const { return hp; }
+    uint32_t getMaxHp() const { return maxHp; }
+    uint32_t getLevel() const { return level; }
+    bool tryParry() const;
+    ObjectDropped getDroppedObject() const;
 
 };
 

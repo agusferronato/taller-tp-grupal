@@ -7,7 +7,12 @@
 class Zombie : public NPC {
 
 public:
-  explicit Zombie(Position position) : NPC(position) {}
+  explicit Zombie(Position position) : NPC(position) {
+    level = 1 + std::rand() % 5;
+    maxHp = 20 + std::rand() % 31;
+    hp = maxHp;
+    agility = 4;
+  }
 
   NPCType getType() override { return NPCType::ZombieT; }
 

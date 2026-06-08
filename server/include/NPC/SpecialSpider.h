@@ -6,7 +6,12 @@
 
 class SpecialSpider : public NPC {
 public:
-  explicit SpecialSpider(Position position) : NPC(position) {}
+  explicit SpecialSpider(Position position) : NPC(position) {
+    level = 6 + std::rand() % 7;
+    maxHp = 60 + std::rand() % 61;
+    hp = maxHp;
+    agility = 15;
+  }
   NPCType getType() override { return NPCType::SpecialSpiderT; }
 
     int getAncho() const override { return 96; };

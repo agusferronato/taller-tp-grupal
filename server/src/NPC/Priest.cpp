@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <cstdlib>
+
 #include "Priest.h"
 #include "Game.h"
 
@@ -22,15 +25,16 @@ void Priest::heal(Game& game, Character& character) {
 }
 
 void Priest::resurrect(Game& game, Character& character) {
-    character.resurrect();
-    int px = getX() + 40;
-    int py = getY();
-    character.move(px, py);
-    game.sendChatToPlayer(character.getId(),
-        "Has sido revivido al lado del sacerdote.");
-    game.sendPlayerMoved(character.getId());
-    game.sendPlayerInfoUpdate(character.getId());
+    
+    int distance = sqrt(pow(character.getX() - getX(), 2) + pow(character.getY() - getY(), 2));
+
+    int framesToWait = std::max(distance / 4, 60);
+
+    game.addResurrectingPlayer(character, getX() + 40, getY(), framesToWait);
+
+    game.sendChatToPlayer(character.getId(), "Resucitando...");
 }
+
 
 void Priest::buyItem(Game& game, Character& character, uint8_t itemId) {
     try {
