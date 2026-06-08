@@ -67,7 +67,17 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
       ChatCommand cmd =
           ChatCommandParser::parse(gameModel->getCurrentChatInput());
       if (cmd.type != ChatCommandType::None) {
-        if (cmd.type == ChatCommandType::Tomar) {
+        if (cmd.type == ChatCommandType::Unknown) {
+          gameModel->addLocalChatMessage("Ese comando no existe",
+                                         ChatMessageCategory::Error);
+        } else if (cmd.type == ChatCommandType::PrivateMessage) {
+          size_t separator = cmd.textArg.find('\n');
+          if (separator != std::string::npos) {
+            gameModel->sendPrivateMessage(
+                cmd.textArg.substr(0, separator),
+                cmd.textArg.substr(separator + 1));
+          }
+        } else if (cmd.type == ChatCommandType::Tomar) {
           gameModel->takeItem();
         } else if (cmd.type == ChatCommandType::Tirar) {
           gameModel->dropItem(static_cast<uint8_t>(cmd.arg));

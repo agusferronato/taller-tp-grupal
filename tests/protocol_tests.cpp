@@ -186,7 +186,7 @@ TEST_F(ProtocolTest, SendsAndReceivesChatMessageEvent) {
   registerAllParsers(server);
   registerAllParsers(client);
 
-  ServerEventDTO original = ChatMessageEventDTO{"ServerBot", "Welcome"};
+  ServerEventDTO original = ChatMessageEventDTO{ChatMessageCategory::System, "ServerBot", "Welcome"};
 
   server.sendEvent(original);
 
@@ -194,6 +194,7 @@ TEST_F(ProtocolTest, SendsAndReceivesChatMessageEvent) {
   auto *dto = std::get_if<ChatMessageEventDTO>(&received);
 
   ASSERT_NE(dto, nullptr);
+  EXPECT_EQ(dto->category, ChatMessageCategory::System);
   EXPECT_EQ(dto->sender, "ServerBot");
   EXPECT_EQ(dto->message, "Welcome");
 }

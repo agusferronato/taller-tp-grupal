@@ -27,6 +27,7 @@
 #include "PlayerMovedEventDTO.h"
 #include "PlayerRemovedEventDTO.h"
 #include "PlayerStoppedEventDTO.h"
+#include "PrivateMessageCommandDTO.h"
 #include "PrivateMessageEventDTO.h"
 #include "Race.h"
 #include "RegisterPlayerEventDTO.h"
@@ -122,6 +123,22 @@ void GameModel::banClanPlayer(const std::string &playerName) {
 
 void GameModel::kickClanMember(const std::string &playerName) {
   sendingQueue.push(KickClanMemberCommandDTO{myPlayerID, playerName});
+}
+
+void GameModel::sendPrivateMessage(const std::string &targetName,
+                                   const std::string &message) {
+  sendingQueue.push(PrivateMessageCommandDTO{targetName, message});
+}
+
+void GameModel::addLocalChatMessage(std::string text,
+                                    ChatMessageCategory category) {
+  chatMessages.push_back(ChatMessage{std::move(text), category});
+
+  while (chatMessages.size() > MAX_NUMBER_OF_MESSAGES) {
+    chatMessages.pop_front();
+  }
+
+  updateChatView();
 }
 
 void GameModel::moveMyPlayer(Direction direction) {
@@ -228,16 +245,35 @@ void GameModel::handle(const InventoryUpdateEventDTO &inv) {
 }
 void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &event) {
-  chatMessages.push_back(event.message);
+  chatMessages.push_back(ChatMessage{event.message, event.category});
   while (chatMessages.size() > 100) {
     chatMessages.pop_front();
   }
   updateChatView();
 }
-void GameModel::handle(const PrivateMessageEventDTO &) {}
+
+void GameModel::handle(const PrivateMessageEventDTO &event) {
+  std::string text = "[MP de " + event.senderName + "] " + event.message;
+  auto myPlayerIt = players.find(myPlayerID);
+  if (myPlayerIt != players.end() &&
+      event.senderName == myPlayerIt->second->getName()) {
+    text = "[MP para " + event.targetName + "] " + event.message;
+  }
+
+  chatMessages.push_back(
+      ChatMessage{std::move(text), ChatMessageCategory::Private});
+
+  while (chatMessages.size() > MAX_NUMBER_OF_MESSAGES) {
+    chatMessages.pop_front();
+  }
+
+  updateChatView();
+}
 
 void GameModel::handle(const GlobalChatMessageEventDTO &event) {
-  chatMessages.push_back(event.playerName + ": " + event.message);
+  chatMessages.push_back(
+      ChatMessage{event.playerName + ": " + event.message,
+                  ChatMessageCategory::Global});
 
   while (chatMessages.size() > MAX_NUMBER_OF_MESSAGES) {
     chatMessages.pop_front();
@@ -250,7 +286,7 @@ void GameModel::updateChatView() {
   gameView->setChatState(chatMessages, currentChatInput, chatActive);
 }
 
-const std::deque<std::string> &GameModel::getChatMessages() const {
+const std::deque<ChatMessage> &GameModel::getChatMessages() const {
   return chatMessages;
 }
 

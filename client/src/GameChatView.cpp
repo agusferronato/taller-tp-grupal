@@ -1,5 +1,7 @@
 #include "GameChatView.h"
 
+#include "ChatColors.h"
+
 #include <SDL2/SDL_ttf.h>
 #include <SDL2pp/Surface.hh>
 #include <SDL2pp/Texture.hh>
@@ -26,7 +28,7 @@ GameChatView::GameChatView(SDL2pp::Font *font) : font(font) {}
 void GameChatView::render(SDL2pp::Renderer &renderer,
                           const SDL2pp::Rect &messagesRect,
                           const SDL2pp::Rect &inputRect,
-                          const std::deque<std::string> &messages,
+                          const std::deque<ChatMessage> &messages,
                           const std::string &input, bool active) {
   renderer.SetDrawBlendMode(SDL_BLENDMODE_BLEND);
 
@@ -38,7 +40,7 @@ void GameChatView::render(SDL2pp::Renderer &renderer,
   int maxTextWidth =
       messagesRect.GetW() - CHAT_PADDING_X_LEFT - CHAT_PADDING_X_RIGHT;
 
-  std::vector<std::string> visualLines =
+  std::vector<VisualLine> visualLines =
       buildVisualLines(messages, maxTextWidth);
 
   renderMessages(renderer, messagesRect, visualLines);
@@ -57,16 +59,17 @@ void GameChatView::renderBackgrounds(SDL2pp::Renderer &renderer,
   renderer.FillRect(inputRect);
 }
 
-std::vector<std::string>
-GameChatView::buildVisualLines(const std::deque<std::string> &messages,
+std::vector<GameChatView::VisualLine>
+GameChatView::buildVisualLines(const std::deque<ChatMessage> &messages,
                                int maxWidth) const {
-
-  std::vector<std::string> visualLines;
+  std::vector<VisualLine> visualLines;
 
   for (const auto &msg : messages) {
-    std::vector<std::string> wrapped = wrapText(msg, maxWidth);
+    std::vector<std::string> wrapped = wrapText(msg.text, maxWidth);
 
-    visualLines.insert(visualLines.end(), wrapped.begin(), wrapped.end());
+    for (const auto &line : wrapped) {
+      visualLines.push_back(VisualLine{line, msg.category});
+    }
   }
 
   return visualLines;
@@ -75,7 +78,7 @@ GameChatView::buildVisualLines(const std::deque<std::string> &messages,
 void GameChatView::renderMessages(
     SDL2pp::Renderer& renderer,
     const SDL2pp::Rect& messagesRect,
-    const std::vector<std::string>& visualLines) const {
+    const std::vector<VisualLine>& visualLines) const {
 
   int visibleLines = calculateVisibleLines(messagesRect);
   int maxScrollOffset = std::max(0, static_cast<int>(visualLines.size()) - visibleLines);
@@ -85,7 +88,7 @@ void GameChatView::renderMessages(
   
   for (auto it = visualLines.rbegin() + safeOffset; it != visualLines.rend(); ++it) {
     SDL2pp::Surface surf =
-        font->RenderUTF8_Solid(*it, SDL_Color{220, 220, 220, 255});
+        font->RenderUTF8_Solid(it->text, colorFor(it->category));
 
     SDL2pp::Texture tex(renderer, surf);
 
@@ -218,7 +221,6 @@ int GameChatView::calculateVisibleLines(
 
   return availableHeight / lineHeight;
 }
-
 void GameChatView::scrollChatUp() {
   ++scrollOffset;
 }

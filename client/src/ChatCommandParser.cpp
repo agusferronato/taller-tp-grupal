@@ -20,7 +20,25 @@ static int parseIntArg(const std::string &message, size_t prefixLen) {
 }
 
 ChatCommand ChatCommandParser::parse(const std::string &message) {
-  if (message.empty() || message[0] != '/') {
+  if (message.empty()) {
+    return {ChatCommandType::None, 0};
+  }
+
+  if (message[0] == '@') {
+    size_t spacePos = message.find(' ');
+    if (spacePos != std::string::npos && spacePos > 1 &&
+        spacePos + 1 < message.size()) {
+      std::string targetName = message.substr(1, spacePos - 1);
+      std::string privateMessage = message.substr(spacePos + 1);
+      if (!targetName.empty() && !privateMessage.empty()) {
+        return {ChatCommandType::PrivateMessage, 0,
+                targetName + "\n" + privateMessage};
+      }
+    }
+    return {ChatCommandType::None, 0};
+  }
+
+  if (message[0] != '/') {
     return {ChatCommandType::None, 0};
   }
 
@@ -33,7 +51,7 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
     if (slot >= 0 && slot < 20) {
       return {ChatCommandType::Tirar, slot};
     }
-    return {ChatCommandType::None, 0};
+    return {ChatCommandType::Unknown, 0};
   }
 
   if (message.rfind("/equipar ", 0) == 0 && message.size() > 9) {
@@ -41,7 +59,7 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
     if (slot >= 0 && slot < 20) {
       return {ChatCommandType::Equipar, slot};
     }
-    return {ChatCommandType::None, 0};
+    return {ChatCommandType::Unknown, 0};
   }
 
   if (message.rfind("/desequipar ", 0) == 0 && message.size() > 12) {
@@ -50,7 +68,7 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
       return {ChatCommandType::Desequipar,
               static_cast<int>(EQUIP_SLOT_FROM_VISUAL[visualPos])};
     }
-    return {ChatCommandType::None, 0};
+    return {ChatCommandType::Unknown, 0};
   }
 
   if (message.rfind("/fundar-clan ", 0) == 0 && message.size() > 13) {
@@ -60,7 +78,7 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
       return {ChatCommandType::FundarClan, 0, clanName};
     }
 
-    return {ChatCommandType::None, 0};
+    return {ChatCommandType::Unknown, 0};
   }
 
   if (message.rfind("/unirse ", 0) == 0 && message.size() > 8) {
@@ -70,7 +88,7 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
       return {ChatCommandType::UnirseClan, 0, clanName};
     }
 
-    return {ChatCommandType::None, 0};
+    return {ChatCommandType::Unknown, 0};
   }
 
   if (message.rfind("/clan-aceptar ", 0) == 0 && message.size() > 14) {
@@ -80,7 +98,7 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
       return {ChatCommandType::ClanAceptar, 0, playerName};
     }
 
-    return {ChatCommandType::None, 0};
+    return {ChatCommandType::Unknown, 0};
   }
 
   if (message == "/dejar-clan") {
@@ -98,7 +116,7 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
       return {ChatCommandType::ClanRechazar, 0, playerName};
     }
 
-    return {ChatCommandType::None, 0};
+    return {ChatCommandType::Unknown, 0};
   }
 
   if (message.rfind("/clan-ban ", 0) == 0 && message.size() > 10) {
@@ -108,7 +126,7 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
       return {ChatCommandType::ClanBan, 0, playerName};
     }
 
-    return {ChatCommandType::None, 0};
+    return {ChatCommandType::Unknown, 0};
   }
 
   if (message.rfind("/clan-kick ", 0) == 0 && message.size() > 11) {
@@ -118,8 +136,8 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
       return {ChatCommandType::ClanKick, 0, playerName};
     }
 
-    return {ChatCommandType::None, 0};
+    return {ChatCommandType::Unknown, 0};
   }
 
-  return {ChatCommandType::None, 0};
+  return {ChatCommandType::Unknown, 0};
 }

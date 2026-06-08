@@ -6,6 +6,8 @@
 
 enum class ChatCommandType {
   None,
+  Unknown,
+  PrivateMessage,
   Tomar,
   Tirar,
   Equipar,

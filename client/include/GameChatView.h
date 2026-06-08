@@ -1,6 +1,7 @@
 #ifndef GAME_CHAT_VIEW_H
 #define GAME_CHAT_VIEW_H
 
+#include "ChatMessage.h"
 #include <SDL2pp/Font.hh>
 #include <SDL2pp/Renderer.hh>
 
@@ -10,6 +11,11 @@
 
 class GameChatView {
 private:
+  struct VisualLine {
+    std::string text;
+    ChatMessageCategory category{ChatMessageCategory::System};
+  };
+
   SDL2pp::Font* font;
   int scrollOffset{0};
 
@@ -19,7 +25,7 @@ public:
   void render(SDL2pp::Renderer& renderer,
               const SDL2pp::Rect& messagesRect,
               const SDL2pp::Rect& inputRect,
-              const std::deque<std::string>& messages,
+              const std::deque<ChatMessage>& messages,
               const std::string& input,
               bool active);
 
@@ -31,13 +37,13 @@ private:
                          const SDL2pp::Rect& messagesRect,
                          const SDL2pp::Rect& inputRect) const;
 
-  std::vector<std::string>
-  buildVisualLines(const std::deque<std::string>& messages,
+  std::vector<VisualLine>
+  buildVisualLines(const std::deque<ChatMessage>& messages,
                    int maxWidth) const;
 
   void renderMessages(SDL2pp::Renderer& renderer,
                       const SDL2pp::Rect& messagesRect,
-                      const std::vector<std::string>& visualLines) const;
+                      const std::vector<VisualLine>& visualLines) const;
 
   void renderInput(SDL2pp::Renderer& renderer,
                    const SDL2pp::Rect& inputRect,

@@ -14,6 +14,7 @@
 #include "LoginPlayerCommandDTO.h"
 #include "MoveCommandDTO.h"
 #include "PlayerStopCommandDTO.h"
+#include "PrivateMessageCommandDTO.h"
 #include "RegisterPlayerCommandDTO.h"
 #include "RejectClanRequestCommandDTO.h"
 #include "ReviewClanCommandDTO.h"
@@ -33,6 +34,7 @@
 #include "command/LoginPlayerCommand.h"
 #include "command/MovePlayerCommand.h"
 #include "command/PlayerStoppedCommand.h"
+#include "command/PrivateMessageCommand.h"
 #include "command/RegisterPlayerCommand.h"
 #include "command/RejectClanRequestCommand.h"
 #include "command/ReviewClanCommand.h"
@@ -84,6 +86,11 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
   if (const auto *request = std::get_if<GlobalChatMessageCommandDTO>(&dto)) {
     return std::make_unique<GlobalChatMessageCommand>(request->playerId,
                                                       request->message);
+  }
+
+  if (const auto *request = std::get_if<PrivateMessageCommandDTO>(&dto)) {
+    return std::make_unique<PrivateMessageCommand>(request->targetName,
+                                                   request->message);
   }
 
   if (const auto *request = std::get_if<AttackCommandDTO>(&dto)) {

@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "Camera.h"
+#include "ChatMessage.h"
 #include "ClientPlayer.h"
 #include "EntityType.h"
 #include "GameChatView.h"
@@ -86,7 +87,7 @@ private:
   Camera camera;
   uint32_t myPlayerID;
 
-  std::deque<std::string> chatMessages;
+  std::deque<ChatMessage> chatMessages;
   std::string currentChatInput;
   bool chatActive{false};
 
@@ -129,7 +130,7 @@ public:
 
   ClickTarget hitTestInventory(int screenX, int screenY) const;
   void updateGroundItems(const std::unordered_map<uint32_t, GroundItemInfoDTO> &items);
-  void setChatState(const std::deque<std::string> &messages,
+  void setChatState(const std::deque<ChatMessage> &messages,
                     const std::string &input, bool active);
 
   void scrollChatUp();
