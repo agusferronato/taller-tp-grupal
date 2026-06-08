@@ -65,8 +65,6 @@ public:
   bool removeItem(uint8_t slot) { return player.removeItem(slot); }
   bool hasItem(uint8_t itemId) const;
   bool hasMoney(uint16_t amount) const;
-  void decreaseGold(uint16_t amount);
-  void increaseGold(uint16_t amount);
   void removeItemById(uint8_t itemId);
   void resurrect();
 

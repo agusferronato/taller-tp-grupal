@@ -42,18 +42,20 @@ void Trader::sellItem(Game& game, Character& character, uint8_t itemId) {
     }
 }
 
-void Trader::listItems(Game& game, Character& character) {
+void Trader::listItems(Game& game, Character& character) { 
     const auto& items = store.getItems();
     if (items.empty()) {
         game.sendChatToPlayer(character.getId(),
             "El comerciante no tiene objetos disponibles.");
         return;
     }
-    std::string msg = "Objetos del comerciante: ";
+    std::string msg = "Objetos del comerciante: \n";
     for (auto& [id, item] : items) {
-        msg += ITEM_TABLE[id].name + " (C:" + std::to_string(item.purchase_price) +
-               " V:" + std::to_string(item.sell_price) + ") x" +
-               std::to_string(item.stock) + ", ";
+        msg += "    (# " + std::to_string(id) + ") " + ITEM_TABLE[id].name 
+            + " (x" + std::to_string(item.stock) + "). Compra: " 
+            + std::to_string(item.purchase_price) + " Venta: " 
+            + std::to_string(item.sell_price) + " \n";
+
     }
     msg.erase(msg.size() - 2);
     game.sendChatToPlayer(character.getId(), msg);
