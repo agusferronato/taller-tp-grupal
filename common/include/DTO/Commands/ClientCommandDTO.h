@@ -4,9 +4,9 @@
 #include <variant>
 
 #include "AcceptClanRequestCommandDTO.h"
+#include "AttackCommandDTO.h"
 #include "BanClanPlayerCommandDTO.h"
 #include "CreateClanCommandDTO.h"
-#include "AttackCommandDTO.h"
 #include "DropItemCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "ExitCommandDTO.h"
@@ -24,16 +24,16 @@
 #include "ReviewClanCommandDTO.h"
 #include "TakeItemCommandDTO.h"
 #include "UnequipCommandDTO.h"
+#include "ValidateLoginCommandDTO.h"
 
-using ClientCommandDTO =
-    std::variant<RegisterPlayerCommandDTO, LoginPlayerCommandDTO,
-                 MeditateCommandDTO, PrivateMessageCommandDTO, MoveCommandDTO,
-                 ExitCommandDTO, PlayerStopCommandDTO, EquipCommandDTO,
-                 UnequipCommandDTO, DropItemCommandDTO, TakeItemCommandDTO,
-                 GlobalChatMessageCommandDTO, AttackCommandDTO,
-                 CreateClanCommandDTO, JoinClanCommandDTO,
-                 AcceptClanRequestCommandDTO, LeaveClanCommandDTO,
-                 ReviewClanCommandDTO, RejectClanRequestCommandDTO,
-                 BanClanPlayerCommandDTO, KickClanMemberCommandDTO>;
+using ClientCommandDTO = std::variant<
+    RegisterPlayerCommandDTO, LoginPlayerCommandDTO, MeditateCommandDTO,
+    PrivateMessageCommandDTO, MoveCommandDTO, ExitCommandDTO,
+    PlayerStopCommandDTO, EquipCommandDTO, UnequipCommandDTO,
+    DropItemCommandDTO, TakeItemCommandDTO, GlobalChatMessageCommandDTO,
+    AttackCommandDTO, CreateClanCommandDTO, JoinClanCommandDTO,
+    AcceptClanRequestCommandDTO, LeaveClanCommandDTO, ReviewClanCommandDTO,
+    RejectClanRequestCommandDTO, BanClanPlayerCommandDTO,
+    KickClanMemberCommandDTO, ValidateLoginCommandDTO>;
 
 #endif

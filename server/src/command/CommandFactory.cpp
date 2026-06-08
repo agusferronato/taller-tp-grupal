@@ -1,9 +1,9 @@
 #include "command/CommandFactory.h"
 
 #include "AcceptClanRequestCommandDTO.h"
+#include "AttackCommandDTO.h"
 #include "BanClanPlayerCommandDTO.h"
 #include "CreateClanCommandDTO.h"
-#include "AttackCommandDTO.h"
 #include "DropItemCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "ExitCommandDTO.h"
@@ -19,10 +19,11 @@
 #include "ReviewClanCommandDTO.h"
 #include "TakeItemCommandDTO.h"
 #include "UnequipCommandDTO.h"
+#include "ValidateLoginCommandDTO.h"
 #include "command/AcceptClanRequestCommand.h"
+#include "command/AttackCommand.h"
 #include "command/BanClanPlayerCommand.h"
 #include "command/CreateClanCommand.h"
-#include "command/AttackCommand.h"
 #include "command/DropItemCommand.h"
 #include "command/EquipCommand.h"
 #include "command/ExitCommand.h"
@@ -38,6 +39,7 @@
 #include "command/ReviewClanCommand.h"
 #include "command/TakeItemCommand.h"
 #include "command/UnequipCommand.h"
+#include "command/ValidateLoginCommand.h"
 
 std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
   if (const auto *request = std::get_if<RegisterPlayerCommandDTO>(&dto)) {
@@ -127,6 +129,10 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
   if (const auto *request = std::get_if<KickClanMemberCommandDTO>(&dto)) {
     return std::make_unique<KickClanMemberCommand>(request->founderId,
                                                    request->playerName);
+  }
+
+  if (const auto *request = std::get_if<ValidateLoginCommandDTO>(&dto)) {
+    return std::make_unique<ValidateLoginCommand>(request->playerName);
   }
 
   throw std::runtime_error("Unknown client request DTO type");
