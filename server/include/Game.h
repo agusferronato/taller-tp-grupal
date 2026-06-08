@@ -66,10 +66,12 @@ private:
   std::list<City> cities;
   std::list<std::unique_ptr<NPC>> npcs;
 
+  std::string mapPath;
+
 public:
   Game(Queue<ClientMessage> &gameloopQueue,
        SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository,
-       ClanManager &clanManager);
+       ClanManager &clanManager, const std::string &mapPath);
 
   virtual void run() override;
 
@@ -90,7 +92,7 @@ public:
   void dropItem(uint32_t playerId, uint8_t inventorySlot);
   void takeItem(uint32_t playerId);
   void sendGlobalChatMessage(uint32_t playerId, const std::string &message);
-  void atack(uint32_t playerId, int16_t x, int16_t y);
+  void attack(uint32_t playerId, int16_t x, int16_t y);
 
   void createClan(uint32_t playerId, const std::string &clanName);
   void requestJoinClan(uint32_t playerId, const std::string &clanName);
@@ -103,7 +105,8 @@ public:
 
   bool thereIsACollidableEntityAt(Position position);
   void appearNPC(std::unique_ptr<NPC> &&npc);
-  uint16_t nextNPCId{1};
+  uint32_t nextNPCId{1};
+  uint32_t nextCityEntityId{1};
 
 private:
   void execute(ClientMessage clientMessage);
@@ -122,13 +125,22 @@ private:
   void sendToClan(uint32_t clanId, const ServerEventDTO &event,
                   std::optional<uint32_t> exceptPlayerId = std::nullopt);
 
-  void playerAtackPlayer(Character &atacker, Character &target);
-  void playerAtackNPC(Character &atacker, NPC &target);
-  uint32_t calculateDamage(Character &atacker);
-  bool validAtack(Character &atacker, Character &target);
+
+  void makeNPCsfollowPlayers();
+  void makeCitiesEntitiesFollowPlayers();
+  void createCityEntities();
+
+  bool checkIfItCollides(Colisionable *entity);
+
+  void playerAttackPlayer(Character &attacker, Character &target);
+  void playerAttackNPC(Character &attacker, NPC &target);
+  uint32_t calculateDamage(Character &attacker);
+  bool validAttack(Character &attacker, Character &target);
   Character *findPlayerByCoordinates(int16_t x, int16_t y);
   NPC *findNPCByCoordinates(int16_t x, int16_t y);
-  const std::string npcName(NPC &npc);
+  int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
+
+  void killPlayer(Character &dyingPlayer);
 };
 
 #endif

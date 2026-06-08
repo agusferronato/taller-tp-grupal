@@ -130,12 +130,6 @@ path = "assets/equipable/escudo2.png"
 layout_type = "EquipableGrid"
 transparent = true
 
-# NPC sprites (from dev branch)
-[[sprites]]
-id = 100
-path = "assets/11402.png"
-transparent = true
-
 [[sprites]]
 id = 101
 path = "assets/zombie.png"
@@ -290,4 +284,19 @@ transparent = true
 [[sprites]]
 id = 318
 path = "assets/items/pocion1.png"
+transparent = true
+
+[[sprites]]
+id = 18
+path = "assets/banquero.png"
+transparent = true
+
+[[sprites]]
+id = 19
+path = "assets/sacerdote.png"
+transparent = true
+
+[[sprites]]
+id = 20
+path = "assets/comerciante.png"
 transparent = true

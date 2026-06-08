@@ -3,6 +3,7 @@
 
 #include "Camera.h"
 #include "MapDownloader.h"
+#include "MapLoader.h"
 #include "TextureMap.h"
 #include <SDL2pp/SDL2pp.hh>
 #include <array>
@@ -10,8 +11,6 @@
 #include <map>
 #include <set>
 #include <string>
-#include <tuple>
-#include <utility>
 #include <memory>
 #include <vector>
 
@@ -50,7 +49,7 @@ private:
 
   std::list<TileOrigin> txtOrigins;
 
-  std::set<std::tuple<int, int, int>> collidableCells;
+  std::set<std::pair<int, int>> collidableCells;
 
   std::vector<std::multimap<
     std::pair<int, int>, 
@@ -61,6 +60,7 @@ private:
 
   Camera &camera;
   MapDownloader downloader;
+  MapLoader mapLoader;
   SDL2pp::Font font;
   SDL2pp::Texture colissionTexture;
 
@@ -79,17 +79,18 @@ private:
   int next_instance_id{0};
 
 public:
-  Grid(Camera &camera, SDL2pp::Renderer &renderer);
+  Grid(Camera &camera, SDL2pp::Renderer &renderer, int max_priority);
+
+  void loadMap(const std::string &mapPath, TextureMap &textureMap);
 
   void setHoverTexture(TextureMap &textureMap, int texture_id);
   void clearHoverTexture();
-  void tryPlaceHoverTexture();
 
   void render(SDL2pp::Renderer &renderer, TextureMap &textureMap);
 
   void setMousePosition(int x, int y);
 
-  void saveMap(GridSDL &gridSDL);
+  void saveMap(GridSDL &gridSDL, const std::string &path);
 
   void setInitBiomePosition(Biome biome);
 
@@ -107,12 +108,14 @@ public:
   int getSelectedBiomeId() const { return selectedBiomeId; }
 
   std::map<int, BiomeGrid> &getBiomes();
+  void tryPlaceHoverTexture(TextureMap &textureMap);
 
 
 private:
 
   std::shared_ptr<Tile> createTileInstance(TextureMap &textureMap, int texture_id, int start_i, int start_j);
   bool checkCollisions(const std::shared_ptr<Tile> &tile);
+
 
   void updateSelectedBiome();
 

@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "City.h"
 #include "Formulas.h"
 #include "PlayerClass.h"
 #include "Race.h"
@@ -78,16 +79,16 @@ std::pair<int, int> Character::getTargetPosition(Direction dir) const {
   int targetY = player.getY();
   switch (dir) {
   case Direction::Up:
-    targetY -= 1;
+    targetY -= 2;
     break;
   case Direction::Down:
-    targetY += 1;
+    targetY += 2;
     break;
   case Direction::Left:
-    targetX -= 1;
+    targetX -= 2;
     break;
   case Direction::Right:
-    targetX += 1;
+    targetX += 2;
     break;
   }
   return {targetX, targetY};
@@ -110,6 +111,15 @@ bool Character::colisionaCon(int targetX, int targetY, int ancho,
   return !(targetX + ancho <= player.getX() ||
            targetX >= player.getX() + ANCHO ||
            targetY + alto <= player.getY() || targetY >= player.getY() + ALTO);
+}
+
+bool Character::isInCity(std::list<City> &cities, int gridSize, int maxSize) {
+  for (auto &city : cities) {
+    if (city.contains(player.getX(), player.getY(), gridSize, maxSize)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 int Character::getX() const { return player.getX(); }
@@ -157,17 +167,14 @@ std::pair<int, int> Character::getTargetPosition() const {
   return getTargetPosition(player.getDirection());
 }
 
-uint32_t Character::getDamage() const { return player.atack(); }
+uint32_t Character::getDamage() const { return player.attack(); }
 
 bool Character::tryParry() const {
   return Formulas::calcularEsquivo(player.getAgility(), rand() % 2);
 }
 
-bool Character::assertAtackDistance(int16_t targetX, int16_t targetY) const {
-  (void)targetX;
-  (void)targetY;
-  // [TODO] validar distancia del ataque con arma cuerpo a cuerpo o a distancia
-  return true;
+bool Character::assertAttackDistance(int16_t targetX, int16_t targetY) const {
+  return player.assertAttackDistance(targetX, targetY);
 }
 
 uint32_t Character::dropGoldOnDeath() {
@@ -176,3 +183,5 @@ uint32_t Character::dropGoldOnDeath() {
   player.removeGold(perdido);
   return perdido;
 }
+
+std::vector<uint8_t> Character::die() { return player.die(); }

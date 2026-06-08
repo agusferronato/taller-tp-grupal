@@ -6,7 +6,6 @@
 #include "DropItemCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "GameWindow.h"
-#include "UnequipCommandDTO.h"
 #include "GlobalChatMessageCommandDTO.h"
 #include "GlobalChatMessageEventDTO.h"
 #include "GroundItemAppearedEventDTO.h"
@@ -18,6 +17,8 @@
 #include "LeaveClanCommandDTO.h"
 #include "NPC.h"
 #include "NPCAppearedEventDTO.h"
+#include "NPCMovedEventDTO.h"
+#include "NPCStoppedEventDTO.h"
 #include "NPCType.h"
 #include "NpcDefeatedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
@@ -32,6 +33,7 @@
 #include "RejectClanRequestCommandDTO.h"
 #include "ReviewClanCommandDTO.h"
 #include "TextureInfoEventDTO.h"
+#include "UnequipCommandDTO.h"
 #include <iostream>
 #include <stdexcept>
 
@@ -55,22 +57,21 @@ void GameModel::updateStateFromServer() {
   gameView->updateGroundItems(groundItemManager.getAll());
 }
 
-void GameModel::handleInventoryClick(int screenX, int screenY,
-                                     uint8_t button) {
+void GameModel::handleInventoryClick(int screenX, int screenY, uint8_t button) {
   ClickTarget target = gameView->hitTestInventory(screenX, screenY);
   if (target.type == ClickTargetType::None)
     return;
 
   if (target.type == ClickTargetType::Equipment) {
-    sendingQueue.push(UnequipCommandDTO{myPlayerID,
-                                        static_cast<uint8_t>(target.index)});
+    sendingQueue.push(
+        UnequipCommandDTO{myPlayerID, static_cast<uint8_t>(target.index)});
   } else if (target.type == ClickTargetType::Inventory) {
     if (button == SDL_BUTTON_RIGHT) {
-      sendingQueue.push(DropItemCommandDTO{myPlayerID,
-                                           static_cast<uint8_t>(target.index)});
+      sendingQueue.push(
+          DropItemCommandDTO{myPlayerID, static_cast<uint8_t>(target.index)});
     } else {
-      sendingQueue.push(EquipCommandDTO{myPlayerID,
-                                        static_cast<uint8_t>(target.index)});
+      sendingQueue.push(
+          EquipCommandDTO{myPlayerID, static_cast<uint8_t>(target.index)});
     }
   }
 }
@@ -131,10 +132,10 @@ void GameModel::stopMyPlayer() {
   sendingQueue.push(PlayerStopCommandDTO{myPlayerID});
 }
 
-void GameModel::atack(int mouseX, int mouseY) {
+void GameModel::attack(int mouseX, int mouseY) {
   auto [worldX, worldY] = gameView->screenToWorld(mouseX, mouseY);
-  sendingQueue.push(AtackCommandDTO{myPlayerID, static_cast<int16_t>(worldX),
-                                    static_cast<int16_t>(worldY)});
+  sendingQueue.push(AttackCommandDTO{myPlayerID, static_cast<int16_t>(worldX),
+                                     static_cast<int16_t>(worldY)});
 }
 
 void GameModel::handle(const PlayerMovedEventDTO &moved) {
@@ -306,6 +307,20 @@ void GameModel::handle(const GroundItemsListEventDTO &e) {
   groundItemManager.setAll(e.items);
 }
 
+void GameModel::handle(const NPCMovedEventDTO &event) {
+  auto it = npcs.find(event.npcId);
+  if (it != npcs.end()) {
+    it->second->updateCoordinates(event.x, event.y, event.direction);
+  }
+}
+
+void GameModel::handle(const NPCStoppedEventDTO &event) {
+  auto it = npcs.find(event.npcId);
+  if (it != npcs.end()) {
+    it->second->stopMoving();
+  }
+}
+
 void GameModel::handle(const NpcDefeatedEventDTO &event) {
   gameView->removeEntity(EntityType::Npc, event.npcId);
   npcs.erase(event.npcId);
@@ -316,6 +331,28 @@ void GameModel::handle(const NPCAppearedEventDTO &event) {
   NPCType npcType = static_cast<NPCType>(event.npcType);
   gameView->addNpc(event.npcId, *npc, npcType);
   npcs[event.npcId] = std::move(npc);
+}
+
+void GameModel::handle(const CityEntityAppearedEventDTO &event) {
+  auto entity =
+      std::make_unique<CityEntityModel>(event.x, event.y, event.direction);
+  CityEntityType type = static_cast<CityEntityType>(event.type);
+  gameView->addCityEntity(event.entityId, *entity, type);
+  cityEntities[event.entityId] = std::move(entity);
+}
+
+void GameModel::handle(const CityEntityMovedEventDTO &event) {
+  auto it = cityEntities.find(event.entityId);
+  if (it != cityEntities.end()) {
+    it->second->updateCoordinates(event.x, event.y, event.direction);
+  }
+}
+
+void GameModel::handle(const CityEntityStoppedEventDTO &event) {
+  auto it = cityEntities.find(event.entityId);
+  if (it != cityEntities.end()) {
+    it->second->stopMoving();
+  }
 }
 
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
@@ -352,10 +389,19 @@ void GameModel::scrollChatDown() {
   updateChatView();
 }
 void GameModel::handleLeftMouseClick(int mouseX, int mouseY) {
-  atack(mouseX, mouseY);
+  handleInventoryClick(mouseX, mouseY, SDL_BUTTON_LEFT);
+
+  attack(mouseX, mouseY);
 }
 
 void GameModel::handleRightMouseClick(int mouseX, int mouseY) {
-  (void)mouseX;
-  (void)mouseY;
+  handleInventoryClick(mouseX, mouseY, SDL_BUTTON_RIGHT);
+}
+
+void GameModel::handle(const PlayerDieEventDTO &event) {
+  auto it = players.find(event.playerId);
+  if (it == players.end()) {
+    return;
+  }
+  it->second->die();
 }

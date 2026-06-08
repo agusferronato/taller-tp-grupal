@@ -3,6 +3,9 @@
 #include <cmath>
 #include <sstream>
 
+#include "CityEntityAppearedEventDTO.h"
+#include "CityEntityMovedEventDTO.h"
+#include "CityEntityStoppedEventDTO.h"
 #include "ConstantRateLoop.h"
 #include "Formulas.h"
 #include "Game.h"
@@ -12,6 +15,8 @@
 #include "MapLoader.h"
 #include "MoveCommandDTO.h"
 #include "NPCAppearedEventDTO.h"
+#include "NPCMovedEventDTO.h"
+#include "NPCStoppedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerInfoEventDTO.h"
 #include "PlayerListEventDTO.h"
@@ -23,17 +28,18 @@
 #include "RegisterPlayerEventDTO.h"
 #include "TextureInfoEventDTO.h"
 #include "command/CommandFactory.h"
+#include <NPCType.h>
 
 static int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
 
 Game::Game(Queue<ClientMessage> &gameloopQueue,
            SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository,
-           ClanManager &clanManager)
+           ClanManager &clanManager, const std::string &mapPath)
     : gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor),
-      repository(repository), clanManager(clanManager) {}
+      repository(repository), clanManager(clanManager), mapPath(mapPath) {}
 
 void Game::run() {
-  MapLoader mapLoader("map.toml");
+  MapLoader mapLoader(mapPath);
   maxSize = mapLoader.GetMaxSize();
   gridSize = mapLoader.GetGridSize();
   commonGroundTextureId = mapLoader.GetCommonGroundTextureId();
@@ -41,7 +47,8 @@ void Game::run() {
   collidableCells = mapLoader.GetCollidableCells();
 
   biomes = std::move(mapLoader.GetBiomes());
-  cities = mapLoader.GetCities();
+  cities = std::move(mapLoader.GetCities());
+  createCityEntities();
 
   for (uint8_t id = 1; id <= 19; ++id) {
     inventoryManager.addGroundItem(id, (id - 1) * 64, 32);
@@ -59,7 +66,11 @@ void Game::run() {
       auto command = factory.create(msg.dto);
       command->execute(*this, msg.connectionId);
     }
+
+    makeNPCsfollowPlayers();
+    makeCitiesEntitiesFollowPlayers();
     movePlayers();
+
     appearNPCs();
     sendMessages();
 
@@ -140,6 +151,26 @@ void Game::registerPlayer(const std::string &name, const Race race,
   senderQueueMonitor.sendToClient(connectionId,
                                   PlayerListEventDTO{std::move(playerList)});
 
+  for (auto &npc : npcs) {
+    senderQueueMonitor.sendToClient(
+        connectionId,
+        NPCAppearedEventDTO{npc->getId(), static_cast<uint8_t>(npc->getType()),
+                            static_cast<int16_t>(npc->getX()),
+                            static_cast<int16_t>(npc->getY())});
+  }
+
+  for (auto &city : cities) {
+    for (auto *entity : city.getEntities()) {
+      senderQueueMonitor.sendToClient(
+          connectionId,
+          CityEntityAppearedEventDTO{
+              entity->getId(),
+              static_cast<uint8_t>(entity->getCityEntityType()),
+              static_cast<int16_t>(entity->getX()),
+              static_cast<int16_t>(entity->getY()), entity->getDirection()});
+    }
+  }
+
   messagesToSend.push_back(players[newId]->toPlayerAppeared());
 
   messagesToSend.push_back(InventoryUpdateEventDTO{
@@ -217,6 +248,26 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
   }
   senderQueueMonitor.sendToClient(connectionId,
                                   PlayerListEventDTO{std::move(playerList)});
+
+  for (auto &npc : npcs) {
+    senderQueueMonitor.sendToClient(
+        connectionId,
+        NPCAppearedEventDTO{npc->getId(), static_cast<uint8_t>(npc->getType()),
+                            static_cast<int16_t>(npc->getX()),
+                            static_cast<int16_t>(npc->getY())});
+  }
+
+  for (auto &city : cities) {
+    for (auto *entity : city.getEntities()) {
+      senderQueueMonitor.sendToClient(
+          connectionId,
+          CityEntityAppearedEventDTO{
+              entity->getId(),
+              static_cast<uint8_t>(entity->getCityEntityType()),
+              static_cast<int16_t>(entity->getX()),
+              static_cast<int16_t>(entity->getY()), entity->getDirection()});
+    }
+  }
 
   messagesToSend.push_back(players[newId]->toPlayerAppeared());
 
@@ -315,7 +366,12 @@ void Game::dropItem(uint32_t playerId, uint8_t inventorySlot) {
   inventoryManager.dropItem(playerId, inventorySlot);
 }
 
-void Game::takeItem(uint32_t playerId) { inventoryManager.takeItem(playerId); }
+void Game::takeItem(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end() || it->second->isDead())
+    return;
+  inventoryManager.takeItem(playerId);
+}
 
 void Game::createClan(uint32_t playerId, const std::string &clanName) {
   auto playerIt = players.find(playerId);
@@ -663,7 +719,6 @@ void Game::reviewClan(uint32_t playerId) {
     }
   }
   sendToPlayer(playerId, ChatMessageEventDTO{"Clan", pending.str()});
-}
 
 bool Game::thereIsACollidableEntityAt(Position position) {
   int center = maxSize / 2;
@@ -681,14 +736,6 @@ bool Game::thereIsACollidableEntityAt(Position position) {
       return true;
   }
 
-  for (auto &npc : npcs) {
-    if (!(cellX + gridSize <= npc->getX() ||
-          cellX >= npc->getX() + npc->getAncho() ||
-          cellY + gridSize <= npc->getY() ||
-          cellY >= npc->getY() + npc->getAlto()))
-      return true;
-  }
-
   return false;
 }
 
@@ -698,59 +745,34 @@ void Game::appearNPC(std::unique_ptr<NPC> &&npc) {
   int py = (npc->getPosition().column - center) * gridSize;
   npc->setPixelPosition(px, py);
 
-  uint16_t id = nextNPCId++;
+  uint32_t id = nextNPCId++;
+  npc->setId(id);
+
+  colisionables.push_back(npc.get());
+
   messagesToSend.push_back(
       NPCAppearedEventDTO{id, static_cast<uint8_t>(npc->getType()),
                           static_cast<int16_t>(px), static_cast<int16_t>(py)});
 
-  std::cout << "NPC of type " << (int)npc->getType() << std::endl;
   npcs.push_back(std::move(npc));
 }
 
 void Game::movePlayers() {
   for (auto &[playerID, info] : players) {
-    if (!info->isMoving()) {
+    if (!info->isMoving())
       continue;
-    }
 
     auto [targetX, targetY] = info->getTargetPosition();
 
-    bool blocked = false;
-    for (auto &col : colisionables) {
-      if (col == info.get())
-        continue;
-      if (col->colisionaCon(targetX, targetY, info->getAncho(),
-                            info->getAlto())) {
-        blocked = true;
-        break;
-      }
-    }
-    if (blocked)
-      continue;
-
-    {
-      int start_i = floorDiv(targetX, gridSize) + maxSize / 2;
-      int end_i =
-          floorDiv(targetX + info->getAncho() - 1, gridSize) + maxSize / 2;
-      int start_j = floorDiv(targetY, gridSize) + maxSize / 2;
-      int end_j =
-          floorDiv(targetY + info->getAlto() - 1, gridSize) + maxSize / 2;
-      bool tileBlocked = false;
-      for (int i = start_i; i <= end_i; i++) {
-        for (int j = start_j; j <= end_j; j++) {
-          if (collidableCells.count({i, j, 0})) {
-            tileBlocked = true;
-            break;
-          }
-        }
-        if (tileBlocked)
-          break;
-      }
-      if (tileBlocked)
-        continue;
-    }
+    int origX = info->getX();
+    int origY = info->getY();
 
     info->move(targetX, targetY);
+
+    if (checkIfItCollides(info.get())) {
+      info->move(origX, origY);
+      continue;
+    }
 
     messagesToSend.push_back(info->toPlayerMoved());
   }
@@ -773,24 +795,24 @@ void Game::sendGlobalChatMessage(uint32_t playerId,
       GlobalChatMessageEventDTO{getPlayerName(playerId), message});
 }
 
-void Game::atack(uint32_t playerId, int16_t x, int16_t y) {
+void Game::attack(uint32_t playerId, int16_t x, int16_t y) {
   auto it = players.find(playerId);
   if (it == players.end()) {
     return;
   }
-  auto atacker = it->second.get();
-  if (!atacker->assertAtackDistance(x, y)) {
+  auto attacker = it->second.get();
+  if (!attacker->assertAttackDistance(x, y)) {
     return;
   }
   auto targetNPC = findNPCByCoordinates(x, y);
   if (targetNPC != nullptr) {
-    playerAtackNPC(*atacker, *targetNPC);
+    playerAttackNPC(*attacker, *targetNPC);
     return;
   }
 
   auto targetPlayer = findPlayerByCoordinates(x, y);
   if (targetPlayer != nullptr) {
-    playerAtackPlayer(*atacker, *targetPlayer);
+    playerAttackPlayer(*attacker, *targetPlayer);
     return;
   }
 }
@@ -856,91 +878,236 @@ void Game::sendToClan(uint32_t clanId, const ServerEventDTO &event,
   }
 }
 
-void Game::playerAtackPlayer(Character &atacker, Character &target) {
-  if (!validAtack(atacker, target)) {
+bool Game::checkIfItCollides(Colisionable *entity) {
+  for (auto &col : colisionables) {
+    if (col == entity)
+      continue;
+    if (col->colisionaCon(entity->getX(), entity->getY(), entity->getAncho(),
+                          entity->getAlto()))
+      return true;
+  }
+
+  int start_i = floorDiv(entity->getX(), gridSize) + maxSize / 2;
+  int end_i =
+      floorDiv(entity->getX() + entity->getAncho(), gridSize) + maxSize / 2;
+  int start_j = floorDiv(entity->getY(), gridSize) + maxSize / 2;
+  int end_j =
+      floorDiv(entity->getY() + entity->getAlto(), gridSize) + maxSize / 2;
+  for (int i = start_i; i <= end_i; i++) {
+    for (int j = start_j; j <= end_j; j++) {
+      if (collidableCells.count({i, j, 0}))
+        return true;
+    }
+  }
+
+  return false;
+}
+
+void Game::createCityEntities() {
+  for (auto &city : cities) {
+    city.createEntities(*this);
+
+    for (auto *entity : city.getEntities()) {
+      int center = maxSize / 2;
+      int px = (entity->getPosition().row - center) * gridSize;
+      int py = (entity->getPosition().column - center) * gridSize;
+      entity->setPixelPosition(px, py);
+
+      uint32_t id = nextCityEntityId++;
+      entity->setId(id);
+      colisionables.push_back(entity);
+
+      messagesToSend.push_back(CityEntityAppearedEventDTO{
+          id, static_cast<uint8_t>(entity->getCityEntityType()),
+          static_cast<int16_t>(px), static_cast<int16_t>(py),
+          entity->getDirection()});
+    }
+  }
+}
+
+void Game::makeNPCsfollowPlayers() {
+  for (auto &npc : npcs) {
+    Character *target = nullptr;
+
+    for (auto &[_, player] : players) {
+      if (player->isInCity(cities, gridSize, maxSize))
+        continue;
+
+      int dx = npc->getX() - player->getX();
+      int dy = npc->getY() - player->getY();
+      if (abs(dx) <= npc->getRange() && abs(dy) <= npc->getRange()) {
+        target = player.get();
+        break;
+      }
+    }
+
+    if (target) {
+      int oldX = npc->getX();
+      int oldY = npc->getY();
+
+      if (npc->updatePosition(*target)) {
+        if (checkIfItCollides(npc.get())) {
+          npc->setPixelPosition(oldX, oldY);
+          npc->stop();
+          messagesToSend.push_back(NPCStoppedEventDTO{npc->getId()});
+        } else {
+          messagesToSend.push_back(NPCMovedEventDTO{
+              npc->getId(), static_cast<int16_t>(npc->getX()),
+              static_cast<int16_t>(npc->getY()), npc->getDirection()});
+        }
+      }
+    } else {
+      if (npc->getIsMoving()) {
+        npc->stop();
+        messagesToSend.push_back(NPCStoppedEventDTO{npc->getId()});
+      }
+    }
+  }
+}
+
+void Game::makeCitiesEntitiesFollowPlayers() {
+  for (auto &city : cities) {
+    for (auto *cityEntity : city.getEntities()) {
+      Character *target = nullptr;
+
+      for (auto &[_, player] : players) {
+        if (!city.contains(player->getX(), player->getY(), gridSize, maxSize))
+          continue;
+
+        int dx = cityEntity->getX() - player->getX();
+        int dy = cityEntity->getY() - player->getY();
+        if (abs(dx) <= cityEntity->getRange() &&
+            abs(dy) <= cityEntity->getRange()) {
+          target = player.get();
+          break;
+        }
+      }
+
+      if (target) {
+        int oldX = cityEntity->getX();
+        int oldY = cityEntity->getY();
+
+        if (cityEntity->updatePosition(*target)) {
+          if (checkIfItCollides(cityEntity)) {
+            cityEntity->setPixelPosition(oldX, oldY);
+            cityEntity->stop();
+            messagesToSend.push_back(
+                CityEntityStoppedEventDTO{cityEntity->getId()});
+          } else {
+            messagesToSend.push_back(CityEntityMovedEventDTO{
+                cityEntity->getId(), static_cast<int16_t>(cityEntity->getX()),
+                static_cast<int16_t>(cityEntity->getY()),
+                cityEntity->getDirection()});
+          }
+        }
+      } else {
+        if (cityEntity->getIsMoving()) {
+          cityEntity->stop();
+          messagesToSend.push_back(
+              CityEntityStoppedEventDTO{cityEntity->getId()});
+        }
+      }
+    }
+  }
+}
+
+void Game::playerAttackPlayer(Character &attacker, Character &target) {
+  if (!validAttack(attacker, target)) {
     return;
   }
-  uint32_t damage = calculateDamage(atacker);
-  bool critico = (damage != atacker.getDamage());
+  uint32_t damage = calculateDamage(attacker);
+  bool critico = (damage != attacker.getDamage());
 
   if (!critico && target.tryParry()) {
     senderQueueMonitor.sendToClient(
-        playerToConnection[atacker.getId()],
+        playerToConnection[attacker.getId()],
         ChatMessageEventDTO{"Sistema", "Atacaste a " + target.getName() +
                                            " pero el lo esquivo"});
     senderQueueMonitor.sendToClient(
         playerToConnection[target.getId()],
         ChatMessageEventDTO{"Sistema",
-                            atacker.getName() +
+                            attacker.getName() +
                                 " trato de atacarte pero lo esquivaste"});
     return;
   }
   damage = target.takeDamage(damage);
 
-  uint32_t xp = Formulas::calcularExperiencia(damage, atacker.getLevel(),
+  uint32_t xp = Formulas::calcularExperiencia(damage, attacker.getLevel(),
                                               target.getLevel());
-  atacker.gainExperience(xp);
+  attacker.gainExperience(xp);
 
   if (target.getHp() == 0) {
     uint32_t oro = target.dropGoldOnDeath();
-    atacker.addGold(oro);
+    attacker.addGold(oro);
     uint32_t xpMuerte = Formulas::calcularExperienciaMuerte(
-        target.getMaxHp(), atacker.getLevel(), target.getLevel(),
+        target.getMaxHp(), attacker.getLevel(), target.getLevel(),
         (std::rand() % 100) / 100.0);
-    atacker.gainExperience(xpMuerte);
-    // [TODO] volver fanstasma el target
+    attacker.gainExperience(xpMuerte);
+    killPlayer(target);
   } else {
     senderQueueMonitor.sendToClient(
-        playerToConnection[atacker.getId()],
+        playerToConnection[attacker.getId()],
         ChatMessageEventDTO{
             "Sistema", "Atacaste a " + target.getName() + " y le hiciste " +
                            std::to_string(damage) + " de daño!"});
     senderQueueMonitor.sendToClient(
         playerToConnection[target.getId()],
         ChatMessageEventDTO{"Sistema",
-                            "Recibiste un ataque de " + atacker.getName() +
+                            "Recibiste un ataque de " + attacker.getName() +
                                 " y te hicieron " + std::to_string(damage) +
                                 " de daño!"});
   }
-  messagesToSend.push_back(atacker.toPlayerInfoEvent());
+  messagesToSend.push_back(attacker.toPlayerInfoEvent());
   messagesToSend.push_back(target.toPlayerInfoEvent());
 }
 
-void Game::playerAtackNPC(Character &atacker, NPC &target) {
-  uint32_t damage = calculateDamage(atacker);
+void Game::playerAttackNPC(Character &attacker, NPC &target) {
+  uint32_t damage = calculateDamage(attacker);
   // [TODO] aplicar daño al npc
   /* [TODO] exp del ataque*/
   if (false) {
     // [TODO] muerte del npc
   } else {
     senderQueueMonitor.sendToClient(
-        playerToConnection[atacker.getId()],
+        playerToConnection[attacker.getId()],
         ChatMessageEventDTO{
-            "Sistema", "Atacaste a un " + npcName(target) + " y le hiciste " +
+            "Sistema", "Atacaste a un " + target.getName() + " y le hiciste " +
                            std::to_string(damage) + " de daño!"});
   }
-  messagesToSend.push_back(atacker.toPlayerInfoEvent());
+  messagesToSend.push_back(attacker.toPlayerInfoEvent());
 }
 
-uint32_t Game::calculateDamage(Character &atacker) {
-  uint32_t damage = atacker.getDamage();
+uint32_t Game::calculateDamage(Character &attacker) {
+  uint32_t damage = attacker.getDamage();
   if (Formulas::calcularCritico(std::rand())) {
     return damage * 2;
   }
   return damage;
 }
 
-bool Game::validAtack([[maybe_unused]] Character &atacker,
-                      [[maybe_unused]] Character &target) {
-  return !atacker.isNewbie() && !target.isNewbie() &&
-         abs(static_cast<int>(atacker.getLevel()) -
-             static_cast<int>(target.getLevel())) <= 10;
-  // [TODO] validar si esta en ciudad
+bool Game::validAttack(Character &attacker, Character &target) {
+  if (attacker.isNewbie() || target.isNewbie()) {
+    // return false;
+  }
+  if (abs(static_cast<int>(attacker.getLevel()) -
+          static_cast<int>(target.getLevel())) > 10) {
+    return false;
+  }
+  for (const auto &city : cities) {
+    if (city.contains(attacker.getX(), attacker.getY(), gridSize, maxSize) ||
+        city.contains(target.getX(), target.getY(), gridSize, maxSize)) {
+      return false;
+    }
+  }
+  if (attacker.isDead() || target.isDead()) {
+    return false;
+  }
+  return true;
 }
 
 Character *Game::findPlayerByCoordinates(int16_t x, int16_t y) {
   for (auto &[pid, player] : players) {
-    if (player->colisionaCon(x, y, player->getAncho(), player->getAlto())) {
+    if (player->colisionaCon(x, y, 16, 16)) {
       return player.get();
     }
   }
@@ -949,31 +1116,20 @@ Character *Game::findPlayerByCoordinates(int16_t x, int16_t y) {
 
 NPC *Game::findNPCByCoordinates(int16_t x, int16_t y) {
   for (auto &npc : npcs) {
-    if (x >= npc->getX() && x < npc->getX() + npc->getAncho() &&
-        y >= npc->getY() && y < npc->getY() + npc->getAlto()) {
+    if (npc->colisionaCon(x, y, 16, 16)) {
       return npc.get();
     }
   }
   return nullptr;
 }
 
-const std::string Game::npcName(NPC &npc) {
-  switch (npc.getType()) {
-  case NPCType::ZombieT:
-    return "Zombie";
-  case NPCType::SpiderT:
-    return "Spider";
-  case NPCType::ElfT:
-    return "Elf";
-  case NPCType::SkeletonT:
-    return "Skeleton";
-  case NPCType::OrcT:
-    return "Orc";
-  case NPCType::GiantT:
-    return "Giant";
-  case NPCType::GolemT:
-    return "Golem";
-  default:
-    return "NPC";
+void Game::killPlayer(Character &dyingPlayer) {
+  dyingPlayer.dropGoldOnDeath();
+  auto items = dyingPlayer.die();
+  int16_t x = dyingPlayer.getX();
+  int16_t y = dyingPlayer.getY();
+  for (auto itemId : items) {
+    inventoryManager.addGroundItem(itemId, x, y);
   }
+  messagesToSend.push_back(PlayerDieEventDTO{dyingPlayer.getId()});
 }

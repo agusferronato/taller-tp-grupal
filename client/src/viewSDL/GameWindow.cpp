@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "CityEntityModel.h"
+#include "CityEntityRenderable.h"
 #include "NPCEntity.h"
 #include "PlayerEntity.h"
 
@@ -224,6 +226,11 @@ void GameWindow::show(unsigned int it) {
   renderer->SetDrawColor(12, 16, 24, 255);
   renderer->FillRect(layout.gameRect);
 
+  if (myPlayerEntity) {
+    camera.follow(myPlayerEntity->get_x(), myPlayerEntity->get_y(),
+                  ClientPlayer::Width, ClientPlayer::Height);
+  }
+
   renderWorld(it);
   renderUIBackgrounds();
   renderHUD();
@@ -232,22 +239,45 @@ void GameWindow::show(unsigned int it) {
   renderer->Present();
 }
 
-void GameWindow::clear() {
-  for (auto &[key, entity] : entities) {
-    entity->clear();
+
+void GameWindow::addPlayer(uint32_t ID, const ClientPlayer &player) {
+  if (ID == myPlayerID) {
+    setMyPlayer(player, ID);
+    return;
   }
 
-  renderer->Clear();
-  renderer->SetDrawColor(0, 0, 0, 255);
-  renderer->Clear();
+  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
+  addEntity(EntityType::Player, ID, std::move(entity));
 }
 
-void GameWindow::renderWorld(unsigned int it) {
-  if (myPlayerEntity) {
-    camera.follow(myPlayerEntity->get_x(), myPlayerEntity->get_y(),
-                  ClientPlayer::Width, ClientPlayer::Height);
-  }
+void GameWindow::removePlayer(uint32_t ID) {
+  removeEntity(EntityType::Player, ID);
+}
 
+
+void GameWindow::addCityEntity(uint32_t ID, CityEntityModel &entity,
+                                CityEntityType entityType) {
+    CityEntityInfo info = cityEntityParser.getInfo(entityType);
+    auto renderable = std::make_unique<CityEntityRenderable>(
+        entity, *textureManager, *font, info.textureId, info.layoutType,
+        info.name);
+    addEntity(EntityType::CityEntity, ID, std::move(renderable));
+}
+
+void GameWindow::removeCityEntity(uint32_t ID) {
+    removeEntity(EntityType::CityEntity, ID);
+}
+
+
+void GameWindow::setChatState(const std::deque<std::string> &messages,
+                              const std::string &input, bool active) {
+  chatMessages = messages;
+  currentChatInput = input;
+  chatActive = active;
+}
+
+
+void GameWindow::renderWorld(unsigned int it) {
   renderCommonGround();
   renderGroundItems();
 
@@ -263,7 +293,7 @@ void GameWindow::renderWorld(unsigned int it) {
 
       for (auto *entity : sortedEntities) {
         if (!entity->rendered() &&
-            entity->get_y() + 1.25 * entity->get_h() < yMax &&
+            entity->get_y() + entity->get_h() < yMax &&
             entity->hasPriority(i)) {
           entity->render(*renderer, camera, it);
         }
@@ -293,7 +323,7 @@ void GameWindow::renderWorld(unsigned int it) {
     }
   }
 
-  for (auto *entity : sortedEntities) {
+  for (auto & entity : sortedEntities) {
     if (!entity->rendered()) {
       entity->render(*renderer, camera, it);
     }
@@ -448,6 +478,111 @@ void GameWindow::renderVitals() {
       SDL_Color{255, 255, 255, 255});
 }
 
+void GameWindow::renderCommonGround() {
+  for (int i = 0; i < maxSize; i++) {
+    for (int j = 0; j < maxSize; j++) {
+      SDL2pp::Rect dstRect =
+          camera.toScreen((i - maxSize / 2) * gridSize,
+                          (j - maxSize / 2) * gridSize, gridSize, gridSize);
+
+      SDL2pp::Rect srcRect = {0, 0, gridSize, gridSize};
+      renderer->Copy(textureMapper->getTexture(commonGroundTextureId), srcRect,
+                     dstRect);
+    }
+  }
+}
+
+void GameWindow::renderGroundItems() {
+  for (const auto &[id, item] : groundItems) {
+    SDL2pp::Texture *tex = textureManager->getItemIcon(item.itemId);
+    if (!tex)
+      continue;
+
+    SDL2pp::Rect dst = camera.toScreen(item.x, item.y, 32, 32);
+    renderer->Copy(*tex, SDL2pp::NullOpt, dst);
+  }
+}
+
+void GameWindow::clear() {
+  for (auto &[key, entity] : entities) {
+    entity->clear();
+  }
+  renderer->Clear();
+  renderer->SetDrawColor(0, 0, 0, 255);
+  renderer->Clear();
+}
+
+void GameWindow::addEntity(EntityType type, uint32_t id,
+                           std::unique_ptr<RenderableEntity> entity) {
+  EntityKey key(type, id);
+  entities[key] = std::move(entity);
+}
+
+void GameWindow::removeEntity(EntityType type, uint32_t id) {
+  EntityKey key(type, id);
+  if (myPlayerEntity && type == EntityType::Player && id == myPlayerID) {
+    myPlayerEntity = nullptr;
+  }
+  entities.erase(key);
+}
+
+void GameWindow::setMyPlayer(const ClientPlayer &player, uint32_t ID) {
+  myPlayerID = ID;
+  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
+  myPlayerEntity = entity.get();
+  addEntity(EntityType::Player, ID, std::move(entity));
+}
+
+SDL2pp::Renderer &GameWindow::getRenderer() { return *renderer; }
+
+SDL2pp::Font &GameWindow::getFont() { return *font; }
+
+void GameWindow::setMapData(int maxSize_, int gridSize_,
+                             int commonGroundTextureId_,
+                             const std::list<TileOrigin> &origins) {
+  maxSize = maxSize_;
+  gridSize = gridSize_;
+  commonGroundTextureId = commonGroundTextureId_;
+  textureMapper->buildRenderGrid(origins, gridSize);
+  tilesToRender = textureMapper->getTilesToRender();
+}
+
+
+void GameWindow::addNpc(uint32_t ID, NPC &npc, NPCType npcType) {
+  NPCInfo info = npcParser.getInfo(npcType);
+  auto entity = std::make_unique<NPCEntity>(npc, *textureManager,
+                                            info.textureId, info.layoutType);
+  addEntity(EntityType::Npc, ID, std::move(entity));
+}
+
+ClickTarget GameWindow::hitTestInventory(int screenX, int screenY) const {
+  if (invPanel)
+    return invPanel->handleClick(screenX, screenY);
+  return {ClickTargetType::None, -1};
+}
+
+void GameWindow::updateGroundItems(
+    const std::unordered_map<uint32_t, GroundItemInfoDTO> &items) {
+  groundItems = items;
+}
+
+
+void GameWindow::getSortedEntities(
+    std::vector<RenderableEntity *> &sortedEntities) {
+
+  sortedEntities.reserve(entities.size());
+
+  for (auto &[key, entity] : entities) {
+    sortedEntities.push_back(entity.get());
+  }
+
+  std::sort(sortedEntities.begin(), sortedEntities.end(),
+            [](RenderableEntity *a, RenderableEntity *b) {
+              if (a->get_y() != b->get_y())
+                return a->get_y() < b->get_y();
+              return a->get_x() < b->get_x();
+            });
+}
 void GameWindow::renderText(int x, int y, const std::string &text,
                             SDL_Color color) {
   SDL2pp::Font *activeFont = uiFont ? uiFont.get() : font.get();

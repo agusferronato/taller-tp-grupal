@@ -1,6 +1,8 @@
 #ifndef GAMEMODEL_H
 #define GAMEMODEL_H
 
+#include "CityEntityModel.h"
+#include "CityEntityType.h"
 #include "ClientPlayer.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
@@ -23,6 +25,7 @@ private:
   uint32_t myPlayerID;
   std::unordered_map<uint32_t, std::unique_ptr<ClientPlayer>> players;
   std::unordered_map<uint32_t, std::unique_ptr<NPC>> npcs;
+  std::unordered_map<uint32_t, std::unique_ptr<CityEntityModel>> cityEntities;
 
   GroundItemManager groundItemManager;
 
@@ -64,7 +67,7 @@ public:
   void handleRightMouseClick(int mouseX, int mouseY);
 
 private:
-  void atack(int mouseX, int mouseY);
+  void attack(int mouseX, int mouseY);
 
 public:
   // Chat
@@ -93,12 +96,17 @@ private:
   void handle(const PlayerAppearedEventDTO &event);
   void handle(const PlayerStoppedEventDTO &event);
   void handle(const PlayerRemovedEventDTO &event);
+  void handle(const CityEntityAppearedEventDTO &event);
+  void handle(const CityEntityMovedEventDTO &event);
+  void handle(const CityEntityStoppedEventDTO &event);
   void handle(const PlayerInfoEventDTO &event);
   void handle(const InventoryUpdateEventDTO &event);
   void handle(const NPCAppearedEventDTO &event);
   void handle(const TextureInfoEventDTO &event);
   void handle(const PlayerListEventDTO &event);
   void handle(const ChatMessageEventDTO &event);
+  void handle(const NPCMovedEventDTO &event);
+  void handle(const NPCStoppedEventDTO &event);
   void handle(const NpcDefeatedEventDTO &event);
   void handle(const RegisterPlayerEventDTO &event);
   void handle(const GroundItemAppearedEventDTO &event);
@@ -106,6 +114,7 @@ private:
   void handle(const GroundItemsListEventDTO &event);
   void handle(const PrivateMessageEventDTO &event);
   void handle(const GlobalChatMessageEventDTO &event);
+  void handle(const PlayerDieEventDTO &event);
 };
 
 #endif
