@@ -125,6 +125,10 @@ ClanBanResult ClanManager::banPlayer(uint32_t founderId, uint32_t playerId) {
     return ClanBanResult::NotFounder;
   }
 
+  if (playerId == founderId) {
+    return ClanBanResult::CannotBanFounder;
+  }
+
   if (clan->isBanned(playerId)) {
     return ClanBanResult::AlreadyBanned;
   }
@@ -219,6 +223,21 @@ std::vector<uint32_t> ClanManager::getMembers(uint32_t clanId) const {
   }
 
   return {clan->members.begin(), clan->members.end()};
+}
+
+std::vector<uint32_t>
+ClanManager::getPendingRequests(uint32_t clanId) const {
+  const Clan *clan = getClan(clanId);
+  if (clan == nullptr) {
+    return {};
+  }
+
+  return {clan->pendingRequests.begin(), clan->pendingRequests.end()};
+}
+
+bool ClanManager::isFounder(uint32_t playerId) const {
+  const Clan *clan = findPlayerClan(playerId);
+  return clan != nullptr && clan->isFounder(playerId);
 }
 
 Clan *ClanManager::findPlayerClan(uint32_t playerId) {

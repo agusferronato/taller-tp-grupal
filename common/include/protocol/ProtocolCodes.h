@@ -28,6 +28,10 @@ enum class ClientCommandOpCode : uint8_t {
   JoinClanCommand,
   AcceptClanRequestCommand,
   LeaveClanCommand,
+  ReviewClanCommand,
+  RejectClanRequestCommand,
+  BanClanPlayerCommand,
+  KickClanMemberCommand,
 };
 
 // Opcodes para eventos enviados por el servidor a los clientes

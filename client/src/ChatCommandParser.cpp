@@ -87,5 +87,39 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
     return {ChatCommandType::DejarClan, 0};
   }
 
+  if (message == "/revisar-clan") {
+    return {ChatCommandType::RevisarClan, 0};
+  }
+
+  if (message.rfind("/clan-rechazar ", 0) == 0 && message.size() > 15) {
+    std::string playerName = stripQuotes(message.substr(15));
+
+    if (!playerName.empty()) {
+      return {ChatCommandType::ClanRechazar, 0, playerName};
+    }
+
+    return {ChatCommandType::None, 0};
+  }
+
+  if (message.rfind("/clan-ban ", 0) == 0 && message.size() > 10) {
+    std::string playerName = stripQuotes(message.substr(10));
+
+    if (!playerName.empty()) {
+      return {ChatCommandType::ClanBan, 0, playerName};
+    }
+
+    return {ChatCommandType::None, 0};
+  }
+
+  if (message.rfind("/clan-kick ", 0) == 0 && message.size() > 11) {
+    std::string playerName = stripQuotes(message.substr(11));
+
+    if (!playerName.empty()) {
+      return {ChatCommandType::ClanKick, 0, playerName};
+    }
+
+    return {ChatCommandType::None, 0};
+  }
+
   return {ChatCommandType::None, 0};
 }

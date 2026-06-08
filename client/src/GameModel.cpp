@@ -1,5 +1,6 @@
 #include "GameModel.h"
 #include "AcceptClanRequestCommandDTO.h"
+#include "BanClanPlayerCommandDTO.h"
 #include "ChatMessageEventDTO.h"
 #include "CreateClanCommandDTO.h"
 #include "DropItemCommandDTO.h"
@@ -13,6 +14,7 @@
 #include "GroundItemsListEventDTO.h"
 #include "InventoryUpdateEventDTO.h"
 #include "JoinClanCommandDTO.h"
+#include "KickClanMemberCommandDTO.h"
 #include "LeaveClanCommandDTO.h"
 #include "NPC.h"
 #include "NPCAppearedEventDTO.h"
@@ -27,6 +29,8 @@
 #include "PrivateMessageEventDTO.h"
 #include "Race.h"
 #include "RegisterPlayerEventDTO.h"
+#include "RejectClanRequestCommandDTO.h"
+#include "ReviewClanCommandDTO.h"
 #include "TextureInfoEventDTO.h"
 #include <iostream>
 #include <stdexcept>
@@ -101,6 +105,22 @@ void GameModel::acceptClanRequest(const std::string &playerName) {
 
 void GameModel::leaveClan() {
   sendingQueue.push(LeaveClanCommandDTO{myPlayerID});
+}
+
+void GameModel::reviewClan() {
+  sendingQueue.push(ReviewClanCommandDTO{myPlayerID});
+}
+
+void GameModel::rejectClanRequest(const std::string &playerName) {
+  sendingQueue.push(RejectClanRequestCommandDTO{myPlayerID, playerName});
+}
+
+void GameModel::banClanPlayer(const std::string &playerName) {
+  sendingQueue.push(BanClanPlayerCommandDTO{myPlayerID, playerName});
+}
+
+void GameModel::kickClanMember(const std::string &playerName) {
+  sendingQueue.push(KickClanMemberCommandDTO{myPlayerID, playerName});
 }
 
 void GameModel::moveMyPlayer(Direction direction) {

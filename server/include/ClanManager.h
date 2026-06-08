@@ -58,6 +58,7 @@ enum class ClanBanResult {
   Success,
   NotFounder,
   AlreadyBanned,
+  CannotBanFounder,
   PlayerNotInClan
 };
 
@@ -87,6 +88,8 @@ public:
   uint32_t getClanId(uint32_t playerId) const;
   const Clan* getClan(uint32_t clanId) const;
   std::vector<uint32_t> getMembers(uint32_t clanId) const;
+  std::vector<uint32_t> getPendingRequests(uint32_t clanId) const;
+  bool isFounder(uint32_t playerId) const;
 
 private:
   Clan* findPlayerClan(uint32_t playerId);
