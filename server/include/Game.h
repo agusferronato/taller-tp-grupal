@@ -99,6 +99,7 @@ public:
   void banClanPlayer(uint32_t founderId, const std::string &playerName);
   void kickClanMember(uint32_t founderId, const std::string &playerName);
   void leaveClan(uint32_t playerId);
+  void reviewClan(uint32_t playerId);
 
   bool thereIsACollidableEntityAt(Position position);
   void appearNPC(std::unique_ptr<NPC> &&npc);

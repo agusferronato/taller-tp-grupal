@@ -1,10 +1,12 @@
 #include "protocol/RegisterAllParsers.h"
 #include "parser/Commands/AcceptClanRequestCommandParser.h"
+#include "parser/Commands/BanClanPlayerCommandParser.h"
 #include "parser/Commands/CreateClanCommandParser.h"
 #include "parser/Commands/DropItemCommandParser.h"
 #include "parser/Commands/EquipCommandParser.h"
 #include "parser/Commands/ExitParser.h"
 #include "parser/Commands/JoinClanCommandParser.h"
+#include "parser/Commands/KickClanMemberCommandParser.h"
 #include "parser/Commands/LeaveClanCommandParser.h"
 #include "parser/Commands/LoginPlayerParser.h"
 #include "parser/Commands/MeditateParser.h"
@@ -12,6 +14,8 @@
 #include "parser/Commands/PlayerStopCommandParser.h"
 #include "parser/Commands/PrivateMessageCommandParser.h"
 #include "parser/Commands/RegisterPlayerParser.h"
+#include "parser/Commands/RejectClanRequestCommandParser.h"
+#include "parser/Commands/ReviewClanCommandParser.h"
 #include "parser/Commands/TakeItemCommandParser.h"
 #include "parser/Commands/UnequipCommandParser.h"
 #include "parser/Events/ChatMessageEventParser.h"
@@ -104,6 +108,22 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerCommandParser(
       static_cast<uint8_t>(ClientCommandOpCode::LeaveClanCommand),
       std::make_unique<LeaveClanCommandParser>());
+
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::ReviewClanCommand),
+      std::make_unique<ReviewClanCommandParser>());
+
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::RejectClanRequestCommand),
+      std::make_unique<RejectClanRequestCommandParser>());
+
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::BanClanPlayerCommand),
+      std::make_unique<BanClanPlayerCommandParser>());
+
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::KickClanMemberCommand),
+      std::make_unique<KickClanMemberCommandParser>());
 
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::ChatMessageEvent),

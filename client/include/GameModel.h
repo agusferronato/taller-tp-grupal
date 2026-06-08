@@ -55,6 +55,10 @@ public:
   void joinClan(const std::string &clanName);
   void acceptClanRequest(const std::string &playerName);
   void leaveClan();
+  void reviewClan();
+  void rejectClanRequest(const std::string &playerName);
+  void banClanPlayer(const std::string &playerName);
+  void kickClanMember(const std::string &playerName);
 
   void handleLeftMouseClick(int mouseX, int mouseY);
   void handleRightMouseClick(int mouseX, int mouseY);

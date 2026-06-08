@@ -13,7 +13,11 @@ enum class ChatCommandType {
   FundarClan,
   UnirseClan,
   ClanAceptar,
-  DejarClan
+  DejarClan,
+  RevisarClan,
+  ClanRechazar,
+  ClanBan,
+  ClanKick
 };
 
 struct ChatCommand {

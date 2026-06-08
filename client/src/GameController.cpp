@@ -83,6 +83,14 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
           gameModel->acceptClanRequest(cmd.textArg);
         } else if (cmd.type == ChatCommandType::DejarClan) {
           gameModel->leaveClan();
+        } else if (cmd.type == ChatCommandType::RevisarClan) {
+          gameModel->reviewClan();
+        } else if (cmd.type == ChatCommandType::ClanRechazar) {
+          gameModel->rejectClanRequest(cmd.textArg);
+        } else if (cmd.type == ChatCommandType::ClanBan) {
+          gameModel->banClanPlayer(cmd.textArg);
+        } else if (cmd.type == ChatCommandType::ClanKick) {
+          gameModel->kickClanMember(cmd.textArg);
         }
         gameModel->closeChat();
       } else {

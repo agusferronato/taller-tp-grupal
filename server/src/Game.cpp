@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cmath>
+#include <sstream>
 
 #include "ConstantRateLoop.h"
 #include "Formulas.h"
@@ -467,6 +468,8 @@ void Game::banClanPlayer(uint32_t founderId, const std::string &playerName) {
     message = "No perteneces a un clan";
   } else if (result == ClanBanResult::NotFounder) {
     message = "Solo el fundador puede banear jugadores";
+  } else if (result == ClanBanResult::CannotBanFounder) {
+    message = "No puedes banearte a vos mismo";
   } else if (result == ClanBanResult::AlreadyBanned) {
     message = "Ese jugador ya esta baneado";
   }
@@ -539,6 +542,56 @@ void Game::leaveClan(uint32_t playerId) {
     message = "El fundador no puede salir del clan";
   }
   sendToPlayer(playerId, ChatMessageEventDTO{"Clan", message});
+}
+
+void Game::reviewClan(uint32_t playerId) {
+  if (players.find(playerId) == players.end()) {
+    return;
+  }
+
+  if (!clanManager.hasClan(playerId)) {
+    sendToPlayer(playerId,
+                 ChatMessageEventDTO{"Clan", "No perteneces a un clan"});
+    return;
+  }
+
+  uint32_t clanId = clanManager.getClanId(playerId);
+  const Clan *clan = clanManager.getClan(clanId);
+  if (clan == nullptr) {
+    sendToPlayer(playerId,
+                 ChatMessageEventDTO{"Clan", "No perteneces a un clan"});
+    return;
+  }
+
+  std::ostringstream members;
+  members << "Miembros de " << clan->name << ": ";
+  std::vector<uint32_t> memberIds = clanManager.getMembers(clanId);
+  for (size_t i = 0; i < memberIds.size(); ++i) {
+    if (i > 0) {
+      members << ", ";
+    }
+    members << getPlayerName(memberIds[i]);
+  }
+  sendToPlayer(playerId, ChatMessageEventDTO{"Clan", members.str()});
+
+  if (!clanManager.isFounder(playerId)) {
+    return;
+  }
+
+  std::vector<uint32_t> pendingIds = clanManager.getPendingRequests(clanId);
+  std::ostringstream pending;
+  pending << "Pedidos pendientes: ";
+  if (pendingIds.empty()) {
+    pending << "ninguno";
+  } else {
+    for (size_t i = 0; i < pendingIds.size(); ++i) {
+      if (i > 0) {
+        pending << ", ";
+      }
+      pending << getPlayerName(pendingIds[i]);
+    }
+  }
+  sendToPlayer(playerId, ChatMessageEventDTO{"Clan", pending.str()});
 }
 
 
