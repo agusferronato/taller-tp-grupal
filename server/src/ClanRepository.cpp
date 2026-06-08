@@ -80,6 +80,8 @@ ClanPersistenceData ClanRepository::load() {
     Clan clan{id, name, founderName};
     if (!readPlayerSet(file, clan.members))
       return {};
+    if (!readPlayerSet(file, clan.pendingRequests))
+      return {};
     if (!readPlayerSet(file, clan.bannedPlayers))
       return {};
 
@@ -104,6 +106,7 @@ void ClanRepository::save(const ClanPersistenceData &data) const {
     writeString(file, clan.name);
     writeString(file, clan.founderName);
     writePlayerSet(file, clan.members);
+    writePlayerSet(file, clan.pendingRequests);
     writePlayerSet(file, clan.bannedPlayers);
   }
 }

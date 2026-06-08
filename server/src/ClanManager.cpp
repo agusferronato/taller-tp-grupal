@@ -69,6 +69,7 @@ ClanManager::requestJoinClan(const std::string &clanName,
   }
 
   clan->pendingRequests.insert(playerName);
+  persist();
   return ClanJoinRequestResult::Success;
 }
 
@@ -118,6 +119,7 @@ ClanRejectResult ClanManager::rejectJoinRequest(const std::string &founderName,
   }
 
   clan->pendingRequests.erase(playerName);
+  persist();
   return ClanRejectResult::Success;
 }
 
@@ -264,7 +266,6 @@ void ClanManager::loadFromPersistenceData(ClanPersistenceData data) {
   clans.clear();
   nextClanId = data.nextClanId;
   for (auto &clan : data.clans) {
-    clan.pendingRequests.clear();
     clans.emplace(clan.id, std::move(clan));
   }
   rebuildIndexes();

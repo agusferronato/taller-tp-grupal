@@ -98,7 +98,7 @@ void GameWindow::setMapData(int maxSize_, int gridSize_,
   tilesToRender = textureMapper->getTilesToRender();
 }
 
-void GameWindow::setChatState(const std::deque<std::string> &messages,
+void GameWindow::setChatState(const std::deque<ChatMessage> &messages,
                               const std::string &input, bool active) {
   chatMessages = messages;
   currentChatInput = input;

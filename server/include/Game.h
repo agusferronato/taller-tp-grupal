@@ -92,6 +92,8 @@ public:
   void dropItem(uint32_t playerId, uint8_t inventorySlot);
   void takeItem(uint32_t playerId);
   void sendGlobalChatMessage(uint32_t playerId, const std::string &message);
+  void sendPrivateMessage(uint32_t connectionId, const std::string &targetName,
+                          const std::string &message);
   void attack(uint32_t playerId, int16_t x, int16_t y);
 
   void createClan(uint32_t playerId, const std::string &clanName);

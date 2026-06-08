@@ -30,6 +30,34 @@
 #include "command/CommandFactory.h"
 #include <NPCType.h>
 
+namespace {
+ChatMessageEventDTO makeChatMessage(ChatMessageCategory category,
+                                    std::string sender,
+                                    std::string message) {
+  return ChatMessageEventDTO{category, std::move(sender), std::move(message)};
+}
+
+ChatMessageEventDTO makeClanMessage(std::string message) {
+  return makeChatMessage(ChatMessageCategory::Clan, "Clan",
+                         std::move(message));
+}
+
+ChatMessageEventDTO makeClanErrorMessage(std::string message) {
+  return makeChatMessage(ChatMessageCategory::Error, "Clan",
+                         std::move(message));
+}
+
+ChatMessageEventDTO makeSystemErrorMessage(std::string message) {
+  return makeChatMessage(ChatMessageCategory::Error, "Sistema",
+                         std::move(message));
+}
+
+ChatMessageEventDTO makeCombatMessage(std::string message) {
+  return makeChatMessage(ChatMessageCategory::Combat, "Sistema",
+                         std::move(message));
+}
+} // namespace
+
 Game::Game(Queue<ClientMessage> &gameloopQueue,
            SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository,
            ClanManager &clanManager, const std::string &mapPath)
@@ -287,8 +315,7 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   uint32_t clanId = players[newId]->getClanId();
   if (clanId != 0) {
-    sendToClan(clanId, ChatMessageEventDTO{"Clan", name + " entro a Argentum"},
-               newId);
+    sendToClan(clanId, makeClanMessage(name + " entro a Argentum"), newId);
   }
 }
 
@@ -323,8 +350,7 @@ void Game::exitPlayer(uint32_t playerId) {
   repository.save(playerName, it->second->toPlayerData());
 
   if (clanId != 0) {
-    sendToClan(clanId,
-               ChatMessageEventDTO{"Clan", playerName + " salio de Argentum"},
+    sendToClan(clanId, makeClanMessage(playerName + " salio de Argentum"),
                playerId);
   }
 
@@ -371,6 +397,34 @@ void Game::takeItem(uint32_t playerId) {
   inventoryManager.takeItem(playerId);
 }
 
+void Game::sendPrivateMessage(uint32_t connectionId,
+                              const std::string &targetName,
+                              const std::string &message) {
+  auto senderPlayerIt = connectionToPlayer.find(connectionId);
+  if (senderPlayerIt == connectionToPlayer.end()) {
+    return;
+  }
+
+  auto senderIt = players.find(senderPlayerIt->second);
+  if (senderIt == players.end()) {
+    return;
+  }
+
+  auto targetPlayerId = findPlayerIdByName(targetName);
+  if (!targetPlayerId.has_value()) {
+    sendToPlayer(senderIt->second->getId(),
+                 makeSystemErrorMessage(
+                     "Ese jugador no existe o no esta online"));
+    return;
+  }
+
+  const std::string &senderName = senderIt->second->getName();
+  sendToPlayer(targetPlayerId.value(),
+               PrivateMessageEventDTO{senderName, targetName, message});
+  sendToPlayer(senderIt->second->getId(),
+               PrivateMessageEventDTO{senderName, targetName, message});
+}
+
 void Game::createClan(uint32_t playerId, const std::string &clanName) {
   auto playerIt = players.find(playerId);
   if (playerIt == players.end()) {
@@ -384,8 +438,7 @@ void Game::createClan(uint32_t playerId, const std::string &clanName) {
     playerIt->second->joinClan(clanId);
     repository.save(playerIt->second->getName(),
                     playerIt->second->toPlayerData());
-    sendToPlayer(playerId,
-                 ChatMessageEventDTO{"Clan", "Fundaste el clan " + clanName});
+    sendToPlayer(playerId, makeClanMessage("Fundaste el clan " + clanName));
     return;
   }
 
@@ -397,7 +450,7 @@ void Game::createClan(uint32_t playerId, const std::string &clanName) {
   } else if (result == ClanCreateResult::PlayerAlreadyInClan) {
     message = "Ya perteneces a un clan";
   }
-  sendToPlayer(playerId, ChatMessageEventDTO{"Clan", message});
+  sendToPlayer(playerId, makeClanErrorMessage(message));
 }
 
 void Game::requestJoinClan(uint32_t playerId, const std::string &clanName) {
@@ -410,8 +463,7 @@ void Game::requestJoinClan(uint32_t playerId, const std::string &clanName) {
       clanManager.requestJoinClan(clanName, playerIt->second->getName());
   if (result == ClanJoinRequestResult::Success) {
     sendToPlayer(
-        playerId,
-        ChatMessageEventDTO{"Clan", "Solicitud enviada al clan " + clanName});
+        playerId, makeClanMessage("Solicitud enviada al clan " + clanName));
 
     uint32_t clanId = clanManager.getClanIdByName(clanName);
     const Clan *clan = clanManager.getClan(clanId);
@@ -419,9 +471,8 @@ void Game::requestJoinClan(uint32_t playerId, const std::string &clanName) {
       auto founderId = findPlayerIdByName(clan->founderName);
       if (founderId.has_value()) {
         sendToPlayer(founderId.value(),
-                     ChatMessageEventDTO{
-                         "Clan", playerIt->second->getName() +
-                                     " solicito unirse al clan " + clanName});
+                     makeClanMessage(playerIt->second->getName() +
+                                     " solicito unirse al clan " + clanName));
       }
     }
     return;
@@ -439,7 +490,7 @@ void Game::requestJoinClan(uint32_t playerId, const std::string &clanName) {
   } else if (result == ClanJoinRequestResult::AlreadyRequested) {
     message = "Ya enviaste una solicitud a ese clan";
   }
-  sendToPlayer(playerId, ChatMessageEventDTO{"Clan", message});
+  sendToPlayer(playerId, makeClanErrorMessage(message));
 }
 
 void Game::acceptClanRequest(uint32_t founderId,
@@ -450,9 +501,8 @@ void Game::acceptClanRequest(uint32_t founderId,
   }
 
   auto targetPlayerId = findPlayerIdByName(playerName);
-  if (!targetPlayerId.has_value()) {
-    sendToPlayer(founderId,
-                 ChatMessageEventDTO{"Clan", "Jugador no encontrado"});
+  if (!targetPlayerId.has_value() && !repository.exists(playerName)) {
+    sendToPlayer(founderId, makeClanErrorMessage("Jugador no encontrado"));
     return;
   }
 
@@ -464,19 +514,28 @@ void Game::acceptClanRequest(uint32_t founderId,
   ClanAcceptResult result =
       clanManager.acceptJoinRequest(founderName, playerName);
   if (result == ClanAcceptResult::Success) {
-    auto playerIt = players.find(targetPlayerId.value());
-    if (playerIt != players.end()) {
-      playerIt->second->joinClan(clanId);
-      repository.save(playerIt->second->getName(),
-                      playerIt->second->toPlayerData());
-    }
+    if (targetPlayerId.has_value()) {
+      auto playerIt = players.find(targetPlayerId.value());
+      if (playerIt != players.end()) {
+        playerIt->second->joinClan(clanId);
+        repository.save(playerIt->second->getName(),
+                        playerIt->second->toPlayerData());
+      }
 
-    sendToPlayer(targetPlayerId.value(),
-                 ChatMessageEventDTO{"Clan", "Bienvenido al clan " + clanName});
-    sendToClan(clanId,
-               ChatMessageEventDTO{"Clan", "El jugador " + playerName +
-                                               " se unio al clan"},
-               targetPlayerId.value());
+      sendToPlayer(targetPlayerId.value(),
+                   makeClanMessage("Bienvenido al clan " + clanName));
+      sendToClan(clanId,
+                 makeClanMessage("El jugador " + playerName +
+                                 " se unio al clan"),
+                 targetPlayerId.value());
+    } else {
+      PlayerData data = repository.load(playerName);
+      data.clanId = clanId;
+      repository.save(playerName, data);
+
+      sendToClan(clanId, makeClanMessage("El jugador " + playerName +
+                                         " se unio al clan"));
+    }
     return;
   }
 
@@ -492,7 +551,7 @@ void Game::acceptClanRequest(uint32_t founderId,
   } else if (result == ClanAcceptResult::PlayerAlreadyInClan) {
     message = "Ese jugador ya pertenece a un clan";
   }
-  sendToPlayer(founderId, ChatMessageEventDTO{"Clan", message});
+  sendToPlayer(founderId, makeClanErrorMessage(message));
 }
 
 void Game::rejectClanRequest(uint32_t founderId,
@@ -503,18 +562,19 @@ void Game::rejectClanRequest(uint32_t founderId,
   }
 
   auto targetPlayerId = findPlayerIdByName(playerName);
-  if (!targetPlayerId.has_value()) {
-    sendToPlayer(founderId,
-                 ChatMessageEventDTO{"Clan", "Jugador no encontrado"});
+  if (!targetPlayerId.has_value() && !repository.exists(playerName)) {
+    sendToPlayer(founderId, makeClanErrorMessage("Jugador no encontrado"));
     return;
   }
 
   ClanRejectResult result =
       clanManager.rejectJoinRequest(founderIt->second->getName(), playerName);
   if (result == ClanRejectResult::Success) {
-    sendToPlayer(founderId, ChatMessageEventDTO{"Clan", "Solicitud rechazada"});
-    sendToPlayer(targetPlayerId.value(),
-                 ChatMessageEventDTO{"Clan", "Tu solicitud fue rechazada"});
+    sendToPlayer(founderId, makeClanMessage("Solicitud rechazada"));
+    if (targetPlayerId.has_value()) {
+      sendToPlayer(targetPlayerId.value(),
+                   makeClanMessage("Tu solicitud fue rechazada"));
+    }
     return;
   }
 
@@ -526,7 +586,7 @@ void Game::rejectClanRequest(uint32_t founderId,
   } else if (result == ClanRejectResult::RequestNotFound) {
     message = "No existe una solicitud pendiente de ese jugador";
   }
-  sendToPlayer(founderId, ChatMessageEventDTO{"Clan", message});
+  sendToPlayer(founderId, makeClanErrorMessage(message));
 }
 
 void Game::banClanPlayer(uint32_t founderId, const std::string &playerName) {
@@ -537,8 +597,7 @@ void Game::banClanPlayer(uint32_t founderId, const std::string &playerName) {
 
   auto targetPlayerId = findPlayerIdByName(playerName);
   if (!targetPlayerId.has_value() && !repository.exists(playerName)) {
-    sendToPlayer(founderId,
-                 ChatMessageEventDTO{"Clan", "Jugador no encontrado"});
+    sendToPlayer(founderId, makeClanErrorMessage("Jugador no encontrado"));
     return;
   }
 
@@ -553,18 +612,17 @@ void Game::banClanPlayer(uint32_t founderId, const std::string &playerName) {
                       playerIt->second->toPlayerData());
 
       sendToPlayer(targetPlayerId.value(),
-                   ChatMessageEventDTO{"Clan", "Fuiste baneado del clan"});
+                   makeClanMessage("Fuiste baneado del clan"));
       sendToClan(clanId,
-                 ChatMessageEventDTO{"Clan", "El jugador " + playerName +
-                                                 " fue baneado del clan"},
+                 makeClanMessage("El jugador " + playerName +
+                                 " fue baneado del clan"),
                  targetPlayerId.value());
     } else {
       PlayerData data = repository.load(playerName);
       data.clanId = 0;
       repository.save(playerName, data);
-      sendToClan(clanId,
-                 ChatMessageEventDTO{"Clan", "El jugador " + playerName +
-                                                 " fue baneado del clan"});
+      sendToClan(clanId, makeClanMessage("El jugador " + playerName +
+                                         " fue baneado del clan"));
     }
     return;
   }
@@ -579,7 +637,7 @@ void Game::banClanPlayer(uint32_t founderId, const std::string &playerName) {
   } else if (result == ClanBanResult::AlreadyBanned) {
     message = "Ese jugador ya esta baneado";
   }
-  sendToPlayer(founderId, ChatMessageEventDTO{"Clan", message});
+  sendToPlayer(founderId, makeClanErrorMessage(message));
 }
 
 void Game::kickClanMember(uint32_t founderId, const std::string &playerName) {
@@ -590,8 +648,7 @@ void Game::kickClanMember(uint32_t founderId, const std::string &playerName) {
 
   auto targetPlayerId = findPlayerIdByName(playerName);
   if (!targetPlayerId.has_value() && !repository.exists(playerName)) {
-    sendToPlayer(founderId,
-                 ChatMessageEventDTO{"Clan", "Jugador no encontrado"});
+    sendToPlayer(founderId, makeClanErrorMessage("Jugador no encontrado"));
     return;
   }
 
@@ -606,18 +663,17 @@ void Game::kickClanMember(uint32_t founderId, const std::string &playerName) {
                       playerIt->second->toPlayerData());
 
       sendToPlayer(targetPlayerId.value(),
-                   ChatMessageEventDTO{"Clan", "Fuiste expulsado del clan"});
+                   makeClanMessage("Fuiste expulsado del clan"));
       sendToClan(clanId,
-                 ChatMessageEventDTO{"Clan", "El jugador " + playerName +
-                                                 " fue expulsado del clan"},
+                 makeClanMessage("El jugador " + playerName +
+                                 " fue expulsado del clan"),
                  targetPlayerId.value());
     } else {
       PlayerData data = repository.load(playerName);
       data.clanId = 0;
       repository.save(playerName, data);
-      sendToClan(clanId,
-                 ChatMessageEventDTO{"Clan", "El jugador " + playerName +
-                                                 " fue expulsado del clan"});
+      sendToClan(clanId, makeClanMessage("El jugador " + playerName +
+                                         " fue expulsado del clan"));
     }
     return;
   }
@@ -632,7 +688,7 @@ void Game::kickClanMember(uint32_t founderId, const std::string &playerName) {
   } else if (result == ClanKickResult::TargetNotInClan) {
     message = "Ese jugador no pertenece a tu clan";
   }
-  sendToPlayer(founderId, ChatMessageEventDTO{"Clan", message});
+  sendToPlayer(founderId, makeClanErrorMessage(message));
 }
 
 void Game::leaveClan(uint32_t playerId) {
@@ -649,10 +705,9 @@ void Game::leaveClan(uint32_t playerId) {
     repository.save(playerIt->second->getName(),
                     playerIt->second->toPlayerData());
 
-    sendToPlayer(playerId, ChatMessageEventDTO{"Clan", "Saliste del clan"});
+    sendToPlayer(playerId, makeClanMessage("Saliste del clan"));
     sendToClan(clanId,
-               ChatMessageEventDTO{"Clan", "El jugador " + playerName +
-                                               " salio del clan"},
+               makeClanMessage("El jugador " + playerName + " salio del clan"),
                playerId);
     return;
   }
@@ -663,7 +718,7 @@ void Game::leaveClan(uint32_t playerId) {
   } else if (result == ClanLeaveResult::FounderCannotLeave) {
     message = "El fundador no puede salir del clan";
   }
-  sendToPlayer(playerId, ChatMessageEventDTO{"Clan", message});
+  sendToPlayer(playerId, makeClanErrorMessage(message));
 }
 
 void Game::reviewClan(uint32_t playerId) {
@@ -675,7 +730,7 @@ void Game::reviewClan(uint32_t playerId) {
   const std::string &playerName = playerIt->second->getName();
   if (!clanManager.hasClan(playerName)) {
     sendToPlayer(playerId,
-                 ChatMessageEventDTO{"Clan", "No perteneces a un clan"});
+                 makeClanErrorMessage("No perteneces a un clan"));
     return;
   }
 
@@ -683,7 +738,7 @@ void Game::reviewClan(uint32_t playerId) {
   const Clan *clan = clanManager.getClan(clanId);
   if (clan == nullptr) {
     sendToPlayer(playerId,
-                 ChatMessageEventDTO{"Clan", "No perteneces a un clan"});
+                 makeClanErrorMessage("No perteneces a un clan"));
     return;
   }
 
@@ -696,7 +751,7 @@ void Game::reviewClan(uint32_t playerId) {
     }
     members << memberNames[i];
   }
-  sendToPlayer(playerId, ChatMessageEventDTO{"Clan", members.str()});
+  sendToPlayer(playerId, makeClanMessage(members.str()));
 
   if (!clanManager.isFounder(playerName)) {
     return;
@@ -716,7 +771,7 @@ void Game::reviewClan(uint32_t playerId) {
       pending << pendingNames[i];
     }
   }
-  sendToPlayer(playerId, ChatMessageEventDTO{"Clan", pending.str()});
+  sendToPlayer(playerId, makeClanMessage(pending.str()));
 }
 
 bool Game::thereIsACollidableEntityAt(Position position) {
@@ -1020,13 +1075,12 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
   if (!critico && target.tryParry()) {
     senderQueueMonitor.sendToClient(
         playerToConnection[attacker.getId()],
-        ChatMessageEventDTO{"Sistema", "Atacaste a " + target.getName() +
-                                           " pero el lo esquivo"});
+        makeCombatMessage("Atacaste a " + target.getName() +
+                          " pero el lo esquivo"));
     senderQueueMonitor.sendToClient(
         playerToConnection[target.getId()],
-        ChatMessageEventDTO{"Sistema",
-                            attacker.getName() +
-                                " trato de atacarte pero lo esquivaste"});
+        makeCombatMessage(attacker.getName() +
+                          " trato de atacarte pero lo esquivaste"));
     return;
   }
   damage = target.takeDamage(damage);
@@ -1046,15 +1100,14 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
   } else {
     senderQueueMonitor.sendToClient(
         playerToConnection[attacker.getId()],
-        ChatMessageEventDTO{
-            "Sistema", "Atacaste a " + target.getName() + " y le hiciste " +
-                           std::to_string(damage) + " de daño!"});
+        makeCombatMessage("Atacaste a " + target.getName() +
+                          " y le hiciste " + std::to_string(damage) +
+                          " de daño!"));
     senderQueueMonitor.sendToClient(
         playerToConnection[target.getId()],
-        ChatMessageEventDTO{"Sistema",
-                            "Recibiste un ataque de " + attacker.getName() +
-                                " y te hicieron " + std::to_string(damage) +
-                                " de daño!"});
+        makeCombatMessage("Recibiste un ataque de " + attacker.getName() +
+                          " y te hicieron " + std::to_string(damage) +
+                          " de daño!"));
   }
   messagesToSend.push_back(attacker.toPlayerInfoEvent());
   messagesToSend.push_back(target.toPlayerInfoEvent());
@@ -1069,9 +1122,9 @@ void Game::playerAttackNPC(Character &attacker, NPC &target) {
   } else {
     senderQueueMonitor.sendToClient(
         playerToConnection[attacker.getId()],
-        ChatMessageEventDTO{
-            "Sistema", "Atacaste a un " + target.getName() + " y le hiciste " +
-                           std::to_string(damage) + " de daño!"});
+        makeCombatMessage("Atacaste a un " + target.getName() +
+                          " y le hiciste " + std::to_string(damage) +
+                          " de daño!"));
   }
   messagesToSend.push_back(attacker.toPlayerInfoEvent());
 }
