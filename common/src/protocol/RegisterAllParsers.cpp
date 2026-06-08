@@ -19,13 +19,19 @@
 #include "parser/Commands/TakeItemCommandParser.h"
 #include "parser/Commands/UnequipCommandParser.h"
 #include "parser/Events/ChatMessageEventParser.h"
+#include "parser/Events/CityEntityAppearedEventParser.h"
+#include "parser/Events/CityEntityMovedEventParser.h"
+#include "parser/Events/CityEntityStoppedEventParser.h"
 #include "parser/Events/GroundItemAppearedEventParser.h"
 #include "parser/Events/GroundItemRemovedEventParser.h"
 #include "parser/Events/GroundItemsListEventParser.h"
 #include "parser/Events/InventoryUpdateEventParser.h"
 #include "parser/Events/NPCAppearedEventParser.h"
+#include "parser/Events/NPCMovedEventParser.h"
+#include "parser/Events/NPCStoppedEventParser.h"
 #include "parser/Events/NpcDefeatedEventParser.h"
 #include "parser/Events/PlayerAppearedEventParser.h"
+#include "parser/Events/PlayerDieEventParser.h"
 #include "parser/Events/PlayerInfoEventParser.h"
 #include "parser/Events/PlayerListEventParser.h"
 #include "parser/Events/PlayerMovedEventParser.h"
@@ -36,7 +42,7 @@
 #include "parser/Events/TextureInfoEventParser.h"
 #include "protocol/Protocol.h"
 #include "protocol/ProtocolCodes.h"
-#include <AtackCommandParser.h>
+#include <AttackCommandParser.h>
 #include <GlobalChatMessageCommandParser.h>
 #include <GlobalChatMessageEventParser.h>
 
@@ -90,8 +96,8 @@ void registerAllParsers(Protocol &protocol) {
       std::make_unique<GlobalChatMessageCommandParser>());
 
   protocol.registerCommandParser(
-      static_cast<uint8_t>(ClientCommandOpCode::AtackCommand),
-      std::make_unique<AtackCommandParser>());
+      static_cast<uint8_t>(ClientCommandOpCode::AttackCommand),
+      std::make_unique<AttackCommandParser>());
 
   protocol.registerCommandParser(
       static_cast<uint8_t>(ClientCommandOpCode::CreateClanCommand),
@@ -192,4 +198,27 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::GlobalChatMessageEvent),
       std::make_unique<GlobalChatMessageEventParser>());
+
+  protocol.registerEventParser(static_cast<uint8_t>(EventOpcode::NPCMovedEvent),
+                               std::make_unique<NPCMovedEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::NPCStoppedEvent),
+      std::make_unique<NPCStoppedEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::CityEntityAppearedEvent),
+      std::make_unique<CityEntityAppearedEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::CityEntityMovedEvent),
+      std::make_unique<CityEntityMovedEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::CityEntityStoppedEvent),
+      std::make_unique<CityEntityStoppedEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::PlayerDieEvent),
+      std::make_unique<PlayerDieEventParser>());
 }

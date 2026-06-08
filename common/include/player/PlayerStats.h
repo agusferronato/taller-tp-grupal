@@ -58,6 +58,9 @@ public:
   void takeDamage(uint32_t damage);
   bool addExperience(uint32_t xp);
   void setGold(uint32_t amount);
+
+  void earnGold(uint32_t amount);
+  void die();
 };
 
 #endif

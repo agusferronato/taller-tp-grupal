@@ -22,12 +22,14 @@
 #include "InventoryPanel.h"
 
 #include "MapData.h"
+#include "CityEntityParser.h"
 #include "NPCParser.h"
 #include "Player.h"
 #include "RenderableEntity.h"
 #include "TextureManager.h"
 #include "TextureMapper.h"
 
+class CityEntityModel;
 class NPC;
 class PlayerEntity;
 
@@ -93,6 +95,7 @@ private:
   PlayerEntity *myPlayerEntity{nullptr};
 
   NPCParser npcParser;
+  CityEntityParser cityEntityParser;
   std::unique_ptr<TextureMapper> textureMapper;
   std::unique_ptr<InventoryPanel> invPanel;
 
@@ -111,6 +114,8 @@ public:
                  std::unique_ptr<RenderableEntity> entity);
   void addPlayer(uint32_t ID, const ClientPlayer &player);
   void addNpc(uint32_t ID, NPC &npc, NPCType npcType);
+  void addCityEntity(uint32_t ID, CityEntityModel &entity, CityEntityType entityType);
+  void removeCityEntity(uint32_t ID);
   void removeEntity(EntityType type, uint32_t id);
   void removePlayer(uint32_t ID);
   void setMyPlayer(const ClientPlayer &player, uint32_t ID);

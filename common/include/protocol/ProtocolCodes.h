@@ -32,6 +32,7 @@ enum class ClientCommandOpCode : uint8_t {
   RejectClanRequestCommand,
   BanClanPlayerCommand,
   KickClanMemberCommand,
+  AttackCommand,
 };
 
 // Opcodes para eventos enviados por el servidor a los clientes
@@ -54,6 +55,12 @@ enum class EventOpcode : uint8_t {
   GroundItemsListEvent,
   PrivateMessageEvent,
   GlobalChatMessageEvent,
+  NPCMovedEvent,
+  NPCStoppedEvent,
+  CityEntityAppearedEvent,
+  CityEntityMovedEvent,
+  CityEntityStoppedEvent,
+  PlayerDieEvent,
 };
 
 #endif // PROTOCOL_CODES_H

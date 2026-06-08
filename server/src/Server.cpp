@@ -1,7 +1,8 @@
 #include "Server.h"
 #include "PlayerRepository.h"
 
-Server::Server(const char *port) : socket(Socket(port)) {}
+Server::Server(const char *port, const char *mapPath)
+    : socket(Socket(port)), mapPath(mapPath) {}
 
 void Server::run() {
 
@@ -13,7 +14,7 @@ void Server::run() {
   Acceptor acceptor(socket, gameloopQueue, senderQueueMonitor);
   acceptor.start();
 
-  Game game(gameloopQueue, senderQueueMonitor, repository, clanManager);
+  Game game(gameloopQueue, senderQueueMonitor, repository, clanManager, mapPath);
   game.start();
 
   std::string input;

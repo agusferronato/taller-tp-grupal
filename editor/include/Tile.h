@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <set>
-#include <tuple>
 #include <utility>
 #include <algorithm> 
 #include "Info.h" 
@@ -32,7 +31,7 @@ private:
     int max_i{0}, max_j{0};
 
     std::vector<GridItem> items;
-    std::set<std::tuple<int, int, int>> localCollidables;
+    std::set<std::pair<int, int>> localCollidables;
 
 public:
     Tile(int id, int texture_id, int priority, int start_i, int start_j, int w_px, int h_px)
@@ -53,7 +52,7 @@ public:
     int getMaxJ() const { return max_j; }
 
     const std::vector<GridItem>& getItems() const { return items; }
-    const std::set<std::tuple<int, int, int>>& getCollidableCells() const { return localCollidables; }
+    const std::set<std::pair<int, int>>& getCollidableCells() const { return localCollidables; }
 
     void addItem(GridItem item) { 
         if (items.empty()) {
@@ -68,7 +67,7 @@ public:
         items.push_back(item); 
     }
 
-    void addCollidable(int i, int j) { localCollidables.insert({i, j, priority}); }
+    void addCollidable(int i, int j) { localCollidables.insert({i, j}); }
 
     void updatePosition(int new_i, int new_j) {
         int offset_i = new_i - origin_i;
@@ -86,9 +85,9 @@ public:
             item.j += offset_j;
         }
 
-        std::set<std::tuple<int, int, int>> updatedCollidables;
+        std::set<std::pair<int, int>> updatedCollidables;
         for (auto& cell : localCollidables) {
-            updatedCollidables.insert({std::get<0>(cell) + offset_i, std::get<1>(cell) + offset_j, priority});
+            updatedCollidables.insert({cell.first + offset_i, cell.second + offset_j});
         }
         localCollidables = std::move(updatedCollidables);
     }

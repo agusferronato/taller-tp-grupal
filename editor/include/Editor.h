@@ -5,6 +5,8 @@
 #include "SaveSuccessModal.h"
 #include "TexturesLayout.h"
 #include "ToolBar.h"
+#include <QInputDialog>
+#include <QLineEdit>
 #include <QMainWindow>
 #include <QObject>
 #include <QVBoxLayout>
@@ -24,8 +26,11 @@ private:
 
   TexturesLayout *texturesPanel;
 
+  std::string mapPath;
+
 public:
-  explicit Editor(QWidget *parent = nullptr);
+  explicit Editor(const std::string &mapPath = "",
+                  QWidget *parent = nullptr);
 
 private:
   void initEditor();
