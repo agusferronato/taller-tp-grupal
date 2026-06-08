@@ -11,7 +11,7 @@ bool Inventory::addItem(uint8_t itemId) {
       return true;
     }
   }
-  return false;
+  return false; 
 }
 
 bool Inventory::removeItem(uint8_t slotIndex) {

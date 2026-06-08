@@ -35,6 +35,7 @@
 #include "protocol/Protocol.h"
 #include "protocol/ProtocolCodes.h"
 #include <AttackCommandParser.h>
+#include "parser/Commands/CityEntityCommandParser.h"
 #include <GlobalChatMessageCommandParser.h>
 #include <GlobalChatMessageEventParser.h>
 
@@ -90,6 +91,10 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerCommandParser(
       static_cast<uint8_t>(ClientCommandOpCode::AttackCommand),
       std::make_unique<AttackCommandParser>());
+
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::CityEntityCommand),
+      std::make_unique<CityEntityCommandParser>());
 
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::ChatMessageEvent),

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cctype>
+#include <climits>
 #include <cmath>
 
 #include "CityEntityAppearedEventDTO.h"
@@ -750,4 +751,238 @@ void Game::killPlayer(Character &dyingPlayer) {
     inventoryManager.addGroundItem(itemId, x, y);
   }
   messagesToSend.push_back(PlayerDieEventDTO{dyingPlayer.getId()});
+}
+
+void Game::sendChatToPlayer(uint32_t playerId, const std::string &message) {
+  auto connIt = playerToConnection.find(playerId);
+  if (connIt != playerToConnection.end()) {
+    senderQueueMonitor.sendToClient(connIt->second,
+                                    ChatMessageEventDTO{"Sistema", message});
+  }
+}
+
+void Game::sendInventoryUpdate(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end())
+    return;
+  messagesToSend.push_back(InventoryUpdateEventDTO{
+      playerId, it->second->getInventoryItems(),
+      it->second->getEquippedWeapon(), it->second->getEquippedArmor(),
+      it->second->getEquippedHelmet(), it->second->getEquippedShield()});
+}
+
+void Game::sendPlayerInfoUpdate(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end())
+    return;
+  messagesToSend.push_back(it->second->toPlayerInfoEvent());
+}
+
+void Game::sendPlayerMoved(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end())
+    return;
+  messagesToSend.push_back(it->second->toPlayerMoved());
+}
+
+bool Game::isNearEntity(CityEntity &entity, const Character &character) {
+  int dx = entity.getX() - character.getX();
+  int dy = entity.getY() - character.getY();
+  return abs(dx) <= entity.getRange() && abs(dy) <= entity.getRange();
+}
+
+CityEntity *Game::findNearestEntity(uint32_t playerId, CityEntityType type) {
+  auto playerIt = players.find(playerId);
+  if (playerIt == players.end())
+    return nullptr;
+  auto &character = playerIt->second;
+  CityEntity *nearest = nullptr;
+  int minDist = INT_MAX;
+
+  for (auto &city : cities) {
+    for (auto *entity : city.getEntities()) {
+      if (entity->getCityEntityType() != type)
+        continue;
+      int dx = entity->getX() - character->getX();
+      int dy = entity->getY() - character->getY();
+      int dist = dx * dx + dy * dy;
+      if (dist < minDist) {
+        minDist = dist;
+        nearest = entity;
+      }
+    }
+  }
+  return nearest;
+}
+
+void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
+                                    int16_t arg) {
+  auto playerIt = players.find(playerId);
+  if (playerIt == players.end())
+    return;
+  auto &character = playerIt->second;
+
+  switch (static_cast<CityEntityCommandDTO::Type>(type)) {
+
+  case CityEntityCommandDTO::CURAR: {
+    auto *priest = dynamic_cast<Priest *>(
+        findNearestEntity(playerId, CityEntityType::Priest));
+    if (!priest || !isNearEntity(*priest, *character)) {
+      sendChatToPlayer(playerId, "No estas cerca de un sacerdote.");
+      return;
+    }
+    priest->heal(*this, *character);
+    break;
+  }
+
+  case CityEntityCommandDTO::RESUCITAR: {
+    if (!character->isDead()) {
+      sendChatToPlayer(playerId, "No estas muerto.");
+      return;
+    }
+    auto *priest = dynamic_cast<Priest *>(
+        findNearestEntity(playerId, CityEntityType::Priest));
+    if (!priest) {
+      sendChatToPlayer(playerId,
+                       "No hay ningun sacerdote disponible para resucitarte.");
+      return;
+    }
+    priest->resurrect(*this, *character);
+    break;
+  }
+
+  case CityEntityCommandDTO::COMPRAR: {
+    if (arg < 1 || arg >= 20) {
+      sendChatToPlayer(playerId, "ID de objeto invalido.");
+      return;
+    }
+    uint8_t itemId = static_cast<uint8_t>(arg);
+    auto *priest = dynamic_cast<Priest *>(
+        findNearestEntity(playerId, CityEntityType::Priest));
+    if (priest && isNearEntity(*priest, *character)) {
+      priest->buyItem(*this, *character, itemId);
+      break;
+    }
+    auto *trader = dynamic_cast<Trader *>(
+        findNearestEntity(playerId, CityEntityType::Trader));
+    if (trader && isNearEntity(*trader, *character)) {
+      trader->buyItem(*this, *character, itemId);
+      break;
+    }
+    sendChatToPlayer(playerId,
+                     "No estas cerca de un sacerdote o comerciante.");
+    break;
+  }
+
+  case CityEntityCommandDTO::VENDER: {
+    if (arg < 1 || arg >= 20) {
+      sendChatToPlayer(playerId, "ID de objeto invalido.");
+      return;
+    }
+    auto *trader = dynamic_cast<Trader *>(
+        findNearestEntity(playerId, CityEntityType::Trader));
+    if (!trader || !isNearEntity(*trader, *character)) {
+      sendChatToPlayer(playerId, "No estas cerca de un comerciante.");
+      return;
+    }
+    trader->sellItem(*this, *character, static_cast<uint8_t>(arg));
+    break;
+  }
+
+  case CityEntityCommandDTO::LISTAR: {
+    auto *priest = dynamic_cast<Priest *>(
+        findNearestEntity(playerId, CityEntityType::Priest));
+    if (priest && isNearEntity(*priest, *character)) {
+      priest->listItems(*this, *character);
+      break;
+    }
+    auto *trader = dynamic_cast<Trader *>(
+        findNearestEntity(playerId, CityEntityType::Trader));
+    if (trader && isNearEntity(*trader, *character)) {
+      trader->listItems(*this, *character);
+      break;
+    }
+    auto *banker = dynamic_cast<Banker *>(
+        findNearestEntity(playerId, CityEntityType::Banker));
+    if (banker && isNearEntity(*banker, *character)) {
+      banker->listItemsAvailables(*this, *character);
+      break;
+    }
+    sendChatToPlayer(
+        playerId,
+        "No estas cerca de un sacerdote, comerciante o banquero.");
+    break;
+  }
+
+  case CityEntityCommandDTO::CONSULTAR_ORO: {
+    auto *banker = dynamic_cast<Banker *>(
+        findNearestEntity(playerId, CityEntityType::Banker));
+    if (!banker || !isNearEntity(*banker, *character)) {
+      sendChatToPlayer(playerId, "No estas cerca de un comerciante.");
+      return;
+    }
+    banker->showGoldAvailable(*this, *character);
+    break;
+  }
+
+  case CityEntityCommandDTO::DEPOSITAR_ITEM: {
+    if (arg < 1 || arg >= 20) {
+      sendChatToPlayer(playerId, "ID de objeto invalido.");
+      return;
+    }
+    auto *banker = dynamic_cast<Banker *>(
+        findNearestEntity(playerId, CityEntityType::Banker));
+    if (!banker || !isNearEntity(*banker, *character)) {
+      sendChatToPlayer(playerId, "No estas cerca de un banquero.");
+      return;
+    }
+    banker->saveItem(*this, *character, static_cast<uint8_t>(arg));
+    break;
+  }
+
+  case CityEntityCommandDTO::RETIRAR_ITEM: {
+    if (arg < 1 || arg >= 20) {
+      sendChatToPlayer(playerId, "ID de objeto invalido.");
+      return;
+    }
+    auto *banker = dynamic_cast<Banker *>(
+        findNearestEntity(playerId, CityEntityType::Banker));
+    if (!banker) {
+      sendChatToPlayer(playerId, "No hay ningun banquero disponible.");
+      return;
+    }
+    banker->takeItem(*this, *character, static_cast<uint8_t>(arg));
+    break;
+  }
+
+  case CityEntityCommandDTO::DEPOSITAR_ORO: {
+    if (arg <= 0) {
+      sendChatToPlayer(playerId, "Cantidad invalida.");
+      return;
+    }
+    auto *banker = dynamic_cast<Banker *>(
+        findNearestEntity(playerId, CityEntityType::Banker));
+    if (!banker || !isNearEntity(*banker, *character)) {
+      sendChatToPlayer(playerId, "No estas cerca de un banquero.");
+      return;
+    }
+    banker->saveGold(*this, *character, static_cast<uint16_t>(arg));
+    break;
+  }
+
+  case CityEntityCommandDTO::RETIRAR_ORO: {
+    if (arg <= 0) {
+      sendChatToPlayer(playerId, "Cantidad invalida.");
+      return;
+    }
+    auto *banker = dynamic_cast<Banker *>(
+        findNearestEntity(playerId, CityEntityType::Banker));
+    if (!banker) {
+      sendChatToPlayer(playerId, "No hay ningun banquero disponible.");
+      return;
+    }
+    banker->takeGold(*this, *character, static_cast<uint16_t>(arg));
+    break;
+  }
+  }
 }

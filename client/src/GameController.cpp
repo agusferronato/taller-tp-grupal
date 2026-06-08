@@ -1,6 +1,7 @@
 #include "GameController.h"
 
 #include "ChatCommandParser.h"
+#include "CityEntityCommandDTO.h"
 #include "PlayerStoppedEventDTO.h"
 #include "WindowClosed.h"
 
@@ -57,14 +58,67 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
       ChatCommand cmd =
           ChatCommandParser::parse(gameModel->getCurrentChatInput());
       if (cmd.type != ChatCommandType::None) {
-        if (cmd.type == ChatCommandType::Tomar) {
+        switch (cmd.type) {
+        case ChatCommandType::Tomar:
           gameModel->takeItem();
-        } else if (cmd.type == ChatCommandType::Tirar) {
+          break;
+        case ChatCommandType::Tirar:
           gameModel->dropItem(static_cast<uint8_t>(cmd.arg));
-        } else if (cmd.type == ChatCommandType::Equipar) {
+          break;
+        case ChatCommandType::Equipar:
           gameModel->equipItem(static_cast<uint8_t>(cmd.arg));
-        } else if (cmd.type == ChatCommandType::Desequipar) {
+          break;
+        case ChatCommandType::Desequipar:
           gameModel->unequipItem(static_cast<uint8_t>(cmd.arg));
+          break;
+        case ChatCommandType::Curar:
+          gameModel->sendCityEntityCommand(
+              CityEntityCommandDTO::CURAR, -1);
+          break;
+        case ChatCommandType::Resucitar:
+          gameModel->sendCityEntityCommand(
+              CityEntityCommandDTO::RESUCITAR, -1);
+          break;
+        case ChatCommandType::Comprar:
+          gameModel->sendCityEntityCommand(
+              CityEntityCommandDTO::COMPRAR,
+              static_cast<int16_t>(cmd.arg));
+          break;
+        case ChatCommandType::Vender:
+          gameModel->sendCityEntityCommand(
+              CityEntityCommandDTO::VENDER,
+              static_cast<int16_t>(cmd.arg));
+          break;
+        case ChatCommandType::Listar:
+          gameModel->sendCityEntityCommand(
+              CityEntityCommandDTO::LISTAR, -1);
+          break;
+        case ChatCommandType::ConsultarOro:
+          gameModel->sendCityEntityCommand(
+              CityEntityCommandDTO::CONSULTAR_ORO, -1);
+          break;
+        case ChatCommandType::Depositar:
+          gameModel->sendCityEntityCommand(
+              CityEntityCommandDTO::DEPOSITAR_ITEM,
+              static_cast<int16_t>(cmd.arg));
+          break;
+        case ChatCommandType::Retirar:
+          gameModel->sendCityEntityCommand(
+              CityEntityCommandDTO::RETIRAR_ITEM,
+              static_cast<int16_t>(cmd.arg));
+          break;
+        case ChatCommandType::DepositarOro:
+          gameModel->sendCityEntityCommand(
+              CityEntityCommandDTO::DEPOSITAR_ORO,
+              static_cast<int16_t>(cmd.arg));
+          break;
+        case ChatCommandType::RetirarOro:
+          gameModel->sendCityEntityCommand(
+              CityEntityCommandDTO::RETIRAR_ORO,
+              static_cast<int16_t>(cmd.arg));
+          break;
+        default:
+          break;
         }
         gameModel->closeChat();
       } else {

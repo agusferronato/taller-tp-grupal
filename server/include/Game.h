@@ -15,9 +15,13 @@
 #include <set>
 #include <tuple>
 
+#include "Banker.h"
 #include "Biome.h"
 #include "Character.h"
 #include "City.h"
+#include "CityEntityCommandDTO.h"
+#include "Priest.h"
+#include "Trader.h"
 #include "Colisionable.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
@@ -93,6 +97,12 @@ public:
   void sendGlobalChatMessage(uint32_t playerId, const std::string &message);
   void attack(uint32_t playerId, int16_t x, int16_t y);
 
+  void executeCityEntityCommand(uint32_t playerId, uint8_t type, int16_t arg);
+  void sendChatToPlayer(uint32_t playerId, const std::string &message);
+  void sendInventoryUpdate(uint32_t playerId);
+  void sendPlayerInfoUpdate(uint32_t playerId);
+  void sendPlayerMoved(uint32_t playerId);
+
   bool thereIsACollidableEntityAt(Position position);
   void appearNPC(std::unique_ptr<NPC> &&npc);
   uint32_t nextNPCId{1};
@@ -123,6 +133,8 @@ private:
   int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
 
   void killPlayer(Character &dyingPlayer);
+  bool isNearEntity(CityEntity &entity, const Character &character);
+  CityEntity *findNearestEntity(uint32_t playerId, CityEntityType type);
 };
 
 #endif

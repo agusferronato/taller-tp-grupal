@@ -1,6 +1,7 @@
 #include "command/CommandFactory.h"
 
 #include "AttackCommandDTO.h"
+#include "CityEntityCommandDTO.h"
 #include "DropItemCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "ExitCommandDTO.h"
@@ -12,6 +13,7 @@
 #include "TakeItemCommandDTO.h"
 #include "UnequipCommandDTO.h"
 #include "command/AttackCommand.h"
+#include "command/CityEntityCommand.h"
 #include "command/DropItemCommand.h"
 #include "command/EquipCommand.h"
 #include "command/ExitCommand.h"
@@ -73,6 +75,11 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
   if (const auto *request = std::get_if<AttackCommandDTO>(&dto)) {
     return std::make_unique<AttackCommand>(request->playerId, request->x,
                                            request->y);
+  }
+
+  if (const auto *request = std::get_if<CityEntityCommandDTO>(&dto)) {
+    return std::make_unique<CityEntityCommand>(request->playerId, request->type,
+                                               request->arg);
   }
 
   throw std::runtime_error("Unknown client request DTO type");
