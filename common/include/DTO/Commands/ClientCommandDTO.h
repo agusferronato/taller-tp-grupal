@@ -5,6 +5,7 @@
 
 #include "AcceptClanRequestCommandDTO.h"
 #include "BanClanPlayerCommandDTO.h"
+#include "CheatCommandDTO.h"
 #include "CreateClanCommandDTO.h"
 #include "AttackCommandDTO.h"
 #include "DropItemCommandDTO.h"
@@ -34,6 +35,7 @@ using ClientCommandDTO =
                  CreateClanCommandDTO, JoinClanCommandDTO,
                  AcceptClanRequestCommandDTO, LeaveClanCommandDTO,
                  ReviewClanCommandDTO, RejectClanRequestCommandDTO,
-                 BanClanPlayerCommandDTO, KickClanMemberCommandDTO>;
+                 BanClanPlayerCommandDTO, KickClanMemberCommandDTO,
+                 CheatCommandDTO>;
 
 #endif

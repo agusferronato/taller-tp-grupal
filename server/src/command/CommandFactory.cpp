@@ -2,6 +2,7 @@
 
 #include "AcceptClanRequestCommandDTO.h"
 #include "BanClanPlayerCommandDTO.h"
+#include "CheatCommandDTO.h"
 #include "CreateClanCommandDTO.h"
 #include "AttackCommandDTO.h"
 #include "DropItemCommandDTO.h"
@@ -22,6 +23,7 @@
 #include "UnequipCommandDTO.h"
 #include "command/AcceptClanRequestCommand.h"
 #include "command/BanClanPlayerCommand.h"
+#include "command/CheatCommand.h"
 #include "command/CreateClanCommand.h"
 #include "command/AttackCommand.h"
 #include "command/DropItemCommand.h"
@@ -134,6 +136,10 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
   if (const auto *request = std::get_if<KickClanMemberCommandDTO>(&dto)) {
     return std::make_unique<KickClanMemberCommand>(request->founderId,
                                                    request->playerName);
+  }
+
+  if (const auto *request = std::get_if<CheatCommandDTO>(&dto)) {
+    return std::make_unique<CheatCommand>(request->cheat);
   }
 
   throw std::runtime_error("Unknown client request DTO type");

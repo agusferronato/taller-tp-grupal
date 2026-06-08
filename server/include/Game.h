@@ -17,6 +17,7 @@
 
 #include "Biome.h"
 #include "Character.h"
+#include "CheatType.h"
 #include "City.h"
 #include "ClanManager.h"
 #include "Colisionable.h"
@@ -38,6 +39,12 @@
 class Game : public Thread {
 
 private:
+  struct PlayerCheats {
+    bool infiniteHealth{false};
+    bool infiniteMana{false};
+    bool superSpeed{false};
+  };
+
   Queue<ClientMessage> &gameloopQueue;
   SenderQueueMonitor &senderQueueMonitor;
   PlayerRepository &repository;
@@ -53,6 +60,7 @@ private:
   std::vector<Colisionable *> colisionables;
   std::unordered_map<uint32_t, uint32_t> connectionToPlayer;
   std::unordered_map<uint32_t, uint32_t> playerToConnection;
+  std::unordered_map<uint32_t, PlayerCheats> cheatsByPlayer;
 
   InventoryManager inventoryManager{players, messagesToSend};
 
@@ -95,6 +103,7 @@ public:
   void sendPrivateMessage(uint32_t connectionId, const std::string &targetName,
                           const std::string &message);
   void attack(uint32_t playerId, int16_t x, int16_t y);
+  void applyCheat(uint32_t connectionId, CheatType cheat);
 
   void createClan(uint32_t playerId, const std::string &clanName);
   void requestJoinClan(uint32_t playerId, const std::string &clanName);
@@ -126,6 +135,12 @@ private:
                      const ServerEventDTO &event);
   void sendToClan(uint32_t clanId, const ServerEventDTO &event,
                   std::optional<uint32_t> exceptPlayerId = std::nullopt);
+  void sendSystemMessageToPlayer(uint32_t playerId, const std::string &message);
+  void sendErrorMessageToConnection(uint32_t connectionId,
+                                    const std::string &message);
+  uint32_t movementSpeedFor(uint32_t playerId) const;
+  bool hasInfiniteHealth(uint32_t playerId) const;
+  bool hasInfiniteMana(uint32_t playerId) const;
 
 
   void makeNPCsfollowPlayers();
