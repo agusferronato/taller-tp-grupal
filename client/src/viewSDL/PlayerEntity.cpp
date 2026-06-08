@@ -59,7 +59,8 @@ void PlayerEntity::renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera
     return;
   }
 
-  SDL2pp::Rect dst = camera.toScreen(player.get_x() - 16, player.get_y() - 32, 64, 64);
+  SDL2pp::Rect dst = camera.toScreen(
+    player.get_x() - ClientPlayer::Width, player.get_y() - ClientPlayer::Height / 2, 64, 64);
 
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
 }
@@ -229,10 +230,17 @@ void PlayerEntity::renderGhostBody(SDL2pp::Renderer &renderer, Camera &camera,
 }
 
 void PlayerEntity::renderGhostHead(SDL2pp::Renderer &renderer, Camera &camera) {
-  Sprite src = textureManager.getHeadSprite(534, player.getDirection()); 
+  Direction playerDirection = player.getDirection();
+
+  Sprite src = textureManager.getHeadSprite(534, playerDirection); 
 
   int head_x = get_head_x(camera);
   int head_y = get_head_y(camera);
+
+  if (playerDirection == Direction::Left)
+    head_x -= 5;
+  if (playerDirection == Direction::Right)
+    head_x += 5;
 
   SDL2pp::Rect dst{head_x, head_y, ClientPlayer::HeadWidth,
                    ClientPlayer::HeadHeight};

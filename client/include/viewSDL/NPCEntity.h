@@ -13,7 +13,9 @@ private:
   TextureManager &textureManager;
   int textureId;
   TextureLayoutType layoutType;
+  int spriteWidth;
   int spriteHeight;
+  int attackNextFrame{-1};
 
 public:
   NPCEntity(NPC &npc, TextureManager &textureManager, int textureId,
@@ -23,6 +25,10 @@ public:
   int get_x() override;
   int get_y() override;
   int get_h() override;
+
+private:
+  void renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera,
+                          unsigned int it);
 };
 
 #endif

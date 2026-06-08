@@ -263,6 +263,9 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   messagesToSend.push_back(players[newId]->toPlayerAppeared());
 
+  if (players[newId]->isDead())
+    messagesToSend.push_back(PlayerDieEventDTO{players[newId]->getId()});
+
   messagesToSend.push_back(InventoryUpdateEventDTO{
       newId, players[newId]->getInventoryItems(),
       players[newId]->getEquippedWeapon(), players[newId]->getEquippedArmor(),
@@ -527,16 +530,16 @@ void Game::tryAttack(NPC& npc, Character& target) {
     return;
   }
 
-  uint32_t damage = target.takeDamage(npc.getDamage());
+  target.takeDamage(npc.getDamage());
 
   if (target.getHp() <= 0) {
     killPlayer(target);
     return;
   }
 
-  senderQueueMonitor.sendToClient(
-      playerToConnection[target.getId()],
-      AttackReceivedEventDTO{damage});
+  messagesToSend.push_back(
+      AttackReceivedEventDTO{EntityType::Player, target.getId(),
+                             EffectType::NormalAttack});
   messagesToSend.push_back(target.toPlayerInfoEvent());
 }
 
@@ -659,6 +662,10 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
   }
   damage = target.takeDamage(damage);
 
+  messagesToSend.push_back(
+      AttackReceivedEventDTO{EntityType::Player, target.getId(),
+                             EffectType::NormalAttack});
+
   uint32_t xp = Formulas::calcularExperiencia(damage, attacker.getLevel(),
                                               target.getLevel());
   attacker.gainExperience(xp);
@@ -706,6 +713,11 @@ void Game::playerAttackNPC(Character &attacker, NPC &target) {
   }
 
   target.takeDamage(damage);
+
+  messagesToSend.push_back(
+      AttackReceivedEventDTO{EntityType::Npc, target.getId(),
+                             EffectType::NormalAttack});
+
   uint32_t xp = Formulas::calcularExperiencia(damage, attacker.getLevel(),
                                               target.getLevel());
   attacker.gainExperience(xp);
