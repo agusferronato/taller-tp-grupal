@@ -327,10 +327,15 @@ void GameModel::handle(const CityEntityStoppedEventDTO &event) {
 }
 
 void GameModel::handle(const AttackReceivedEventDTO &event) {
-  (void)event;
-  auto it = players.find(myPlayerID);
-  if (it != players.end())
-    it->second->setBeingAttacked(true);
+  if (event.entityType == EntityType::Player) {
+    auto it = players.find(event.entityId);
+    if (it != players.end())
+      it->second->setBeingAttacked(true);
+  } else if (event.entityType == EntityType::Npc) {
+    auto it = npcs.find(event.entityId);
+    if (it != npcs.end())
+      it->second->setBeingAttacked(true);
+  }
 }
 
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
