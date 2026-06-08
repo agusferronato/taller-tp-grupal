@@ -115,6 +115,7 @@ private:
   void handle(const PrivateMessageEventDTO &event);
   void handle(const GlobalChatMessageEventDTO &event);
   void handle(const PlayerDieEventDTO &event);
+  void handle(const LoginResultEventDTO &event);
 };
 
 #endif

@@ -58,15 +58,13 @@ void MainWindow::onStartGame(const QString &username) {
   ClientData data = ClientDataLogin{username.toStdString()};
 
   emit gameStartRequested(data);
-  close();
 }
 
 void MainWindow::onCharacterCreated(const QString &username,
                                     const QString &race,
                                     const QString &playerClass) {
   auto s = username.toStdString();
-  ClientData data = ClientDataRegister{s, s, race.toStdString(),
-                                       playerClass.toStdString()};
+  ClientData data =
+      ClientDataRegister{s, s, race.toStdString(), playerClass.toStdString()};
   emit gameStartRequested(data);
-  close();
 }

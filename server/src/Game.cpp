@@ -12,6 +12,7 @@
 #include "GlobalChatMessageEventDTO.h"
 #include "GroundItemsListEventDTO.h"
 #include "InventoryUpdateEventDTO.h"
+#include "LoginResultEventDTO.h"
 #include "MapLoader.h"
 #include "MoveCommandDTO.h"
 #include "NPCAppearedEventDTO.h"
@@ -100,7 +101,9 @@ void Game::registerPlayer(const std::string &name, const Race race,
                           uint32_t connectionId) {
 
   if (repository.exists(name)) {
-    senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{0, 1});
+    senderQueueMonitor.sendToClient(
+        connectionId,
+        RegisterPlayerEventDTO{0, RegisterStatus::PlayerAlreadyExists});
     return;
   }
 
@@ -124,7 +127,8 @@ void Game::registerPlayer(const std::string &name, const Race race,
   senderQueueMonitor.markAsRegistered(connectionId);
 
   senderQueueMonitor.sendToClient(connectionId,
-                                  RegisterPlayerEventDTO{newId, 0});
+                                  RegisterPlayerEventDTO{newId,
+                                                         RegisterStatus::Success});
 
   {
     std::vector<TextureOriginDTO> origins;
@@ -188,17 +192,37 @@ void Game::registerPlayer(const std::string &name, const Race race,
   }
 }
 
-void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
-
+void Game::validateLogin(const std::string &name, uint32_t connectionId) {
   if (!repository.exists(name)) {
-    senderQueueMonitor.sendToClient(connectionId, RegisterPlayerEventDTO{0, 1});
+    senderQueueMonitor.sendToClient(
+        connectionId, LoginResultEventDTO{0, LoginStatus::PlayerNotFound});
     return;
   }
 
   for (auto &[pid, info] : players) {
     if (info->getName() == name) {
-      senderQueueMonitor.sendToClient(connectionId,
-                                      RegisterPlayerEventDTO{0, 2});
+      senderQueueMonitor.sendToClient(
+          connectionId, LoginResultEventDTO{0, LoginStatus::AlreadyOnline});
+      return;
+    }
+  }
+
+  senderQueueMonitor.sendToClient(connectionId,
+                                  LoginResultEventDTO{0, LoginStatus::Success});
+}
+
+void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
+
+  if (!repository.exists(name)) {
+    senderQueueMonitor.sendToClient(
+        connectionId, LoginResultEventDTO{0, LoginStatus::PlayerNotFound});
+    return;
+  }
+
+  for (auto &[pid, info] : players) {
+    if (info->getName() == name) {
+      senderQueueMonitor.sendToClient(
+          connectionId, LoginResultEventDTO{0, LoginStatus::AlreadyOnline});
       return;
     }
   }
@@ -225,7 +249,8 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
   senderQueueMonitor.markAsRegistered(connectionId);
 
   senderQueueMonitor.sendToClient(connectionId,
-                                  RegisterPlayerEventDTO{newId, 0});
+                                  LoginResultEventDTO{newId,
+                                                      LoginStatus::Success});
 
   std::vector<TextureOriginDTO> origins;
   origins.reserve(textureOrigins.size());
