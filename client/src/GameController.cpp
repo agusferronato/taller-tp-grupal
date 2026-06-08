@@ -75,6 +75,14 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
           gameModel->equipItem(static_cast<uint8_t>(cmd.arg));
         } else if (cmd.type == ChatCommandType::Desequipar) {
           gameModel->unequipItem(static_cast<uint8_t>(cmd.arg));
+        } else if (cmd.type == ChatCommandType::FundarClan) {
+          gameModel->createClan(cmd.textArg);
+        } else if (cmd.type == ChatCommandType::UnirseClan) {
+          gameModel->joinClan(cmd.textArg);
+        } else if (cmd.type == ChatCommandType::ClanAceptar) {
+          gameModel->acceptClanRequest(cmd.textArg);
+        } else if (cmd.type == ChatCommandType::DejarClan) {
+          gameModel->leaveClan();
         }
         gameModel->closeChat();
       } else {

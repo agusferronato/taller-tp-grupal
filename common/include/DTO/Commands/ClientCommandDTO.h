@@ -3,11 +3,15 @@
 
 #include <variant>
 
+#include "AcceptClanRequestCommandDTO.h"
 #include "AtackCommandDTO.h"
+#include "CreateClanCommandDTO.h"
 #include "DropItemCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "ExitCommandDTO.h"
 #include "GlobalChatMessageCommandDTO.h"
+#include "JoinClanCommandDTO.h"
+#include "LeaveClanCommandDTO.h"
 #include "LoginPlayerCommandDTO.h"
 #include "MeditateCommandDTO.h"
 #include "MoveCommandDTO.h"
@@ -22,6 +26,8 @@ using ClientCommandDTO =
                  MeditateCommandDTO, PrivateMessageCommandDTO, MoveCommandDTO,
                  ExitCommandDTO, PlayerStopCommandDTO, EquipCommandDTO,
                  UnequipCommandDTO, DropItemCommandDTO, TakeItemCommandDTO,
-                 GlobalChatMessageCommandDTO, AtackCommandDTO>;
+                 GlobalChatMessageCommandDTO, AtackCommandDTO,
+                 CreateClanCommandDTO, JoinClanCommandDTO,
+                 AcceptClanRequestCommandDTO, LeaveClanCommandDTO>;
 
 #endif

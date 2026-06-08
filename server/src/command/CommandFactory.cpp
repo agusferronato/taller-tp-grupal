@@ -1,21 +1,29 @@
 #include "command/CommandFactory.h"
 
+#include "AcceptClanRequestCommandDTO.h"
 #include "AtackCommandDTO.h"
+#include "CreateClanCommandDTO.h"
 #include "DropItemCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "ExitCommandDTO.h"
 #include "GlobalChatMessageCommandDTO.h"
+#include "JoinClanCommandDTO.h"
+#include "LeaveClanCommandDTO.h"
 #include "LoginPlayerCommandDTO.h"
 #include "MoveCommandDTO.h"
 #include "PlayerStopCommandDTO.h"
 #include "RegisterPlayerCommandDTO.h"
 #include "TakeItemCommandDTO.h"
 #include "UnequipCommandDTO.h"
+#include "command/AcceptClanRequestCommand.h"
 #include "command/AtackCommand.h"
+#include "command/CreateClanCommand.h"
 #include "command/DropItemCommand.h"
 #include "command/EquipCommand.h"
 #include "command/ExitCommand.h"
 #include "command/GlobalChatMessageCommand.h"
+#include "command/JoinClanCommand.h"
+#include "command/LeaveClanCommand.h"
 #include "command/LoginPlayerCommand.h"
 #include "command/MovePlayerCommand.h"
 #include "command/PlayerStoppedCommand.h"
@@ -73,6 +81,25 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
   if (const auto *request = std::get_if<AtackCommandDTO>(&dto)) {
     return std::make_unique<AtackCommand>(request->playerId, request->x,
                                           request->y);
+  }
+
+  if (const auto *request = std::get_if<CreateClanCommandDTO>(&dto)) {
+    return std::make_unique<CreateClanCommand>(request->playerId,
+                                               request->clanName);
+  }
+
+  if (const auto *request = std::get_if<JoinClanCommandDTO>(&dto)) {
+    return std::make_unique<JoinClanCommand>(request->playerId,
+                                             request->clanName);
+  }
+
+  if (const auto *request = std::get_if<AcceptClanRequestCommandDTO>(&dto)) {
+    return std::make_unique<AcceptClanRequestCommand>(request->founderId,
+                                                      request->playerName);
+  }
+
+  if (const auto *request = std::get_if<LeaveClanCommandDTO>(&dto)) {
+    return std::make_unique<LeaveClanCommand>(request->playerId);
   }
 
   throw std::runtime_error("Unknown client request DTO type");

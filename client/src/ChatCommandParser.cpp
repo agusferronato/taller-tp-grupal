@@ -63,5 +63,29 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
     return {ChatCommandType::None, 0};
   }
 
+  if (message.rfind("/unirse ", 0) == 0 && message.size() > 8) {
+    std::string clanName = stripQuotes(message.substr(8));
+
+    if (!clanName.empty()) {
+      return {ChatCommandType::UnirseClan, 0, clanName};
+    }
+
+    return {ChatCommandType::None, 0};
+  }
+
+  if (message.rfind("/clan-aceptar ", 0) == 0 && message.size() > 14) {
+    std::string playerName = stripQuotes(message.substr(14));
+
+    if (!playerName.empty()) {
+      return {ChatCommandType::ClanAceptar, 0, playerName};
+    }
+
+    return {ChatCommandType::None, 0};
+  }
+
+  if (message == "/dejar-clan") {
+    return {ChatCommandType::DejarClan, 0};
+  }
+
   return {ChatCommandType::None, 0};
 }

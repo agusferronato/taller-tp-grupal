@@ -10,7 +10,10 @@ enum class ChatCommandType {
   Tirar,
   Equipar,
   Desequipar,
-  FundarClan
+  FundarClan,
+  UnirseClan,
+  ClanAceptar,
+  DejarClan
 };
 
 struct ChatCommand {
