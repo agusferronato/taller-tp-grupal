@@ -270,7 +270,7 @@ void GameModel::handle(const ChatMessageEventDTO &event) {
     while (std::getline(stream, line, '\n')) {
         if (line.empty()) continue;
 
-        chatMessages.push_back(ChatMessage{event.message, event.category});
+        chatMessages.push_back(ChatMessage{line, event.category});
         while (chatMessages.size() > 100)
             chatMessages.pop_front();
     }

@@ -147,21 +147,19 @@ void Game::registerPlayer(const std::string &name, const Race race,
     return;
   }
 
-  uint32_t newId = nextPlayerId++;
+  uint32_t newId = connectionId;
   int spawnX = nextSpawnX;
   int spawnY = 0;
   nextSpawnX += 64;
 
   auto player = std::make_unique<Character>(newId, name, race, playerClass,
-                                            spawnX, spawnY, Direction::Down);
+                                             spawnX, spawnY, Direction::Down);
   player->addItem(17);
   player->addItem(1);
   repository.create(player->toPlayerData());
 
   colisionables.push_back(player.get());
   players[newId] = std::move(player);
-  connectionToPlayer[connectionId] = newId;
-  playerToConnection[newId] = connectionId;
   playerIdByName[name] = newId;
 
   senderQueueMonitor.markAsRegistered(connectionId);
@@ -268,7 +266,7 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
   }
 
   PlayerData data = repository.load(name);
-  uint32_t newId = nextPlayerId++;
+  uint32_t newId = connectionId;
 
   auto player = std::make_unique<Character>(newId, data);
   uint32_t savedClanId = player->getClanId();
@@ -282,8 +280,6 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   colisionables.push_back(player.get());
   players[newId] = std::move(player);
-  connectionToPlayer[connectionId] = newId;
-  playerToConnection[newId] = connectionId;
   playerIdByName[name] = newId;
 
   senderQueueMonitor.markAsRegistered(connectionId);
@@ -400,23 +396,9 @@ void Game::exitPlayer(uint32_t playerId) {
 
   messagesToSend.push_back(PlayerRemovedEventDTO{playerId});
 
-  auto connIt = playerToConnection.find(playerId);
-  if (connIt != playerToConnection.end()) {
-    connectionToPlayer.erase(connIt->second);
-    playerToConnection.erase(connIt);
-  }
-
   playerIdByName.erase(playerName);
   cheatsByPlayer.erase(playerId);
   players.erase(it);
-}
-
-void Game::exitPlayerByConnection(uint32_t connectionId) {
-  auto it = connectionToPlayer.find(connectionId);
-  if (it == connectionToPlayer.end()) {
-    return;
-  }
-  exitPlayer(it->second);
 }
 
 void Game::equipItem(uint32_t playerId, uint8_t inventorySlot) {
@@ -442,12 +424,7 @@ void Game::sendPrivateMessage(uint32_t connectionId,
                               const std::string &targetName,
                               const std::string &message) {
 
-  auto senderPlayerIt = connectionToPlayer.find(connectionId);
-  if (senderPlayerIt == connectionToPlayer.end()) {
-    return;
-  }
-
-  auto senderIt = players.find(senderPlayerIt->second);
+  auto senderIt = players.find(connectionId);
   if (senderIt == players.end()) {
     return;
   }
@@ -468,13 +445,7 @@ void Game::sendPrivateMessage(uint32_t connectionId,
 }
 
 void Game::applyCheat(uint32_t connectionId, CheatType cheat) {
-  auto connectionIt = connectionToPlayer.find(connectionId);
-  if (connectionIt == connectionToPlayer.end()) {
-    sendErrorMessageToConnection(connectionId, "No se pudo aplicar el cheat");
-    return;
-  }
-
-  uint32_t playerId = connectionIt->second;
+  uint32_t playerId = connectionId;
   auto playerIt = players.find(playerId);
   if (playerIt == players.end()) {
     sendErrorMessageToConnection(connectionId, "No se pudo aplicar el cheat");
@@ -998,21 +969,8 @@ std::string Game::getPlayerName(uint32_t playerId) const {
   return it->second->getName();
 }
 
-std::optional<uint32_t>
-Game::getConnectionIdForPlayer(uint32_t playerId) const {
-  auto it = playerToConnection.find(playerId);
-  if (it == playerToConnection.end()) {
-    return std::nullopt;
-  }
-  return it->second;
-}
-
 void Game::sendToPlayer(uint32_t playerId, const ServerEventDTO &event) {
-  auto connectionId = getConnectionIdForPlayer(playerId);
-  if (!connectionId.has_value()) {
-    return;
-  }
-  senderQueueMonitor.sendToClient(connectionId.value(), event);
+  senderQueueMonitor.sendToClient(playerId, event);
 }
 
 void Game::sendToPlayers(const std::vector<uint32_t> &playerIds,
@@ -1039,15 +997,7 @@ void Game::sendToClan(uint32_t clanId, const ServerEventDTO &event,
 }
 
 void Game::sendSystemMessage(uint32_t playerId, const std::string &msg) {
-
-  auto connectionIt = playerToConnection.find(playerId);
-
-  uint32_t connectionId = connectionIt->second;
-  senderQueueMonitor.sendToClient(
-        connectionId,
-        makeSystemMessage(msg)
-      );
-
+  senderQueueMonitor.sendToClient(playerId, makeSystemMessage(msg));
 }
 
 void Game::sendSystemMessageToPlayer(uint32_t playerId,
@@ -1135,7 +1085,7 @@ void Game::tryAttack(NPC& npc, Character& target) {
 
   if (target.tryParry()) {
     senderQueueMonitor.sendToClient(
-        playerToConnection[target.getId()],
+        target.getId(),
         makeCombatMessage(npc.getName() + " trato de atacarte pero lo esquivaste"));
     return;
   }
@@ -1260,11 +1210,11 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
 
   if (!critico && target.tryParry()) {
     senderQueueMonitor.sendToClient(
-        playerToConnection[attacker.getId()],
+        attacker.getId(),
         makeCombatMessage("Atacaste a " + target.getName() +
                           " pero el lo esquivo"));
     senderQueueMonitor.sendToClient(
-        playerToConnection[target.getId()],
+        target.getId(),
         makeCombatMessage(attacker.getName() +
                           " trato de atacarte pero lo esquivaste"));
     return;
@@ -1293,12 +1243,12 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
     killPlayer(target);
   } else {
     senderQueueMonitor.sendToClient(
-        playerToConnection[attacker.getId()],
+        attacker.getId(),
         makeCombatMessage("Atacaste a " + target.getName() +
                           " y le hiciste " + std::to_string(damage) +
                           " de daño!"));
     senderQueueMonitor.sendToClient(
-        playerToConnection[target.getId()],
+        target.getId(),
         makeCombatMessage("Recibiste un ataque de " + attacker.getName() +
                           " y te hicieron " + std::to_string(damage) +
                           " de daño!"));
@@ -1318,7 +1268,7 @@ void Game::playerAttackNPC(Character &attacker, NPC &target) {
 
   if (!critico && target.tryParry()) {
     senderQueueMonitor.sendToClient(
-        playerToConnection[attacker.getId()],
+        attacker.getId(),
         makeCombatMessage("Atacaste a " + target.getName() + " pero lo esquivo"));
     return;
   }
@@ -1372,7 +1322,7 @@ void Game::playerAttackNPC(Character &attacker, NPC &target) {
 
   } else {
     senderQueueMonitor.sendToClient(
-        playerToConnection[attacker.getId()],
+        attacker.getId(),
         makeCombatMessage("Atacaste a un " + target.getName() +
                           " y le hiciste " + std::to_string(damage) +
                           " de daño!"));
@@ -1706,7 +1656,7 @@ void Game::updateResurrectingPlayers() {
       sendSystemMessage(pid, "Has sido resucitado.");
 
       senderQueueMonitor.sendToClient(
-          playerToConnection[pid],
+          pid,
           PlayerResurrectEventDTO{pid, static_cast<int16_t>(it->priestX),
                                   static_cast<int16_t>(it->priestY)});
 

@@ -57,13 +57,10 @@ private:
   std::list<ServerEventDTO> messagesToSend;
   bool keepRunning = true;
 
-  uint32_t nextPlayerId{1};
   int nextSpawnX{0};
   std::unordered_map<uint32_t, std::unique_ptr<Character>> players;
   std::unordered_map<std::string, uint32_t> playerIdByName;
   std::vector<Colisionable *> colisionables;
-  std::unordered_map<uint32_t, uint32_t> connectionToPlayer;
-  std::unordered_map<uint32_t, uint32_t> playerToConnection;
   std::unordered_map<uint32_t, PlayerCheats> cheatsByPlayer;
 
   InventoryManager inventoryManager{players, messagesToSend};
@@ -99,7 +96,6 @@ public:
   void movePlayer(uint32_t playerId, Direction direction);
   void stopPlayer(uint32_t playerId);
   void exitPlayer(uint32_t playerId);
-  void exitPlayerByConnection(uint32_t connectionId);
   void equipItem(uint32_t playerId, uint8_t inventorySlot);
   void unequipSlot(uint32_t playerId, uint8_t equipSlot);
   void dropItem(uint32_t playerId, uint8_t inventorySlot);
@@ -153,13 +149,12 @@ private:
 
   std::optional<uint32_t> findPlayerIdByName(const std::string &name) const;
   std::string getPlayerName(uint32_t playerId) const;
-  std::optional<uint32_t> getConnectionIdForPlayer(uint32_t playerId) const;
   void sendToPlayer(uint32_t playerId, const ServerEventDTO &event);
   void sendToPlayers(const std::vector<uint32_t> &playerIds,
                      const ServerEventDTO &event);
   void sendToClan(uint32_t clanId, const ServerEventDTO &event,
                   std::optional<uint32_t> exceptPlayerId = std::nullopt);
-  
+
   void sendErrorMessageToConnection(uint32_t connectionId,
                                     const std::string &message);
   uint32_t movementSpeedFor(uint32_t playerId) const;
