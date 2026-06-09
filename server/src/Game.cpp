@@ -173,14 +173,14 @@ void Game::registerPlayer(const std::string &name, const Race race,
     origins.reserve(textureOrigins.size());
     for (const auto &o : textureOrigins) {
       origins.push_back(
-          {static_cast<uint8_t>(o.priority), static_cast<uint8_t>(o.texture_id),
+          {static_cast<uint8_t>(o.priority), static_cast<uint16_t>(o.texture_id),
            static_cast<uint16_t>(o.x), static_cast<uint16_t>(o.y)});
     }
     senderQueueMonitor.sendToClient(
         connectionId,
         TextureInfoEventDTO{
             static_cast<uint16_t>(maxSize), static_cast<uint16_t>(gridSize),
-            static_cast<uint8_t>(commonGroundTextureId), std::move(origins)});
+            static_cast<uint16_t>(commonGroundTextureId), std::move(origins)});
   }
 
   std::vector<PlayerInfoDTO> playerList;
@@ -292,14 +292,14 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
   origins.reserve(textureOrigins.size());
   for (const auto &o : textureOrigins) {
     origins.push_back({static_cast<uint8_t>(o.priority),
-                       static_cast<uint8_t>(o.texture_id),
+                       static_cast<uint16_t>(o.texture_id),
                        static_cast<uint16_t>(o.x), static_cast<uint16_t>(o.y)});
   }
   senderQueueMonitor.sendToClient(
       connectionId,
       TextureInfoEventDTO{
           static_cast<uint16_t>(maxSize), static_cast<uint16_t>(gridSize),
-          static_cast<uint8_t>(commonGroundTextureId), std::move(origins)});
+           static_cast<uint16_t>(commonGroundTextureId), std::move(origins)});
 
   std::vector<PlayerInfoDTO> playerList;
   for (auto &[pid, info] : players) {
