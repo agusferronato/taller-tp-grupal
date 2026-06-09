@@ -31,12 +31,12 @@ Manual de Usuario (ManualUsuario.tex): Guía de juego con todos
 los controles, comandos de chat, interacción con NPCs, sistema de
 clanes, uso del inventario, y explicación de las mecánicas (muerte,
 combate, ciudades, etc.).
-- 
+
 Manual de Proyecto (ManualProyecto.tex): Documenta el proceso
 de desarrollo: organización del equipo, herramientas utilizadas,
 evolución semana a semana, dificultades encontradas, lecciones
 aprendidas y estado actual de las funcionalidades(que esta completado y que falta).
-- 
+
 Documentación Técnica (DocumentacionTecnica.tex): Arquitectura
 del cliente y servidor, modelo de hilos, protocolo de comunicación
 binario (opcodes y formato de mensajes), formato de persistencia
