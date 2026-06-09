@@ -3,6 +3,7 @@
 #include "AcceptClanRequestCommandDTO.h"
 #include "AttackCommandDTO.h"
 #include "BanClanPlayerCommandDTO.h"
+#include "CheatCommandDTO.h"
 #include "CreateClanCommandDTO.h"
 #include "DropItemCommandDTO.h"
 #include "EquipCommandDTO.h"
@@ -24,6 +25,7 @@
 #include "command/AcceptClanRequestCommand.h"
 #include "command/AttackCommand.h"
 #include "command/BanClanPlayerCommand.h"
+#include "command/CheatCommand.h"
 #include "command/CreateClanCommand.h"
 #include "command/DropItemCommand.h"
 #include "command/EquipCommand.h"
@@ -138,6 +140,10 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
                                                    request->playerName);
   }
 
+  if (const auto *request = std::get_if<CheatCommandDTO>(&dto)) {
+    return std::make_unique<CheatCommand>(request->cheat);
+  }
+  
   if (const auto *request = std::get_if<ValidateLoginCommandDTO>(&dto)) {
     return std::make_unique<ValidateLoginCommand>(request->playerName);
   }

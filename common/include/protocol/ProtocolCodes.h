@@ -32,6 +32,7 @@ enum class ClientCommandOpCode : uint8_t {
   BanClanPlayerCommand,
   KickClanMemberCommand,
   AttackCommand,
+  CheatCommand,
   ValidateLoginCommand,
 };
 

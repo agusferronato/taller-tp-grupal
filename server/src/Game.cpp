@@ -53,6 +53,11 @@ ChatMessageEventDTO makeSystemErrorMessage(std::string message) {
                          std::move(message));
 }
 
+ChatMessageEventDTO makeSystemMessage(std::string message) {
+  return makeChatMessage(ChatMessageCategory::System, "Sistema",
+                         std::move(message));
+}
+
 ChatMessageEventDTO makeCombatMessage(std::string message) {
   return makeChatMessage(ChatMessageCategory::Combat, "Sistema",
                          std::move(message));
@@ -392,6 +397,7 @@ void Game::exitPlayer(uint32_t playerId) {
   }
 
   playerIdByName.erase(playerName);
+  cheatsByPlayer.erase(playerId);
   players.erase(it);
 }
 
@@ -448,6 +454,66 @@ void Game::sendPrivateMessage(uint32_t connectionId,
                PrivateMessageEventDTO{senderName, targetName, message});
   sendToPlayer(senderIt->second->getId(),
                PrivateMessageEventDTO{senderName, targetName, message});
+}
+
+void Game::applyCheat(uint32_t connectionId, CheatType cheat) {
+  auto connectionIt = connectionToPlayer.find(connectionId);
+  if (connectionIt == connectionToPlayer.end()) {
+    sendErrorMessageToConnection(connectionId, "No se pudo aplicar el cheat");
+    return;
+  }
+
+  uint32_t playerId = connectionIt->second;
+  auto playerIt = players.find(playerId);
+  if (playerIt == players.end()) {
+    sendErrorMessageToConnection(connectionId, "No se pudo aplicar el cheat");
+    return;
+  }
+
+  Character &player = *playerIt->second;
+  PlayerCheats &cheats = cheatsByPlayer[playerId];
+
+  switch (cheat) {
+  case CheatType::Die:
+    if (player.isDead()) {
+      sendToPlayer(playerId, makeSystemErrorMessage("Ya estas muerto"));
+      return;
+    }
+    killPlayer(player);
+    messagesToSend.push_back(player.toPlayerInfoEvent());
+    sendSystemMessageToPlayer(playerId, "Has muerto");
+    return;
+
+  case CheatType::InfiniteHealth:
+    cheats.infiniteHealth = true;
+    sendSystemMessageToPlayer(playerId, "Vida infinita activada");
+    return;
+
+  case CheatType::NormalHealth:
+    cheats.infiniteHealth = false;
+    sendSystemMessageToPlayer(playerId, "Vida infinita desactivada");
+    return;
+
+  case CheatType::InfiniteMana:
+    cheats.infiniteMana = true;
+    sendSystemMessageToPlayer(playerId, "Mana infinito activado");
+    return;
+
+  case CheatType::NormalMana:
+    cheats.infiniteMana = false;
+    sendSystemMessageToPlayer(playerId, "Mana infinito desactivado");
+    return;
+
+  case CheatType::SuperSpeed:
+    cheats.superSpeed = true;
+    sendSystemMessageToPlayer(playerId, "Supervelocidad activada");
+    return;
+
+  case CheatType::NormalSpeed:
+    cheats.superSpeed = false;
+    sendSystemMessageToPlayer(playerId, "Supervelocidad desactivada");
+    return;
+  }
 }
 
 void Game::createClan(uint32_t playerId, const std::string &clanName) {
@@ -841,7 +907,7 @@ void Game::movePlayers() {
     if (!info->isMoving())
       continue;
 
-    auto [targetX, targetY] = info->getTargetPosition();
+    auto [targetX, targetY] = info->getTargetPosition(movementSpeedFor(playerID));
 
     int origX = info->getX();
     int origY = info->getY();
@@ -955,6 +1021,34 @@ void Game::sendToClan(uint32_t clanId, const ServerEventDTO &event,
     }
     sendToPlayer(playerId.value(), event);
   }
+}
+
+void Game::sendSystemMessageToPlayer(uint32_t playerId,
+                                     const std::string &message) {
+  sendToPlayer(playerId, makeSystemMessage(message));
+}
+
+void Game::sendErrorMessageToConnection(uint32_t connectionId,
+                                        const std::string &message) {
+  senderQueueMonitor.sendToClient(connectionId, makeSystemErrorMessage(message));
+}
+
+uint32_t Game::movementSpeedFor(uint32_t playerId) const {
+  auto it = cheatsByPlayer.find(playerId);
+  if (it != cheatsByPlayer.end() && it->second.superSpeed) {
+    return 4;
+  }
+  return 2;
+}
+
+bool Game::hasInfiniteHealth(uint32_t playerId) const {
+  auto it = cheatsByPlayer.find(playerId);
+  return it != cheatsByPlayer.end() && it->second.infiniteHealth;
+}
+
+bool Game::hasInfiniteMana(uint32_t playerId) const {
+  auto it = cheatsByPlayer.find(playerId);
+  return it != cheatsByPlayer.end() && it->second.infiniteMana;
 }
 
 bool Game::checkIfItCollides(Colisionable *entity) {
@@ -1108,7 +1202,11 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
                           " trato de atacarte pero lo esquivaste"));
     return;
   }
-  damage = target.takeDamage(damage);
+  if (hasInfiniteHealth(target.getId())) {
+    damage = 0;
+  } else {
+    damage = target.takeDamage(damage);
+  }
 
   uint32_t xp = Formulas::calcularExperiencia(damage, attacker.getLevel(),
                                               target.getLevel());
