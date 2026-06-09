@@ -55,6 +55,9 @@ public:
   uint32_t getConstitution() const { return constitution; }
   uint32_t getIntelligence() const { return intelligence; }
 
+  void setHealth(uint32_t hp) { health = hp > maxHealth ? maxHealth : hp; }
+  void setMana(uint32_t mana) { this->mana = mana > maxMana ? maxMana : mana; }
+
   void takeDamage(uint32_t damage);
   bool addExperience(uint32_t xp);
   void setGold(uint32_t amount);

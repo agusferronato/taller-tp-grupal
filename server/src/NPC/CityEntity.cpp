@@ -10,7 +10,7 @@ bool CityEntity::colisionaCon(int targetX, int targetY, int targetAncho,
 }
 
 bool CityEntity::updatePosition(const Character& character) {
-    int dx = character.getX() - x;
+    int dx = character.getX() - x; 
     int dy = character.getY() - y;
 
     if (abs(dx) > range || abs(dy) > range) {

@@ -194,3 +194,22 @@ uint32_t Character::dropGoldOnDeath() {
 }
 
 std::vector<uint8_t> Character::die() { return player.die(); }
+
+bool Character::hasItem(uint8_t itemId) const {
+  return player.getInventory().findItem(itemId) != MAX_INVENTORY_SLOTS;
+}
+
+bool Character::hasMoney(uint16_t amount) const {
+  return player.getGold() >= amount;
+}
+
+
+void Character::removeItemById(uint8_t itemId) {
+  uint8_t slot = player.getInventory().findItem(itemId);
+  if (slot != MAX_INVENTORY_SLOTS)
+    player.removeItem(slot);
+}
+
+void Character::resurrect() {
+  player.resurrect();
+}

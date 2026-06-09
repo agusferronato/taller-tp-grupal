@@ -22,6 +22,7 @@ public:
   int get_h() override;
 
 private:
+  int attackNextFrame{-1};
   const ClientPlayer &player;
   TextureManager &textureManager;
   SDL2pp::Font &nameFont;
@@ -40,6 +41,8 @@ private:
   void renderGhostHead(SDL2pp::Renderer &renderer, Camera &camera);
   int get_head_x(Camera &camera);
   int get_head_y(Camera &camera);
+  void renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera,
+                          unsigned int it);
   int getRaceBodyID(Race race) const;
   int getRaceHeadID(Race race) const;
 };

@@ -6,17 +6,21 @@
 
 class SpecialSkeleton : public NPC {
 public:
-  explicit SpecialSkeleton(Position position) : NPC(position) {}
+  explicit SpecialSkeleton(Position position) : NPC(position) {
+    level = 8 + std::rand() % 8;
+    maxHp = 80 + std::rand() % 71;
+    hp = maxHp;
+    agility = 8;
+  }
   NPCType getType() override { return NPCType::SpecialSkeletonT; }
 
-  const std::string &getName() const override {
-    static const std::string name = "Special Skeleton";
-    return name;
-  }
+    int getAncho() const override { return 32; };
+    int getAlto() const override { return 64; };
+    int getRange() const override { return 128; };
 
-  int getAncho() const override { return 32; };
-  int getAlto() const override { return 64; };
-  int getRange() const override { return 128; };
+    std::string getName() override { return "SpecialSkeleton"; }
+    int getAttackCounterMax() override { return 200; }
+    uint32_t getDamage() override { return 3; }
 };
 
 #endif

@@ -19,6 +19,7 @@
 #include "parser/Commands/ReviewClanCommandParser.h"
 #include "parser/Commands/TakeItemCommandParser.h"
 #include "parser/Commands/UnequipCommandParser.h"
+#include "parser/Events/AttackReceivedEventParser.h"
 #include "parser/Commands/ValidateLoginCommandParser.h"
 #include "parser/Events/ChatMessageEventParser.h"
 #include "parser/Events/CityEntityAppearedEventParser.h"
@@ -35,6 +36,7 @@
 #include "parser/Events/NpcDefeatedEventParser.h"
 #include "parser/Events/PlayerAppearedEventParser.h"
 #include "parser/Events/PlayerDieEventParser.h"
+#include "parser/Events/PlayerResurrectEventParser.h"
 #include "parser/Events/PlayerInfoEventParser.h"
 #include "parser/Events/PlayerListEventParser.h"
 #include "parser/Events/PlayerMovedEventParser.h"
@@ -46,6 +48,7 @@
 #include "protocol/Protocol.h"
 #include "protocol/ProtocolCodes.h"
 #include <AttackCommandParser.h>
+#include "parser/Commands/CityEntityCommandParser.h"
 #include <GlobalChatMessageCommandParser.h>
 #include <GlobalChatMessageEventParser.h>
 
@@ -101,6 +104,10 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerCommandParser(
       static_cast<uint8_t>(ClientCommandOpCode::AttackCommand),
       std::make_unique<AttackCommandParser>());
+
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::CityEntityCommand),
+      std::make_unique<CityEntityCommandParser>());
 
   protocol.registerCommandParser(
       static_cast<uint8_t>(ClientCommandOpCode::CreateClanCommand),
@@ -230,8 +237,16 @@ void registerAllParsers(Protocol &protocol) {
       std::make_unique<CityEntityStoppedEventParser>());
 
   protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::AttackReceivedEvent),
+      std::make_unique<AttackReceivedEventParser>());
+
+  protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::PlayerDieEvent),
       std::make_unique<PlayerDieEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::PlayerResurrectEvent),
+      std::make_unique<PlayerResurrectEventParser>());
 
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::LoginResultEvent),

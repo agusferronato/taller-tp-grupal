@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cctype>
+#include <climits>
 #include <cmath>
 #include <sstream>
 
@@ -20,6 +21,7 @@
 #include "NPCStoppedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerInfoEventDTO.h"
+#include "PlayerResurrectEventDTO.h"
 #include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "PlayerRemovedEventDTO.h"
@@ -29,6 +31,10 @@
 #include "RegisterPlayerEventDTO.h"
 #include "TextureInfoEventDTO.h"
 #include "command/CommandFactory.h"
+#include "GroundItemsListEventDTO.h"
+#include "AttackReceivedEventDTO.h"
+#include "InventoryUpdateEventDTO.h"
+#include "GlobalChatMessageEventDTO.h"
 #include <NPCType.h>
 
 namespace {
@@ -104,6 +110,7 @@ void Game::run() {
     movePlayers();
 
     appearNPCs();
+    updateResurrectingPlayers();
     sendMessages();
 
     if (++saveCounter >= 300) {
@@ -140,21 +147,19 @@ void Game::registerPlayer(const std::string &name, const Race race,
     return;
   }
 
-  uint32_t newId = nextPlayerId++;
+  uint32_t newId = connectionId;
   int spawnX = nextSpawnX;
   int spawnY = 0;
   nextSpawnX += 64;
 
   auto player = std::make_unique<Character>(newId, name, race, playerClass,
-                                            spawnX, spawnY, Direction::Down);
+                                             spawnX, spawnY, Direction::Down);
   player->addItem(17);
   player->addItem(1);
   repository.create(player->toPlayerData());
 
   colisionables.push_back(player.get());
   players[newId] = std::move(player);
-  connectionToPlayer[connectionId] = newId;
-  playerToConnection[newId] = connectionId;
   playerIdByName[name] = newId;
 
   senderQueueMonitor.markAsRegistered(connectionId);
@@ -261,7 +266,7 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
   }
 
   PlayerData data = repository.load(name);
-  uint32_t newId = nextPlayerId++;
+  uint32_t newId = connectionId;
 
   auto player = std::make_unique<Character>(newId, data);
   uint32_t savedClanId = player->getClanId();
@@ -275,8 +280,6 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   colisionables.push_back(player.get());
   players[newId] = std::move(player);
-  connectionToPlayer[connectionId] = newId;
-  playerToConnection[newId] = connectionId;
   playerIdByName[name] = newId;
 
   senderQueueMonitor.markAsRegistered(connectionId);
@@ -327,6 +330,9 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   messagesToSend.push_back(players[newId]->toPlayerAppeared());
 
+  if (players[newId]->isDead())
+    messagesToSend.push_back(PlayerDieEventDTO{players[newId]->getId()});
+
   messagesToSend.push_back(InventoryUpdateEventDTO{
       newId, players[newId]->getInventoryItems(),
       players[newId]->getEquippedWeapon(), players[newId]->getEquippedArmor(),
@@ -353,7 +359,7 @@ void Game::movePlayer(uint32_t playerId, Direction direction) {
 
   auto it = players.find(playerId);
 
-  if (it == players.end()) {
+  if (it == players.end() || isResurrecting(playerId)) {
     return;
   }
 
@@ -390,23 +396,9 @@ void Game::exitPlayer(uint32_t playerId) {
 
   messagesToSend.push_back(PlayerRemovedEventDTO{playerId});
 
-  auto connIt = playerToConnection.find(playerId);
-  if (connIt != playerToConnection.end()) {
-    connectionToPlayer.erase(connIt->second);
-    playerToConnection.erase(connIt);
-  }
-
   playerIdByName.erase(playerName);
   cheatsByPlayer.erase(playerId);
   players.erase(it);
-}
-
-void Game::exitPlayerByConnection(uint32_t connectionId) {
-  auto it = connectionToPlayer.find(connectionId);
-  if (it == connectionToPlayer.end()) {
-    return;
-  }
-  exitPlayer(it->second);
 }
 
 void Game::equipItem(uint32_t playerId, uint8_t inventorySlot) {
@@ -431,12 +423,8 @@ void Game::takeItem(uint32_t playerId) {
 void Game::sendPrivateMessage(uint32_t connectionId,
                               const std::string &targetName,
                               const std::string &message) {
-  auto senderPlayerIt = connectionToPlayer.find(connectionId);
-  if (senderPlayerIt == connectionToPlayer.end()) {
-    return;
-  }
 
-  auto senderIt = players.find(senderPlayerIt->second);
+  auto senderIt = players.find(connectionId);
   if (senderIt == players.end()) {
     return;
   }
@@ -457,13 +445,7 @@ void Game::sendPrivateMessage(uint32_t connectionId,
 }
 
 void Game::applyCheat(uint32_t connectionId, CheatType cheat) {
-  auto connectionIt = connectionToPlayer.find(connectionId);
-  if (connectionIt == connectionToPlayer.end()) {
-    sendErrorMessageToConnection(connectionId, "No se pudo aplicar el cheat");
-    return;
-  }
-
-  uint32_t playerId = connectionIt->second;
+  uint32_t playerId = connectionId;
   auto playerIt = players.find(playerId);
   if (playerIt == players.end()) {
     sendErrorMessageToConnection(connectionId, "No se pudo aplicar el cheat");
@@ -904,6 +886,10 @@ void Game::appearNPC(std::unique_ptr<NPC> &&npc) {
 
 void Game::movePlayers() {
   for (auto &[playerID, info] : players) {
+
+    if (isResurrecting(playerID))
+      continue;
+
     if (!info->isMoving())
       continue;
 
@@ -983,21 +969,8 @@ std::string Game::getPlayerName(uint32_t playerId) const {
   return it->second->getName();
 }
 
-std::optional<uint32_t>
-Game::getConnectionIdForPlayer(uint32_t playerId) const {
-  auto it = playerToConnection.find(playerId);
-  if (it == playerToConnection.end()) {
-    return std::nullopt;
-  }
-  return it->second;
-}
-
 void Game::sendToPlayer(uint32_t playerId, const ServerEventDTO &event) {
-  auto connectionId = getConnectionIdForPlayer(playerId);
-  if (!connectionId.has_value()) {
-    return;
-  }
-  senderQueueMonitor.sendToClient(connectionId.value(), event);
+  senderQueueMonitor.sendToClient(playerId, event);
 }
 
 void Game::sendToPlayers(const std::vector<uint32_t> &playerIds,
@@ -1021,6 +994,10 @@ void Game::sendToClan(uint32_t clanId, const ServerEventDTO &event,
     }
     sendToPlayer(playerId.value(), event);
   }
+}
+
+void Game::sendSystemMessage(uint32_t playerId, const std::string &msg) {
+  senderQueueMonitor.sendToClient(playerId, makeSystemMessage(msg));
 }
 
 void Game::sendSystemMessageToPlayer(uint32_t playerId,
@@ -1098,12 +1075,43 @@ void Game::createCityEntities() {
   }
 }
 
-void Game::makeNPCsfollowPlayers() {
-  for (auto &npc : npcs) {
-    Character *target = nullptr;
+
+
+
+void Game::tryAttack(NPC& npc, Character& target) {
+
+  if (!npc.collidesWith(target) || !npc.reachesAttackCounter())
+    return;
+
+  if (target.tryParry()) {
+    senderQueueMonitor.sendToClient(
+        target.getId(),
+        makeCombatMessage(npc.getName() + " trato de atacarte pero lo esquivaste"));
+    return;
+  }
+
+  target.takeDamage(npc.getDamage());
+
+  if (target.getHp() <= 0) {
+    killPlayer(target);
+    return;
+  }
+
+  messagesToSend.push_back(
+      AttackReceivedEventDTO{EntityType::Player, target.getId(),
+                             EffectType::NormalAttack});
+  messagesToSend.push_back(target.toPlayerInfoEvent());
+}
+
+
+
+void Game::makeNPCsfollowPlayers()
+{
+  for (auto& npc : npcs) {
+    Character* target = nullptr;
 
     for (auto &[_, player] : players) {
-      if (player->isInCity(cities, gridSize, maxSize))
+      if (player->isInCity(cities, gridSize, maxSize) || player->isDead())
         continue;
 
       int dx = npc->getX() - player->getX();
@@ -1120,6 +1128,9 @@ void Game::makeNPCsfollowPlayers() {
 
       if (npc->updatePosition(*target)) {
         if (checkIfItCollides(npc.get())) {
+
+          tryAttack(*npc, *target);
+
           npc->setPixelPosition(oldX, oldY);
           npc->stop();
           messagesToSend.push_back(NPCStoppedEventDTO{npc->getId()});
@@ -1138,53 +1149,59 @@ void Game::makeNPCsfollowPlayers() {
   }
 }
 
+
 void Game::makeCitiesEntitiesFollowPlayers() {
   for (auto &city : cities) {
     for (auto *cityEntity : city.getEntities()) {
       Character *target = nullptr;
 
       for (auto &[_, player] : players) {
-        if (!city.contains(player->getX(), player->getY(), gridSize, maxSize))
+        if (!city.contains(player->getX(), player->getY(), gridSize, maxSize) || player->isDead())
           continue;
 
         int dx = cityEntity->getX() - player->getX();
         int dy = cityEntity->getY() - player->getY();
-        if (abs(dx) <= cityEntity->getRange() &&
-            abs(dy) <= cityEntity->getRange()) {
-          target = player.get();
-          break;
+        if (abs(dx) <= cityEntity->getRange() && abs(dy) <= cityEntity->getRange()) {
+            target = player.get();
+            break;
         }
       }
 
-      if (target) {
-        int oldX = cityEntity->getX();
-        int oldY = cityEntity->getY();
+            if (target) {
+                int oldX = cityEntity->getX();
+                int oldY = cityEntity->getY();
 
-        if (cityEntity->updatePosition(*target)) {
-          if (checkIfItCollides(cityEntity)) {
-            cityEntity->setPixelPosition(oldX, oldY);
-            cityEntity->stop();
-            messagesToSend.push_back(
-                CityEntityStoppedEventDTO{cityEntity->getId()});
-          } else {
-            messagesToSend.push_back(CityEntityMovedEventDTO{
-                cityEntity->getId(), static_cast<int16_t>(cityEntity->getX()),
-                static_cast<int16_t>(cityEntity->getY()),
-                cityEntity->getDirection()});
-          }
-        }
-      } else {
-        if (cityEntity->getIsMoving()) {
-          cityEntity->stop();
-          messagesToSend.push_back(
-              CityEntityStoppedEventDTO{cityEntity->getId()});
+                if (cityEntity->updatePosition(*target)) {
+                    if (checkIfItCollides(cityEntity)) {
+                        cityEntity->setPixelPosition(oldX, oldY);
+                        cityEntity->stop();
+                        messagesToSend.push_back(CityEntityStoppedEventDTO{cityEntity->getId()});
+                    } else {
+                        messagesToSend.push_back(
+                            CityEntityMovedEventDTO{cityEntity->getId(),
+                                                    static_cast<int16_t>(cityEntity->getX()),
+                                                    static_cast<int16_t>(cityEntity->getY()),
+                                                    cityEntity->getDirection()});
+                    }
+                } else {
+                  if (cityEntity->getIsMoving()) {
+                    cityEntity->stop();
+                    messagesToSend.push_back(CityEntityStoppedEventDTO{cityEntity->getId()});
+                  }
+                }
+            } else {
+                if (cityEntity->getIsMoving()) {
+                    cityEntity->stop();
+                    messagesToSend.push_back(CityEntityStoppedEventDTO{cityEntity->getId()});
+                }
+            }
         }
       }
     }
-  }
-}
 
+    
 void Game::playerAttackPlayer(Character &attacker, Character &target) {
+
   if (!validAttack(attacker, target)) {
     return;
   }
@@ -1193,11 +1210,11 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
 
   if (!critico && target.tryParry()) {
     senderQueueMonitor.sendToClient(
-        playerToConnection[attacker.getId()],
+        attacker.getId(),
         makeCombatMessage("Atacaste a " + target.getName() +
                           " pero el lo esquivo"));
     senderQueueMonitor.sendToClient(
-        playerToConnection[target.getId()],
+        target.getId(),
         makeCombatMessage(attacker.getName() +
                           " trato de atacarte pero lo esquivaste"));
     return;
@@ -1208,11 +1225,15 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
     damage = target.takeDamage(damage);
   }
 
+  messagesToSend.push_back(
+      AttackReceivedEventDTO{EntityType::Player, target.getId(),
+                             EffectType::NormalAttack});
+
   uint32_t xp = Formulas::calcularExperiencia(damage, attacker.getLevel(),
                                               target.getLevel());
   attacker.gainExperience(xp);
 
-  if (target.getHp() == 0) {
+  if (target.getHp() <= 0) {
     uint32_t oro = target.dropGoldOnDeath();
     attacker.addGold(oro);
     uint32_t xpMuerte = Formulas::calcularExperienciaMuerte(
@@ -1222,12 +1243,12 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
     killPlayer(target);
   } else {
     senderQueueMonitor.sendToClient(
-        playerToConnection[attacker.getId()],
+        attacker.getId(),
         makeCombatMessage("Atacaste a " + target.getName() +
                           " y le hiciste " + std::to_string(damage) +
                           " de daño!"));
     senderQueueMonitor.sendToClient(
-        playerToConnection[target.getId()],
+        target.getId(),
         makeCombatMessage("Recibiste un ataque de " + attacker.getName() +
                           " y te hicieron " + std::to_string(damage) +
                           " de daño!"));
@@ -1237,19 +1258,77 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
 }
 
 void Game::playerAttackNPC(Character &attacker, NPC &target) {
+
+  if (!validAttackToNpc(attacker))
+    return;
+
   uint32_t damage = calculateDamage(attacker);
-  // [TODO] aplicar daño al npc
-  /* [TODO] exp del ataque*/
-  if (false) {
-    // [TODO] muerte del npc
+
+  bool critico = (damage != attacker.getDamage());
+
+  if (!critico && target.tryParry()) {
+    senderQueueMonitor.sendToClient(
+        attacker.getId(),
+        makeCombatMessage("Atacaste a " + target.getName() + " pero lo esquivo"));
+    return;
+  }
+
+  target.takeDamage(damage);
+
+  messagesToSend.push_back(
+      AttackReceivedEventDTO{EntityType::Npc, target.getId(),
+                             EffectType::NormalAttack});
+
+  uint32_t xp = Formulas::calcularExperiencia(damage, attacker.getLevel(),
+                                              target.getLevel());
+  attacker.gainExperience(xp);
+
+  if (target.getHP() <= 0) {
+
+    ObjectDropped objectDropped = target.getDroppedObject();
+
+    switch (objectDropped.type) {
+      case ObjectDroppedType::Gold:
+        attacker.addGold(objectDropped.value);
+        break;
+
+      case ObjectDroppedType::Item:
+        inventoryManager.addGroundItem(
+            static_cast<uint8_t>(objectDropped.value), target.getX(),
+            target.getY());
+        break;
+
+      default:
+        break;
+    }
+
+    uint32_t xpMuerte = Formulas::calcularExperienciaMuerte(
+        target.getMaxHp(), attacker.getLevel(), target.getLevel(),
+        (std::rand() % 100) / 100.0);
+    attacker.gainExperience(xpMuerte);
+
+    messagesToSend.push_back(NpcDefeatedEventDTO{target.getId()});
+
+    colisionables.erase(
+        std::remove(colisionables.begin(), colisionables.end(), &target),
+        colisionables.end());
+
+    auto npcIt = std::find_if(
+        npcs.begin(), npcs.end(),
+        [&target](const auto &npc) { return npc.get() == &target; });
+    if (npcIt != npcs.end()) {
+      npcs.erase(npcIt);
+    }
+
   } else {
     senderQueueMonitor.sendToClient(
-        playerToConnection[attacker.getId()],
+        attacker.getId(),
         makeCombatMessage("Atacaste a un " + target.getName() +
                           " y le hiciste " + std::to_string(damage) +
                           " de daño!"));
   }
   messagesToSend.push_back(attacker.toPlayerInfoEvent());
+
 }
 
 uint32_t Game::calculateDamage(Character &attacker) {
@@ -1262,8 +1341,12 @@ uint32_t Game::calculateDamage(Character &attacker) {
 
 bool Game::validAttack(Character &attacker, Character &target) {
   if (attacker.isNewbie() || target.isNewbie()) {
-    // return false;
+    return false;
   }
+
+  if (attacker.getId() == target.getId())
+    return false;
+
   if (abs(static_cast<int>(attacker.getLevel()) -
           static_cast<int>(target.getLevel())) > 10) {
     return false;
@@ -1276,6 +1359,17 @@ bool Game::validAttack(Character &attacker, Character &target) {
   }
   if (attacker.isDead() || target.isDead()) {
     return false;
+  }
+  return true;
+}
+
+bool Game::validAttackToNpc(Character &attacker) {
+  if (attacker.isDead())
+    return false;
+  for (const auto &city : cities) {
+    if (city.contains(attacker.getX(), attacker.getY(), gridSize, maxSize)) {
+      return false;
+    }
   }
   return true;
 }
@@ -1307,4 +1401,280 @@ void Game::killPlayer(Character &dyingPlayer) {
     inventoryManager.addGroundItem(itemId, x, y);
   }
   messagesToSend.push_back(PlayerDieEventDTO{dyingPlayer.getId()});
+}
+
+
+void Game::sendInventoryUpdate(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end())
+    return;
+  messagesToSend.push_back(InventoryUpdateEventDTO{
+      playerId, it->second->getInventoryItems(),
+      it->second->getEquippedWeapon(), it->second->getEquippedArmor(),
+      it->second->getEquippedHelmet(), it->second->getEquippedShield()});
+}
+
+void Game::sendPlayerInfoUpdate(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end())
+    return;
+  messagesToSend.push_back(it->second->toPlayerInfoEvent());
+}
+
+void Game::sendPlayerMoved(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end())
+    return;
+  messagesToSend.push_back(it->second->toPlayerMoved());
+}
+
+bool Game::isNearEntity(CityEntity &entity, const Character &character) {
+  int dx = entity.getX() - character.getX();
+  int dy = entity.getY() - character.getY();
+  return abs(dx) <= entity.getRange() && abs(dy) <= entity.getRange();
+}
+
+CityEntity *Game::findNearestEntity(uint32_t playerId, CityEntityType type) {
+  auto playerIt = players.find(playerId);
+  if (playerIt == players.end())
+    return nullptr;
+  auto &character = playerIt->second;
+  CityEntity *nearest = nullptr;
+  int minDist = INT_MAX;
+
+  for (auto &city : cities) {
+    for (auto *entity : city.getEntities()) {
+      if (entity->getCityEntityType() != type)
+        continue;
+      int dx = entity->getX() - character->getX();
+      int dy = entity->getY() - character->getY();
+      int dist = dx * dx + dy * dy;
+      if (dist < minDist) {
+        minDist = dist;
+        nearest = entity;
+      }
+    }
+  }
+  return nearest;
+}
+
+void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
+                                    int16_t arg) {
+  auto playerIt = players.find(playerId);
+  if (playerIt == players.end())
+    return;
+  auto &character = playerIt->second;
+
+  if (character->isDead() && 
+      static_cast<CityEntityCommandDTO::Type>(type) != CityEntityCommandDTO::RESUCITAR)
+    return;
+
+  switch (static_cast<CityEntityCommandDTO::Type>(type)) {
+
+  case CityEntityCommandDTO::CURAR: {
+    auto *priest = dynamic_cast<Priest *>(
+        findNearestEntity(playerId, CityEntityType::Priest));
+    if (!priest || !isNearEntity(*priest, *character)) {
+
+      sendSystemMessage(playerId, "No estas cerca de un sacerdote.");
+      
+      return;
+    }
+    priest->heal(*this, *character);
+    break;
+  }
+
+  case CityEntityCommandDTO::RESUCITAR: {
+    if (!character->isDead()) {
+      sendSystemMessage(playerId, "No estas muerto.");
+      return;
+    }
+    if (isResurrecting(playerId)) {
+      sendSystemMessage(playerId, "Ya estas siendo resucitado.");
+      return;
+    }
+    auto *priest = dynamic_cast<Priest *>(
+        findNearestEntity(playerId, CityEntityType::Priest));
+    if (!priest) {
+      sendSystemMessage(playerId, "No hay ningun sacerdote disponible para resucitarte.");
+      return;
+    }
+    priest->resurrect(*this, *character);
+    break;
+  }
+
+  case CityEntityCommandDTO::COMPRAR: {
+    if (arg < 1 || arg >= 20) {
+      sendSystemMessage(playerId, "ID de objeto invalido.");
+      return;
+    }
+    uint8_t itemId = static_cast<uint8_t>(arg);
+    auto *priest = dynamic_cast<Priest *>(
+        findNearestEntity(playerId, CityEntityType::Priest));
+    if (priest && isNearEntity(*priest, *character)) {
+      priest->buyItem(*this, *character, itemId);
+      break;
+    }
+    auto *trader = dynamic_cast<Trader *>(
+        findNearestEntity(playerId, CityEntityType::Trader));
+    if (trader && isNearEntity(*trader, *character)) {
+      trader->buyItem(*this, *character, itemId);
+      break;
+    }
+    sendSystemMessage(playerId, "No estas cerca de un sacerdote o comerciante.");
+    break;
+  }
+
+  case CityEntityCommandDTO::VENDER: {
+    if (arg < 1 || arg >= 20) {
+      sendSystemMessage(playerId, "ID de objeto invalido.");
+      return;
+    }
+    auto *trader = dynamic_cast<Trader *>(
+        findNearestEntity(playerId, CityEntityType::Trader));
+    if (!trader || !isNearEntity(*trader, *character)) {
+      sendSystemMessage(playerId, "No estas cerca de un comerciante.");
+      return;
+    }
+    trader->sellItem(*this, *character, static_cast<uint8_t>(arg));
+    break;
+  }
+
+  case CityEntityCommandDTO::LISTAR: {
+    auto *priest = dynamic_cast<Priest *>(
+        findNearestEntity(playerId, CityEntityType::Priest));
+    if (priest && isNearEntity(*priest, *character)) {
+      priest->listItems(*this, *character);
+      break;
+    }
+    auto *trader = dynamic_cast<Trader *>(
+        findNearestEntity(playerId, CityEntityType::Trader));
+    if (trader && isNearEntity(*trader, *character)) {
+      trader->listItems(*this, *character);
+      break;
+    }
+    auto *banker = dynamic_cast<Banker *>(
+        findNearestEntity(playerId, CityEntityType::Banker));
+    if (banker && isNearEntity(*banker, *character)) {
+      banker->listItemsAvailables(*this, *character);
+      break;
+    }
+    sendSystemMessage(playerId, "No estas cerca de un sacerdote, comerciante o banquero.");
+    break;
+  }
+
+  case CityEntityCommandDTO::CONSULTAR_ORO: {
+    auto *banker = dynamic_cast<Banker *>(
+        findNearestEntity(playerId, CityEntityType::Banker));
+    if (!banker || !isNearEntity(*banker, *character)) {
+      sendSystemMessage(playerId, "No estas cerca de un comerciante.");
+      return;
+    }
+    banker->showGoldAvailable(*this, *character);
+    break;
+  }
+
+  case CityEntityCommandDTO::DEPOSITAR_ITEM: {
+    if (arg < 1 || arg >= 20) {
+      sendSystemMessage(playerId, "ID de objeto invalido.");
+      return;
+    }
+    auto *banker = dynamic_cast<Banker *>(
+        findNearestEntity(playerId, CityEntityType::Banker));
+    if (!banker || !isNearEntity(*banker, *character)) {
+      sendSystemMessage(playerId, "No estas cerca de un banquero.");
+      return;
+    }
+    banker->saveItem(*this, *character, static_cast<uint8_t>(arg));
+    break;
+  }
+
+  case CityEntityCommandDTO::RETIRAR_ITEM: {
+    if (arg < 1 || arg >= 20) {
+      sendSystemMessage(playerId, "ID de objeto invalido.");
+      return;
+    }
+    auto *banker = dynamic_cast<Banker *>(
+        findNearestEntity(playerId, CityEntityType::Banker));
+    if (!banker) {
+      sendSystemMessage(playerId, "No hay ningun banquero disponible.");
+      return;
+    }
+    banker->takeItem(*this, *character, static_cast<uint8_t>(arg));
+    break;
+  }
+
+  case CityEntityCommandDTO::DEPOSITAR_ORO: {
+    if (arg <= 0) {
+      sendSystemMessage(playerId, "Cantidad invalida.");
+      return;
+    }
+    auto *banker = dynamic_cast<Banker *>(
+        findNearestEntity(playerId, CityEntityType::Banker));
+    if (!banker || !isNearEntity(*banker, *character)) {
+      sendSystemMessage(playerId, "No estas cerca de un banquero.");
+      return;
+    }
+    banker->saveGold(*this, *character, static_cast<uint16_t>(arg));
+    break;
+  }
+
+  case CityEntityCommandDTO::RETIRAR_ORO: {
+    if (arg <= 0) {
+      sendSystemMessage(playerId, "Cantidad invalida.");
+      return;
+    }
+    auto *banker = dynamic_cast<Banker *>(
+        findNearestEntity(playerId, CityEntityType::Banker));
+    if (!banker) {
+      sendSystemMessage(playerId, "No hay ningun banquero disponible.");
+      return;
+    }
+    banker->takeGold(*this, *character, static_cast<uint16_t>(arg));
+    break;
+  }
+  }
+}
+
+
+void Game::addResurrectingPlayer(Character &character, int priestX,
+                                 int priestY, int maxCounter) {
+  resurrectingPlayers.push_back(
+      {&character, priestX, priestY, 0, maxCounter});
+}
+
+void Game::updateResurrectingPlayers() {
+  auto it = resurrectingPlayers.begin();
+  while (it != resurrectingPlayers.end()) {
+    it->counter++;
+    if (it->counter >= it->maxCounter) {
+      uint32_t pid = it->character->getId();
+
+      it->character->move(it->priestX, it->priestY);
+      it->character->resurrect();
+
+      sendSystemMessage(pid, "Has sido resucitado.");
+
+      senderQueueMonitor.sendToClient(
+          pid,
+          PlayerResurrectEventDTO{pid, static_cast<int16_t>(it->priestX),
+                                  static_cast<int16_t>(it->priestY)});
+
+      messagesToSend.push_back(it->character->toPlayerAppeared());
+
+      sendPlayerInfoUpdate(pid);
+
+      it = resurrectingPlayers.erase(it);
+    } else {
+      ++it;
+    }
+  }
+}
+
+bool Game::isResurrecting(uint32_t playerId) {
+  for (auto &rp : resurrectingPlayers) {
+    if (rp.character->getId() == playerId)
+      return true;
+  }
+  return false;
 }

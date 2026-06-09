@@ -7,17 +7,21 @@
 class Elf : public NPC {
 
 public:
-  explicit Elf(Position position) : NPC(position) {}
+  explicit Elf(Position position) : NPC(position) {
+    level = 4 + std::rand() % 7;
+    maxHp = 40 + std::rand() % 51;
+    hp = maxHp;
+    agility = 10;
+  }
   NPCType getType() override { return NPCType::ElfT; }
 
-  const std::string &getName() const override {
-    static const std::string name = "Elf";
-    return name;
-  }
+    int getAncho() const override { return 32; };
+    int getAlto() const override { return 32; };
+    int getRange() const override { return 128; };
 
-  int getAncho() const override { return 32; };
-  int getAlto() const override { return 32; };
-  int getRange() const override { return 128; };
+    std::string getName() override { return "Elf"; }
+    int getAttackCounterMax() override { return 175; }
+    uint32_t getDamage() override { return 2; }
 };
 
 #endif

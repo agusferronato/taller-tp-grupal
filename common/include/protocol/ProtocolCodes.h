@@ -32,6 +32,7 @@ enum class ClientCommandOpCode : uint8_t {
   BanClanPlayerCommand,
   KickClanMemberCommand,
   AttackCommand,
+  CityEntityCommand,
   CheatCommand,
   ValidateLoginCommand,
 };
@@ -61,8 +62,10 @@ enum class EventOpcode : uint8_t {
   CityEntityAppearedEvent,
   CityEntityMovedEvent,
   CityEntityStoppedEvent,
+  AttackReceivedEvent,
   PlayerDieEvent,
-  LoginResultEvent,
+  PlayerResurrectEvent,
+  LoginResultEvent
 };
 
 #endif // PROTOCOL_CODES_H

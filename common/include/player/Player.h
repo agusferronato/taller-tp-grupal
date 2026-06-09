@@ -73,7 +73,7 @@ public:
   bool unequipSlot(EquipSlot slot) { return inventory.unequipSlot(slot); }
   bool removeItem(uint8_t slotIndex) { return inventory.removeItem(slotIndex); }
   const std::array<uint8_t, MAX_INVENTORY_SLOTS> &getInventoryItems() const {
-    return inventory.getItems();
+    return inventory.getItems(); 
   }
   uint8_t getEquippedWeapon() const { return inventory.getWeapon(); }
   uint8_t getEquippedArmor() const { return inventory.getArmor(); }
@@ -88,6 +88,7 @@ public:
   void setEquippedHelmet(uint8_t id) { inventory.setHelmet(id); }
   void setEquippedShield(uint8_t id) { inventory.setShield(id); }
 
+  void resurrect();
   uint32_t getClanId() const { return clanId; }
   bool hasClan() const { return clanId != NO_CLAN; }
   void joinClan(uint32_t clanId) { this->clanId = clanId; }

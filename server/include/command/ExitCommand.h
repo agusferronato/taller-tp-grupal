@@ -6,11 +6,8 @@
 #include "Command.h"
 
 class ExitCommand : public Command {
-private:
-  uint32_t playerId;
-
 public:
-  explicit ExitCommand(uint32_t playerId);
+  ExitCommand() = default;
 
   void execute(Game &game, uint32_t connectionId) override;
 };

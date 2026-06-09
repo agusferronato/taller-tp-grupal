@@ -27,9 +27,48 @@ void PlayerEntity::renderAlive(SDL2pp::Renderer &renderer, Camera &camera,
   renderHead(renderer, camera);
   renderEquipable(renderer, camera, it);
   renderName(renderer, camera);
+  renderAttackEffect(renderer, camera, it);
 
   wasRendered = true;
 }
+
+
+
+void PlayerEntity::renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera,
+                              unsigned int it) {
+  (void)it;
+
+  if (!player.isBeingAttacked()) {
+    attackNextFrame = -1;
+    return;
+  }
+
+  if (attackNextFrame == -1) {
+    attackNextFrame = 0;
+  }
+
+  auto result = textureManager.getAttackFrame(350, attackNextFrame);
+  Sprite &src = result.sprite;
+
+  attackNextFrame++;
+
+  const int totalTicks = 24;
+  if (attackNextFrame >= totalTicks) {
+    player.stopAttackEffect();
+    attackNextFrame = -1;
+    return;
+  }
+
+  SDL2pp::Rect dst = camera.toScreen(
+    player.get_x() - ClientPlayer::Width, player.get_y() - ClientPlayer::Height / 2, 64, 64);
+
+  renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
+}
+
+
+
+
+
 
 void PlayerEntity::renderBody(SDL2pp::Renderer &renderer, Camera &camera,
                               unsigned int it) {
@@ -178,45 +217,33 @@ int PlayerEntity::getRaceHeadID(Race race) const {
 
 void PlayerEntity::renderGhostBody(SDL2pp::Renderer &renderer, Camera &camera,
                                    unsigned int it) {
+  
   unsigned int animationIt = player.getIsMoving() ? it : 0;
-  int bodyID = getRaceBodyID(player.getRace());
-  uint8_t armorSlot = player.getEquippedArmor();
-
-  auto getSprite = [&]() -> Sprite {
-    if (armorSlot != 0) {
-      try {
-        EquipInfo info = equipParser.getInfo(armorSlot);
-        if (info.type == "Body") {
-          return textureManager.getBodySprite(
-              info.textureId, player.getDirection(), animationIt);
-        } else {
-          return textureManager.getEquipableSprite(
-              info.type, info.textureId, player.getDirection(), animationIt);
-        }
-      } catch (...) {
-      }
-    }
-    return textureManager.getBodySprite(bodyID, player.getDirection(),
-                                        animationIt);
-  };
-  Sprite src = getSprite();
-  int ox = (ClientPlayer::Width - src.w) / 2; // centra horizontalmente
+  
+  Sprite src = textureManager.getBodySprite(
+    TextureLayoutType::Ghost, 535, player.getDirection(), animationIt);
+    
+  int ox = (ClientPlayer::Width - src.w) / 2; 
   SDL2pp::Rect dst = camera.toScreen(player.get_x() + ox, player.get_y(), src.w,
                                      ClientPlayer::Height);
-  src.txt.SetAlphaMod(128); // 50% de transparencia
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
-  src.txt.SetAlphaMod(255); // Restaurar opacidad
 }
 
 void PlayerEntity::renderGhostHead(SDL2pp::Renderer &renderer, Camera &camera) {
-  Sprite src = textureManager.getHeadSprite(getRaceHeadID(player.getRace()),
-                                            player.getDirection());
+  Direction playerDirection = player.getDirection();
+
+  Sprite src = textureManager.getHeadSprite(534, playerDirection); 
 
   int head_x = get_head_x(camera);
   int head_y = get_head_y(camera);
-  src.txt.SetAlphaMod(128); // 50% de transparencia
+
+  if (playerDirection == Direction::Left)
+    head_x -= 5;
+  if (playerDirection == Direction::Right)
+    head_x += 5;
+
   SDL2pp::Rect dst{head_x, head_y, ClientPlayer::HeadWidth,
                    ClientPlayer::HeadHeight};
+  
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
-  src.txt.SetAlphaMod(255); // Restaurar opacidad
 }
