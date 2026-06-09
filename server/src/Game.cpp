@@ -866,7 +866,7 @@ bool Game::thereIsACollidableEntityAt(Position position) {
   return false;
 }
 
-void Game::appearNPC(std::unique_ptr<NPC> &&npc) {
+uint32_t Game::appearNPC(std::unique_ptr<NPC> &&npc) {
   int center = maxSize / 2;
   int px = (npc->getPosition().row - center) * gridSize;
   int py = (npc->getPosition().column - center) * gridSize;
@@ -882,6 +882,7 @@ void Game::appearNPC(std::unique_ptr<NPC> &&npc) {
                           static_cast<int16_t>(px), static_cast<int16_t>(py)});
 
   npcs.push_back(std::move(npc));
+  return id;
 }
 
 void Game::movePlayers() {
@@ -1317,6 +1318,13 @@ void Game::playerAttackNPC(Character &attacker, NPC &target) {
         npcs.begin(), npcs.end(),
         [&target](const auto &npc) { return npc.get() == &target; });
     if (npcIt != npcs.end()) {
+      uint32_t npcId = (*npcIt)->getId();
+      for (auto &biome : biomes) {
+        if (biome->hasNPC(npcId)) {
+          biome->unregisterNPC(npcId);
+          break;
+        }
+      }
       npcs.erase(npcIt);
     }
 
