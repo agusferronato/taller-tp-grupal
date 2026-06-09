@@ -17,35 +17,35 @@ Trader::Trader(Position position)
 void Trader::buyItem(Game& game, Character& character, uint8_t itemId) {
     try {
         store.buyItemWith(character, itemId);
-        game.sendChatToPlayer(character.getId(),
+        game.sendSystemMessage(character.getId(),
             "Has comprado " + ITEM_TABLE[itemId].name + " por " +
             std::to_string(getStoreItem(itemId).purchase_price) + " de oro.");
         game.sendInventoryUpdate(character.getId());
     } catch (const ItemNotAvailable& e) {
-        game.sendChatToPlayer(character.getId(), e.what());
+        game.sendSystemMessage(character.getId(), e.what());
     } catch (const InsufficientGold& e) {
-        game.sendChatToPlayer(character.getId(), e.what());
+        game.sendSystemMessage(character.getId(), e.what());
     }
 }
 
 void Trader::sellItem(Game& game, Character& character, uint8_t itemId) {
     try {
         store.sellItem(character, itemId);
-        game.sendChatToPlayer(character.getId(),
+        game.sendSystemMessage(character.getId(),
             "Has vendido " + ITEM_TABLE[itemId].name + " por " +
             std::to_string(getStoreItem(itemId).sell_price) + " de oro.");
         game.sendInventoryUpdate(character.getId());
     } catch (const PlayerDoesNotHaveTheItem& e) {
-        game.sendChatToPlayer(character.getId(), e.what());
+        game.sendSystemMessage(character.getId(), e.what());
     } catch (const ItemNotAvailable& e) {
-        game.sendChatToPlayer(character.getId(), e.what());
+        game.sendSystemMessage(character.getId(), e.what());
     }
 }
 
 void Trader::listItems(Game& game, Character& character) { 
     const auto& items = store.getItems();
     if (items.empty()) {
-        game.sendChatToPlayer(character.getId(),
+        game.sendSystemMessage(character.getId(),
             "El comerciante no tiene objetos disponibles.");
         return;
     }
@@ -58,6 +58,6 @@ void Trader::listItems(Game& game, Character& character) {
 
     }
     msg.erase(msg.size() - 2);
-    game.sendChatToPlayer(character.getId(), msg);
+    game.sendSystemMessage(character.getId(), msg);
 }
 

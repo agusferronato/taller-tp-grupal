@@ -11,6 +11,9 @@
 #include <vector>
 
 class Player {
+public:
+  static constexpr uint32_t NO_CLAN = 0;
+
 private:
   std::string name;
   Race race;
@@ -21,6 +24,7 @@ private:
   bool death;
   PlayerStats stats;
   Inventory inventory;
+  uint32_t clanId{NO_CLAN};
 
 public:
   Player(std::string name, Race race, Direction direction,
@@ -85,6 +89,11 @@ public:
   void setEquippedShield(uint8_t id) { inventory.setShield(id); }
 
   void resurrect();
+  uint32_t getClanId() const { return clanId; }
+  bool hasClan() const { return clanId != NO_CLAN; }
+  void joinClan(uint32_t clanId) { this->clanId = clanId; }
+  void leaveClan() { this->clanId = NO_CLAN; }
+
   bool assertAttackDistance(int16_t targetX, int16_t targetY) const;
   std::vector<uint8_t> die();
   bool isDead() const { return death; }
