@@ -2,6 +2,7 @@
 
 #include "AcceptClanRequestCommandDTO.h"
 #include "AttackCommandDTO.h"
+#include "CityEntityCommandDTO.h"
 #include "BanClanPlayerCommandDTO.h"
 #include "CheatCommandDTO.h"
 #include "CreateClanCommandDTO.h"
@@ -24,6 +25,7 @@
 #include "ValidateLoginCommandDTO.h"
 #include "command/AcceptClanRequestCommand.h"
 #include "command/AttackCommand.h"
+#include "command/CityEntityCommand.h"
 #include "command/BanClanPlayerCommand.h"
 #include "command/CheatCommand.h"
 #include "command/CreateClanCommand.h"
@@ -64,8 +66,8 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
     return std::make_unique<PlayerStoppedCommand>(request->playerId);
   }
 
-  if (const auto *request = std::get_if<ExitCommandDTO>(&dto)) {
-    return std::make_unique<ExitCommand>(request->playerId);
+  if (std::get_if<ExitCommandDTO>(&dto)) {
+    return std::make_unique<ExitCommand>();
   }
 
   if (const auto *request = std::get_if<EquipCommandDTO>(&dto)) {
@@ -102,6 +104,11 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
                                            request->y);
   }
 
+  if (const auto *request = std::get_if<CityEntityCommandDTO>(&dto)) {
+    return std::make_unique<CityEntityCommand>(request->playerId, request->type,
+                                               request->arg);
+  }
+  
   if (const auto *request = std::get_if<CreateClanCommandDTO>(&dto)) {
     return std::make_unique<CreateClanCommand>(request->playerId,
                                                request->clanName);

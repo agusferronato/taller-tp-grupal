@@ -1,10 +1,12 @@
 #include "GameModel.h"
+#include "AttackReceivedEventDTO.h"
 #include "AcceptClanRequestCommandDTO.h"
 #include "BanClanPlayerCommandDTO.h"
 #include "ChatMessageEventDTO.h"
 #include "CheatCommandDTO.h"
 #include "CreateClanCommandDTO.h"
 #include "DropItemCommandDTO.h"
+#include "CityEntityCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "GameWindow.h"
 #include "GlobalChatMessageCommandDTO.h"
@@ -27,6 +29,7 @@
 #include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "PlayerRemovedEventDTO.h"
+#include "PlayerResurrectEventDTO.h"
 #include "PlayerStoppedEventDTO.h"
 #include "PrivateMessageCommandDTO.h"
 #include "PrivateMessageEventDTO.h"
@@ -91,6 +94,10 @@ void GameModel::equipItem(uint8_t slot) {
 
 void GameModel::unequipItem(uint8_t equipSlot) {
   sendingQueue.push(UnequipCommandDTO{myPlayerID, equipSlot});
+}
+
+void GameModel::sendCityEntityCommand(uint8_t cmdType, int16_t arg) {
+  sendingQueue.push(CityEntityCommandDTO{myPlayerID, cmdType, arg});
 }
 
 void GameModel::createClan(const std::string &clanName) {
@@ -257,11 +264,17 @@ void GameModel::handle(const InventoryUpdateEventDTO &inv) {
 }
 void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &event) {
-  chatMessages.push_back(ChatMessage{event.message, event.category});
-  while (chatMessages.size() > 100) {
-    chatMessages.pop_front();
-  }
-  updateChatView();
+
+  std::istringstream stream(event.message);
+    std::string line;
+    while (std::getline(stream, line, '\n')) {
+        if (line.empty()) continue;
+
+        chatMessages.push_back(ChatMessage{line, event.category});
+        while (chatMessages.size() > 100)
+            chatMessages.pop_front();
+    }
+    updateChatView();
 }
 
 void GameModel::handle(const PrivateMessageEventDTO &event) {
@@ -403,6 +416,18 @@ void GameModel::handle(const CityEntityStoppedEventDTO &event) {
   }
 }
 
+void GameModel::handle(const AttackReceivedEventDTO &event) {
+  if (event.entityType == EntityType::Player) {
+    auto it = players.find(event.entityId);
+    if (it != players.end())
+      it->second->setBeingAttacked(true);
+  } else if (event.entityType == EntityType::Npc) {
+    auto it = npcs.find(event.entityId);
+    if (it != npcs.end())
+      it->second->setBeingAttacked(true);
+  }
+}
+
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
 
 void GameModel::handle(const LoginResultEventDTO &) {}
@@ -453,5 +478,19 @@ void GameModel::handle(const PlayerDieEventDTO &event) {
   if (it == players.end()) {
     return;
   }
-  it->second->die();
+  if (event.playerId == myPlayerID) {
+    it->second->die();
+  } else {
+    gameView->removePlayer(event.playerId);
+    players.erase(event.playerId);
+  }
+}
+
+void GameModel::handle(const PlayerResurrectEventDTO &event) {
+  if (event.playerId != myPlayerID)
+    return;
+  auto it = players.find(myPlayerID);
+  if (it == players.end())
+    return;
+  it->second->resurrect(event.x, event.y);
 }

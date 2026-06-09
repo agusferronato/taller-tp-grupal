@@ -52,6 +52,7 @@ public:
   void dropItem(uint8_t slot);
   void equipItem(uint8_t slot);
   void unequipItem(uint8_t equipSlot);
+  void sendCityEntityCommand(uint8_t cmdType, int16_t arg);
   const GroundItemManager &getGroundItemManager() const {
     return groundItemManager;
   }
@@ -121,8 +122,10 @@ private:
   void handle(const GroundItemRemovedEventDTO &event);
   void handle(const GroundItemsListEventDTO &event);
   void handle(const PrivateMessageEventDTO &event);
+  void handle(const AttackReceivedEventDTO &event);
   void handle(const GlobalChatMessageEventDTO &event);
   void handle(const PlayerDieEventDTO &event);
+  void handle(const PlayerResurrectEventDTO &event);
   void handle(const LoginResultEventDTO &event);
 };
 

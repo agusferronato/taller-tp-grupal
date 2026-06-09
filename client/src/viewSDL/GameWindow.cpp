@@ -77,6 +77,9 @@ void GameWindow::initResources() {
   textureManager->loadLayoutsFromToml("assets/layouts.toml");
   textureManager->loadTexturesFromToml("assets/sprites.toml");
 
+  bloodOverlay = std::make_unique<BloodOverlay>(*renderer);
+  bloodOverlay->loadTextures("assets/sangrado/");
+
   invPanel = std::make_unique<InventoryPanel>(*renderer, *textureManager);
   invPanel->loadTextures();
 }
@@ -190,6 +193,12 @@ void GameWindow::show(unsigned int it) {
   }
 
   renderWorld(it);
+
+  if (myPlayerEntity) {
+    const auto &p = myPlayerEntity->getPlayer();
+    bloodOverlay->render(p.getHp(), p.getMaxHp());
+  }
+
   renderUIBackgrounds();
   renderHUD();
   renderUIFrame();

@@ -9,6 +9,7 @@ private:
     int x, y;
     Direction direction;
     bool isMoving;
+    mutable bool beingAttacked{false};
 
 public:
 
@@ -22,6 +23,10 @@ public:
     void setCoordinates(int x, int y);
     void updateCoordinates(int x, int y, Direction direction);
     void stopMoving();
+
+    bool isBeingAttacked() const { return beingAttacked; }
+    void setBeingAttacked(bool v) { beingAttacked = v; }
+    void stopAttackEffect() const { beingAttacked = false; }
 };
 
 #endif

@@ -6,17 +6,21 @@
 
 class SpecialElf : public NPC {
 public:
-  explicit SpecialElf(Position position) : NPC(position) {}
+  explicit SpecialElf(Position position) : NPC(position) {
+    level = 10 + std::rand() % 9;
+    maxHp = 90 + std::rand() % 91;
+    hp = maxHp;
+    agility = 14;
+  }
   NPCType getType() override { return NPCType::SpecialElfT; }
 
-  const std::string &getName() const override {
-    static const std::string name = "Special Elf";
-    return name;
-  }
+    int getAncho() const override { return 32; };
+    int getAlto() const override { return 32; };
+    int getRange() const override { return 128; };
 
-  int getAncho() const override { return 32; };
-  int getAlto() const override { return 32; };
-  int getRange() const override { return 128; };
+    std::string getName() override { return "SpecialElf"; }
+    int getAttackCounterMax() override { return 170; }
+    uint32_t getDamage() override { return 1; }
 };
 
 #endif

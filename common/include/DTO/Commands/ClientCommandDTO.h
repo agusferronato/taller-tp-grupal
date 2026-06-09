@@ -5,6 +5,7 @@
 
 #include "AcceptClanRequestCommandDTO.h"
 #include "AttackCommandDTO.h"
+#include "CityEntityCommandDTO.h"
 #include "BanClanPlayerCommandDTO.h"
 #include "CheatCommandDTO.h"
 #include "CreateClanCommandDTO.h"
@@ -42,6 +43,7 @@ using ClientCommandDTO = std::variant<
     TakeItemCommandDTO,
     GlobalChatMessageCommandDTO,
     AttackCommandDTO,
+    CityEntityCommandDTO,
     CreateClanCommandDTO,
     JoinClanCommandDTO,
     AcceptClanRequestCommandDTO,
