@@ -2,7 +2,10 @@
 #define BIOME_H
 
 
+#include <cstdint>
 #include <random>
+#include <unordered_set>
+
 #include "Position.h"
 
 class Game;
@@ -12,6 +15,7 @@ class Biome {
 protected:
 
     Delimiter start, end;
+    std::unordered_set<uint32_t> npcIds;
 
 public:
 
@@ -21,6 +25,10 @@ public:
 
     virtual void NPCgenerationStrategy(Game& game) = 0;
 
+    void registerNPC(uint32_t id) { npcIds.insert(id); }
+    void unregisterNPC(uint32_t id) { npcIds.erase(id); }
+    bool hasNPC(uint32_t id) const { return npcIds.find(id) != npcIds.end(); }
+    unsigned int getNPCCount() const { return npcIds.size(); }
 
 protected:
 

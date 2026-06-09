@@ -5,7 +5,7 @@
 
 void Dungeon::NPCgenerationStrategy(Game& game) {
 
-    if (npcCounter > MAX_NPC)
+    if (getNPCCount() >= MAX_NPC)
         return;
 
     counter = (counter + 1) % GENERATE_NPC_COUNTER;
@@ -17,15 +17,14 @@ void Dungeon::NPCgenerationStrategy(Game& game) {
         if (getRandomNumber() <= probability) {
             Position pos = getRandomPositionBetween(start, end);
             if (!game.thereIsACollidableEntityAt(pos)) {
-                game.appearNPC(std::move(createNPC(pos)));
+                uint32_t npcId = game.appearNPC(std::move(createNPC(pos)));
+                registerNPC(npcId);
             }
         }
     };
 
-    trySpawn(0.05, [](Position p) { return std::make_unique<GreatReamer>(p); });
-    trySpawn(0.05, [](Position p) { return std::make_unique<Giant>(p); });
+    trySpawn(0.02, [](Position p) { return std::make_unique<GreatReamer>(p); });
+    trySpawn(0.02, [](Position p) { return std::make_unique<Giant>(p); });
 }
 
-void Dungeon::decreaseCounter() {
-    npcCounter--;
-}
+
