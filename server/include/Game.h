@@ -90,6 +90,7 @@ public:
 
   void registerPlayer(const std::string &name, const Race race,
                       const PlayerClass playerClass, uint32_t connectionId);
+  void validateLogin(const std::string &name, uint32_t connectionId);
   void loginPlayer(const std::string &name, uint32_t connectionId);
   void movePlayer(uint32_t playerId, Direction direction);
   void stopPlayer(uint32_t playerId);
@@ -141,7 +142,6 @@ private:
   uint32_t movementSpeedFor(uint32_t playerId) const;
   bool hasInfiniteHealth(uint32_t playerId) const;
   bool hasInfiniteMana(uint32_t playerId) const;
-
 
   void makeNPCsfollowPlayers();
   void makeCitiesEntitiesFollowPlayers();

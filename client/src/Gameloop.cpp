@@ -72,15 +72,27 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
   ServerEventDTO event;
   uint32_t myPlayerId = 0;
   bool registered = false;
+  bool isLogin = std::holds_alternative<ClientDataLogin>(clientData);
 
   while (!registered) {
     event = receptionQueue.pop();
 
-    if (auto *resp = std::get_if<RegisterPlayerEventDTO>(&event)) {
-      if (resp->status != 0) {
-        if (resp->status == 2) {
-          throw std::runtime_error("Player is already online");
+    if (isLogin) {
+      auto *resp = std::get_if<LoginResultEventDTO>(&event);
+      if (resp == nullptr) {
+        deferredEvents.push_back(std::move(event));
+        continue;
+      }
+      if (resp->status != LoginStatus::Success) {
+        if (resp->status == LoginStatus::AlreadyOnline) {
+          throw std::runtime_error("Ese personaje ya esta conectado");
         }
+        throw std::runtime_error("No existe un personaje con ese nombre");
+      }
+      myPlayerId = resp->playerId;
+      registered = true;
+    } else if (auto *resp = std::get_if<RegisterPlayerEventDTO>(&event)) {
+      if (resp->status != RegisterStatus::Success) {
         throw std::runtime_error("Player registration failed");
       }
       myPlayerId = resp->playerId;
@@ -94,7 +106,9 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
 
   gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
                                           receptionQueue, sendingQueue);
-  gameController = std::make_unique<GameController>(gameModel.get());
+  audio = std::make_unique<Audio>();
+  gameController = std::make_unique<GameController>(gameModel.get(), audio.get());
+  audio->startMusic();
 
   for (auto &deferred : deferredEvents) {
     receptionQueue.push(std::move(deferred));

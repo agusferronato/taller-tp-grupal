@@ -271,7 +271,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerResponse) {
   registerAllParsers(server);
   registerAllParsers(client);
 
-  ServerEventDTO original = RegisterPlayerEventDTO{1, 0};
+  ServerEventDTO original = RegisterPlayerEventDTO{1, RegisterStatus::Success};
 
   server.sendEvent(original);
 
@@ -280,7 +280,7 @@ TEST_F(ProtocolTest, SendsAndReceivesRegisterPlayerResponse) {
 
   ASSERT_NE(dto, nullptr);
   EXPECT_EQ(dto->playerId, 1);
-  EXPECT_EQ(dto->status, 0);
+  EXPECT_EQ(dto->status, RegisterStatus::Success);
 }
 
 TEST_F(ProtocolTest, SendsAndReceivesPlayerList) {
