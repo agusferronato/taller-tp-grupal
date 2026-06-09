@@ -41,7 +41,6 @@
 
 static constexpr int MAX_NUMBER_OF_MESSAGES = 100;
 
-
 GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
                      Queue<ServerEventDTO> &receptionQueue,
                      Queue<ClientCommandDTO> &sendingQueue)
@@ -405,6 +404,8 @@ void GameModel::handle(const CityEntityStoppedEventDTO &event) {
 }
 
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
+
+void GameModel::handle(const LoginResultEventDTO &) {}
 
 PlayerStatsInfo GameModel::playerStatsFrom(const PlayerInfoDTO &info) {
   PlayerStatsInfo stats{stats.health = info.hp,

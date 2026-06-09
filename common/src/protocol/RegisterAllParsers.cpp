@@ -19,6 +19,7 @@
 #include "parser/Commands/ReviewClanCommandParser.h"
 #include "parser/Commands/TakeItemCommandParser.h"
 #include "parser/Commands/UnequipCommandParser.h"
+#include "parser/Commands/ValidateLoginCommandParser.h"
 #include "parser/Events/ChatMessageEventParser.h"
 #include "parser/Events/CityEntityAppearedEventParser.h"
 #include "parser/Events/CityEntityMovedEventParser.h"
@@ -27,6 +28,7 @@
 #include "parser/Events/GroundItemRemovedEventParser.h"
 #include "parser/Events/GroundItemsListEventParser.h"
 #include "parser/Events/InventoryUpdateEventParser.h"
+#include "parser/Events/LoginResultEventParser.h"
 #include "parser/Events/NPCAppearedEventParser.h"
 #include "parser/Events/NPCMovedEventParser.h"
 #include "parser/Events/NPCStoppedEventParser.h"
@@ -136,6 +138,10 @@ void registerAllParsers(Protocol &protocol) {
       static_cast<uint8_t>(ClientCommandOpCode::CheatCommand),
       std::make_unique<CheatCommandParser>());
 
+  protocol.registerCommandParser(
+      static_cast<uint8_t>(ClientCommandOpCode::ValidateLoginCommand),
+      std::make_unique<ValidateLoginCommandParser>());
+
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::ChatMessageEvent),
       std::make_unique<ChatMessageEventParser>());
@@ -226,4 +232,8 @@ void registerAllParsers(Protocol &protocol) {
   protocol.registerEventParser(
       static_cast<uint8_t>(EventOpcode::PlayerDieEvent),
       std::make_unique<PlayerDieEventParser>());
+
+  protocol.registerEventParser(
+      static_cast<uint8_t>(EventOpcode::LoginResultEvent),
+      std::make_unique<LoginResultEventParser>());
 }

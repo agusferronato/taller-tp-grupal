@@ -33,6 +33,7 @@ enum class ClientCommandOpCode : uint8_t {
   KickClanMemberCommand,
   AttackCommand,
   CheatCommand,
+  ValidateLoginCommand,
 };
 
 // Opcodes para eventos enviados por el servidor a los clientes
@@ -61,6 +62,7 @@ enum class EventOpcode : uint8_t {
   CityEntityMovedEvent,
   CityEntityStoppedEvent,
   PlayerDieEvent,
+  LoginResultEvent,
 };
 
 #endif // PROTOCOL_CODES_H
