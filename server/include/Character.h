@@ -102,6 +102,11 @@ public:
   uint32_t dropGoldOnDeath();
   std::vector<uint8_t> die();
 
+  uint32_t getClanId() const { return player.getClanId(); }
+  bool hasClan() const { return player.hasClan(); }
+  void joinClan(uint32_t clanId) { player.joinClan(clanId); }
+  void leaveClan() { player.leaveClan(); }
+
 private:
   uint32_t id;
   Player player;

@@ -33,16 +33,20 @@ constexpr SDL_Color kExpBg{10, 50, 10, 255};
 } // namespace
 
 GameWindow::GameWindow(uint32_t myPlayerID)
-    : camera(Camera(960, 540)), myPlayerID(myPlayerID),
-      windowWidth(960), windowHeight(540) {
+    : camera(Camera(960, 540)),
+      myPlayerID(myPlayerID),
+      windowWidth(960),
+      windowHeight(540) {
   window = std::make_unique<SDL2pp::Window>(
-      "Argentum Online", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-      960, 540, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+      "Argentum Online", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 960,
+      540, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
   renderer =
       std::make_unique<SDL2pp::Renderer>(*window, -1, SDL_RENDERER_ACCELERATED);
+
   renderer->SetLogicalSize(960, 540);
   renderer->SetDrawBlendMode(SDL_BLENDMODE_BLEND);
+
   initResources();
 }
 
@@ -75,55 +79,91 @@ void GameWindow::initResources() {
   invPanel->loadTextures();
 }
 
-GameWindow::Layout GameWindow::getLayout() const {
-  if (windowWidth == 960 && windowHeight == 540) {
-    return Layout{
-        SDL2pp::Rect(0, 0, 960, 540),
-        SDL2pp::Rect(3, 3, 676, 113),
-        SDL2pp::Rect(3, 122, 676, 20),
-        SDL2pp::Rect(8, 145, 668, 385),
-        SDL2pp::Rect(686, 7, 267, 114),
-        SDL2pp::Rect(686, 128, 267, 294),
-        SDL2pp::Rect(686, 429, 267, 104)};
+SDL2pp::Renderer &GameWindow::getRenderer() {
+  return *renderer;
+}
+
+SDL2pp::Font &GameWindow::getFont() {
+  return *font;
+}
+
+void GameWindow::setMapData(int maxSize_, int gridSize_,
+                            int commonGroundTextureId_,
+                            const std::list<TileOrigin> &origins) {
+  maxSize = maxSize_;
+  gridSize = gridSize_;
+  commonGroundTextureId = commonGroundTextureId_;
+
+  textureMapper->buildRenderGrid(origins, gridSize);
+  tilesToRender = textureMapper->getTilesToRender();
+}
+
+void GameWindow::setChatState(const std::deque<ChatMessage> &messages,
+                              const std::string &input, bool active) {
+  chatMessages = messages;
+  currentChatInput = input;
+  chatActive = active;
+}
+
+void GameWindow::scrollChatUp() {
+  if (chatView)
+    chatView->scrollChatUp();
+}
+
+void GameWindow::scrollChatDown() {
+  if (chatView)
+    chatView->scrollChatDown();
+}
+
+std::pair<int, int> GameWindow::screenToWorld(int mouseX, int mouseY) {
+  return camera.mouseToWorld(mouseX, mouseY);
+}
+
+void GameWindow::addEntity(EntityType type, uint32_t id,
+                           std::unique_ptr<RenderableEntity> entity) {
+  EntityKey key(type, id);
+  entities[key] = std::move(entity);
+}
+
+void GameWindow::removeEntity(EntityType type, uint32_t id) {
+  EntityKey key(type, id);
+
+  if (myPlayerEntity && type == EntityType::Player && id == myPlayerID) {
+    myPlayerEntity = nullptr;
   }
 
-  const int leftWidth = std::max(
-      360, windowWidth - kSidePanelWidth - (3 * kMargin));
+  entities.erase(key);
+}
 
-  const int chatY = kMargin;
-  const int chatInputY = chatY + kChatMessagesHeight + kChatGap;
-  const int gameTop = chatInputY + kChatInputHeight + kMargin;
-  const int gameHeight = std::max(240, windowHeight - gameTop - kMargin);
+void GameWindow::setMyPlayer(const ClientPlayer &player, uint32_t ID) {
+  myPlayerID = ID;
 
-  const int rightX = windowWidth - kMargin - kSidePanelWidth;
+  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
+  myPlayerEntity = entity.get();
 
-  Layout layout;
-  layout.windowRect = SDL2pp::Rect(0, 0, windowWidth, windowHeight);
-  layout.chatMessagesRect =
-      SDL2pp::Rect(kMargin, chatY, leftWidth, kChatMessagesHeight);
-  layout.chatInputRect =
-      SDL2pp::Rect(kMargin, chatInputY, leftWidth, kChatInputHeight);
-  layout.gameRect = SDL2pp::Rect(kMargin, gameTop, leftWidth, gameHeight);
-  layout.rightTopRect =
-      SDL2pp::Rect(rightX, kMargin, kSidePanelWidth, kInfoPanelHeight);
-  layout.inventoryRect =
-      SDL2pp::Rect(rightX, gameTop, kSidePanelWidth, kInventoryPanelHeight);
+  addEntity(EntityType::Player, ID, std::move(entity));
+}
 
-  int statsY = layout.inventoryRect.GetY() + layout.inventoryRect.GetH() + kMargin;
-  if (statsY + kStatsPanelHeight > windowHeight - kMargin) {
-    statsY = windowHeight - kMargin - kStatsPanelHeight;
+void GameWindow::addPlayer(uint32_t ID, const ClientPlayer &player) {
+  if (ID == myPlayerID) {
+    setMyPlayer(player, ID);
+    return;
   }
-  layout.bottomRightRect =
-      SDL2pp::Rect(rightX, statsY, kSidePanelWidth, kStatsPanelHeight);
 
-  return layout;
+  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
+  addEntity(EntityType::Player, ID, std::move(entity));
+}
+
+void GameWindow::renderInventoryPanel() {
+  if (!invPanel || !myPlayerEntity)
+    return;
+
+  invPanel->render(myPlayerEntity->getPlayer());
 }
 
 void GameWindow::show(unsigned int it) {
   SDL_ClearError();
   clear();
-
-  Layout layout = getLayout();
 
   renderer->SetDrawColor(6, 8, 12, 255);
   renderer->FillRect(layout.windowRect);
@@ -140,28 +180,16 @@ void GameWindow::show(unsigned int it) {
   }
 
   renderWorld(it);
-  renderUIBackgrounds(layout);
-  renderHUD(layout);
-  renderUIFrame(layout);
+  renderUIBackgrounds();
+  renderHUD();
+  renderUIFrame();
 
   renderer->Present();
-}
-
-
-void GameWindow::addPlayer(uint32_t ID, const ClientPlayer &player) {
-  if (ID == myPlayerID) {
-    setMyPlayer(player, ID);
-    return;
-  }
-
-  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
-  addEntity(EntityType::Player, ID, std::move(entity));
 }
 
 void GameWindow::removePlayer(uint32_t ID) {
   removeEntity(EntityType::Player, ID);
 }
-
 
 void GameWindow::addCityEntity(uint32_t ID, CityEntityModel &entity,
                                 CityEntityType entityType) {
@@ -174,14 +202,6 @@ void GameWindow::addCityEntity(uint32_t ID, CityEntityModel &entity,
 
 void GameWindow::removeCityEntity(uint32_t ID) {
     removeEntity(EntityType::CityEntity, ID);
-}
-
-
-void GameWindow::setChatState(const std::deque<std::string> &messages,
-                              const std::string &input, bool active) {
-  chatMessages = messages;
-  currentChatInput = input;
-  chatActive = active;
 }
 
 
@@ -212,9 +232,13 @@ void GameWindow::renderWorld(unsigned int it) {
             (item.i - maxSize / 2) * gridSize,
             (item.j - maxSize / 2) * gridSize, gridSize, gridSize);
 
-        SDL2pp::Rect srcRect = {item.x_start, item.y_start,
-                                item.x_end - item.x_start,
-                                item.y_end - item.y_start};
+        SDL2pp::Rect srcRect = {
+            item.x_start,
+            item.y_start,
+            item.x_end - item.x_start,
+            item.y_end - item.y_start,
+        };
+
         renderer->Copy(textureMapper->getTexture(item.texture_id), srcRect,
                        dstRect);
       }
@@ -234,56 +258,71 @@ void GameWindow::renderWorld(unsigned int it) {
   }
 }
 
-void GameWindow::renderHUD(const Layout &layout) {
-  renderInventoryPanel(layout);
-  renderChat(layout);
-  renderPlayerHeader(layout);
-  renderPlayerStats(layout);
-  renderVitals(layout);
+void GameWindow::renderCommonGround() {
+  for (int i = 0; i < maxSize; i++) {
+    for (int j = 0; j < maxSize; j++) {
+      SDL2pp::Rect dstRect =
+          camera.toScreen((i - maxSize / 2) * gridSize,
+                          (j - maxSize / 2) * gridSize, gridSize, gridSize);
+
+      SDL2pp::Rect srcRect = {0, 0, gridSize, gridSize};
+
+      renderer->Copy(textureMapper->getTexture(commonGroundTextureId), srcRect,
+                     dstRect);
+    }
+  }
 }
 
-void GameWindow::renderUIBackgrounds(const Layout &layout) {
+void GameWindow::renderHUD() {
+  renderInventoryPanel();
+  renderChat();
+  renderPlayerHeader();
+  renderPlayerStats();
+  renderVitals();
+}
+
+void GameWindow::renderUIBackgrounds() {
   if (chatMessagesBackground) {
     renderer->Copy(*chatMessagesBackground, SDL2pp::NullOpt,
                    layout.chatMessagesRect);
   }
+
   if (chatInputBackground) {
     renderer->Copy(*chatInputBackground, SDL2pp::NullOpt,
                    layout.chatInputRect);
   }
+
   if (userInfoBackground) {
     renderer->Copy(*userInfoBackground, SDL2pp::NullOpt, layout.rightTopRect);
   }
+
   if (userInventoryBackground) {
     renderer->Copy(*userInventoryBackground, SDL2pp::NullOpt,
                    layout.inventoryRect);
   }
+
   if (userStatsBackground) {
     renderer->Copy(*userStatsBackground, SDL2pp::NullOpt,
                    layout.bottomRightRect);
   }
 }
 
-void GameWindow::renderUIFrame(const Layout &layout) {
+void GameWindow::renderUIFrame() {
   if (!uiFrameTexture)
     return;
+
   renderer->Copy(*uiFrameTexture, SDL2pp::NullOpt, layout.windowRect);
 }
 
-void GameWindow::renderInventoryPanel(const Layout &) {
-  if (!invPanel || !myPlayerEntity)
-    return;
-  invPanel->render(myPlayerEntity->getPlayer());
-}
-
-void GameWindow::renderChat(const Layout &layout) {
+void GameWindow::renderChat() {
   if (!chatView)
     return;
+
   chatView->render(*renderer, layout.chatMessagesRect, layout.chatInputRect,
                    chatMessages, currentChatInput, chatActive);
 }
 
-void GameWindow::renderPlayerHeader(const Layout &layout) {
+void GameWindow::renderPlayerHeader() {
   if (!titleFont)
     return;
 
@@ -301,15 +340,14 @@ void GameWindow::renderPlayerHeader(const Layout &layout) {
                  SDL2pp::Rect(x, y, surf.GetWidth(), surf.GetHeight()));
 }
 
-void GameWindow::renderPlayerStats(const Layout &layout) {
- if (!myPlayerEntity)
+void GameWindow::renderPlayerStats() {
+  if (!myPlayerEntity)
     return;
+
   const ClientPlayer &p = myPlayerEntity->getPlayer();
 
   int xpCur = 357;  // placeholder, reemplazar por xp actual
   int xpMax = 1000; // placeholder, reemplazar por xp total para subir de nivel
-  // Para el nivel maximo se podria hacer que la barra aparezca siempre llena
-  // por ejemplo
 
   int x = layout.rightTopRect.GetX();
   int y = layout.rightTopRect.GetY();
@@ -321,32 +359,28 @@ void GameWindow::renderPlayerStats(const Layout &layout) {
   int xpY = y + 84;
   int xpW = 227;
   int xpH = 20;
-  // int xpX = x + 20 + 2;
-  // int xpY = y + 84 + 2;
-  // int xpW = 227 - 2;
-  // int xpH = 20 - 2;
 
   drawBar(xpX, xpY, xpW, xpH, xpCur, xpMax, SDL_Color{60, 180, 60, 255},
           SDL_Color{20, 20, 20, 255});
 
   SDL2pp::Rect xpBarRect(xpX, xpY, xpW, xpH);
+
   renderCenteredTextInRect(
       xpBarRect, std::to_string(xpCur) + " / " + std::to_string(xpMax),
       SDL_Color{255, 255, 255, 255});
 }
 
-void GameWindow::renderVitals(const Layout &layout) {
+void GameWindow::renderVitals() {
   if (!myPlayerEntity)
     return;
 
-  const auto &p = myPlayerEntity->getPlayer();
+  const ClientPlayer &p = myPlayerEntity->getPlayer();
 
   int x = layout.bottomRightRect.GetX();
   int y = layout.bottomRightRect.GetY();
 
-  int spanW = layout.bottomRightRect.GetW() - 40;
   int barX = x + 20;
-  int barW = spanW;
+  int barW = layout.bottomRightRect.GetW() - 40;
   int barH = 20;
 
   if (barW < 20)
@@ -372,20 +406,6 @@ void GameWindow::renderVitals(const Layout &layout) {
       SDL_Color{255, 255, 255, 255});
 }
 
-void GameWindow::renderCommonGround() {
-  for (int i = 0; i < maxSize; i++) {
-    for (int j = 0; j < maxSize; j++) {
-      SDL2pp::Rect dstRect =
-          camera.toScreen((i - maxSize / 2) * gridSize,
-                          (j - maxSize / 2) * gridSize, gridSize, gridSize);
-
-      SDL2pp::Rect srcRect = {0, 0, gridSize, gridSize};
-      renderer->Copy(textureMapper->getTexture(commonGroundTextureId), srcRect,
-                     dstRect);
-    }
-  }
-}
-
 void GameWindow::renderGroundItems() {
   for (const auto &[id, item] : groundItems) {
     SDL2pp::Texture *tex = textureManager->getItemIcon(item.itemId);
@@ -405,42 +425,6 @@ void GameWindow::clear() {
   renderer->SetDrawColor(0, 0, 0, 255);
   renderer->Clear();
 }
-
-void GameWindow::addEntity(EntityType type, uint32_t id,
-                           std::unique_ptr<RenderableEntity> entity) {
-  EntityKey key(type, id);
-  entities[key] = std::move(entity);
-}
-
-void GameWindow::removeEntity(EntityType type, uint32_t id) {
-  EntityKey key(type, id);
-  if (myPlayerEntity && type == EntityType::Player && id == myPlayerID) {
-    myPlayerEntity = nullptr;
-  }
-  entities.erase(key);
-}
-
-void GameWindow::setMyPlayer(const ClientPlayer &player, uint32_t ID) {
-  myPlayerID = ID;
-  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
-  myPlayerEntity = entity.get();
-  addEntity(EntityType::Player, ID, std::move(entity));
-}
-
-SDL2pp::Renderer &GameWindow::getRenderer() { return *renderer; }
-
-SDL2pp::Font &GameWindow::getFont() { return *font; }
-
-void GameWindow::setMapData(int maxSize_, int gridSize_,
-                             int commonGroundTextureId_,
-                             const std::list<TileOrigin> &origins) {
-  maxSize = maxSize_;
-  gridSize = gridSize_;
-  commonGroundTextureId = commonGroundTextureId_;
-  textureMapper->buildRenderGrid(origins, gridSize);
-  tilesToRender = textureMapper->getTilesToRender();
-}
-
 
 void GameWindow::addNpc(uint32_t ID, NPC &npc, NPCType npcType) {
   NPCInfo info = npcParser.getInfo(npcType);
@@ -480,6 +464,7 @@ void GameWindow::getSortedEntities(
 void GameWindow::renderText(int x, int y, const std::string &text,
                             SDL_Color color) {
   SDL2pp::Font *activeFont = uiFont ? uiFont.get() : font.get();
+
   if (!activeFont)
     return;
 
@@ -509,6 +494,7 @@ void GameWindow::renderCenteredTextInRect(const SDL2pp::Rect &rect,
 void GameWindow::drawBar(int x, int y, int w, int h, uint32_t cur,
                          uint32_t max, SDL_Color fg, SDL_Color bg) {
   SDL2pp::Rect bgRect(x, y, w, h);
+
   renderer->SetDrawColor(bg.r, bg.g, bg.b, bg.a);
   renderer->FillRect(bgRect);
 
@@ -516,14 +502,12 @@ void GameWindow::drawBar(int x, int y, int w, int h, uint32_t cur,
     return;
 
   int fillW = static_cast<int>((static_cast<double>(cur) / max) * w);
+
   if (fillW <= 0)
     return;
 
   SDL2pp::Rect fillRect(x, y, fillW, h);
+
   renderer->SetDrawColor(fg.r, fg.g, fg.b, fg.a);
   renderer->FillRect(fillRect);
-}
-
-std::pair<int, int> GameWindow::screenToWorld(int mouseX, int mouseY) {
-  return camera.mouseToWorld(mouseX, mouseY);
 }

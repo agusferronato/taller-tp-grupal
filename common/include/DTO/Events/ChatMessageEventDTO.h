@@ -1,6 +1,7 @@
 #ifndef CHAT_MESSAGE_EVENT_DTO_H
 #define CHAT_MESSAGE_EVENT_DTO_H
 
+#include "DTO/Events/ChatMessageCategory.h"
 #include "protocol/ProtocolCodes.h"
 #include <string>
 
@@ -10,6 +11,7 @@ private:
 
 public:
   EventOpcode getCode() const { return opCode; }
+  ChatMessageCategory category;
   std::string sender;
   std::string message;
 };

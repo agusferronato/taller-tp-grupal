@@ -1,6 +1,7 @@
 #ifndef GAMEMODEL_H
 #define GAMEMODEL_H
 
+#include "ChatMessage.h"
 #include "CityEntityModel.h"
 #include "CityEntityType.h"
 #include "ClientPlayer.h"
@@ -29,7 +30,7 @@ private:
 
   GroundItemManager groundItemManager;
 
-  std::deque<std::string> chatMessages;
+  std::deque<ChatMessage> chatMessages;
   std::string currentChatInput;
   bool chatActive = false;
 
@@ -53,6 +54,19 @@ public:
   const GroundItemManager &getGroundItemManager() const {
     return groundItemManager;
   }
+
+  void createClan(const std::string &clanName);
+  void joinClan(const std::string &clanName);
+  void acceptClanRequest(const std::string &playerName);
+  void leaveClan();
+  void reviewClan();
+  void rejectClanRequest(const std::string &playerName);
+  void banClanPlayer(const std::string &playerName);
+  void kickClanMember(const std::string &playerName);
+  void sendPrivateMessage(const std::string &targetName,
+                          const std::string &message);
+  void addLocalChatMessage(std::string text, ChatMessageCategory category);
+
   void handleLeftMouseClick(int mouseX, int mouseY);
   void handleRightMouseClick(int mouseX, int mouseY);
 
@@ -61,7 +75,7 @@ private:
 
 public:
   // Chat
-  const std::deque<std::string> &getChatMessages() const;
+  const std::deque<ChatMessage> &getChatMessages() const;
   const std::string &getCurrentChatInput() const;
   bool isChatActive() const;
 
@@ -70,6 +84,9 @@ public:
   void appendChatText(const char *text);
   void backspaceChat();
   void submitChat();
+  void scrollChatUp();
+  void scrollChatDown();
+  int getChatScrollOffset() const;
 
 private:
   void registerPlayers();
@@ -102,6 +119,7 @@ private:
   void handle(const PrivateMessageEventDTO &event);
   void handle(const GlobalChatMessageEventDTO &event);
   void handle(const PlayerDieEventDTO &event);
+  void handle(const LoginResultEventDTO &event);
 };
 
 #endif
