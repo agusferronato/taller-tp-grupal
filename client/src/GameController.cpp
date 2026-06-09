@@ -35,6 +35,16 @@ void GameController::handleEvent(const SDL_Event &event) {
     }
     break;
 
+  case SDL_MOUSEWHEEL:
+    if (gameModel->isChatActive()) {
+      if (event.wheel.y > 0) {
+        gameModel->scrollChatUp();
+      } else if (event.wheel.y < 0) {
+        gameModel->scrollChatDown();
+      }
+    }
+    break;
+
   case SDL_MOUSEBUTTONDOWN:
     handleMouseDown(event.button);
     break;
@@ -58,7 +68,17 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
       ChatCommand cmd =
           ChatCommandParser::parse(gameModel->getCurrentChatInput());
       if (cmd.type != ChatCommandType::None) {
-        if (cmd.type == ChatCommandType::Tomar) {
+        if (cmd.type == ChatCommandType::Unknown) {
+          gameModel->addLocalChatMessage("Ese comando no existe",
+                                         ChatMessageCategory::Error);
+        } else if (cmd.type == ChatCommandType::PrivateMessage) {
+          size_t separator = cmd.textArg.find('\n');
+          if (separator != std::string::npos) {
+            gameModel->sendPrivateMessage(
+                cmd.textArg.substr(0, separator),
+                cmd.textArg.substr(separator + 1));
+          }
+        } else if (cmd.type == ChatCommandType::Tomar) {
           gameModel->takeItem();
         } else if (cmd.type == ChatCommandType::Tirar) {
           gameModel->dropItem(static_cast<uint8_t>(cmd.arg));
@@ -66,6 +86,22 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
           gameModel->equipItem(static_cast<uint8_t>(cmd.arg));
         } else if (cmd.type == ChatCommandType::Desequipar) {
           gameModel->unequipItem(static_cast<uint8_t>(cmd.arg));
+        } else if (cmd.type == ChatCommandType::FundarClan) {
+          gameModel->createClan(cmd.textArg);
+        } else if (cmd.type == ChatCommandType::UnirseClan) {
+          gameModel->joinClan(cmd.textArg);
+        } else if (cmd.type == ChatCommandType::ClanAceptar) {
+          gameModel->acceptClanRequest(cmd.textArg);
+        } else if (cmd.type == ChatCommandType::DejarClan) {
+          gameModel->leaveClan();
+        } else if (cmd.type == ChatCommandType::RevisarClan) {
+          gameModel->reviewClan();
+        } else if (cmd.type == ChatCommandType::ClanRechazar) {
+          gameModel->rejectClanRequest(cmd.textArg);
+        } else if (cmd.type == ChatCommandType::ClanBan) {
+          gameModel->banClanPlayer(cmd.textArg);
+        } else if (cmd.type == ChatCommandType::ClanKick) {
+          gameModel->kickClanMember(cmd.textArg);
         }
         gameModel->closeChat();
       } else {

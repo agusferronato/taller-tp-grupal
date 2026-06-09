@@ -4,6 +4,7 @@
 #include <chrono>
 #include <list>
 #include <memory>
+#include <optional>
 #include <string>
 #include <thread>
 #include <unordered_map>
@@ -11,13 +12,13 @@
 #include <vector>
 
 #include "ClientMessage.h"
-#include <optional>
 #include <set>
 #include <tuple>
 
 #include "Biome.h"
 #include "Character.h"
 #include "City.h"
+#include "ClanManager.h"
 #include "Colisionable.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
@@ -40,15 +41,15 @@ private:
   Queue<ClientMessage> &gameloopQueue;
   SenderQueueMonitor &senderQueueMonitor;
   PlayerRepository &repository;
+  ClanManager &clanManager;
 
   std::list<ServerEventDTO> messagesToSend;
   bool keepRunning = true;
 
-  std::unordered_map<std::string, uint32_t> playerIdByName;
-
   uint32_t nextPlayerId{1};
   int nextSpawnX{0};
   std::unordered_map<uint32_t, std::unique_ptr<Character>> players;
+  std::unordered_map<std::string, uint32_t> playerIdByName;
   std::vector<Colisionable *> colisionables;
   std::unordered_map<uint32_t, uint32_t> connectionToPlayer;
   std::unordered_map<uint32_t, uint32_t> playerToConnection;
@@ -70,7 +71,7 @@ private:
 public:
   Game(Queue<ClientMessage> &gameloopQueue,
        SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository,
-       const std::string &mapPath);
+       ClanManager &clanManager, const std::string &mapPath);
 
   virtual void run() override;
 
@@ -81,6 +82,7 @@ public:
 
   void registerPlayer(const std::string &name, const Race race,
                       const PlayerClass playerClass, uint32_t connectionId);
+  void validateLogin(const std::string &name, uint32_t connectionId);
   void loginPlayer(const std::string &name, uint32_t connectionId);
   void movePlayer(uint32_t playerId, Direction direction);
   void stopPlayer(uint32_t playerId);
@@ -91,7 +93,18 @@ public:
   void dropItem(uint32_t playerId, uint8_t inventorySlot);
   void takeItem(uint32_t playerId);
   void sendGlobalChatMessage(uint32_t playerId, const std::string &message);
+  void sendPrivateMessage(uint32_t connectionId, const std::string &targetName,
+                          const std::string &message);
   void attack(uint32_t playerId, int16_t x, int16_t y);
+
+  void createClan(uint32_t playerId, const std::string &clanName);
+  void requestJoinClan(uint32_t playerId, const std::string &clanName);
+  void acceptClanRequest(uint32_t founderId, const std::string &playerName);
+  void rejectClanRequest(uint32_t founderId, const std::string &playerName);
+  void banClanPlayer(uint32_t founderId, const std::string &playerName);
+  void kickClanMember(uint32_t founderId, const std::string &playerName);
+  void leaveClan(uint32_t playerId);
+  void reviewClan(uint32_t playerId);
 
   bool thereIsACollidableEntityAt(Position position);
   void appearNPC(std::unique_ptr<NPC> &&npc);
@@ -106,12 +119,20 @@ private:
 
   void appearNPCs();
 
+  std::optional<uint32_t> findPlayerIdByName(const std::string &name) const;
+  std::string getPlayerName(uint32_t playerId) const;
+  std::optional<uint32_t> getConnectionIdForPlayer(uint32_t playerId) const;
+  void sendToPlayer(uint32_t playerId, const ServerEventDTO &event);
+  void sendToPlayers(const std::vector<uint32_t> &playerIds,
+                     const ServerEventDTO &event);
+  void sendToClan(uint32_t clanId, const ServerEventDTO &event,
+                  std::optional<uint32_t> exceptPlayerId = std::nullopt);
+
   void makeNPCsfollowPlayers();
   void makeCitiesEntitiesFollowPlayers();
+  void createCityEntities();
 
   bool checkIfItCollides(Colisionable *entity);
-
-  void createCityEntities();
 
   void playerAttackPlayer(Character &attacker, Character &target);
   void playerAttackNPC(Character &attacker, NPC &target);

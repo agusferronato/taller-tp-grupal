@@ -33,6 +33,7 @@ struct PlayerData {
   uint8_t equippedArmor{0};
   uint8_t equippedHelmet{0};
   uint8_t equippedShield{0};
+  uint32_t clanId{0};
 
   void setName(const std::string &s) {
     std::strncpy(name, s.c_str(), PLAYER_NAME_MAX - 1);

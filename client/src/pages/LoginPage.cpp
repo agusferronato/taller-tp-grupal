@@ -8,9 +8,8 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-#include "DTO/Commands/ExitCommandDTO.h"
-#include "DTO/Commands/LoginPlayerCommandDTO.h"
-#include "DTO/Events/RegisterPlayerEventDTO.h"
+#include "DTO/Commands/ValidateLoginCommandDTO.h"
+#include "DTO/Events/LoginResultEventDTO.h"
 #include "Socket.h"
 #include "protocol/Protocol.h"
 #include "protocol/RegisterAllParsers.h"
@@ -74,11 +73,12 @@ LoginPage::LoginPage(const QString &hostname, const QString &port,
   backBtn = new QPushButton(this);
   backBtn->setObjectName("backBtn");
   backBtn->setFixedSize(300, 70);
-  backBtn->setStyleSheet("QPushButton {"
-                          "  border-image: url(assets/menu/boton_volver.png) stretch;"
-                         "  background: transparent;"
-                         "  border: none;"
-                         "}");
+  backBtn->setStyleSheet(
+      "QPushButton {"
+      "  border-image: url(assets/menu/boton_volver.png) stretch;"
+      "  background: transparent;"
+      "  border: none;"
+      "}");
   panelLayout->addWidget(backBtn, 0, Qt::AlignCenter);
 
   connect(backBtn, &QPushButton::clicked, this,
@@ -102,10 +102,10 @@ void LoginPage::onConnectClicked() {
     Protocol protocol(sock);
     registerAllParsers(protocol);
 
-    protocol.sendCommand(LoginPlayerCommandDTO{username.toStdString()});
+    protocol.sendCommand(ValidateLoginCommandDTO{username.toStdString()});
 
     auto response = protocol.receiveEvent();
-    auto *resp = std::get_if<RegisterPlayerEventDTO>(&response);
+    auto *resp = std::get_if<LoginResultEventDTO>(&response);
     if (!resp) {
       QApplication::restoreOverrideCursor();
       QMessageBox::critical(this, "Error",
@@ -113,22 +113,14 @@ void LoginPage::onConnectClicked() {
       return;
     }
 
-    if (resp->status == 2) {
-      try {
-        sock.shutdown(2);
-      } catch (...) {
-      }
+    if (resp->status == LoginStatus::AlreadyOnline) {
       QApplication::restoreOverrideCursor();
       QMessageBox::warning(this, "Personaje ya conectado",
                            "Ese personaje ya esta conectado al juego.");
       return;
     }
 
-    if (resp->status != 0) {
-      try {
-        sock.shutdown(2);
-      } catch (...) {
-      }
+    if (resp->status != LoginStatus::Success) {
       QApplication::restoreOverrideCursor();
       QMessageBox::warning(this, "Nombre no encontrado",
                            "No existe un personaje con ese nombre.");
@@ -136,7 +128,6 @@ void LoginPage::onConnectClicked() {
     }
 
     try {
-      protocol.sendCommand(ExitCommandDTO{resp->playerId});
       sock.shutdown(2);
     } catch (...) {
     }
