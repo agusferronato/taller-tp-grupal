@@ -221,7 +221,7 @@ name = "Textura #24"
 path = "assets/background/ground/1.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_25]
@@ -230,7 +230,7 @@ name = "Textura #25"
 path = "assets/background/ground/2.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_26]
@@ -239,7 +239,7 @@ name = "Textura #26"
 path = "assets/background/ground/3.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_27]
@@ -248,7 +248,7 @@ name = "Textura #27"
 path = "assets/background/ground/4.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_28]
@@ -257,7 +257,7 @@ name = "Textura #28"
 path = "assets/background/ground/5.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_29]
@@ -266,7 +266,7 @@ name = "Textura #29"
 path = "assets/background/ground/6.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_30]
@@ -275,7 +275,7 @@ name = "Textura #30"
 path = "assets/background/ground/7.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_31]
@@ -284,7 +284,7 @@ name = "Textura #31"
 path = "assets/background/ground/8.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_32]
@@ -293,7 +293,7 @@ name = "Textura #32"
 path = "assets/background/ground/9.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_33]
@@ -302,7 +302,7 @@ name = "Textura #33"
 path = "assets/background/ground/10.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_34]
@@ -311,7 +311,7 @@ name = "Textura #34"
 path = "assets/background/ground/11.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_35]
@@ -320,7 +320,7 @@ name = "Textura #35"
 path = "assets/background/ground/12.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_36]
@@ -338,7 +338,7 @@ name = "Textura #37"
 path = "assets/background/ground/14.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_38]
@@ -356,7 +356,7 @@ name = "Textura #39"
 path = "assets/background/ground/16.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_40]
@@ -365,7 +365,7 @@ name = "Textura #40"
 path = "assets/background/ground/17.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_41]
@@ -374,7 +374,7 @@ name = "Textura #41"
 path = "assets/background/ground/18.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_42]
@@ -383,7 +383,7 @@ name = "Textura #42"
 path = "assets/background/ground/19.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_43]
@@ -392,7 +392,7 @@ name = "Textura #43"
 path = "assets/background/ground/20.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_44]
@@ -401,7 +401,7 @@ name = "Textura #44"
 path = "assets/background/ground/21.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_45]
@@ -410,7 +410,7 @@ name = "Textura #45"
 path = "assets/background/ground/22.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_46]
@@ -419,7 +419,7 @@ name = "Textura #46"
 path = "assets/background/ground/23.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_47]
@@ -428,7 +428,7 @@ name = "Textura #47"
 path = "assets/background/ground/24.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_48]
@@ -437,7 +437,7 @@ name = "Textura #48"
 path = "assets/background/ground/25.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_49]
@@ -446,7 +446,7 @@ name = "Textura #49"
 path = "assets/background/ground/26.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_50]
@@ -455,7 +455,7 @@ name = "Textura #50"
 path = "assets/background/ground/27.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_51]
@@ -464,7 +464,7 @@ name = "Textura #51"
 path = "assets/background/ground/28.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_52]
@@ -473,7 +473,7 @@ name = "Textura #52"
 path = "assets/background/ground/29.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_53]
@@ -482,7 +482,7 @@ name = "Textura #53"
 path = "assets/background/ground/30.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_54]
@@ -977,7 +977,7 @@ name = "Textura #108"
 path = "assets/background/ground/85.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_109]
@@ -986,7 +986,7 @@ name = "Textura #109"
 path = "assets/background/ground/86.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_110]
@@ -995,7 +995,7 @@ name = "Textura #110"
 path = "assets/background/ground/87.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_111]
@@ -1004,7 +1004,7 @@ name = "Textura #111"
 path = "assets/background/ground/88.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_112]
@@ -1013,7 +1013,7 @@ name = "Textura #112"
 path = "assets/background/ground/89.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_113]
@@ -1022,7 +1022,7 @@ name = "Textura #113"
 path = "assets/background/ground/90.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_114]
@@ -1031,7 +1031,7 @@ name = "Textura #114"
 path = "assets/background/ground/91.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_115]
@@ -1040,7 +1040,7 @@ name = "Textura #115"
 path = "assets/background/ground/92.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_116]
@@ -1049,7 +1049,7 @@ name = "Textura #116"
 path = "assets/background/ground/93.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_117]
@@ -1058,7 +1058,7 @@ name = "Textura #117"
 path = "assets/background/ground/94.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_118]
@@ -1067,7 +1067,7 @@ name = "Textura #118"
 path = "assets/background/ground/95.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_119]
@@ -1076,7 +1076,7 @@ name = "Textura #119"
 path = "assets/background/ground/96.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_120]
@@ -1085,7 +1085,7 @@ name = "Textura #120"
 path = "assets/background/ground/97.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_121]
@@ -1094,7 +1094,7 @@ name = "Textura #121"
 path = "assets/background/ground/98.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_122]
@@ -1103,7 +1103,7 @@ name = "Textura #122"
 path = "assets/background/ground/99.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_123]
@@ -1112,7 +1112,7 @@ name = "Textura #123"
 path = "assets/background/ground/100.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_124]
@@ -1121,7 +1121,7 @@ name = "Textura #124"
 path = "assets/background/ground/101.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_125]
@@ -1130,7 +1130,7 @@ name = "Textura #125"
 path = "assets/background/ground/102.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_126]
@@ -1139,7 +1139,7 @@ name = "Textura #126"
 path = "assets/background/ground/103.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_127]
@@ -1148,7 +1148,7 @@ name = "Textura #127"
 path = "assets/background/ground/104.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_128]
@@ -1182,46 +1182,46 @@ collidable_percentage = 0.0
 id = 131
 name = "Textura #131"
 path = "assets/background/ground/108.png"
-collidable = false
+collidable = true
 transparent = true
 priority = 0
-collidable_percentage = 0.0
+collidable_percentage = 1.0
 
 [textures.tex_132]
 id = 132
 name = "Textura #132"
 path = "assets/background/ground/109.png"
-collidable = false
+collidable = true
 transparent = true
 priority = 0
-collidable_percentage = 0.0
+collidable_percentage = 1.0
 
 [textures.tex_133]
 id = 133
 name = "Textura #133"
 path = "assets/background/ground/110.png"
-collidable = false
+collidable = true
 transparent = true
 priority = 0
-collidable_percentage = 0.0
+collidable_percentage = 1.0
 
 [textures.tex_134]
 id = 134
 name = "Textura #134"
 path = "assets/background/ground/112.png"
-collidable = false
+collidable = true
 transparent = true
 priority = 0
-collidable_percentage = 0.0
+collidable_percentage = 1.0
 
 [textures.tex_135]
 id = 135
 name = "Textura #135"
 path = "assets/background/ground/113.png"
-collidable = false
+collidable = true
 transparent = true
 priority = 0
-collidable_percentage = 0.0
+collidable_percentage = 1.0
 
 [textures.tex_136]
 id = 136
@@ -1373,7 +1373,7 @@ name = "Textura #152"
 path = "assets/background/ground/146.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_153]
@@ -1382,7 +1382,7 @@ name = "Textura #153"
 path = "assets/background/ground/147.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_154]
@@ -1391,7 +1391,7 @@ name = "Textura #154"
 path = "assets/background/ground/148.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_155]
@@ -1400,7 +1400,7 @@ name = "Textura #155"
 path = "assets/background/ground/149.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_156]
@@ -1409,7 +1409,7 @@ name = "Textura #156"
 path = "assets/background/ground/150.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_157]
@@ -1418,7 +1418,7 @@ name = "Textura #157"
 path = "assets/background/ground/151.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_158]
@@ -1427,7 +1427,7 @@ name = "Textura #158"
 path = "assets/background/ground/152.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_159]
@@ -1436,7 +1436,7 @@ name = "Textura #159"
 path = "assets/background/ground/153.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_160]
@@ -1445,7 +1445,7 @@ name = "Textura #160"
 path = "assets/background/ground/154.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_161]
@@ -1454,7 +1454,7 @@ name = "Textura #161"
 path = "assets/background/ground/155.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_162]
@@ -1463,7 +1463,7 @@ name = "Textura #162"
 path = "assets/background/ground/156.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_163]
@@ -1472,7 +1472,7 @@ name = "Textura #163"
 path = "assets/background/ground/157.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_164]
@@ -1481,7 +1481,7 @@ name = "Textura #164"
 path = "assets/background/ground/158.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_165]
@@ -1490,7 +1490,7 @@ name = "Textura #165"
 path = "assets/background/ground/159.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_166]
@@ -1499,7 +1499,7 @@ name = "Textura #166"
 path = "assets/background/ground/160.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_167]
@@ -1508,35 +1508,35 @@ name = "Textura #167"
 path = "assets/background/ground/161.png"
 collidable = false
 transparent = true
-priority = 0
+priority = 1
 collidable_percentage = 0.0
 
 [textures.tex_168]
 id = 168
 name = "Textura #168"
 path = "assets/background/ground/162.png"
-collidable = false
+collidable = true
 transparent = true
 priority = 0
-collidable_percentage = 0.0
+collidable_percentage = 1.0
 
 [textures.tex_169]
 id = 169
 name = "Textura #169"
 path = "assets/background/ground/163.png"
-collidable = false
+collidable = true
 transparent = true
 priority = 0
-collidable_percentage = 0.0
+collidable_percentage = 1.0
 
 [textures.tex_170]
 id = 170
 name = "Textura #170"
 path = "assets/background/ground/164.png"
-collidable = false
+collidable = true
 transparent = true
 priority = 0
-collidable_percentage = 0.0
+collidable_percentage = 1.0
 
 [textures.tex_171]
 id = 171
@@ -1554,7 +1554,7 @@ path = "assets/background/decoration/0.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.85
 
 [textures.tex_173]
 id = 173
@@ -1572,7 +1572,7 @@ path = "assets/background/decoration/2.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_175]
 id = 175
@@ -1581,7 +1581,7 @@ path = "assets/background/decoration/3.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_176]
 id = 176
@@ -1590,7 +1590,7 @@ path = "assets/background/decoration/4.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.5
 
 [textures.tex_177]
 id = 177
@@ -1599,7 +1599,7 @@ path = "assets/background/decoration/5.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.5
 
 [textures.tex_178]
 id = 178
@@ -1608,7 +1608,7 @@ path = "assets/background/decoration/6.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_179]
 id = 179
@@ -1617,7 +1617,7 @@ path = "assets/background/decoration/7.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.5
 
 [textures.tex_180]
 id = 180
@@ -1761,7 +1761,7 @@ path = "assets/background/decoration/24.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.5
 
 [textures.tex_196]
 id = 196
@@ -1770,7 +1770,7 @@ path = "assets/background/decoration/25.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.5
 
 [textures.tex_197]
 id = 197
@@ -1986,7 +1986,7 @@ path = "assets/background/decoration/49.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_221]
 id = 221
@@ -2130,7 +2130,7 @@ path = "assets/background/decoration/65.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_237]
 id = 237
@@ -2139,7 +2139,7 @@ path = "assets/background/decoration/66.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_238]
 id = 238
@@ -2148,7 +2148,7 @@ path = "assets/background/decoration/67.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_239]
 id = 239
@@ -2157,7 +2157,7 @@ path = "assets/background/decoration/68.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_240]
 id = 240
@@ -2166,7 +2166,7 @@ path = "assets/background/decoration/69.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_241]
 id = 241
@@ -2175,7 +2175,7 @@ path = "assets/background/decoration/70.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_242]
 id = 242
@@ -2184,7 +2184,7 @@ path = "assets/background/decoration/71.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_243]
 id = 243
@@ -2193,7 +2193,7 @@ path = "assets/background/decoration/72.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_244]
 id = 244
@@ -2202,7 +2202,7 @@ path = "assets/background/decoration/73.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_245]
 id = 245
@@ -2211,7 +2211,7 @@ path = "assets/background/decoration/74.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_246]
 id = 246
@@ -2220,7 +2220,7 @@ path = "assets/background/decoration/75.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_247]
 id = 247
@@ -2229,7 +2229,7 @@ path = "assets/background/decoration/76.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_248]
 id = 248
@@ -2238,7 +2238,7 @@ path = "assets/background/decoration/77.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_249]
 id = 249
@@ -2247,7 +2247,7 @@ path = "assets/background/decoration/78.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_250]
 id = 250
@@ -2256,7 +2256,7 @@ path = "assets/background/decoration/79.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_251]
 id = 251
@@ -2265,7 +2265,7 @@ path = "assets/background/decoration/83.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_252]
 id = 252
@@ -2274,7 +2274,7 @@ path = "assets/background/decoration/84.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_253]
 id = 253
@@ -2283,7 +2283,7 @@ path = "assets/background/decoration/85.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_254]
 id = 254
@@ -2301,7 +2301,7 @@ path = "assets/background/decoration/87.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.5
 
 [textures.tex_256]
 id = 256
@@ -2424,19 +2424,19 @@ collidable_percentage = 0.25
 id = 269
 name = "Textura #269"
 path = "assets/background/decoration/101.png"
-collidable = true
+collidable = false
 transparent = true
-priority = 2
-collidable_percentage = 0.25
+priority = 1
+collidable_percentage = 0.0
 
 [textures.tex_270]
 id = 270
 name = "Textura #270"
 path = "assets/background/decoration/102.png"
-collidable = true
+collidable = false
 transparent = true
-priority = 2
-collidable_percentage = 0.25
+priority = 1
+collidable_percentage = 0.0
 
 [textures.tex_271]
 id = 271
@@ -2445,7 +2445,7 @@ path = "assets/background/decoration/103.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_272]
 id = 272
@@ -2463,7 +2463,7 @@ path = "assets/background/decoration/105.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_274]
 id = 274
@@ -2472,7 +2472,7 @@ path = "assets/background/decoration/106.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_275]
 id = 275
@@ -2490,16 +2490,16 @@ path = "assets/background/decoration/108.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.45
 
 [textures.tex_277]
 id = 277
-name = "Textura #277"
+name = "Textura #277" 
 path = "assets/background/decoration/109.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.45
 
 [textures.tex_278]
 id = 278
@@ -2508,7 +2508,7 @@ path = "assets/background/decoration/110.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.45
 
 [textures.tex_279]
 id = 279
@@ -2526,7 +2526,7 @@ path = "assets/background/decoration/112.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.35
 
 [textures.tex_281]
 id = 281
@@ -2535,7 +2535,7 @@ path = "assets/background/decoration/113.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.35
 
 [textures.tex_282]
 id = 282
@@ -2562,7 +2562,7 @@ path = "assets/background/decoration/117.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.35
 
 [textures.tex_285]
 id = 285
@@ -2598,7 +2598,7 @@ path = "assets/background/decoration/121.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.35
 
 [textures.tex_289]
 id = 289
@@ -2607,7 +2607,7 @@ path = "assets/background/decoration/122.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_290]
 id = 290
@@ -2652,7 +2652,7 @@ path = "assets/background/decoration/127.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.85
 
 [textures.tex_295]
 id = 295
@@ -2661,7 +2661,7 @@ path = "assets/background/decoration/128.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.7
 
 [textures.tex_296]
 id = 296
@@ -2670,7 +2670,7 @@ path = "assets/background/decoration/129.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.85
 
 [textures.tex_297]
 id = 297
@@ -2679,7 +2679,7 @@ path = "assets/background/decoration/130.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.7
 
 [textures.tex_298]
 id = 298
@@ -2688,7 +2688,7 @@ path = "assets/background/decoration/131.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.75
 
 [textures.tex_299]
 id = 299
@@ -2697,7 +2697,7 @@ path = "assets/background/decoration/132.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.85
 
 [textures.tex_300]
 id = 300
@@ -2706,7 +2706,7 @@ path = "assets/background/decoration/133.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.7
 
 [textures.tex_301]
 id = 301
@@ -2715,7 +2715,7 @@ path = "assets/background/decoration/134.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.85
 
 [textures.tex_302]
 id = 302
@@ -2733,7 +2733,7 @@ path = "assets/background/decoration/136.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.35
 
 [textures.tex_304]
 id = 304
@@ -2748,55 +2748,55 @@ collidable_percentage = 0.25
 id = 305
 name = "Textura #305"
 path = "assets/background/decoration/138.png"
-collidable = true
+collidable = false 
 transparent = true
-priority = 2
-collidable_percentage = 0.25
+priority = 3
+collidable_percentage = 0.0
 
 [textures.tex_306]
 id = 306
 name = "Textura #306"
 path = "assets/background/decoration/139.png"
-collidable = true
+collidable = false 
 transparent = true
-priority = 2
-collidable_percentage = 0.25
+priority = 3
+collidable_percentage = 0.0
 
 [textures.tex_307]
 id = 307
 name = "Textura #307"
 path = "assets/background/decoration/140.png"
-collidable = true
+collidable = false 
 transparent = true
-priority = 2
-collidable_percentage = 0.25
+priority = 3
+collidable_percentage = 0.0
 
 [textures.tex_308]
 id = 308
 name = "Textura #308"
 path = "assets/background/decoration/141.png"
-collidable = true
+collidable = false 
 transparent = true
-priority = 2
-collidable_percentage = 0.25
+priority = 3
+collidable_percentage = 0.0
 
 [textures.tex_309]
 id = 309
 name = "Textura #309"
 path = "assets/background/decoration/142.png"
-collidable = true
+collidable = false 
 transparent = true
-priority = 2
-collidable_percentage = 0.25
+priority = 3
+collidable_percentage = 0.0
 
 [textures.tex_310]
 id = 310
 name = "Textura #310"
 path = "assets/background/decoration/143.png"
-collidable = true
+collidable = false 
 transparent = true
-priority = 2
-collidable_percentage = 0.25
+priority = 3
+collidable_percentage = 0.0
 
 [textures.tex_311]
 id = 311
@@ -2895,25 +2895,25 @@ path = "assets/background/decoration/154.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.5
 
 [textures.tex_322]
 id = 322
 name = "Textura #322"
 path = "assets/background/decoration/155.png"
-collidable = true
+collidable = false
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.0
 
 [textures.tex_323]
 id = 323
 name = "Textura #323"
 path = "assets/background/decoration/156.png"
-collidable = true
+collidable = false
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.0
 
 [textures.tex_324]
 id = 324
@@ -2922,7 +2922,7 @@ path = "assets/background/decoration/157.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_325]
 id = 325
@@ -2931,7 +2931,7 @@ path = "assets/background/decoration/158.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 0.9
 
 [textures.tex_326]
 id = 326
@@ -2940,7 +2940,7 @@ path = "assets/background/decoration/159.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_327]
 id = 327
@@ -2949,7 +2949,7 @@ path = "assets/background/decoration/160.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_328]
 id = 328
@@ -2958,7 +2958,7 @@ path = "assets/background/decoration/161.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_329]
 id = 329
@@ -2985,7 +2985,7 @@ path = "assets/background/decoration/164.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_332]
 id = 332
@@ -2994,7 +2994,7 @@ path = "assets/background/decoration/165.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_333]
 id = 333
@@ -3003,7 +3003,7 @@ path = "assets/background/decoration/166.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_334]
 id = 334
@@ -3012,7 +3012,7 @@ path = "assets/background/decoration/167.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_335]
 id = 335
@@ -3021,7 +3021,7 @@ path = "assets/background/decoration/168.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_336]
 id = 336
@@ -3066,7 +3066,7 @@ path = "assets/background/decoration/174.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_341]
 id = 341
@@ -3075,7 +3075,7 @@ path = "assets/background/decoration/175.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_342]
 id = 342
@@ -3084,7 +3084,7 @@ path = "assets/background/decoration/176.png"
 collidable = true
 transparent = true
 priority = 2
-collidable_percentage = 0.25
+collidable_percentage = 1.0
 
 [textures.tex_343]
 id = 343
