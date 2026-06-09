@@ -37,7 +37,6 @@ void Audio::unloadAll() {
 }
 
 void Audio::startMusic() {
-  return;
   if (tracks.empty())
     return;
   currentIndex = 0;
