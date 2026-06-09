@@ -6,6 +6,8 @@
 
 enum class ChatCommandType {
   None,
+  Unknown,
+  PrivateMessage,
   Tomar,
   Tirar,
   Equipar,
@@ -19,12 +21,30 @@ enum class ChatCommandType {
   Depositar,
   Retirar,
   DepositarOro,
-  RetirarOro
+  RetirarOro,
+  FundarClan,
+  UnirseClan,
+  ClanAceptar,
+  DejarClan,
+  RevisarClan,
+  ClanRechazar,
+  ClanBan,
+  ClanKick,
+  AlejarCamara,
+  CamaraNormal,
+  Morir,
+  VidaInfinita,
+  VidaNormal,
+  ManaInfinito,
+  ManaNormal,
+  Supervelocidad,
+  VelocidadNormal
 };
 
 struct ChatCommand {
-  ChatCommandType type;
-  int arg;
+  ChatCommandType type{ChatCommandType::None};
+  int arg{0};
+  std::string textArg{};
 };
 
 class ChatCommandParser {

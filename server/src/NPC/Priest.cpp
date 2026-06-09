@@ -19,7 +19,7 @@ Priest::Priest(Position position)
 void Priest::heal(Game& game, Character& character) {
     character.heal(character.getMaxHp());
     character.addMana(character.getMaxMana());
-    game.sendChatToPlayer(character.getId(),
+    game.sendSystemMessage(character.getId(),
         "El sacerdote te ha curado. Has recuperado toda tu vida y mana.");
     game.sendPlayerInfoUpdate(character.getId());
 }
@@ -32,28 +32,28 @@ void Priest::resurrect(Game& game, Character& character) {
 
     game.addResurrectingPlayer(character, getX() + 40, getY(), framesToWait);
 
-    game.sendChatToPlayer(character.getId(), "Resucitando...");
+    game.sendSystemMessage(character.getId(), "Resucitando...");
 }
 
 
 void Priest::buyItem(Game& game, Character& character, uint8_t itemId) {
     try {
         store.buyItemWith(character, itemId);
-        game.sendChatToPlayer(character.getId(),
+        game.sendSystemMessage(character.getId(),
             "Has comprado " + ITEM_TABLE[itemId].name + " por " +
             std::to_string(getStoreItem(itemId).purchase_price) + " de oro.");
         game.sendInventoryUpdate(character.getId());
     } catch (const ItemNotAvailable& e) {
-        game.sendChatToPlayer(character.getId(), e.what());
+        game.sendSystemMessage(character.getId(), e.what());
     } catch (const InsufficientGold& e) {
-        game.sendChatToPlayer(character.getId(), e.what());
+        game.sendSystemMessage(character.getId(), e.what());
     }
 }
 
 void Priest::listItems(Game& game, Character& character) {
     const auto& items = store.getItems();
     if (items.empty()) {
-        game.sendChatToPlayer(character.getId(), 
+        game.sendSystemMessage(character.getId(), 
             "El sacerdote no tiene objetos disponibles.");
         return;
     }
@@ -64,5 +64,5 @@ void Priest::listItems(Game& game, Character& character) {
             + std::to_string(item.purchase_price) + " \n";
     }
     msg.erase(msg.size() - 2);
-    game.sendChatToPlayer(character.getId(), msg);
+    game.sendSystemMessage(character.getId(), msg);
 }

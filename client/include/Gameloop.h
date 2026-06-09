@@ -4,6 +4,7 @@
 #include <memory>
 #include <unordered_map>
 
+#include "Audio.h"
 #include "ClientData.h"
 #include "ConstantRateLoop.h"
 #include "DTO/Commands/ClientCommandDTO.h"
@@ -26,6 +27,7 @@ private:
   ShutdownEvent &shutdownEvent;
   ClientData clientData;
 
+  std::unique_ptr<Audio> audio;
   std::unique_ptr<GameController> gameController;
   std::unique_ptr<GameWindow> gameView;
   std::unique_ptr<GameModel> gameModel;
