@@ -30,6 +30,8 @@ constexpr SDL_Color kManaFill{40, 80, 220, 255};
 constexpr SDL_Color kManaBg{10, 20, 60, 255};
 constexpr SDL_Color kExpFill{60, 200, 60, 255};
 constexpr SDL_Color kExpBg{10, 50, 10, 255};
+constexpr float kNormalCameraZoom = 1.0f;
+constexpr float kZoomedOutCameraZoom = 0.65f;
 } // namespace
 
 GameWindow::GameWindow(uint32_t myPlayerID)
@@ -117,6 +119,14 @@ void GameWindow::scrollChatDown() {
 
 std::pair<int, int> GameWindow::screenToWorld(int mouseX, int mouseY) {
   return camera.mouseToWorld(mouseX, mouseY);
+}
+
+void GameWindow::zoomOutCamera() {
+  camera.setZoom(kZoomedOutCameraZoom);
+}
+
+void GameWindow::resetCameraZoom() {
+  camera.setZoom(kNormalCameraZoom);
 }
 
 void GameWindow::addEntity(EntityType type, uint32_t id,

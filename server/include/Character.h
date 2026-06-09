@@ -55,7 +55,9 @@ public:
   void setDirection(Direction dir);
   void stop();
   std::pair<int, int> getTargetPosition(Direction dir) const;
+  std::pair<int, int> getTargetPosition(Direction dir, uint32_t speed) const;
   std::pair<int, int> getTargetPosition() const;
+  std::pair<int, int> getTargetPosition(uint32_t speed) const;
   void move(int newX, int newY) { player.move(newX, newY); }
 
   // Inventory (delegates to Player)

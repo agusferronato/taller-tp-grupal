@@ -75,20 +75,25 @@ void Character::setDirection(Direction dir) { player.startMoving(dir); }
 void Character::stop() { player.stopMoving(); }
 
 std::pair<int, int> Character::getTargetPosition(Direction dir) const {
+  return getTargetPosition(dir, 2);
+}
+
+std::pair<int, int> Character::getTargetPosition(Direction dir,
+                                                 uint32_t speed) const {
   int targetX = player.getX();
   int targetY = player.getY();
   switch (dir) {
   case Direction::Up:
-    targetY -= 2;
+    targetY -= speed;
     break;
   case Direction::Down:
-    targetY += 2;
+    targetY += speed;
     break;
   case Direction::Left:
-    targetX -= 2;
+    targetX -= speed;
     break;
   case Direction::Right:
-    targetX += 2;
+    targetX += speed;
     break;
   }
   return {targetX, targetY};
@@ -165,6 +170,10 @@ PlayerMovedEventDTO Character::toPlayerMoved() const {
 
 std::pair<int, int> Character::getTargetPosition() const {
   return getTargetPosition(player.getDirection());
+}
+
+std::pair<int, int> Character::getTargetPosition(uint32_t speed) const {
+  return getTargetPosition(player.getDirection(), speed);
 }
 
 uint32_t Character::getDamage() const { return player.attack(); }

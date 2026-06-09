@@ -2,6 +2,7 @@
 #define GAMEMODEL_H
 
 #include "ChatMessage.h"
+#include "CheatType.h"
 #include "CityEntityModel.h"
 #include "CityEntityType.h"
 #include "ClientPlayer.h"
@@ -66,6 +67,9 @@ public:
   void sendPrivateMessage(const std::string &targetName,
                           const std::string &message);
   void addLocalChatMessage(std::string text, ChatMessageCategory category);
+  void zoomOutCamera();
+  void resetCameraZoom();
+  void sendCheat(CheatType cheat);
 
   void handleLeftMouseClick(int mouseX, int mouseY);
   void handleRightMouseClick(int mouseX, int mouseY);

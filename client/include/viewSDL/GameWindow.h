@@ -136,6 +136,8 @@ public:
   void scrollChatUp();
   void scrollChatDown();
   std::pair<int, int> screenToWorld(int mouseX, int mouseY);
+  void zoomOutCamera();
+  void resetCameraZoom();
 
 private:
   void renderHUD();
