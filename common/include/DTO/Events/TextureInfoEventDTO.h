@@ -14,7 +14,7 @@ public:
   EventOpcode getCode() const { return opCode; }
   uint16_t maxSize;
   uint16_t gridSize;
-  uint8_t commonGroundTextureId;
+  uint16_t commonGroundTextureId;
   std::vector<TextureOriginDTO> origins;
 };
 

@@ -121,7 +121,7 @@ public:
   void sendPlayerMoved(uint32_t playerId);
 
   bool thereIsACollidableEntityAt(Position position);
-  void appearNPC(std::unique_ptr<NPC> &&npc);
+  uint32_t appearNPC(std::unique_ptr<NPC> &&npc);
   uint32_t nextNPCId{1};
   uint32_t nextCityEntityId{1};
 
