@@ -7,7 +7,7 @@
 
 void Desert::NPCgenerationStrategy(Game& game) {
 
-    if (npcCounter > MAX_NPC)
+    if (getNPCCount() >= MAX_NPC)
         return;
 
     counter = (counter + 1) % GENERATE_NPC_COUNTER;
@@ -19,18 +19,17 @@ void Desert::NPCgenerationStrategy(Game& game) {
         if (getRandomNumber() <= probability) {
             Position pos = getRandomPositionBetween(start, end);
             if (!game.thereIsACollidableEntityAt(pos)) {
-                game.appearNPC(std::move(createNPC(pos)));
+                uint32_t npcId = game.appearNPC(std::move(createNPC(pos)));
+                registerNPC(npcId);
             }
         }
     };
 
-    trySpawn(0.15, [](Position p) { return std::make_unique<Elf>(p); });
-    trySpawn(0.15, [](Position p) { return std::make_unique<SpecialElf>(p); });
-    trySpawn(0.15, [](Position p) { return std::make_unique<Skeleton>(p); });
-    trySpawn(0.15, [](Position p) { return std::make_unique<SpecialSkeleton>(p); });
-    trySpawn(0.05, [](Position p) { return std::make_unique<Golem>(p); });
+    trySpawn(0.05, [](Position p) { return std::make_unique<Elf>(p); });
+    trySpawn(0.05, [](Position p) { return std::make_unique<SpecialElf>(p); });
+    trySpawn(0.05, [](Position p) { return std::make_unique<Skeleton>(p); });
+    trySpawn(0.05, [](Position p) { return std::make_unique<SpecialSkeleton>(p); });
+    trySpawn(0.02, [](Position p) { return std::make_unique<Golem>(p); });
 }
 
-void Desert::decreaseCounter() {
-    npcCounter--;
-}
+

@@ -159,16 +159,16 @@ void GridSDL::resizeEvent(QResizeEvent *event) {
 void GridSDL::keyPressEvent(QKeyEvent *event) {
   switch (event->key()) {
   case Qt::Key_Left:
-    x -= 4;
+    x -= 8;
     break;
   case Qt::Key_Right:
-    x += 4;
+    x += 8;
     break;
   case Qt::Key_Up:
-    y -= 4;
+    y -= 8;
     break;
   case Qt::Key_Down:
-    y += 4;
+    y += 8;
     break;
   default:
     break;

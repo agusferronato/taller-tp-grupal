@@ -12,7 +12,7 @@ struct TileOrigin {
 
 struct TextureOriginDTO {
   uint8_t priority;
-  uint8_t texture_id;
+  uint16_t texture_id;
   uint16_t i;
   uint16_t j;
 };
