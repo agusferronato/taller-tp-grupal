@@ -4,6 +4,11 @@
 #include "protocol/ProtocolCodes.h"
 #include <cstdint>
 
+enum class RegisterStatus : uint8_t {
+  Success = 0,
+  PlayerAlreadyExists = 1,
+};
+
 struct RegisterPlayerEventDTO {
 private:
   static constexpr EventOpcode opCode = EventOpcode::RegisterPlayerEvent;
@@ -11,7 +16,7 @@ private:
 public:
   EventOpcode getCode() const { return opCode; }
   uint32_t playerId;
-  uint8_t status;
+  RegisterStatus status;
 };
 
 #endif // REGISTER_PLAYER_EVENT_DTO_H

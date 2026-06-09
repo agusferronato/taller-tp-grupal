@@ -22,6 +22,11 @@ void Client::run() {
     shutdownEvent.put(ShutdownReason::ConnectionClosed);
     sendingQueue.close();
     receptionQueue.close();
+    try {
+      socket.shutdown(SHUT_RDWR);
+      socket.close();
+    } catch (...) {
+    }
     receiver.join();
     sender.join();
     throw;
