@@ -12,6 +12,7 @@
 #include "GroundItemRemovedEventDTO.h"
 #include "GroundItemsListEventDTO.h"
 #include "InventoryUpdateEventDTO.h"
+#include "LoginResultEventDTO.h"
 #include "NPCAppearedEventDTO.h"
 #include "NPCMovedEventDTO.h"
 #include "NPCStoppedEventDTO.h"
@@ -36,6 +37,6 @@ using ServerEventDTO = std::variant<
     GlobalChatMessageEventDTO, CityEntityAppearedEventDTO,
     CityEntityMovedEventDTO, CityEntityStoppedEventDTO,
     GroundItemAppearedEventDTO, GroundItemRemovedEventDTO,
-    GroundItemsListEventDTO, PlayerDieEventDTO>;
+    GroundItemsListEventDTO, PlayerDieEventDTO, LoginResultEventDTO>;
 
 #endif // EVENT_DTO_H

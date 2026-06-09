@@ -12,9 +12,8 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 
-#include "DTO/Commands/ExitCommandDTO.h"
-#include "DTO/Commands/LoginPlayerCommandDTO.h"
-#include "DTO/Events/RegisterPlayerEventDTO.h"
+#include "DTO/Commands/ValidateLoginCommandDTO.h"
+#include "DTO/Events/LoginResultEventDTO.h"
 #include "Socket.h"
 #include "protocol/Protocol.h"
 #include "protocol/RegisterAllParsers.h"
@@ -169,14 +168,15 @@ CharacterCreationPage::CharacterCreationPage(const QString &hostname,
   createBtn = new QPushButton(this);
   createBtn->setObjectName("createCharBtn");
   createBtn->setFixedSize(300, 70);
-  createBtn->setStyleSheet("QPushButton {"
-                           "  border-image: url(assets/menu/boton_play.png) stretch;"
-                           "  background: transparent;"
-                           "  border: none;"
-                           "  color: white;"
-                           "  font-size: 16px;"
-                           "  font-weight: bold;"
-                           "}");
+  createBtn->setStyleSheet(
+      "QPushButton {"
+      "  border-image: url(assets/menu/boton_play.png) stretch;"
+      "  background: transparent;"
+      "  border: none;"
+      "  color: white;"
+      "  font-size: 16px;"
+      "  font-weight: bold;"
+      "}");
   panelLayout->addWidget(createBtn, 0, Qt::AlignCenter);
 
   connect(createBtn, &QPushButton::clicked, this,
@@ -187,11 +187,12 @@ CharacterCreationPage::CharacterCreationPage(const QString &hostname,
   backBtn = new QPushButton(this);
   backBtn->setObjectName("backBtn");
   backBtn->setFixedSize(300, 70);
-  backBtn->setStyleSheet("QPushButton {"
-                          "  border-image: url(assets/menu/boton_volver.png) stretch;"
-                         "  background: transparent;"
-                         "  border: none;"
-                         "}");
+  backBtn->setStyleSheet(
+      "QPushButton {"
+      "  border-image: url(assets/menu/boton_volver.png) stretch;"
+      "  background: transparent;"
+      "  border: none;"
+      "}");
   panelLayout->addWidget(backBtn, 0, Qt::AlignCenter);
 
   connect(backBtn, &QPushButton::clicked, this,
@@ -215,10 +216,10 @@ void CharacterCreationPage::onCreateClicked() {
     Protocol protocol(sock);
     registerAllParsers(protocol);
 
-    protocol.sendCommand(LoginPlayerCommandDTO{username.toStdString()});
+    protocol.sendCommand(ValidateLoginCommandDTO{username.toStdString()});
 
     auto response = protocol.receiveEvent();
-    auto *resp = std::get_if<RegisterPlayerEventDTO>(&response);
+    auto *resp = std::get_if<LoginResultEventDTO>(&response);
     if (!resp) {
       QApplication::restoreOverrideCursor();
       QMessageBox::critical(this, "Error",
@@ -226,9 +227,9 @@ void CharacterCreationPage::onCreateClicked() {
       return;
     }
 
-    if (resp->status == 0 || resp->status == 2) {
+    if (resp->status == LoginStatus::Success ||
+        resp->status == LoginStatus::AlreadyOnline) {
       try {
-        protocol.sendCommand(ExitCommandDTO{resp->playerId});
         sock.shutdown(1);
       } catch (...) {
       }
@@ -248,6 +249,5 @@ void CharacterCreationPage::onCreateClicked() {
 
   QApplication::restoreOverrideCursor();
 
-  emit characterCreated(username,  selectedRace,
-                        classCombo->currentText());
+  emit characterCreated(username, selectedRace, classCombo->currentText());
 }
