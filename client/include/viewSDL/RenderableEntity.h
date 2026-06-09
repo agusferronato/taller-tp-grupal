@@ -7,7 +7,7 @@
 class RenderableEntity {
 
 private:
-  int priority{1};
+  int priority{2};
 
 protected:
   bool wasRendered{false};
