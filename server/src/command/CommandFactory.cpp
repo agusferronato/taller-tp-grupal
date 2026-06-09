@@ -66,8 +66,8 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
     return std::make_unique<PlayerStoppedCommand>(request->playerId);
   }
 
-  if (const auto *request = std::get_if<ExitCommandDTO>(&dto)) {
-    return std::make_unique<ExitCommand>(request->playerId);
+  if (std::get_if<ExitCommandDTO>(&dto)) {
+    return std::make_unique<ExitCommand>();
   }
 
   if (const auto *request = std::get_if<EquipCommandDTO>(&dto)) {
