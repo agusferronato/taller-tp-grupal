@@ -1,5 +1,11 @@
 #include "PlayerEntity.h"
 
+namespace {
+bool sameColor(SDL_Color a, SDL_Color b) {
+  return a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a;
+}
+} // namespace
+
 PlayerEntity::PlayerEntity(const ClientPlayer &player,
                            TextureManager &textureManager,
                            SDL2pp::Font &nameFont)
@@ -7,6 +13,16 @@ PlayerEntity::PlayerEntity(const ClientPlayer &player,
 
 void PlayerEntity::render(SDL2pp::Renderer &renderer, Camera &camera,
                           unsigned int it) {
+  SDL2pp::Rect bounds = camera.toScreen(
+      player.get_x() - ClientPlayer::Width,
+      player.get_y() - ClientPlayer::HeadHeight - 32,
+      ClientPlayer::Width * 3,
+      ClientPlayer::Height + ClientPlayer::HeadHeight + 64);
+  if (!camera.isVisibleOnScreen(bounds)) {
+    wasRendered = true;
+    return;
+  }
+
   if (player.isDead()) {
     renderDead(renderer, camera, it);
   } else {
@@ -50,7 +66,7 @@ void PlayerEntity::renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera
   auto result = textureManager.getAttackFrame(350, attackNextFrame);
   Sprite &src = result.sprite;
 
-  attackNextFrame++;
+  attackNextFrame++; 
 
   const int totalTicks = 24;
   if (attackNextFrame >= totalTicks) {
@@ -61,6 +77,9 @@ void PlayerEntity::renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera
 
   SDL2pp::Rect dst = camera.toScreen(
     player.get_x() - ClientPlayer::Width, player.get_y() - ClientPlayer::Height / 2, 64, 64);
+
+  if (!camera.isVisibleOnScreen(dst))
+    return;
 
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
 }
@@ -98,6 +117,9 @@ void PlayerEntity::renderBody(SDL2pp::Renderer &renderer, Camera &camera,
   int ox = (ClientPlayer::Width - src.w) / 2; // centra horizontalmente
   SDL2pp::Rect dst = camera.toScreen(player.get_x() + ox, player.get_y(), src.w,
                                      ClientPlayer::Height);
+  if (!camera.isVisibleOnScreen(dst))
+    return;
+
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
 }
 
@@ -124,6 +146,9 @@ void PlayerEntity::renderEquipable(SDL2pp::Renderer &renderer, Camera &camera,
     SDL2pp::Rect dst =
         camera.toScreen(player.get_x() + info.offsetX,
                         player.get_y() + info.offsetY, finalW, finalH);
+    if (!camera.isVisibleOnScreen(dst))
+      return;
+
     renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
   };
 
@@ -144,13 +169,25 @@ void PlayerEntity::renderName(SDL2pp::Renderer &renderer, Camera &camera) {
       camera.toScreen(player.get_x(), player.get_y(), ClientPlayer::Width,
                       ClientPlayer::Height);
 
-  SDL2pp::Surface surf =
-      nameFont.RenderUTF8_Solid(name, SDL_Color{255, 255, 255, 255});
-  SDL2pp::Texture tex(renderer, surf);
-  int nameX = playerPosition.x + (playerPosition.w - surf.GetWidth()) / 2;
-  int nameY = head_y - surf.GetHeight() - 2;
-  renderer.Copy(tex, SDL2pp::NullOpt,
-                SDL2pp::Rect(nameX, nameY, surf.GetWidth(), surf.GetHeight()));
+  const SDL_Color color{255, 255, 255, 255};
+  if (!cachedNameTexture || cachedNameText != name ||
+      !sameColor(cachedNameColor, color) || cachedNameFont != &nameFont) {
+    SDL2pp::Surface surf = nameFont.RenderUTF8_Solid(name, color);
+    cachedNameTexture = std::make_unique<SDL2pp::Texture>(renderer, surf);
+    cachedNameText = name;
+    cachedNameColor = color;
+    cachedNameFont = &nameFont;
+    cachedNameW = surf.GetWidth();
+    cachedNameH = surf.GetHeight();
+  }
+
+  int nameX = playerPosition.x + (playerPosition.w - cachedNameW) / 2;
+  int nameY = head_y - cachedNameH - 2;
+  SDL2pp::Rect dst(nameX, nameY, cachedNameW, cachedNameH);
+  if (!camera.isVisibleOnScreen(dst))
+    return;
+
+  renderer.Copy(*cachedNameTexture, SDL2pp::NullOpt, dst);
 }
 
 void PlayerEntity::renderHead(SDL2pp::Renderer &renderer, Camera &camera) {
@@ -162,6 +199,9 @@ void PlayerEntity::renderHead(SDL2pp::Renderer &renderer, Camera &camera) {
 
   SDL2pp::Rect dst{head_x, head_y, ClientPlayer::HeadWidth,
                    ClientPlayer::HeadHeight};
+  if (!camera.isVisibleOnScreen(dst))
+    return;
+
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
 }
 
@@ -226,6 +266,9 @@ void PlayerEntity::renderGhostBody(SDL2pp::Renderer &renderer, Camera &camera,
   int ox = (ClientPlayer::Width - src.w) / 2; 
   SDL2pp::Rect dst = camera.toScreen(player.get_x() + ox, player.get_y(), src.w,
                                      ClientPlayer::Height);
+  if (!camera.isVisibleOnScreen(dst))
+    return;
+
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
 }
 
@@ -244,6 +287,8 @@ void PlayerEntity::renderGhostHead(SDL2pp::Renderer &renderer, Camera &camera) {
 
   SDL2pp::Rect dst{head_x, head_y, ClientPlayer::HeadWidth,
                    ClientPlayer::HeadHeight};
+  if (!camera.isVisibleOnScreen(dst))
+    return;
   
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
 }
