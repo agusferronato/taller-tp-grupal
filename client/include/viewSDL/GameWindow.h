@@ -102,7 +102,7 @@ private:
   std::unique_ptr<TextureMapper> textureMapper;
   std::unique_ptr<InventoryPanel> invPanel;
 
-  std::unordered_map<uint32_t, GroundItemInfoDTO> groundItems;
+
 
   int maxSize, gridSize, commonGroundTextureId;
   int windowWidth, windowHeight;
@@ -131,7 +131,7 @@ public:
                   const std::list<TileOrigin> &origins);
 
   ClickTarget hitTestInventory(int screenX, int screenY) const;
-  void updateGroundItems(const std::unordered_map<uint32_t, GroundItemInfoDTO> &items);
+  void addGroundItem(uint32_t ID, uint8_t itemId, int x, int y);
   void setChatState(const std::deque<ChatMessage> &messages,
                     const std::string &input, bool active);
 
@@ -154,7 +154,6 @@ private:
   void renderInventoryPanel();
   void initResources();
   void renderCommonGround();
-  void renderGroundItems();
 
   void getSortedEntities(std::vector<RenderableEntity *> &);
   void renderText(int x, int y, const std::string &text, SDL_Color color);

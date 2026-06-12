@@ -50,7 +50,7 @@ void PlayerEntity::renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera
   auto result = textureManager.getAttackFrame(350, attackNextFrame);
   Sprite &src = result.sprite;
 
-  attackNextFrame++;
+  attackNextFrame++; 
 
   const int totalTicks = 24;
   if (attackNextFrame >= totalTicks) {
