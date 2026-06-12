@@ -60,14 +60,14 @@ public:
         static_cast<int>((mouseY - viewportY) / zoom + y));
   }
 
-SDL2pp::Rect toScreen(float wx, float wy, int w, int h) const {
-  int left = viewportX + static_cast<int>(std::round((wx - x) * zoom));
-  int top = viewportY + static_cast<int>(std::round((wy - y) * zoom));
-  int right = viewportX + static_cast<int>(std::round((wx + w - x) * zoom));
-  int bottom = viewportY + static_cast<int>(std::round((wy + h - y) * zoom));
+  SDL2pp::Rect toScreen(float wx, float wy, int w, int h) const {
+    int left = viewportX + static_cast<int>(std::round((wx - x) * zoom));
+    int top = viewportY + static_cast<int>(std::round((wy - y) * zoom));
+    int right = viewportX + static_cast<int>(std::round((wx + w - x) * zoom));
+    int bottom = viewportY + static_cast<int>(std::round((wy + h - y) * zoom));
 
-  return SDL2pp::Rect(left, top, right - left, bottom - top);
-}
+    return SDL2pp::Rect(left, top, right - left, bottom - top);
+  }
 };
 
 #endif
