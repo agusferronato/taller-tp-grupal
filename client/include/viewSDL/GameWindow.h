@@ -20,7 +20,6 @@
 #include "ClientPlayer.h"
 #include "EntityType.h"
 #include "GameChatView.h"
-#include "GroundItemsListEventDTO.h"
 #include "InventoryPanel.h"
 
 #include "MapData.h"
@@ -46,6 +45,15 @@ private:
     SDL2pp::Rect rightTopRect;
     SDL2pp::Rect inventoryRect;
     SDL2pp::Rect bottomRightRect;
+  };
+
+  struct CachedTextTexture {
+    std::unique_ptr<SDL2pp::Texture> texture;
+    std::string text;
+    SDL_Color color{};
+    SDL2pp::Font *font{nullptr};
+    int w{0};
+    int h{0};
   };
 
   const Layout layout{
@@ -82,6 +90,16 @@ private:
   std::unique_ptr<SDL2pp::Texture> userInfoBackground;
   std::unique_ptr<SDL2pp::Texture> userInventoryBackground;
   std::unique_ptr<SDL2pp::Texture> userStatsBackground;
+  std::unique_ptr<SDL2pp::Texture> playerHeaderTexture;
+  std::string playerHeaderCachedText;
+  SDL_Color playerHeaderCachedColor{};
+  SDL2pp::Font *playerHeaderCachedFont{nullptr};
+  int playerHeaderTextW{0};
+  int playerHeaderTextH{0};
+  CachedTextTexture levelTextCache;
+  CachedTextTexture xpTextCache;
+  CachedTextTexture hpTextCache;
+  CachedTextTexture manaTextCache;
 
   std::unique_ptr<TextureManager> textureManager;
   std::unique_ptr<BloodOverlay> bloodOverlay;
@@ -102,7 +120,7 @@ private:
   std::unique_ptr<TextureMapper> textureMapper;
   std::unique_ptr<InventoryPanel> invPanel;
 
-  std::unordered_map<uint32_t, GroundItemInfoDTO> groundItems;
+
 
   int maxSize, gridSize, commonGroundTextureId;
   int windowWidth, windowHeight;
@@ -131,7 +149,7 @@ public:
                   const std::list<TileOrigin> &origins);
 
   ClickTarget hitTestInventory(int screenX, int screenY) const;
-  void updateGroundItems(const std::unordered_map<uint32_t, GroundItemInfoDTO> &items);
+  void addGroundItem(uint32_t ID, uint8_t itemId, int x, int y);
   void setChatState(const std::deque<ChatMessage> &messages,
                     const std::string &input, bool active);
 
@@ -154,12 +172,15 @@ private:
   void renderInventoryPanel();
   void initResources();
   void renderCommonGround();
-  void renderGroundItems();
 
   void getSortedEntities(std::vector<RenderableEntity *> &);
-  void renderText(int x, int y, const std::string &text, SDL_Color color);
-  void renderCenteredTextInRect(const SDL2pp::Rect &rect,
+  void renderCachedText(CachedTextTexture &cache, int x, int y,
+                        const std::string &text, SDL_Color color);
+  void renderCachedCenteredText(CachedTextTexture &cache,
+                                const SDL2pp::Rect &rect,
                                 const std::string &text, SDL_Color color);
+  void updateTextCache(CachedTextTexture &cache, SDL2pp::Font &activeFont,
+                       const std::string &text, SDL_Color color);
   void drawBar(int x, int y, int w, int h, uint32_t cur, uint32_t max,
                SDL_Color fg, SDL_Color bg);
 };
