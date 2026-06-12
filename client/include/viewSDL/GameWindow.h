@@ -20,7 +20,6 @@
 #include "ClientPlayer.h"
 #include "EntityType.h"
 #include "GameChatView.h"
-#include "GroundItemsListEventDTO.h"
 #include "InventoryPanel.h"
 
 #include "MapData.h"
