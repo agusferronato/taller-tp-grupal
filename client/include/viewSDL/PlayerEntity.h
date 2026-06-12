@@ -2,6 +2,8 @@
 #define PLAYER_ENTITY_H
 
 #include <SDL2pp/SDL2pp.hh>
+#include <memory>
+#include <string>
 
 #include "ClientPlayer.h"
 #include "EquipParser.h"
@@ -27,6 +29,12 @@ private:
   TextureManager &textureManager;
   SDL2pp::Font &nameFont;
   EquipParser equipParser;
+  std::unique_ptr<SDL2pp::Texture> cachedNameTexture;
+  std::string cachedNameText;
+  SDL_Color cachedNameColor{};
+  SDL2pp::Font *cachedNameFont{nullptr};
+  int cachedNameW{0};
+  int cachedNameH{0};
 
   void renderAlive(SDL2pp::Renderer &renderer, Camera &camera, unsigned int it);
   void renderDead(SDL2pp::Renderer &renderer, Camera &camera, unsigned int it);
