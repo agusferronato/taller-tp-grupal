@@ -58,7 +58,6 @@ void GameModel::updateStateFromServer() {
     std::visit([this](const auto &e) { handle(e); }, event);
   }
 
-  gameView->updateGroundItems(groundItemManager.getAll());
 }
 
 void GameModel::handleInventoryClick(int screenX, int screenY, uint8_t button) {
@@ -359,13 +358,15 @@ void GameModel::submitChat() {
   updateChatView();
 }
 void GameModel::handle(const GroundItemAppearedEventDTO &e) {
-  groundItemManager.add(e.groundItemId, e.itemId, e.x, e.y);
+  gameView->addGroundItem(e.groundItemId, e.itemId, e.x, e.y);
 }
 void GameModel::handle(const GroundItemRemovedEventDTO &e) {
-  groundItemManager.remove(e.groundItemId);
+  gameView->removeEntity(EntityType::GroundItem, e.groundItemId);
 }
 void GameModel::handle(const GroundItemsListEventDTO &e) {
-  groundItemManager.setAll(e.items);
+  for (auto& item : e.items) {
+    gameView->addGroundItem(item.groundItemId, item.itemId, item.x, item.y);
+  }
 }
 
 void GameModel::handle(const NPCMovedEventDTO &event) {

@@ -7,6 +7,7 @@
 
 #include "CityEntityModel.h"
 #include "CityEntityRenderable.h"
+#include "GroundItemEntity.h"
 #include "NPCEntity.h"
 #include "PlayerEntity.h"
 
@@ -230,7 +231,6 @@ void GameWindow::removeCityEntity(uint32_t ID) {
 
 void GameWindow::renderWorld(unsigned int it) {
   renderCommonGround();
-  renderGroundItems();
 
   std::vector<RenderableEntity *> sortedEntities;
   getSortedEntities(sortedEntities);
@@ -445,20 +445,6 @@ void GameWindow::renderVitals() {
       SDL_Color{255, 255, 255, 255});
 }
 
-void GameWindow::renderGroundItems() {
-  for (const auto &[id, item] : groundItems) {
-    SDL2pp::Texture *tex = textureManager->getItemIcon(item.itemId);
-    if (!tex)
-      continue;
-
-    SDL2pp::Rect dst = camera.toScreen(item.x, item.y, 32, 32);
-    if (!camera.isVisibleOnScreen(dst))
-      continue;
-
-    renderer->Copy(*tex, SDL2pp::NullOpt, dst);
-  }
-}
-
 void GameWindow::clear() {
   for (auto &[key, entity] : entities) {
     entity->clear();
@@ -474,16 +460,20 @@ void GameWindow::addNpc(uint32_t ID, NPC &npc, NPCType npcType) {
   addEntity(EntityType::Npc, ID, std::move(entity));
 }
 
+void GameWindow::addGroundItem(uint32_t ID, uint8_t itemId, int x, int y) {
+  auto entity =
+      std::make_unique<GroundItemEntity>(itemId, x, y, *textureManager);
+  addEntity(EntityType::GroundItem, ID, std::move(entity));
+}
+
+
 ClickTarget GameWindow::hitTestInventory(int screenX, int screenY) const {
   if (invPanel)
     return invPanel->handleClick(screenX, screenY);
   return {ClickTargetType::None, -1};
 }
 
-void GameWindow::updateGroundItems(
-    const std::unordered_map<uint32_t, GroundItemInfoDTO> &items) {
-  groundItems = items;
-}
+
 
 
 void GameWindow::getSortedEntities(
