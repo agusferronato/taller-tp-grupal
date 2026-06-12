@@ -9,7 +9,6 @@
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "Direction.h"
-#include "GroundItemManager.h"
 #include "NPC.h"
 #include "Queue.h"
 #include <deque> //Double ended queue for chat messages
@@ -28,8 +27,6 @@ private:
   std::unordered_map<uint32_t, std::unique_ptr<ClientPlayer>> players;
   std::unordered_map<uint32_t, std::unique_ptr<NPC>> npcs;
   std::unordered_map<uint32_t, std::unique_ptr<CityEntityModel>> cityEntities;
-
-  GroundItemManager groundItemManager;
 
   std::deque<ChatMessage> chatMessages;
   std::string currentChatInput;
@@ -53,9 +50,6 @@ public:
   void equipItem(uint8_t slot);
   void unequipItem(uint8_t equipSlot);
   void sendCityEntityCommand(uint8_t cmdType, int16_t arg);
-  const GroundItemManager &getGroundItemManager() const {
-    return groundItemManager;
-  }
 
   void createClan(const std::string &clanName);
   void joinClan(const std::string &clanName);
