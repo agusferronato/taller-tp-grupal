@@ -1,4 +1,6 @@
 #include "GameModel.h"
+#include "Audio.h"
+#include "AttackCommandDTO.h"
 #include "AttackReceivedEventDTO.h"
 #include "AcceptClanRequestCommandDTO.h"
 #include "BanClanPlayerCommandDTO.h"
@@ -7,6 +9,7 @@
 #include "CreateClanCommandDTO.h"
 #include "DropItemCommandDTO.h"
 #include "CityEntityCommandDTO.h"
+#include "TakeItemCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "GameWindow.h"
 #include "GlobalChatMessageCommandDTO.h"
@@ -46,9 +49,10 @@ static constexpr int MAX_NUMBER_OF_MESSAGES = 100;
 
 GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
                      Queue<ServerEventDTO> &receptionQueue,
-                     Queue<ClientCommandDTO> &sendingQueue)
+                     Queue<ClientCommandDTO> &sendingQueue,
+                     Audio *audio)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
-      myPlayerID(myPlayerID), gameView(gameView) {
+      myPlayerID(myPlayerID), gameView(gameView), audio(audio) {
   registerPlayers();
 }
 
@@ -81,14 +85,20 @@ void GameModel::handleInventoryClick(int screenX, int screenY, uint8_t button) {
 
 void GameModel::takeItem() {
   sendingQueue.push(TakeItemCommandDTO{myPlayerID});
+  audio->playPickup();
 }
 
 void GameModel::dropItem(uint8_t slot) {
   sendingQueue.push(DropItemCommandDTO{myPlayerID, slot});
+  audio->playPickup();
 }
 
 void GameModel::equipItem(uint8_t slot) {
   sendingQueue.push(EquipCommandDTO{myPlayerID, slot});
+  auto it = players.find(myPlayerID);
+  if (it != players.end()) {
+    audio->playEquip(it->second->getInventory().getItemId(slot));
+  }
 }
 
 void GameModel::unequipItem(uint8_t equipSlot) {
@@ -97,6 +107,16 @@ void GameModel::unequipItem(uint8_t equipSlot) {
 
 void GameModel::sendCityEntityCommand(uint8_t cmdType, int16_t arg) {
   sendingQueue.push(CityEntityCommandDTO{myPlayerID, cmdType, arg});
+  if (cmdType == CityEntityCommandDTO::CURAR) {
+    audio->playHeal();
+  } else if (cmdType == CityEntityCommandDTO::COMPRAR ||
+             cmdType == CityEntityCommandDTO::VENDER ||
+             cmdType == CityEntityCommandDTO::DEPOSITAR_ITEM ||
+             cmdType == CityEntityCommandDTO::RETIRAR_ITEM ||
+             cmdType == CityEntityCommandDTO::DEPOSITAR_ORO ||
+             cmdType == CityEntityCommandDTO::RETIRAR_ORO) {
+    audio->playCoin();
+  }
 }
 
 void GameModel::createClan(const std::string &clanName) {
@@ -171,6 +191,10 @@ void GameModel::attack(int mouseX, int mouseY) {
   auto [worldX, worldY] = gameView->screenToWorld(mouseX, mouseY);
   sendingQueue.push(AttackCommandDTO{myPlayerID, static_cast<int16_t>(worldX),
                                      static_cast<int16_t>(worldY)});
+  auto it = players.find(myPlayerID);
+  if (it != players.end()) {
+    audio->playAttack(it->second->getEquippedWeapon());
+  }
 }
 
 void GameModel::handle(const PlayerMovedEventDTO &moved) {
@@ -216,6 +240,10 @@ void GameModel::handle(const PlayerInfoEventDTO &event) {
   if (it != players.end()) {
     it->second->updateStats(event.hp, event.maxHp, event.mana, event.maxMana,
                             event.gold, event.level, event.experience);
+  }
+  if (event.playerId == myPlayerID && event.level > lastKnownLevel) {
+    lastKnownLevel = event.level;
+    audio->playLevelUp();
   }
 }
 
@@ -386,6 +414,7 @@ void GameModel::handle(const NPCStoppedEventDTO &event) {
 void GameModel::handle(const NpcDefeatedEventDTO &event) {
   gameView->removeEntity(EntityType::Npc, event.npcId);
   npcs.erase(event.npcId);
+  audio->playNpcDeath();
 }
 
 void GameModel::handle(const NPCAppearedEventDTO &event) {
@@ -426,6 +455,9 @@ void GameModel::handle(const AttackReceivedEventDTO &event) {
     auto it = npcs.find(event.entityId);
     if (it != npcs.end())
       it->second->setBeingAttacked(true);
+  }
+  if (event.entityId == myPlayerID) {
+    audio->playHitReceived();
   }
 }
 
@@ -481,6 +513,7 @@ void GameModel::handle(const PlayerDieEventDTO &event) {
   }
   if (event.playerId == myPlayerID) {
     it->second->die();
+    audio->playPlayerDeath();
   } else {
     gameView->removePlayer(event.playerId);
     players.erase(event.playerId);
@@ -494,4 +527,5 @@ void GameModel::handle(const PlayerResurrectEventDTO &event) {
   if (it == players.end())
     return;
   it->second->resurrect(event.x, event.y);
+  audio->playResurrect();
 }

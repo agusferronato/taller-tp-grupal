@@ -16,6 +16,7 @@
 #include <string>
 #include <unordered_map>
 
+class Audio;
 class GameWindow;
 
 class GameModel {
@@ -33,11 +34,14 @@ private:
   bool chatActive = false;
 
   GameWindow *gameView;
+  Audio *audio;
+  uint32_t lastKnownLevel = 0;
 
 public:
   GameModel(uint32_t myPlayerID, GameWindow *gameView,
             Queue<ServerEventDTO> &receptionQueue,
-            Queue<ClientCommandDTO> &sendingQueue);
+            Queue<ClientCommandDTO> &sendingQueue,
+            Audio *audio);
   void updateStateFromServer();
 
 public:
