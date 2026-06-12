@@ -1,9 +1,10 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <SDL2/SDL.h>
 #include <SDL2pp/SDL2pp.hh>
-#include <utility>
 #include <cmath>
+#include <utility>
 
 class Camera {
 private:
@@ -36,6 +37,23 @@ public:
   float getY() const { return y; }
   int getViewportX() const { return viewportX; }
   int getViewportY() const { return viewportY; }
+
+  SDL2pp::Rect getViewportRect() const {
+    return SDL2pp::Rect(viewportX, viewportY, viewportW, viewportH);
+  }
+
+  bool isVisibleOnScreen(const SDL2pp::Rect &screenRect) const {
+    SDL_Rect rect{screenRect.GetX(), screenRect.GetY(), screenRect.GetW(),
+                  screenRect.GetH()};
+    SDL_Rect viewport{viewportX, viewportY, viewportW, viewportH};
+    return SDL_HasIntersection(&rect, &viewport) == SDL_TRUE;
+  }
+
+  bool isVisibleInWorld(float wx, float wy, int w, int h) const {
+    SDL2pp::Rect screenRect = toScreen(wx, wy, w, h);
+    return isVisibleOnScreen(screenRect);
+  }
+
   std::pair<int, int> mouseToWorld(int mouseX, int mouseY) const {
     return std::make_pair(
         static_cast<int>((mouseX - viewportX) / zoom + x),

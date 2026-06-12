@@ -48,6 +48,15 @@ private:
     SDL2pp::Rect bottomRightRect;
   };
 
+  struct CachedTextTexture {
+    std::unique_ptr<SDL2pp::Texture> texture;
+    std::string text;
+    SDL_Color color{};
+    SDL2pp::Font *font{nullptr};
+    int w{0};
+    int h{0};
+  };
+
   const Layout layout{
     // Pantalla completa
     SDL2pp::Rect(0, 0, 960, 540),
@@ -82,6 +91,16 @@ private:
   std::unique_ptr<SDL2pp::Texture> userInfoBackground;
   std::unique_ptr<SDL2pp::Texture> userInventoryBackground;
   std::unique_ptr<SDL2pp::Texture> userStatsBackground;
+  std::unique_ptr<SDL2pp::Texture> playerHeaderTexture;
+  std::string playerHeaderCachedText;
+  SDL_Color playerHeaderCachedColor{};
+  SDL2pp::Font *playerHeaderCachedFont{nullptr};
+  int playerHeaderTextW{0};
+  int playerHeaderTextH{0};
+  CachedTextTexture levelTextCache;
+  CachedTextTexture xpTextCache;
+  CachedTextTexture hpTextCache;
+  CachedTextTexture manaTextCache;
 
   std::unique_ptr<TextureManager> textureManager;
   std::unique_ptr<BloodOverlay> bloodOverlay;
@@ -157,9 +176,13 @@ private:
   void renderGroundItems();
 
   void getSortedEntities(std::vector<RenderableEntity *> &);
-  void renderText(int x, int y, const std::string &text, SDL_Color color);
-  void renderCenteredTextInRect(const SDL2pp::Rect &rect,
+  void renderCachedText(CachedTextTexture &cache, int x, int y,
+                        const std::string &text, SDL_Color color);
+  void renderCachedCenteredText(CachedTextTexture &cache,
+                                const SDL2pp::Rect &rect,
                                 const std::string &text, SDL_Color color);
+  void updateTextCache(CachedTextTexture &cache, SDL2pp::Font &activeFont,
+                       const std::string &text, SDL_Color color);
   void drawBar(int x, int y, int w, int h, uint32_t cur, uint32_t max,
                SDL_Color fg, SDL_Color bg);
 };
