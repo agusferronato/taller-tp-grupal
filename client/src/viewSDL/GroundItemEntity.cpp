@@ -7,10 +7,17 @@ GroundItemEntity::GroundItemEntity(uint8_t itemId, int x, int y,
 void GroundItemEntity::render(SDL2pp::Renderer &renderer, Camera &camera,
                               unsigned int) {
   SDL2pp::Texture *tex = textureManager.getItemIcon(itemId);
-  if (!tex)
+  if (!tex) {
+    wasRendered = true;
     return;
+  }
 
   SDL2pp::Rect dst = camera.toScreen(x, y, 32, 32);
+  if (!camera.isVisibleOnScreen(dst)) {
+    wasRendered = true;
+    return;
+  }
+
   renderer.Copy(*tex, SDL2pp::NullOpt, dst);
   wasRendered = true;
 }

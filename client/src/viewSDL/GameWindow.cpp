@@ -8,7 +8,6 @@
 #include "CityEntityModel.h"
 #include "CityEntityRenderable.h"
 #include "GroundItemEntity.h"
-#include "GroundItemsListEventDTO.h"
 #include "NPCEntity.h"
 #include "PlayerEntity.h"
 
@@ -34,6 +33,10 @@ constexpr SDL_Color kExpFill{60, 200, 60, 255};
 constexpr SDL_Color kExpBg{10, 50, 10, 255};
 constexpr float kNormalCameraZoom = 1.0f;
 constexpr float kZoomedOutCameraZoom = 0.65f;
+
+bool sameColor(SDL_Color a, SDL_Color b) {
+  return a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a;
+}
 } // namespace
 
 GameWindow::GameWindow(uint32_t myPlayerID)
@@ -252,12 +255,8 @@ void GameWindow::renderWorld(unsigned int it) {
             (item.i - maxSize / 2) * gridSize,
             (item.j - maxSize / 2) * gridSize, gridSize, gridSize);
 
-        /* gridSize funciona como un margen */
-        if (dstRect.x + dstRect.w < -gridSize ||
-          dstRect.y + dstRect.h < -gridSize ||
-          dstRect.x >= renderer->GetLogicalWidth() + gridSize ||
-          dstRect.y >= renderer->GetLogicalHeight() + gridSize)
-            continue;
+        if (!camera.isVisibleOnScreen(dstRect))
+          continue;
 
         SDL2pp::Rect srcRect = {
             item.x_start,
@@ -292,12 +291,8 @@ void GameWindow::renderCommonGround() {
           camera.toScreen((i - maxSize / 2) * gridSize,
                           (j - maxSize / 2) * gridSize, gridSize, gridSize);
 
-      /* gridSize funciona como un margen */
-      if (dstRect.x + dstRect.w < -gridSize ||
-          dstRect.y + dstRect.h < -gridSize ||
-          dstRect.x >= renderer->GetLogicalWidth() + gridSize ||
-          dstRect.y >= renderer->GetLogicalHeight() + gridSize)
-            continue;
+      if (!camera.isVisibleOnScreen(dstRect))
+        continue;
 
       SDL2pp::Rect srcRect = {0, 0, gridSize, gridSize};
 
@@ -360,18 +355,27 @@ void GameWindow::renderPlayerHeader() {
   if (!titleFont)
     return;
 
-  SDL2pp::Surface surf =
-      titleFont->RenderUTF8_Blended("Argentum", SDL_Color{255, 255, 255, 255});
-
-  SDL2pp::Texture tex(*renderer, surf);
+  const std::string title = "Argentum";
+  const SDL_Color color{255, 255, 255, 255};
+  if (!playerHeaderTexture || playerHeaderCachedText != title ||
+      !sameColor(playerHeaderCachedColor, color) ||
+      playerHeaderCachedFont != titleFont.get()) {
+    SDL2pp::Surface surf = titleFont->RenderUTF8_Blended(title, color);
+    playerHeaderTexture = std::make_unique<SDL2pp::Texture>(*renderer, surf);
+    playerHeaderCachedText = title;
+    playerHeaderCachedColor = color;
+    playerHeaderCachedFont = titleFont.get();
+    playerHeaderTextW = surf.GetWidth();
+    playerHeaderTextH = surf.GetHeight();
+  }
 
   int x = layout.rightTopRect.GetX() + 24 +
-          (layout.rightTopRect.GetW() - surf.GetWidth()) / 2;
+          (layout.rightTopRect.GetW() - playerHeaderTextW) / 2;
 
   int y = layout.rightTopRect.GetY() + 18;
 
-  renderer->Copy(tex, SDL2pp::NullOpt,
-                 SDL2pp::Rect(x, y, surf.GetWidth(), surf.GetHeight()));
+  renderer->Copy(*playerHeaderTexture, SDL2pp::NullOpt,
+                 SDL2pp::Rect(x, y, playerHeaderTextW, playerHeaderTextH));
 }
 
 void GameWindow::renderPlayerStats() {
@@ -386,8 +390,8 @@ void GameWindow::renderPlayerStats() {
   int x = layout.rightTopRect.GetX();
   int y = layout.rightTopRect.GetY();
 
-  renderText(x + 40, y + 28, std::to_string(p.getLevel()),
-             SDL_Color{255, 255, 200, 255});
+  renderCachedText(levelTextCache, x + 40, y + 28, std::to_string(p.getLevel()),
+                   SDL_Color{255, 255, 200, 255});
 
   int xpX = x + 20;
   int xpY = y + 84;
@@ -399,8 +403,9 @@ void GameWindow::renderPlayerStats() {
 
   SDL2pp::Rect xpBarRect(xpX, xpY, xpW, xpH);
 
-  renderCenteredTextInRect(
-      xpBarRect, std::to_string(xpCur) + " / " + std::to_string(xpMax),
+  renderCachedCenteredText(
+      xpTextCache, xpBarRect,
+      std::to_string(xpCur) + " / " + std::to_string(xpMax),
       SDL_Color{255, 255, 255, 255});
 }
 
@@ -424,8 +429,8 @@ void GameWindow::renderVitals() {
   drawBar(barX, hpY, barW, barH, p.getHp(), p.getMaxHp(), kHpFill, kHpBg);
 
   SDL2pp::Rect hpBarRect(barX, hpY, barW, barH);
-  renderCenteredTextInRect(
-      hpBarRect,
+  renderCachedCenteredText(
+      hpTextCache, hpBarRect,
       std::to_string(p.getHp()) + " / " + std::to_string(p.getMaxHp()),
       SDL_Color{255, 255, 255, 255});
 
@@ -434,19 +439,16 @@ void GameWindow::renderVitals() {
           kManaBg);
 
   SDL2pp::Rect manaBarRect(barX, manaY, barW, barH);
-  renderCenteredTextInRect(
-      manaBarRect,
+  renderCachedCenteredText(
+      manaTextCache, manaBarRect,
       std::to_string(p.getMana()) + " / " + std::to_string(p.getMaxMana()),
       SDL_Color{255, 255, 255, 255});
 }
-
-
 
 void GameWindow::clear() {
   for (auto &[key, entity] : entities) {
     entity->clear();
   }
-  renderer->Clear();
   renderer->SetDrawColor(0, 0, 0, 255);
   renderer->Clear();
 }
@@ -490,34 +492,50 @@ void GameWindow::getSortedEntities(
               return a->get_x() < b->get_x();
             });
 }
-void GameWindow::renderText(int x, int y, const std::string &text,
-                            SDL_Color color) {
+void GameWindow::renderCachedText(CachedTextTexture &cache, int x, int y,
+                                  const std::string &text, SDL_Color color) {
   SDL2pp::Font *activeFont = uiFont ? uiFont.get() : font.get();
 
   if (!activeFont)
     return;
 
-  SDL2pp::Surface surf = activeFont->RenderUTF8_Solid(text, color);
-  SDL2pp::Texture tex(*renderer, surf);
+  updateTextCache(cache, *activeFont, text, color);
 
-  renderer->Copy(tex, SDL2pp::NullOpt,
-                 SDL2pp::Rect(x, y, surf.GetWidth(), surf.GetHeight()));
+  renderer->Copy(*cache.texture, SDL2pp::NullOpt,
+                 SDL2pp::Rect(x, y, cache.w, cache.h));
 }
 
-void GameWindow::renderCenteredTextInRect(const SDL2pp::Rect &rect,
+void GameWindow::renderCachedCenteredText(CachedTextTexture &cache,
+                                          const SDL2pp::Rect &rect,
                                           const std::string &text,
                                           SDL_Color color) {
   if (!font)
     return;
 
-  SDL2pp::Surface surf = font->RenderUTF8_Solid(text, color);
-  SDL2pp::Texture tex(*renderer, surf);
+  updateTextCache(cache, *font, text, color);
 
-  int x = rect.GetX() + (rect.GetW() - surf.GetWidth()) / 2;
-  int y = rect.GetY() + (rect.GetH() - surf.GetHeight()) / 2;
+  int x = rect.GetX() + (rect.GetW() - cache.w) / 2;
+  int y = rect.GetY() + (rect.GetH() - cache.h) / 2;
 
-  renderer->Copy(tex, SDL2pp::NullOpt,
-                 SDL2pp::Rect(x, y, surf.GetWidth(), surf.GetHeight()));
+  renderer->Copy(*cache.texture, SDL2pp::NullOpt,
+                 SDL2pp::Rect(x, y, cache.w, cache.h));
+}
+
+void GameWindow::updateTextCache(CachedTextTexture &cache,
+                                 SDL2pp::Font &activeFont,
+                                 const std::string &text, SDL_Color color) {
+  if (cache.texture && cache.text == text && sameColor(cache.color, color) &&
+      cache.font == &activeFont) {
+    return;
+  }
+
+  SDL2pp::Surface surf = activeFont.RenderUTF8_Solid(text, color);
+  cache.texture = std::make_unique<SDL2pp::Texture>(*renderer, surf);
+  cache.text = text;
+  cache.color = color;
+  cache.font = &activeFont;
+  cache.w = surf.GetWidth();
+  cache.h = surf.GetHeight();
 }
 
 void GameWindow::drawBar(int x, int y, int w, int h, uint32_t cur,

@@ -16,6 +16,11 @@ void NPCEntity::render(SDL2pp::Renderer &renderer, Camera &camera,
   Sprite src = textureManager.getBodySprite(layoutType, textureId,
                                             npc.getDirection(), animationIt);
   SDL2pp::Rect dst = camera.toScreen(get_x(), get_y(), src.w, src.h);
+  if (!camera.isVisibleOnScreen(dst)) {
+    wasRendered = true;
+    return;
+  }
+
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
   renderAttackEffect(renderer, camera, it);
   wasRendered = true;
@@ -48,6 +53,9 @@ void NPCEntity::renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera,
 
   SDL2pp::Rect dst = camera.toScreen(
       get_x() + spriteWidth / 2 - 32, get_y() + spriteHeight / 2 - 32, 64, 64);
+
+  if (!camera.isVisibleOnScreen(dst))
+    return;
 
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
 }
