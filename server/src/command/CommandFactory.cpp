@@ -148,7 +148,7 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
   }
 
   if (const auto *request = std::get_if<CheatCommandDTO>(&dto)) {
-    return std::make_unique<CheatCommand>(request->cheat);
+    return std::make_unique<CheatCommand>(request->cheat, request->arg);
   }
   
   if (const auto *request = std::get_if<ValidateLoginCommandDTO>(&dto)) {

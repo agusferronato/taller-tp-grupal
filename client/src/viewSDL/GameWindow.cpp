@@ -7,6 +7,7 @@
 
 #include "CityEntityModel.h"
 #include "CityEntityRenderable.h"
+#include "Formulas.h"
 #include "GroundItemEntity.h"
 #include "NPCEntity.h"
 #include "PlayerEntity.h"
@@ -384,8 +385,8 @@ void GameWindow::renderPlayerStats() {
 
   const ClientPlayer &p = myPlayerEntity->getPlayer();
 
-  int xpCur = 357;  // placeholder, reemplazar por xp actual
-  int xpMax = 1000; // placeholder, reemplazar por xp total para subir de nivel
+  uint32_t xpCur = p.getExperience();
+  uint32_t xpMax = Formulas::calcularLimiteXP(p.getLevel());
 
   int x = layout.rightTopRect.GetX();
   int y = layout.rightTopRect.GetY();

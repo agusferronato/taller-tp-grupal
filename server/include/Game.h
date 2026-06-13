@@ -104,7 +104,7 @@ public:
   void sendPrivateMessage(uint32_t connectionId, const std::string &targetName,
                           const std::string &message);
   void attack(uint32_t playerId, int16_t x, int16_t y);
-  void applyCheat(uint32_t connectionId, CheatType cheat);
+  void applyCheat(uint32_t connectionId, CheatType cheat, uint32_t arg = 0);
 
   void createClan(uint32_t playerId, const std::string &clanName);
   void requestJoinClan(uint32_t playerId, const std::string &clanName);

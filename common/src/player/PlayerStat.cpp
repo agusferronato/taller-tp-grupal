@@ -68,6 +68,15 @@ bool PlayerStats::addExperience(uint32_t xp) {
   return false;
 }
 
+void PlayerStats::setLevel(uint32_t newLevel) {
+  level = newLevel < 1 ? 1 : newLevel;
+  experience = 0;
+  maxHealth = Formulas::calcularVidaMax(constitution, race, playerClass, level);
+  maxMana = Formulas::calcularManaMax(intelligence, race, playerClass, level);
+  health = maxHealth;
+  mana = maxMana;
+}
+
 void PlayerStats::setGold(uint32_t amount) { gold = amount; }
 
 void PlayerStats::takeDamage(uint32_t damage) {
