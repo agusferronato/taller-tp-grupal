@@ -81,6 +81,11 @@ uint32_t Player::attack() const {
                                 weapon.maxDamage, rand());
 }
 
+void Player::setLevel(uint32_t level) {
+  stats.setLevel(level);
+  death = false;
+}
+
 bool Player::assertAttackDistance(int16_t targetX, int16_t targetY) const {
   int16_t dx = std::abs(targetX - x);
   int16_t dy = std::abs(targetY - y);

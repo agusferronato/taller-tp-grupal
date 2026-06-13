@@ -46,6 +46,7 @@ public:
   void earnGold(uint32_t);
   void removeGold(uint32_t amount);
   uint32_t attack() const;
+  void setLevel(uint32_t level);
 
   bool isMoving() const { return moving; }
   Direction getDirection() const { return direction; }

@@ -87,6 +87,7 @@ public:
   void heal(uint32_t amount);
   void addMana(uint32_t amount) { player.addMana(amount); }
   void gainExperience(uint32_t xp);
+  void setLevel(uint32_t level) { player.setLevel(level); }
   void addGold(uint32_t amount);
   void spendGold(uint32_t amount);
 
