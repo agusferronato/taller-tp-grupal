@@ -7,9 +7,10 @@
 class CheatCommand : public Command {
 private:
   CheatType cheat;
+  uint32_t arg;
 
 public:
-  explicit CheatCommand(CheatType cheat);
+  explicit CheatCommand(CheatType cheat, uint32_t arg = 0);
 
   void execute(Game &game, uint32_t connectionId) override;
 };

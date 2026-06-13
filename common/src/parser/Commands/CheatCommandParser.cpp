@@ -13,10 +13,12 @@ void CheatCommandParser::serialize(std::vector<uint8_t> &bytes,
   utils.appendBytes(static_cast<uint8_t>(ClientCommandOpCode::CheatCommand),
                     bytes);
   utils.appendBytes(static_cast<uint8_t>(request.cheat), bytes);
+  utils.appendBytes(request.arg, bytes);
 }
 
 ClientCommandDTO CheatCommandParser::deserialize(Protocol &protocol) {
   uint8_t cheat = protocol.getUint8();
+  uint32_t arg = protocol.getUint32();
 
-  return CheatCommandDTO{static_cast<CheatType>(cheat)};
+  return CheatCommandDTO{static_cast<CheatType>(cheat), arg};
 }

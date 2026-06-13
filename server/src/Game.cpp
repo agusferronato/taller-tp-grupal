@@ -444,7 +444,7 @@ void Game::sendPrivateMessage(uint32_t connectionId,
                PrivateMessageEventDTO{senderName, targetName, message});
 }
 
-void Game::applyCheat(uint32_t connectionId, CheatType cheat) {
+void Game::applyCheat(uint32_t connectionId, CheatType cheat, uint32_t arg) {
   uint32_t playerId = connectionId;
   auto playerIt = players.find(playerId);
   if (playerIt == players.end()) {
@@ -494,6 +494,17 @@ void Game::applyCheat(uint32_t connectionId, CheatType cheat) {
   case CheatType::NormalSpeed:
     cheats.superSpeed = false;
     sendSystemMessageToPlayer(playerId, "Supervelocidad desactivada");
+    return;
+
+  case CheatType::SetLevel:
+    if (arg < 1) {
+      sendToPlayer(playerId, makeSystemErrorMessage("Nivel invalido"));
+      return;
+    }
+    player.setLevel(arg);
+    messagesToSend.push_back(player.toPlayerInfoEvent());
+    sendSystemMessageToPlayer(playerId,
+                              "Nivel seteado a " + std::to_string(arg));
     return;
   }
 }
@@ -1348,24 +1359,47 @@ uint32_t Game::calculateDamage(Character &attacker) {
 }
 
 bool Game::validAttack(Character &attacker, Character &target) {
-  if (attacker.isNewbie() || target.isNewbie()) {
+  if (attacker.isNewbie()) {
+    senderQueueMonitor.sendToClient(
+        attacker.getId(),
+        makeCombatMessage("No podes atacar a otros jugadores siendo newbie."));
     return false;
   }
 
-  if (attacker.getId() == target.getId())
+  if (target.isNewbie()) {
+    senderQueueMonitor.sendToClient(
+        attacker.getId(),
+        makeCombatMessage("No podes atacar a un jugador newbie."));
     return false;
+  }
+
+  if (attacker.getId() == target.getId()) {
+    senderQueueMonitor.sendToClient(
+        attacker.getId(), makeCombatMessage("No podes atacarte a vos mismo."));
+    return false;
+  }
 
   if (abs(static_cast<int>(attacker.getLevel()) -
           static_cast<int>(target.getLevel())) > 10) {
+    senderQueueMonitor.sendToClient(
+        attacker.getId(),
+        makeCombatMessage("No podes atacar a un jugador con tanta diferencia "
+                          "de nivel."));
     return false;
   }
   for (const auto &city : cities) {
     if (city.contains(attacker.getX(), attacker.getY(), gridSize, maxSize) ||
         city.contains(target.getX(), target.getY(), gridSize, maxSize)) {
+      senderQueueMonitor.sendToClient(
+          attacker.getId(),
+          makeCombatMessage("No podes atacar jugadores dentro de una ciudad."));
       return false;
     }
   }
   if (attacker.isDead() || target.isDead()) {
+    senderQueueMonitor.sendToClient(
+        attacker.getId(),
+        makeCombatMessage("No podes atacar o ser atacado estando muerto."));
     return false;
   }
   return true;
