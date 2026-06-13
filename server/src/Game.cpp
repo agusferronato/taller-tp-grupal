@@ -38,6 +38,8 @@
 #include <NPCType.h>
 
 namespace {
+constexpr uint32_t MIN_LEVEL_TO_CREATE_CLAN = 6;
+
 ChatMessageEventDTO makeChatMessage(ChatMessageCategory category,
                                     std::string sender,
                                     std::string message) {
@@ -536,6 +538,15 @@ void Game::createClan(uint32_t playerId, const std::string &clanName) {
   }
 
   const std::string &playerName = playerIt->second->getName();
+  if (playerIt->second->getLevel() < MIN_LEVEL_TO_CREATE_CLAN) {
+    sendToPlayer(playerId,
+                 makeClanErrorMessage(
+                     "Necesitas ser nivel " +
+                     std::to_string(MIN_LEVEL_TO_CREATE_CLAN) +
+                     " para fundar un clan"));
+    return;
+  }
+
   ClanCreateResult result = clanManager.createClan(clanName, playerName);
   if (result == ClanCreateResult::Success) {
     uint32_t clanId = clanManager.getClanIdByName(clanName);
@@ -1393,9 +1404,17 @@ bool Game::validAttack(Character &attacker, Character &target) {
     return false;
   }
 
-  if (attacker.getId() == target.getId()) {
+  // Mejor simplemente no mandar nada en este caso
+  // if (attacker.getId() == target.getId()) {
+  //   senderQueueMonitor.sendToClient(
+  //       attacker.getId(), makeCombatMessage("No podes atacarte a vos mismo."));
+  //   return false;
+  // }
+
+  if (clanManager.sameClan(attacker.getName(), target.getName())) {
     senderQueueMonitor.sendToClient(
-        attacker.getId(), makeCombatMessage("No podes atacarte a vos mismo."));
+        attacker.getId(),
+        makeCombatMessage("No podes atacar a un miembro de tu clan."));
     return false;
   }
 
