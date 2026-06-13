@@ -42,6 +42,7 @@
 #include "ReviewClanCommandDTO.h"
 #include "TextureInfoEventDTO.h"
 #include "UnequipCommandDTO.h"
+#include <sstream>
 #include <iostream>
 #include <stdexcept>
 
