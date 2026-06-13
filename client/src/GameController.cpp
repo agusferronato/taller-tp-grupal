@@ -22,7 +22,9 @@ void GameController::handleEvent(const SDL_Event &event) {
     throw WindowClosed("Window was closed by the user");
 
   case SDL_KEYDOWN:
-    if (event.key.repeat == 0) {
+    if (event.key.repeat == 0 ||
+        (gameModel->isChatActive() &&
+         event.key.keysym.sym == SDLK_BACKSPACE)) {
       handleKeyDown(event.key.keysym.sym);
     }
     break;
@@ -181,6 +183,13 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
             break;
         case ChatCommandType::VelocidadNormal:
             gameModel->sendCheat(CheatType::NormalSpeed);
+            break;
+        case ChatCommandType::SetLevel:
+            gameModel->sendCheat(CheatType::SetLevel,
+                                 static_cast<uint32_t>(cmd.arg));
+            break;
+        case ChatCommandType::Revivir:
+            gameModel->sendCheat(CheatType::Revive);
             break;
         default:
             break;

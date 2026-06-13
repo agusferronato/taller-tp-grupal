@@ -155,8 +155,8 @@ void GameModel::resetCameraZoom() {
   gameView->resetCameraZoom();
 }
 
-void GameModel::sendCheat(CheatType cheat) {
-  sendingQueue.push(CheatCommandDTO{cheat});
+void GameModel::sendCheat(CheatType cheat, uint32_t arg) {
+  sendingQueue.push(CheatCommandDTO{cheat, arg});
 }
 
 void GameModel::moveMyPlayer(Direction direction) {
