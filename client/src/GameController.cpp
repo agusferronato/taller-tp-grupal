@@ -188,6 +188,9 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
             gameModel->sendCheat(CheatType::SetLevel,
                                  static_cast<uint32_t>(cmd.arg));
             break;
+        case ChatCommandType::Revivir:
+            gameModel->sendCheat(CheatType::Revive);
+            break;
         default:
             break;
         }

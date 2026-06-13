@@ -193,6 +193,10 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
     return {ChatCommandType::VelocidadNormal, 0};
   }
 
+  if (message == "/revivir") {
+    return {ChatCommandType::Revivir, 0};
+  }
+
   if (message == "/nivel") {
     return {ChatCommandType::SetLevel, 0};
   }

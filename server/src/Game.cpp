@@ -506,6 +506,26 @@ void Game::applyCheat(uint32_t connectionId, CheatType cheat, uint32_t arg) {
     sendSystemMessageToPlayer(playerId,
                               "Nivel seteado a " + std::to_string(arg));
     return;
+
+  case CheatType::Revive:
+    if (!player.isDead()) {
+      sendSystemMessageToPlayer(playerId, "Ya estas vivo");
+      return;
+    }
+    // Si el jugador estaba en proceso de resurreccion, se lo saca de ese proceso para revivirlo
+    resurrectingPlayers.remove_if(
+        [playerId](const ResurrectingPlayer &resurrectingPlayer) {
+          return resurrectingPlayer.character->getId() == playerId;
+        });
+    player.resurrect();
+    senderQueueMonitor.sendToClient(
+        playerId,
+        PlayerResurrectEventDTO{playerId, static_cast<int16_t>(player.getX()),
+                                static_cast<int16_t>(player.getY())});
+    messagesToSend.push_back(player.toPlayerAppeared());
+    sendPlayerInfoUpdate(playerId);
+    sendSystemMessageToPlayer(playerId, "Has revivido");
+    return;
   }
 }
 
