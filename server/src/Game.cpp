@@ -1390,6 +1390,12 @@ uint32_t Game::calculateDamage(Character &attacker) {
 }
 
 bool Game::validAttack(Character &attacker, Character &target) {
+  
+  // No puedes atacarte a ti mismo
+  if (attacker.getId() == target.getId()) {
+    return false;
+  }
+  
   if (attacker.isNewbie()) {
     senderQueueMonitor.sendToClient(
         attacker.getId(),
@@ -1403,13 +1409,6 @@ bool Game::validAttack(Character &attacker, Character &target) {
         makeCombatMessage("No podes atacar a un jugador newbie."));
     return false;
   }
-
-  // Mejor simplemente no mandar nada en este caso
-  // if (attacker.getId() == target.getId()) {
-  //   senderQueueMonitor.sendToClient(
-  //       attacker.getId(), makeCombatMessage("No podes atacarte a vos mismo."));
-  //   return false;
-  // }
 
   if (clanManager.sameClan(attacker.getName(), target.getName())) {
     senderQueueMonitor.sendToClient(
