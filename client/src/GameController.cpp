@@ -22,7 +22,9 @@ void GameController::handleEvent(const SDL_Event &event) {
     throw WindowClosed("Window was closed by the user");
 
   case SDL_KEYDOWN:
-    if (event.key.repeat == 0) {
+    if (event.key.repeat == 0 ||
+        (gameModel->isChatActive() &&
+         event.key.keysym.sym == SDLK_BACKSPACE)) {
       handleKeyDown(event.key.keysym.sym);
     }
     break;
