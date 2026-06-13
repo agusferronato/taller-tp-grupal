@@ -83,13 +83,4 @@ cat <<'EOF'
 
 Dependencies installed.
 
-Suggested build:
-  cmake -S . -B build -G Ninja
-  cmake --build build --target taller_server taller_client
-
-Notes:
-  - SDL2, SDL2_image, SDL2_mixer, SDL2_ttf, SDL2pp, toml++ and googletest are
-    fetched by the current CMake configuration.
-  - This script installs only the Ubuntu packages needed to configure and build
-    those targets locally.
 EOF
