@@ -33,12 +33,14 @@ cmake --build . -j$(nproc)
 ./taller_tests
 ```
 Por ejemplo:
-`./taller_server 8080 map.toml` para crear el server con el mapa de map.toml
-`./taller_client localhost 8080` para conectarse al server creado
+`./taller_server 8080 map.toml` para crear el server con el mapa de map.toml (ruta relativa).
+`./taller_client localhost 8080` para conectarse al server creado.
 
 Si no se hace por default, se recomienda forzar el uso de X11 sobre Wayland, ya que este ultimo presenta leaks y otros problemas relacionados con SDL/Qt. Para ello, se puede forzar escribiendo `QT_QPA_PLATFORM=xcb` antes del comando, como por ejemplo `QT_QPA_PLATFORM=xcb ./taller_editor`.
 
 En caso de correr Valgrind, se provee un archivo de supresiones en la raiz del proyecto, llamando `valgrind.supp`.
+
+Adicionalmente, tambien se provee un mapa de prueba en la raiz del proyecto, hecho con el editor. Para ejecutar el server con este programa, correr `./taller_server 8080 ../mapa_de_prueba.toml`
 
 ## Manuales
 La documentación se encuentra en tres archivos PDF:
