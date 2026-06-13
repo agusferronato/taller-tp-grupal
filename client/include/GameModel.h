@@ -68,7 +68,7 @@ public:
   void addLocalChatMessage(std::string text, ChatMessageCategory category);
   void zoomOutCamera();
   void resetCameraZoom();
-  void sendCheat(CheatType cheat);
+  void sendCheat(CheatType cheat, uint32_t arg = 0);
 
   void handleLeftMouseClick(int mouseX, int mouseY);
   void handleRightMouseClick(int mouseX, int mouseY);
