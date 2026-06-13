@@ -11,6 +11,7 @@ enum class CheatType : uint8_t {
   NormalMana,
   SuperSpeed,
   NormalSpeed,
+  SetLevel,
 };
 
 #endif

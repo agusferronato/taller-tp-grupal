@@ -184,6 +184,10 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
         case ChatCommandType::VelocidadNormal:
             gameModel->sendCheat(CheatType::NormalSpeed);
             break;
+        case ChatCommandType::SetLevel:
+            gameModel->sendCheat(CheatType::SetLevel,
+                                 static_cast<uint32_t>(cmd.arg));
+            break;
         default:
             break;
         }

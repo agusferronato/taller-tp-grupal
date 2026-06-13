@@ -193,6 +193,18 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
     return {ChatCommandType::VelocidadNormal, 0};
   }
 
+  if (message == "/nivel") {
+    return {ChatCommandType::SetLevel, 0};
+  }
+
+  if (message.rfind("/nivel ", 0) == 0 && message.size() > 7) {
+    int level = parseIntArg(message, 7);
+    if (level >= 1) {
+      return {ChatCommandType::SetLevel, level};
+    }
+    return {ChatCommandType::SetLevel, 0};
+  }
+
   if (message.rfind("/clan-rechazar ", 0) == 0 && message.size() > 15) {
     std::string playerName = stripQuotes(message.substr(15));
 
