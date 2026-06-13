@@ -12,6 +12,7 @@ enum class CheatType : uint8_t {
   SuperSpeed,
   NormalSpeed,
   SetLevel,
+  Revive,
 };
 
 #endif

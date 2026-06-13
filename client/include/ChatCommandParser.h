@@ -39,7 +39,8 @@ enum class ChatCommandType {
   ManaNormal,
   Supervelocidad,
   VelocidadNormal,
-  SetLevel
+  SetLevel,
+  Revivir
 };
 
 struct ChatCommand {
