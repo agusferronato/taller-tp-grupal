@@ -13,6 +13,7 @@ public:
   ClientCommandOpCode getCode() const { return opCode; }
 
   CheatType cheat;
+  uint32_t arg{0};
 };
 
 #endif

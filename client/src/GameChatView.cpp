@@ -6,8 +6,8 @@
 #include <SDL2pp/Surface.hh>
 #include <SDL2pp/Texture.hh>
 
-#include <vector>
 #include <algorithm>
+#include <vector>
 
 // Si el espacio para hacer wrap es menor a este valor, se ignora el espacio y
 // se hace wrap en la palabra completa. De esta manera se evitan lineas con muy
@@ -40,10 +40,9 @@ void GameChatView::render(SDL2pp::Renderer &renderer,
   int maxTextWidth =
       messagesRect.GetW() - CHAT_PADDING_X_LEFT - CHAT_PADDING_X_RIGHT;
 
-  std::vector<VisualLine> visualLines =
-      buildVisualLines(messages, maxTextWidth);
+  ensureVisualLineCache(renderer, messages, maxTextWidth);
 
-  renderMessages(renderer, messagesRect, visualLines);
+  renderMessages(renderer, messagesRect);
   renderInput(renderer, inputRect, input, active);
 }
 
@@ -75,33 +74,31 @@ GameChatView::buildVisualLines(const std::deque<ChatMessage> &messages,
   return visualLines;
 }
 
-void GameChatView::renderMessages(
-    SDL2pp::Renderer& renderer,
-    const SDL2pp::Rect& messagesRect,
-    const std::vector<VisualLine>& visualLines) const {
+void GameChatView::renderMessages(SDL2pp::Renderer &renderer,
+                                  const SDL2pp::Rect &messagesRect) {
 
   int visibleLines = calculateVisibleLines(messagesRect);
-  int maxScrollOffset = std::max(0, static_cast<int>(visualLines.size()) - visibleLines);
-  int safeOffset = std::clamp(scrollOffset, 0, maxScrollOffset);
+  maxScrollOffset =
+      std::max(0, static_cast<int>(cachedVisualLines.size()) - visibleLines);
+  scrollOffset = std::clamp(scrollOffset, 0, maxScrollOffset);
 
   int y = messagesRect.GetY() + messagesRect.GetH() - CHAT_PADDING_Y;
-  
-  for (auto it = visualLines.rbegin() + safeOffset; it != visualLines.rend(); ++it) {
-    SDL2pp::Surface surf =
-        font->RenderUTF8_Solid(it->text, colorFor(it->category));
 
-    SDL2pp::Texture tex(renderer, surf);
+  for (auto it = cachedVisualLines.rbegin() + scrollOffset;
+       it != cachedVisualLines.rend(); ++it) {
+    if (!it->texture)
+      continue;
 
-    y -= surf.GetHeight() + LINE_SPACING;
+    y -= it->height + LINE_SPACING;
 
     if (y < messagesRect.GetY() + CHAT_PADDING_Y)
       break;
 
-    renderer.Copy(tex, SDL2pp::NullOpt,
+    renderer.Copy(*it->texture, SDL2pp::NullOpt,
                   SDL2pp::Rect(messagesRect.GetX() + CHAT_PADDING_X_LEFT,
                                y,
-                               surf.GetWidth(),
-                               surf.GetHeight()));
+                               it->width,
+                               it->height));
   }
 }
 
@@ -109,17 +106,24 @@ void GameChatView::renderInput(SDL2pp::Renderer &renderer,
                                const SDL2pp::Rect &inputRect,
                                const std::string &input, bool active) const {
   std::string inputLine = active ? "> " + input + "_" : "> " + input;
+  int visibleWidth =
+      inputRect.GetW() - CHAT_PADDING_X_LEFT - CHAT_PADDING_X_RIGHT;
+  if (visibleWidth <= 0)
+    return;
 
   SDL2pp::Surface surf =
       font->RenderUTF8_Solid(inputLine, SDL_Color{255, 255, 180, 255});
 
   SDL2pp::Texture tex(renderer, surf);
 
-  renderer.Copy(
-      tex, SDL2pp::NullOpt,
-      SDL2pp::Rect(inputRect.GetX() + CHAT_PADDING_X_LEFT,
-                   inputRect.GetY() + (inputRect.GetH() - surf.GetHeight()) / 2,
-                   surf.GetWidth(), surf.GetHeight()));
+  int srcX = std::max(0, surf.GetWidth() - visibleWidth);
+  int renderWidth = std::min(surf.GetWidth(), visibleWidth);
+
+  renderer.Copy(tex, SDL2pp::Rect(srcX, 0, renderWidth, surf.GetHeight()),
+                SDL2pp::Rect(
+                    inputRect.GetX() + CHAT_PADDING_X_LEFT,
+                    inputRect.GetY() + (inputRect.GetH() - surf.GetHeight()) / 2,
+                    renderWidth, surf.GetHeight()));
 }
 
 std::vector<std::string> GameChatView::wrapText(const std::string &text,
@@ -205,15 +209,11 @@ int GameChatView::measureTextWidth(const std::string &text) const {
   return w;
 }
 
-int GameChatView::calculateVisibleLines(
-    const SDL2pp::Rect& messagesRect) const {
+int GameChatView::calculateVisibleLines(const SDL2pp::Rect &messagesRect) {
   if (!font)
     return 0;
 
-  SDL2pp::Surface surf =
-      font->RenderUTF8_Solid("Ay", SDL_Color{255, 255, 255, 255});
-
-  int lineHeight = surf.GetHeight() + LINE_SPACING;
+  int lineHeight = getLineHeight();
   int availableHeight = messagesRect.GetH() - 2 * CHAT_PADDING_Y;
 
   if (lineHeight <= 0)
@@ -221,8 +221,76 @@ int GameChatView::calculateVisibleLines(
 
   return availableHeight / lineHeight;
 }
+
+void GameChatView::ensureVisualLineCache(
+    SDL2pp::Renderer &renderer, const std::deque<ChatMessage> &messages,
+    int maxWidth) {
+  if (cachedWrapWidth == maxWidth && messagesMatchCache(messages))
+    return;
+
+  std::vector<VisualLine> visualLines = buildVisualLines(messages, maxWidth);
+  cachedVisualLines.resize(visualLines.size());
+
+  for (size_t i = 0; i < visualLines.size(); ++i) {
+    updateCachedLine(renderer, cachedVisualLines[i], visualLines[i]);
+  }
+
+  cachedWrapWidth = maxWidth;
+  cachedMessages = messages;
+}
+
+bool GameChatView::messagesMatchCache(
+    const std::deque<ChatMessage> &messages) const {
+  if (messages.size() != cachedMessages.size())
+    return false;
+
+  for (size_t i = 0; i < messages.size(); ++i) {
+    if (messages[i].text != cachedMessages[i].text ||
+        messages[i].category != cachedMessages[i].category) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+void GameChatView::updateCachedLine(SDL2pp::Renderer &renderer,
+                                    CachedVisualLine &cache,
+                                    const VisualLine &line) {
+  SDL_Color color = colorFor(line.category);
+  if (cache.texture && cache.line.text == line.text &&
+      cache.line.category == line.category && cache.font == font &&
+      cache.color.r == color.r && cache.color.g == color.g &&
+      cache.color.b == color.b && cache.color.a == color.a) {
+    return;
+  }
+
+  SDL2pp::Surface surf = font->RenderUTF8_Solid(line.text, color);
+  cache.texture = std::make_unique<SDL2pp::Texture>(renderer, surf);
+  cache.line = line;
+  cache.color = color;
+  cache.font = font;
+  cache.width = surf.GetWidth();
+  cache.height = surf.GetHeight();
+}
+
+int GameChatView::getLineHeight() {
+  if (cachedLineHeightFont == font && cachedLineHeight > 0)
+    return cachedLineHeight;
+
+  // Se renderiza una vez un texto de prueba para medir la altura.
+  // Se elije "Ay" porque tiene caracteres muy altos y muy bajos
+  SDL2pp::Surface surf =
+      font->RenderUTF8_Solid("Ay", SDL_Color{255, 255, 255, 255});
+  cachedLineHeightFont = font;
+  cachedLineHeight = surf.GetHeight() + LINE_SPACING;
+  return cachedLineHeight;
+}
+
 void GameChatView::scrollChatUp() {
-  ++scrollOffset;
+  if (scrollOffset < maxScrollOffset) {
+    ++scrollOffset;
+  }
 }
 
 void GameChatView::scrollChatDown() {
