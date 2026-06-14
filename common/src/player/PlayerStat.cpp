@@ -1,6 +1,8 @@
 #include "Formulas.h"
 #include "PlayerStats.h"
 
+#include <limits>
+
 PlayerStats::PlayerStats(const PlayerStatsInfo &info)
     : gold(info.gold), experience(info.experience), level(info.level),
       health(info.health), mana(info.mana) {
@@ -77,19 +79,24 @@ void PlayerStats::setLevel(uint32_t newLevel) {
   mana = maxMana;
 }
 
-void PlayerStats::setGold(uint32_t amount) { gold = amount; }
+void PlayerStats::setGold(uint32_t amount) {
+  uint32_t max = Formulas::calcularOroMax(level);
+  max *= 1.5; // 50% de exceso permitido
+  gold = amount > max ? max : amount;
+}
 
 void PlayerStats::takeDamage(uint32_t damage) {
   health = damage > health ? 0 : health - damage;
 }
 
 void PlayerStats::earnGold(uint32_t amount) {
-  uint32_t max = Formulas::calcularOroMax(level);
-  max *= 1.5; // 50% de exceso permitido
-  if (amount + gold > max) {
-    gold = max;
+  uint64_t newGold = static_cast<uint64_t>(gold) + amount;
+  
+  // Si da mas que el maximo permitido, se setea al maximo permitido
+  if (newGold > std::numeric_limits<uint32_t>::max()) {
+    setGold(std::numeric_limits<uint32_t>::max());
   } else {
-    gold += amount;
+    setGold(static_cast<uint32_t>(newGold));
   }
 }
 

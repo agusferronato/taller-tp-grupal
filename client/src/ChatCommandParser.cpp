@@ -1,5 +1,8 @@
 #include "ChatCommandParser.h"
 
+#include <cctype>
+#include <limits>
+
 static constexpr uint8_t EQUIP_SLOT_FROM_VISUAL[4] = {0, 2, 1, 3};
 
 // Para soportar nombres de clan con espacios, se pueden escribir entre comillas. Ejemplo:
@@ -17,6 +20,28 @@ static int parseIntArg(const std::string &message, size_t prefixLen) {
   } catch (...) {
     return -1;
   }
+}
+
+static bool parseUint32Arg(const std::string &message, size_t prefixLen,
+                           uint32_t &value) {
+  if (message.size() <= prefixLen) {
+    return false;
+  }
+
+  uint64_t parsed = 0;
+  for (unsigned char ch : message.substr(prefixLen)) {
+    if (!std::isdigit(ch)) {
+      return false;
+    }
+
+    parsed = parsed * 10 + static_cast<uint64_t>(ch - '0');
+    if (parsed > std::numeric_limits<uint32_t>::max()) {
+      return false;
+    }
+  }
+
+  value = static_cast<uint32_t>(parsed);
+  return true;
 }
 
 ChatCommand ChatCommandParser::parse(const std::string &message) {
@@ -207,6 +232,14 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
       return {ChatCommandType::SetLevel, level};
     }
     return {ChatCommandType::SetLevel, 0};
+  }
+
+  if (message.rfind("/setoro ", 0) == 0) {
+    uint32_t amount = 0;
+    if (parseUint32Arg(message, 8, amount)) {
+      return {ChatCommandType::SetGold, 0, "", amount};
+    }
+    return {ChatCommandType::Unknown, 0};
   }
 
   if (message.rfind("/clan-rechazar ", 0) == 0 && message.size() > 15) {

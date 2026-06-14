@@ -89,6 +89,7 @@ public:
   void gainExperience(uint32_t xp);
   void setLevel(uint32_t level) { player.setLevel(level); }
   void addGold(uint32_t amount);
+  void setGold(uint32_t amount);
   void spendGold(uint32_t amount);
 
   // Colisionable interface
