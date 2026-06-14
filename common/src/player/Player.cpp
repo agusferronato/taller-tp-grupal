@@ -55,7 +55,12 @@ void Player::resurrect() {
   stats.setHealth(stats.getMaxHp());
   stats.setMana(stats.getMaxMana());
 }
-bool Player::useMana(uint32_t) { return false; }
+bool Player::useMana(uint32_t amount) {
+  if (stats.getMana() < amount)
+    return false;
+  stats.setMana(stats.getMana() - amount);
+  return true;
+}
 void Player::addMana(uint32_t amount) { stats.addMana(amount); }
 bool Player::gainExperience(uint32_t xp) { return stats.addExperience(xp); }
 bool Player::expentGold(uint32_t amount) {

@@ -21,6 +21,7 @@
 #include "JoinClanCommandDTO.h"
 #include "KickClanMemberCommandDTO.h"
 #include "LeaveClanCommandDTO.h"
+#include "MeditateCommandDTO.h"
 #include "NPC.h"
 #include "NPCAppearedEventDTO.h"
 #include "NPCMovedEventDTO.h"
@@ -43,6 +44,7 @@
 #include "TextureInfoEventDTO.h"
 #include "UnequipCommandDTO.h"
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 
 static constexpr int MAX_NUMBER_OF_MESSAGES = 100;
@@ -177,6 +179,10 @@ void GameModel::resetCameraZoom() {
 
 void GameModel::sendCheat(CheatType cheat, uint32_t arg) {
   sendingQueue.push(CheatCommandDTO{cheat, arg});
+}
+
+void GameModel::meditate() {
+  sendingQueue.push(MeditateCommandDTO{myPlayerID});
 }
 
 void GameModel::moveMyPlayer(Direction direction) {
