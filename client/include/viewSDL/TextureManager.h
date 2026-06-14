@@ -44,6 +44,12 @@ public:
                             Direction dir, unsigned int it);
   Sprite getZombieSprite(int txtID, Direction dir, unsigned int it);
   SDL2pp::Texture *getItemIcon(uint8_t itemId) const;
+
+  struct AttackFrameResult {
+    Sprite sprite;
+    int frame;
+  };
+  AttackFrameResult getAttackFrame(int textureId, unsigned int it);
 };
 
 #endif

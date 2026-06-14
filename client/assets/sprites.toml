@@ -18,7 +18,7 @@ transparent = true
 
 [[sprites]]
 id = 3
-path = "assets/cabezas/enano.png"
+path = "assets/cabezas/enano.png" 
 layout_type = "Head"
 transparent = true
 
@@ -299,4 +299,20 @@ transparent = true
 [[sprites]]
 id = 20
 path = "assets/comerciante.png"
+transparent = true
+
+[[sprites]]
+id = 350
+path = "assets/ataque/ataque_cuerpo.png"
+transparent = true
+
+
+[[sprites]]
+id = 534
+path = "assets/cabezas/fantasma.png"
+transparent = true
+
+[[sprites]]
+id = 535
+path = "assets/fantasma.png"
 transparent = true

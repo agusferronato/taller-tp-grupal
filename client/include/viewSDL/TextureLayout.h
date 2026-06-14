@@ -3,10 +3,11 @@
 
 #include <variant>
 
+#include "AttackLayout.h"
 #include "BodyLayout.h"
 #include "HeadLayout.h"
 #include "TextureLayoutType.h"
 
-using TextureLayout = std::variant<BodyLayout, HeadLayout>;
+using TextureLayout = std::variant<BodyLayout, HeadLayout, AttackLayout>;
 
-#endif
+#endif 

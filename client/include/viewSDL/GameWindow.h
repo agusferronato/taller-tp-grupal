@@ -14,11 +14,12 @@
 #include <utility>
 #include <vector>
 
+#include "BloodOverlay.h"
 #include "Camera.h"
+#include "ChatMessage.h"
 #include "ClientPlayer.h"
 #include "EntityType.h"
 #include "GameChatView.h"
-#include "GroundItemsListEventDTO.h"
 #include "InventoryPanel.h"
 
 #include "MapData.h"
@@ -35,6 +36,7 @@ class PlayerEntity;
 
 class GameWindow {
 private:
+
   struct Layout {
     SDL2pp::Rect windowRect;
     SDL2pp::Rect chatMessagesRect;
@@ -43,6 +45,32 @@ private:
     SDL2pp::Rect rightTopRect;
     SDL2pp::Rect inventoryRect;
     SDL2pp::Rect bottomRightRect;
+  };
+
+  struct CachedTextTexture {
+    std::unique_ptr<SDL2pp::Texture> texture;
+    std::string text;
+    SDL_Color color{};
+    SDL2pp::Font *font{nullptr};
+    int w{0};
+    int h{0};
+  };
+
+  const Layout layout{
+    // Pantalla completa
+    SDL2pp::Rect(0, 0, 960, 540),
+    // Chat messages
+    SDL2pp::Rect(3, 3, 676, 113),
+    // Chat input
+    SDL2pp::Rect(3, 122, 676, 20),
+    // Juego principal
+    SDL2pp::Rect(8, 145, 668, 385),
+    // Informacion/Experiencia
+    SDL2pp::Rect(686, 7, 267, 114),
+    // Inventario/Equipamiento/Oro
+    SDL2pp::Rect(686, 128, 267, 294),
+    // Vida/Mana
+    SDL2pp::Rect(686, 429, 267, 104),
   };
 
   SDL2pp::SDL sdl{SDL_INIT_VIDEO};
@@ -62,13 +90,24 @@ private:
   std::unique_ptr<SDL2pp::Texture> userInfoBackground;
   std::unique_ptr<SDL2pp::Texture> userInventoryBackground;
   std::unique_ptr<SDL2pp::Texture> userStatsBackground;
+  std::unique_ptr<SDL2pp::Texture> playerHeaderTexture;
+  std::string playerHeaderCachedText;
+  SDL_Color playerHeaderCachedColor{};
+  SDL2pp::Font *playerHeaderCachedFont{nullptr};
+  int playerHeaderTextW{0};
+  int playerHeaderTextH{0};
+  CachedTextTexture levelTextCache;
+  CachedTextTexture xpTextCache;
+  CachedTextTexture hpTextCache;
+  CachedTextTexture manaTextCache;
 
   std::unique_ptr<TextureManager> textureManager;
+  std::unique_ptr<BloodOverlay> bloodOverlay;
 
   Camera camera;
   uint32_t myPlayerID;
 
-  std::deque<std::string> chatMessages;
+  std::deque<ChatMessage> chatMessages;
   std::string currentChatInput;
   bool chatActive{false};
 
@@ -81,7 +120,7 @@ private:
   std::unique_ptr<TextureMapper> textureMapper;
   std::unique_ptr<InventoryPanel> invPanel;
 
-  std::unordered_map<uint32_t, GroundItemInfoDTO> groundItems;
+
 
   int maxSize, gridSize, commonGroundTextureId;
   int windowWidth, windowHeight;
@@ -110,32 +149,38 @@ public:
                   const std::list<TileOrigin> &origins);
 
   ClickTarget hitTestInventory(int screenX, int screenY) const;
-  void updateGroundItems(const std::unordered_map<uint32_t, GroundItemInfoDTO> &items);
-  void setChatState(const std::deque<std::string> &messages,
+  void addGroundItem(uint32_t ID, uint8_t itemId, int x, int y);
+  void setChatState(const std::deque<ChatMessage> &messages,
                     const std::string &input, bool active);
 
+  void scrollChatUp();
+  void scrollChatDown();
   std::pair<int, int> screenToWorld(int mouseX, int mouseY);
+  void zoomOutCamera();
+  void resetCameraZoom();
 
 private:
-  void renderHUD(const Layout &layout);
+  void renderHUD();
   void renderWorld(unsigned int it);
   void clear();
-  void renderChat(const Layout &layout);
-  void renderUIBackgrounds(const Layout &layout);
-  void renderUIFrame(const Layout &layout);
-  void renderPlayerStats(const Layout &layout);
-  void renderPlayerHeader(const Layout &layout);
-  void renderVitals(const Layout &layout);
-  void renderInventoryPanel(const Layout &layout);
+  void renderChat();
+  void renderUIBackgrounds();
+  void renderUIFrame();
+  void renderPlayerStats();
+  void renderPlayerHeader();
+  void renderVitals();
+  void renderInventoryPanel();
   void initResources();
   void renderCommonGround();
-  void renderGroundItems();
 
   void getSortedEntities(std::vector<RenderableEntity *> &);
-  Layout getLayout() const;
-  void renderText(int x, int y, const std::string &text, SDL_Color color);
-  void renderCenteredTextInRect(const SDL2pp::Rect &rect,
+  void renderCachedText(CachedTextTexture &cache, int x, int y,
+                        const std::string &text, SDL_Color color);
+  void renderCachedCenteredText(CachedTextTexture &cache,
+                                const SDL2pp::Rect &rect,
                                 const std::string &text, SDL_Color color);
+  void updateTextCache(CachedTextTexture &cache, SDL2pp::Font &activeFont,
+                       const std::string &text, SDL_Color color);
   void drawBar(int x, int y, int w, int h, uint32_t cur, uint32_t max,
                SDL_Color fg, SDL_Color bg);
 };

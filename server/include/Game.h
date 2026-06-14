@@ -4,6 +4,7 @@
 #include <chrono>
 #include <list>
 #include <memory>
+#include <optional>
 #include <string>
 #include <thread>
 #include <unordered_map>
@@ -11,13 +12,18 @@
 #include <vector>
 
 #include "ClientMessage.h"
-#include <optional>
 #include <set>
 #include <tuple>
 
+#include "Banker.h"
 #include "Biome.h"
 #include "Character.h"
+#include "CheatType.h"
 #include "City.h"
+#include "CityEntityCommandDTO.h"
+#include "Priest.h"
+#include "Trader.h"
+#include "ClanManager.h"
 #include "Colisionable.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
@@ -37,21 +43,25 @@
 class Game : public Thread {
 
 private:
+  struct PlayerCheats {
+    bool infiniteHealth{false};
+    bool infiniteMana{false};
+    bool superSpeed{false};
+  };
+
   Queue<ClientMessage> &gameloopQueue;
   SenderQueueMonitor &senderQueueMonitor;
   PlayerRepository &repository;
+  ClanManager &clanManager;
 
   std::list<ServerEventDTO> messagesToSend;
   bool keepRunning = true;
 
-  std::unordered_map<std::string, uint32_t> playerIdByName;
-
-  uint32_t nextPlayerId{1};
   int nextSpawnX{0};
   std::unordered_map<uint32_t, std::unique_ptr<Character>> players;
+  std::unordered_map<std::string, uint32_t> playerIdByName;
   std::vector<Colisionable *> colisionables;
-  std::unordered_map<uint32_t, uint32_t> connectionToPlayer;
-  std::unordered_map<uint32_t, uint32_t> playerToConnection;
+  std::unordered_map<uint32_t, PlayerCheats> cheatsByPlayer;
 
   InventoryManager inventoryManager{players, messagesToSend};
 
@@ -70,7 +80,7 @@ private:
 public:
   Game(Queue<ClientMessage> &gameloopQueue,
        SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository,
-       const std::string &mapPath);
+       ClanManager &clanManager, const std::string &mapPath);
 
   virtual void run() override;
 
@@ -81,22 +91,53 @@ public:
 
   void registerPlayer(const std::string &name, const Race race,
                       const PlayerClass playerClass, uint32_t connectionId);
+  void validateLogin(const std::string &name, uint32_t connectionId);
   void loginPlayer(const std::string &name, uint32_t connectionId);
   void movePlayer(uint32_t playerId, Direction direction);
   void stopPlayer(uint32_t playerId);
   void exitPlayer(uint32_t playerId);
-  void exitPlayerByConnection(uint32_t connectionId);
   void equipItem(uint32_t playerId, uint8_t inventorySlot);
   void unequipSlot(uint32_t playerId, uint8_t equipSlot);
   void dropItem(uint32_t playerId, uint8_t inventorySlot);
   void takeItem(uint32_t playerId);
   void sendGlobalChatMessage(uint32_t playerId, const std::string &message);
+  void sendPrivateMessage(uint32_t connectionId, const std::string &targetName,
+                          const std::string &message);
   void attack(uint32_t playerId, int16_t x, int16_t y);
+  void applyCheat(uint32_t connectionId, CheatType cheat, uint32_t arg = 0);
+
+  void createClan(uint32_t playerId, const std::string &clanName);
+  void requestJoinClan(uint32_t playerId, const std::string &clanName);
+  void acceptClanRequest(uint32_t founderId, const std::string &playerName);
+  void rejectClanRequest(uint32_t founderId, const std::string &playerName);
+  void banClanPlayer(uint32_t founderId, const std::string &playerName);
+  void kickClanMember(uint32_t founderId, const std::string &playerName);
+  void leaveClan(uint32_t playerId);
+  void reviewClan(uint32_t playerId);
+
+  void executeCityEntityCommand(uint32_t playerId, uint8_t type, int16_t arg);
+  void sendInventoryUpdate(uint32_t playerId);
+  void sendPlayerInfoUpdate(uint32_t playerId);
+  void sendPlayerMoved(uint32_t playerId);
 
   bool thereIsACollidableEntityAt(Position position);
-  void appearNPC(std::unique_ptr<NPC> &&npc);
+  uint32_t appearNPC(std::unique_ptr<NPC> &&npc);
   uint32_t nextNPCId{1};
   uint32_t nextCityEntityId{1};
+
+  struct ResurrectingPlayer {
+    Character *character;
+    int priestX;
+    int priestY;
+    int counter;
+    int maxCounter;
+  };
+
+  void addResurrectingPlayer(Character &character, int priestX, int priestY,
+                             int maxCounter);
+
+  void sendSystemMessage(uint32_t playerId, const std::string &msg);
+  void sendSystemMessageToPlayer(uint32_t playerId, const std::string &message);
 
 private:
   void execute(ClientMessage clientMessage);
@@ -106,23 +147,46 @@ private:
 
   void appearNPCs();
 
+  std::optional<uint32_t> findPlayerIdByName(const std::string &name) const;
+  std::string getPlayerName(uint32_t playerId) const;
+  void sendToPlayer(uint32_t playerId, const ServerEventDTO &event);
+  void sendToPlayers(const std::vector<uint32_t> &playerIds,
+                     const ServerEventDTO &event);
+  void sendToClan(uint32_t clanId, const ServerEventDTO &event,
+                  std::optional<uint32_t> exceptPlayerId = std::nullopt);
+
+  void sendErrorMessageToConnection(uint32_t connectionId,
+                                    const std::string &message);
+  uint32_t movementSpeedFor(uint32_t playerId) const;
+  bool hasInfiniteHealth(uint32_t playerId) const;
+  bool hasInfiniteMana(uint32_t playerId) const;
+
   void makeNPCsfollowPlayers();
+  void tryAttack(NPC &npc, Character &target);
   void makeCitiesEntitiesFollowPlayers();
+  void createCityEntities();
 
   bool checkIfItCollides(Colisionable *entity);
-
-  void createCityEntities();
 
   void playerAttackPlayer(Character &attacker, Character &target);
   void playerAttackNPC(Character &attacker, NPC &target);
   uint32_t calculateDamage(Character &attacker);
   bool validAttack(Character &attacker, Character &target);
+  bool validAttackToNpc(Character &attacker);
   Character *findPlayerByCoordinates(int16_t x, int16_t y);
   NPC *findNPCByCoordinates(int16_t x, int16_t y);
   int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
 
   void killPlayer(Character &dyingPlayer);
   void restorePlayers();
+  
+  bool isNearEntity(CityEntity &entity, const Character &character);
+  CityEntity *findNearestEntity(uint32_t playerId, CityEntityType type);
+
+  void updateResurrectingPlayers();
+  bool isResurrecting(uint32_t playerId);
+
+  std::list<ResurrectingPlayer> resurrectingPlayers;
 };
 
 #endif

@@ -21,6 +21,7 @@ public:
 private:
   uint32_t id;
   Player player;
+  mutable bool beingAttacked{false};
 
 public:
   ClientPlayer(uint32_t id, std::string name, int xOrigin, int yOrigin,
@@ -58,12 +59,17 @@ public:
 
   const Player &getPlayer() const { return player; }
 
+  bool isBeingAttacked() const { return beingAttacked; }
+  void setBeingAttacked(bool v) { beingAttacked = v; }
+  void stopAttackEffect() const { beingAttacked = false; }
+
   uint8_t getEquippedWeapon() const { return player.getEquippedWeapon(); }
   uint8_t getEquippedArmor() const { return player.getEquippedArmor(); }
   uint8_t getEquippedHelmet() const { return player.getEquippedHelmet(); }
   uint8_t getEquippedShield() const { return player.getEquippedShield(); }
   const Inventory &getInventory() const { return player.getInventory(); }
   void die();
+  void resurrect(int x, int y);
   bool isDead() const;
 };
 

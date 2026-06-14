@@ -29,6 +29,7 @@ Character::Character(uint32_t id, const PlayerData &data)
       timeSinceLastManaConsume = 0;
     }
   }
+  player.joinClan(data.clanId);
 }
 
 PlayerData Character::toPlayerData() const {
@@ -56,6 +57,7 @@ PlayerData Character::toPlayerData() const {
   data.equippedArmor = player.getEquippedArmor();
   data.equippedHelmet = player.getEquippedHelmet();
   data.equippedShield = player.getEquippedShield();
+  data.clanId = player.getClanId();
   return data;
 }
 
@@ -81,20 +83,25 @@ void Character::setDirection(Direction dir) { player.startMoving(dir); }
 void Character::stop() { player.stopMoving(); }
 
 std::pair<int, int> Character::getTargetPosition(Direction dir) const {
+  return getTargetPosition(dir, 2);
+}
+
+std::pair<int, int> Character::getTargetPosition(Direction dir,
+                                                 uint32_t speed) const {
   int targetX = player.getX();
   int targetY = player.getY();
   switch (dir) {
   case Direction::Up:
-    targetY -= 2;
+    targetY -= speed;
     break;
   case Direction::Down:
-    targetY += 2;
+    targetY += speed;
     break;
   case Direction::Left:
-    targetX -= 2;
+    targetX -= speed;
     break;
   case Direction::Right:
-    targetX += 2;
+    targetX += speed;
     break;
   }
   return {targetX, targetY};
@@ -174,6 +181,10 @@ std::pair<int, int> Character::getTargetPosition() const {
   return getTargetPosition(player.getDirection());
 }
 
+std::pair<int, int> Character::getTargetPosition(uint32_t speed) const {
+  return getTargetPosition(player.getDirection(), speed);
+}
+
 uint32_t Character::getDamage() const { return player.attack(); }
 
 bool Character::tryParry() const {
@@ -210,4 +221,24 @@ void Character::restore() {
       timeSinceLastManaConsume = std::nullopt;
     }
   }
+
+}
+
+bool Character::hasItem(uint8_t itemId) const {
+  return player.getInventory().findItem(itemId) != MAX_INVENTORY_SLOTS;
+}
+
+bool Character::hasMoney(uint16_t amount) const {
+  return player.getGold() >= amount;
+}
+
+
+void Character::removeItemById(uint8_t itemId) {
+  uint8_t slot = player.getInventory().findItem(itemId);
+  if (slot != MAX_INVENTORY_SLOTS)
+    player.removeItem(slot);
+}
+
+void Character::resurrect() {
+  player.resurrect();
 }

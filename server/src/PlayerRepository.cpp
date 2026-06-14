@@ -55,6 +55,8 @@ static void writeData(std::ostream &file, const PlayerData &data) {
              sizeof(data.equippedHelmet));
   file.write(reinterpret_cast<const char *>(&data.equippedShield),
              sizeof(data.equippedShield));
+  file.write(reinterpret_cast<const char *>(&data.clanId),
+             sizeof(data.clanId));
 }
 
 static void readData(std::ifstream &file, PlayerData &data) {
@@ -93,6 +95,8 @@ static void readData(std::ifstream &file, PlayerData &data) {
             sizeof(data.equippedHelmet));
   file.read(reinterpret_cast<char *>(&data.equippedShield),
             sizeof(data.equippedShield));
+  file.read(reinterpret_cast<char *>(&data.clanId),
+            sizeof(data.clanId));
 }
 
 PlayerRepository::PlayerRepository(const std::string &dataDir)

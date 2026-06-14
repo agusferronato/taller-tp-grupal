@@ -5,13 +5,13 @@ Inventory::Inventory() { items.fill(EMPTY_ITEM); }
 bool Inventory::addItem(uint8_t itemId) {
   if (itemId == EMPTY_ITEM || itemId >= MAX_ITEM_TYPES)
     return false;
-  for (auto &slot : items) {
+  for (auto &slot : items) { 
     if (slot == EMPTY_ITEM) {
       slot = itemId;
       return true;
     }
   }
-  return false;
+  return false; 
 }
 
 bool Inventory::removeItem(uint8_t slotIndex) {

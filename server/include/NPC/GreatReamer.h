@@ -6,17 +6,21 @@
 
 class GreatReamer : public NPC {
 public:
-  explicit GreatReamer(Position position) : NPC(position) {}
+  explicit GreatReamer(Position position) : NPC(position) {
+    level = 20 + std::rand() % 11;
+    maxHp = 300 + std::rand() % 201;
+    hp = maxHp;
+    agility = 10;
+  }
   NPCType getType() override { return NPCType::GreatReamerT; }
 
-  const std::string &getName() const override {
-    static const std::string name = "Great Reamer";
-    return name;
-  }
+    int getAncho() const override { return 64; };
+    int getAlto() const override { return 64; };
+    int getRange() const override { return 128; };
 
-  int getAncho() const override { return 64; };
-  int getAlto() const override { return 64; };
-  int getRange() const override { return 128; };
+    std::string getName() override { return "GreatReamer"; }
+    int getAttackCounterMax() override { return 250; }
+    uint32_t getDamage() override { return 1; }
 };
 
 #endif

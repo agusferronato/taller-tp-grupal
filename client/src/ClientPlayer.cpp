@@ -22,4 +22,9 @@ void ClientPlayer::updateStats(uint32_t hp, uint32_t maxHp, uint32_t mana,
 
 void ClientPlayer::die() { player.die(); }
 
+void ClientPlayer::resurrect(int x, int y) {
+  player.move(x, y);
+  player.resurrect();
+}
+
 bool ClientPlayer::isDead() const { return player.isDead(); }

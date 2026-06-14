@@ -4,11 +4,49 @@
 #include <string>
 #include <cstdint>
 
-enum class ChatCommandType { None, Tomar, Tirar, Equipar, Desequipar };
+enum class ChatCommandType {
+  None,
+  Unknown,
+  PrivateMessage,
+  Tomar,
+  Tirar,
+  Equipar,
+  Desequipar,
+  Curar,
+  Resucitar,
+  Comprar,
+  Vender,
+  Listar,
+  ConsultarOro,
+  Depositar,
+  Retirar,
+  DepositarOro,
+  RetirarOro,
+  FundarClan,
+  UnirseClan,
+  ClanAceptar,
+  DejarClan,
+  RevisarClan,
+  ClanRechazar,
+  ClanBan,
+  ClanKick,
+  AlejarCamara,
+  CamaraNormal,
+  Morir,
+  VidaInfinita,
+  VidaNormal,
+  ManaInfinito,
+  ManaNormal,
+  Supervelocidad,
+  VelocidadNormal,
+  SetLevel,
+  Revivir
+};
 
 struct ChatCommand {
-  ChatCommandType type;
-  int arg;
+  ChatCommandType type{ChatCommandType::None};
+  int arg{0};
+  std::string textArg{};
 };
 
 class ChatCommandParser {

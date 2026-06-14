@@ -11,6 +11,9 @@
 #include <vector>
 
 class Player {
+public:
+  static constexpr uint32_t NO_CLAN = 0;
+
 private:
   std::string name;
   Race race;
@@ -21,6 +24,7 @@ private:
   bool death;
   PlayerStats stats;
   Inventory inventory;
+  uint32_t clanId{NO_CLAN};
 
 public:
   Player(std::string name, Race race, Direction direction,
@@ -42,6 +46,7 @@ public:
   void earnGold(uint32_t);
   void removeGold(uint32_t amount);
   uint32_t attack() const;
+  void setLevel(uint32_t level);
 
   bool isMoving() const { return moving; }
   Direction getDirection() const { return direction; }
@@ -69,7 +74,7 @@ public:
   bool unequipSlot(EquipSlot slot) { return inventory.unequipSlot(slot); }
   bool removeItem(uint8_t slotIndex) { return inventory.removeItem(slotIndex); }
   const std::array<uint8_t, MAX_INVENTORY_SLOTS> &getInventoryItems() const {
-    return inventory.getItems();
+    return inventory.getItems(); 
   }
   uint8_t getEquippedWeapon() const { return inventory.getWeapon(); }
   uint8_t getEquippedArmor() const { return inventory.getArmor(); }
@@ -83,6 +88,12 @@ public:
   void setEquippedArmor(uint8_t id) { inventory.setArmor(id); }
   void setEquippedHelmet(uint8_t id) { inventory.setHelmet(id); }
   void setEquippedShield(uint8_t id) { inventory.setShield(id); }
+
+  void resurrect();
+  uint32_t getClanId() const { return clanId; }
+  bool hasClan() const { return clanId != NO_CLAN; }
+  void joinClan(uint32_t clanId) { this->clanId = clanId; }
+  void leaveClan() { this->clanId = NO_CLAN; }
 
   bool assertAttackDistance(int16_t targetX, int16_t targetY) const;
   std::vector<uint8_t> die();

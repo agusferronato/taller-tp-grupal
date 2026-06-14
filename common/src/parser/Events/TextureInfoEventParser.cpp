@@ -27,7 +27,7 @@ void TextureInfoEventParser::serialize(std::vector<uint8_t> &bytes,
 ServerEventDTO TextureInfoEventParser::deserialize(Protocol &protocol) {
   uint16_t maxSize = protocol.getUint16();
   uint16_t gridSize = protocol.getUint16();
-  uint8_t commonGroundTextureId = protocol.getUint8();
+  uint16_t commonGroundTextureId = protocol.getUint16();
   uint16_t count = protocol.getUint16();
 
   std::vector<TextureOriginDTO> origins;
@@ -35,7 +35,7 @@ ServerEventDTO TextureInfoEventParser::deserialize(Protocol &protocol) {
 
   for (uint16_t i = 0; i < count; ++i) {
     uint8_t priority = protocol.getUint8();
-    uint8_t texture_id = protocol.getUint8();
+    uint16_t texture_id = protocol.getUint16();
     uint16_t ii = protocol.getUint16();
     uint16_t jj = protocol.getUint16();
     origins.push_back({priority, texture_id, ii, jj});

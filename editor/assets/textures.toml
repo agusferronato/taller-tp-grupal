@@ -22,7 +22,7 @@ name = "Arbol"
 path = "assets/background/decoration/11.png"
 collidable = true
 transparent = true
-priority = 1
+priority = 2
 collidable_percentage = 0.2
 
 [textures.camino_tierra_1]
@@ -166,7 +166,7 @@ name = "Banco"
 path = "assets/background/decoration/80.png"
 collidable = true 
 transparent = true 
-priority = 1
+priority = 2
 collidable_percentage = 1.0
 
 [textures.cartel]
@@ -175,7 +175,7 @@ name = "Cartel"
 path = "assets/background/decoration/81.png"
 collidable = true 
 transparent = true 
-priority = 1
+priority = 2
 collidable_percentage = 1.0
 
 [textures.piedra]
@@ -184,7 +184,7 @@ name = "Piedra"
 path = "assets/background/decoration/82.png"
 collidable = true 
 transparent = true 
-priority = 1
+priority = 2
 collidable_percentage = 1.0
  
 [textures.arbol_2]
@@ -193,7 +193,7 @@ name = "Arbol 2"
 path = "assets/background/decoration/172.png"
 collidable = true 
 transparent = true 
-priority = 1
+priority = 2
 collidable_percentage = 0.2
 
 [textures.klein]
@@ -202,5 +202,2895 @@ name = "Klein"
 path = "assets/background/decoration/115.png"
 collidable = true 
 transparent = true 
+priority = 2
+collidable_percentage = 0.25
+
+
+[textures.tex_23]
+id = 23
+name = "Textura #23"
+path = "assets/background/ground/0.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_24]
+id = 24
+name = "Textura #24"
+path = "assets/background/ground/1.png"
+collidable = false
+transparent = true
 priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_25]
+id = 25
+name = "Textura #25"
+path = "assets/background/ground/2.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_26]
+id = 26
+name = "Textura #26"
+path = "assets/background/ground/3.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_27]
+id = 27
+name = "Textura #27"
+path = "assets/background/ground/4.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_28]
+id = 28
+name = "Textura #28"
+path = "assets/background/ground/5.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_29]
+id = 29
+name = "Textura #29"
+path = "assets/background/ground/6.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_30]
+id = 30
+name = "Textura #30"
+path = "assets/background/ground/7.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_31]
+id = 31
+name = "Textura #31"
+path = "assets/background/ground/8.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_32]
+id = 32
+name = "Textura #32"
+path = "assets/background/ground/9.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_33]
+id = 33
+name = "Textura #33"
+path = "assets/background/ground/10.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_34]
+id = 34
+name = "Textura #34"
+path = "assets/background/ground/11.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_35]
+id = 35
+name = "Textura #35"
+path = "assets/background/ground/12.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_36]
+id = 36
+name = "Textura #36"
+path = "assets/background/ground/13.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_37]
+id = 37
+name = "Textura #37"
+path = "assets/background/ground/14.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_38]
+id = 38
+name = "Textura #38"
+path = "assets/background/ground/15.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_39]
+id = 39
+name = "Textura #39"
+path = "assets/background/ground/16.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_40]
+id = 40
+name = "Textura #40"
+path = "assets/background/ground/17.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_41]
+id = 41
+name = "Textura #41"
+path = "assets/background/ground/18.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_42]
+id = 42
+name = "Textura #42"
+path = "assets/background/ground/19.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_43]
+id = 43
+name = "Textura #43"
+path = "assets/background/ground/20.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_44]
+id = 44
+name = "Textura #44"
+path = "assets/background/ground/21.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_45]
+id = 45
+name = "Textura #45"
+path = "assets/background/ground/22.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_46]
+id = 46
+name = "Textura #46"
+path = "assets/background/ground/23.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_47]
+id = 47
+name = "Textura #47"
+path = "assets/background/ground/24.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_48]
+id = 48
+name = "Textura #48"
+path = "assets/background/ground/25.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_49]
+id = 49
+name = "Textura #49"
+path = "assets/background/ground/26.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_50]
+id = 50
+name = "Textura #50"
+path = "assets/background/ground/27.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_51]
+id = 51
+name = "Textura #51"
+path = "assets/background/ground/28.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_52]
+id = 52
+name = "Textura #52"
+path = "assets/background/ground/29.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_53]
+id = 53
+name = "Textura #53"
+path = "assets/background/ground/30.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_54]
+id = 54
+name = "Textura #54"
+path = "assets/background/ground/31.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_55]
+id = 55
+name = "Textura #55"
+path = "assets/background/ground/32.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_56]
+id = 56
+name = "Textura #56"
+path = "assets/background/ground/33.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_57]
+id = 57
+name = "Textura #57"
+path = "assets/background/ground/34.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_58]
+id = 58
+name = "Textura #58"
+path = "assets/background/ground/35.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_59]
+id = 59
+name = "Textura #59"
+path = "assets/background/ground/36.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_60]
+id = 60
+name = "Textura #60"
+path = "assets/background/ground/37.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_61]
+id = 61
+name = "Textura #61"
+path = "assets/background/ground/38.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_62]
+id = 62
+name = "Textura #62"
+path = "assets/background/ground/39.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_63]
+id = 63
+name = "Textura #63"
+path = "assets/background/ground/40.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_64]
+id = 64
+name = "Textura #64"
+path = "assets/background/ground/41.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_65]
+id = 65
+name = "Textura #65"
+path = "assets/background/ground/42.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_66]
+id = 66
+name = "Textura #66"
+path = "assets/background/ground/43.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_67]
+id = 67
+name = "Textura #67"
+path = "assets/background/ground/44.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_68]
+id = 68
+name = "Textura #68"
+path = "assets/background/ground/45.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_69]
+id = 69
+name = "Textura #69"
+path = "assets/background/ground/46.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_70]
+id = 70
+name = "Textura #70"
+path = "assets/background/ground/47.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_71]
+id = 71
+name = "Textura #71"
+path = "assets/background/ground/48.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_72]
+id = 72
+name = "Textura #72"
+path = "assets/background/ground/49.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_73]
+id = 73
+name = "Textura #73"
+path = "assets/background/ground/50.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_74]
+id = 74
+name = "Textura #74"
+path = "assets/background/ground/51.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_75]
+id = 75
+name = "Textura #75"
+path = "assets/background/ground/52.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_76]
+id = 76
+name = "Textura #76"
+path = "assets/background/ground/53.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_77]
+id = 77
+name = "Textura #77"
+path = "assets/background/ground/54.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_78]
+id = 78
+name = "Textura #78"
+path = "assets/background/ground/55.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_79]
+id = 79
+name = "Textura #79"
+path = "assets/background/ground/56.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_80]
+id = 80
+name = "Textura #80"
+path = "assets/background/ground/57.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_81]
+id = 81
+name = "Textura #81"
+path = "assets/background/ground/58.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_82]
+id = 82
+name = "Textura #82"
+path = "assets/background/ground/59.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_83]
+id = 83
+name = "Textura #83"
+path = "assets/background/ground/60.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_84]
+id = 84
+name = "Textura #84"
+path = "assets/background/ground/61.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_85]
+id = 85
+name = "Textura #85"
+path = "assets/background/ground/62.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_86]
+id = 86
+name = "Textura #86"
+path = "assets/background/ground/63.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_87]
+id = 87
+name = "Textura #87"
+path = "assets/background/ground/64.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_88]
+id = 88
+name = "Textura #88"
+path = "assets/background/ground/65.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_89]
+id = 89
+name = "Textura #89"
+path = "assets/background/ground/66.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_90]
+id = 90
+name = "Textura #90"
+path = "assets/background/ground/67.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_91]
+id = 91
+name = "Textura #91"
+path = "assets/background/ground/68.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_92]
+id = 92
+name = "Textura #92"
+path = "assets/background/ground/69.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_93]
+id = 93
+name = "Textura #93"
+path = "assets/background/ground/70.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_94]
+id = 94
+name = "Textura #94"
+path = "assets/background/ground/71.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_95]
+id = 95
+name = "Textura #95"
+path = "assets/background/ground/72.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_96]
+id = 96
+name = "Textura #96"
+path = "assets/background/ground/73.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_97]
+id = 97
+name = "Textura #97"
+path = "assets/background/ground/74.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_98]
+id = 98
+name = "Textura #98"
+path = "assets/background/ground/75.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_99]
+id = 99
+name = "Textura #99"
+path = "assets/background/ground/76.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_100]
+id = 100
+name = "Textura #100"
+path = "assets/background/ground/77.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_101]
+id = 101
+name = "Textura #101"
+path = "assets/background/ground/78.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_102]
+id = 102
+name = "Textura #102"
+path = "assets/background/ground/79.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_103]
+id = 103
+name = "Textura #103"
+path = "assets/background/ground/80.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_104]
+id = 104
+name = "Textura #104"
+path = "assets/background/ground/81.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_105]
+id = 105
+name = "Textura #105"
+path = "assets/background/ground/82.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_106]
+id = 106
+name = "Textura #106"
+path = "assets/background/ground/83.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_107]
+id = 107
+name = "Textura #107"
+path = "assets/background/ground/84.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_108]
+id = 108
+name = "Textura #108"
+path = "assets/background/ground/85.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_109]
+id = 109
+name = "Textura #109"
+path = "assets/background/ground/86.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_110]
+id = 110
+name = "Textura #110"
+path = "assets/background/ground/87.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_111]
+id = 111
+name = "Textura #111"
+path = "assets/background/ground/88.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_112]
+id = 112
+name = "Textura #112"
+path = "assets/background/ground/89.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_113]
+id = 113
+name = "Textura #113"
+path = "assets/background/ground/90.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_114]
+id = 114
+name = "Textura #114"
+path = "assets/background/ground/91.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_115]
+id = 115
+name = "Textura #115"
+path = "assets/background/ground/92.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_116]
+id = 116
+name = "Textura #116"
+path = "assets/background/ground/93.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_117]
+id = 117
+name = "Textura #117"
+path = "assets/background/ground/94.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_118]
+id = 118
+name = "Textura #118"
+path = "assets/background/ground/95.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_119]
+id = 119
+name = "Textura #119"
+path = "assets/background/ground/96.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_120]
+id = 120
+name = "Textura #120"
+path = "assets/background/ground/97.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_121]
+id = 121
+name = "Textura #121"
+path = "assets/background/ground/98.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_122]
+id = 122
+name = "Textura #122"
+path = "assets/background/ground/99.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_123]
+id = 123
+name = "Textura #123"
+path = "assets/background/ground/100.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_124]
+id = 124
+name = "Textura #124"
+path = "assets/background/ground/101.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_125]
+id = 125
+name = "Textura #125"
+path = "assets/background/ground/102.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_126]
+id = 126
+name = "Textura #126"
+path = "assets/background/ground/103.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_127]
+id = 127
+name = "Textura #127"
+path = "assets/background/ground/104.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_128]
+id = 128
+name = "Textura #128"
+path = "assets/background/ground/105.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_129]
+id = 129
+name = "Textura #129"
+path = "assets/background/ground/106.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_130]
+id = 130
+name = "Textura #130"
+path = "assets/background/ground/107.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_131]
+id = 131
+name = "Textura #131"
+path = "assets/background/ground/108.png"
+collidable = true
+transparent = true
+priority = 0
+collidable_percentage = 1.0
+
+[textures.tex_132]
+id = 132
+name = "Textura #132"
+path = "assets/background/ground/109.png"
+collidable = true
+transparent = true
+priority = 0
+collidable_percentage = 1.0
+
+[textures.tex_133]
+id = 133
+name = "Textura #133"
+path = "assets/background/ground/110.png"
+collidable = true
+transparent = true
+priority = 0
+collidable_percentage = 1.0
+
+[textures.tex_134]
+id = 134
+name = "Textura #134"
+path = "assets/background/ground/112.png"
+collidable = true
+transparent = true
+priority = 0
+collidable_percentage = 1.0
+
+[textures.tex_135]
+id = 135
+name = "Textura #135"
+path = "assets/background/ground/113.png"
+collidable = true
+transparent = true
+priority = 0
+collidable_percentage = 1.0
+
+[textures.tex_136]
+id = 136
+name = "Textura #136"
+path = "assets/background/ground/115.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_137]
+id = 137
+name = "Textura #137"
+path = "assets/background/ground/116.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_138]
+id = 138
+name = "Textura #138"
+path = "assets/background/ground/117.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_139]
+id = 139
+name = "Textura #139"
+path = "assets/background/ground/133.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_140]
+id = 140
+name = "Textura #140"
+path = "assets/background/ground/134.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_141]
+id = 141
+name = "Textura #141"
+path = "assets/background/ground/135.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_142]
+id = 142
+name = "Textura #142"
+path = "assets/background/ground/136.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_143]
+id = 143
+name = "Textura #143"
+path = "assets/background/ground/137.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_144]
+id = 144
+name = "Textura #144"
+path = "assets/background/ground/138.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_145]
+id = 145
+name = "Textura #145"
+path = "assets/background/ground/139.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_146]
+id = 146
+name = "Textura #146"
+path = "assets/background/ground/140.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_147]
+id = 147
+name = "Textura #147"
+path = "assets/background/ground/141.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_148]
+id = 148
+name = "Textura #148"
+path = "assets/background/ground/142.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_149]
+id = 149
+name = "Textura #149"
+path = "assets/background/ground/143.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_150]
+id = 150
+name = "Textura #150"
+path = "assets/background/ground/144.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_151]
+id = 151
+name = "Textura #151"
+path = "assets/background/ground/145.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_152]
+id = 152
+name = "Textura #152"
+path = "assets/background/ground/146.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_153]
+id = 153
+name = "Textura #153"
+path = "assets/background/ground/147.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_154]
+id = 154
+name = "Textura #154"
+path = "assets/background/ground/148.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_155]
+id = 155
+name = "Textura #155"
+path = "assets/background/ground/149.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_156]
+id = 156
+name = "Textura #156"
+path = "assets/background/ground/150.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_157]
+id = 157
+name = "Textura #157"
+path = "assets/background/ground/151.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_158]
+id = 158
+name = "Textura #158"
+path = "assets/background/ground/152.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_159]
+id = 159
+name = "Textura #159"
+path = "assets/background/ground/153.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_160]
+id = 160
+name = "Textura #160"
+path = "assets/background/ground/154.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_161]
+id = 161
+name = "Textura #161"
+path = "assets/background/ground/155.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_162]
+id = 162
+name = "Textura #162"
+path = "assets/background/ground/156.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_163]
+id = 163
+name = "Textura #163"
+path = "assets/background/ground/157.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_164]
+id = 164
+name = "Textura #164"
+path = "assets/background/ground/158.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_165]
+id = 165
+name = "Textura #165"
+path = "assets/background/ground/159.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_166]
+id = 166
+name = "Textura #166"
+path = "assets/background/ground/160.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_167]
+id = 167
+name = "Textura #167"
+path = "assets/background/ground/161.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_168]
+id = 168
+name = "Textura #168"
+path = "assets/background/ground/162.png"
+collidable = true
+transparent = true
+priority = 0
+collidable_percentage = 1.0
+
+[textures.tex_169]
+id = 169
+name = "Textura #169"
+path = "assets/background/ground/163.png"
+collidable = true
+transparent = true
+priority = 0
+collidable_percentage = 1.0
+
+[textures.tex_170]
+id = 170
+name = "Textura #170"
+path = "assets/background/ground/164.png"
+collidable = true
+transparent = true
+priority = 0
+collidable_percentage = 1.0
+
+[textures.tex_171]
+id = 171
+name = "Textura #171"
+path = "assets/background/ground/165.png"
+collidable = false
+transparent = true
+priority = 0
+collidable_percentage = 0.0
+
+[textures.tex_172]
+id = 172
+name = "Textura #172"
+path = "assets/background/decoration/0.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.85
+
+[textures.tex_173]
+id = 173
+name = "Textura #173"
+path = "assets/background/decoration/1.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_174]
+id = 174
+name = "Textura #174"
+path = "assets/background/decoration/2.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_175]
+id = 175
+name = "Textura #175"
+path = "assets/background/decoration/3.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_176]
+id = 176
+name = "Textura #176"
+path = "assets/background/decoration/4.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.5
+
+[textures.tex_177]
+id = 177
+name = "Textura #177"
+path = "assets/background/decoration/5.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.5
+
+[textures.tex_178]
+id = 178
+name = "Textura #178"
+path = "assets/background/decoration/6.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_179]
+id = 179
+name = "Textura #179"
+path = "assets/background/decoration/7.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.5
+
+[textures.tex_180]
+id = 180
+name = "Textura #180"
+path = "assets/background/decoration/8.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_181]
+id = 181
+name = "Textura #181"
+path = "assets/background/decoration/9.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_182]
+id = 182
+name = "Textura #182"
+path = "assets/background/decoration/10.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_183]
+id = 183
+name = "Textura #183"
+path = "assets/background/decoration/12.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_184]
+id = 184
+name = "Textura #184"
+path = "assets/background/decoration/13.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_185]
+id = 185
+name = "Textura #185"
+path = "assets/background/decoration/14.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_186]
+id = 186
+name = "Textura #186"
+path = "assets/background/decoration/15.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_187]
+id = 187
+name = "Textura #187"
+path = "assets/background/decoration/16.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_188]
+id = 188
+name = "Textura #188"
+path = "assets/background/decoration/17.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_189]
+id = 189
+name = "Textura #189"
+path = "assets/background/decoration/18.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_190]
+id = 190
+name = "Textura #190"
+path = "assets/background/decoration/19.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_191]
+id = 191
+name = "Textura #191"
+path = "assets/background/decoration/20.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_192]
+id = 192
+name = "Textura #192"
+path = "assets/background/decoration/21.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_193]
+id = 193
+name = "Textura #193"
+path = "assets/background/decoration/22.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_194]
+id = 194
+name = "Textura #194"
+path = "assets/background/decoration/23.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_195]
+id = 195
+name = "Textura #195"
+path = "assets/background/decoration/24.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.5
+
+[textures.tex_196]
+id = 196
+name = "Textura #196"
+path = "assets/background/decoration/25.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.5
+
+[textures.tex_197]
+id = 197
+name = "Textura #197"
+path = "assets/background/decoration/26.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_198]
+id = 198
+name = "Textura #198"
+path = "assets/background/decoration/27.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_199]
+id = 199
+name = "Textura #199"
+path = "assets/background/decoration/28.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_200]
+id = 200
+name = "Textura #200"
+path = "assets/background/decoration/29.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_201]
+id = 201
+name = "Textura #201"
+path = "assets/background/decoration/30.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_202]
+id = 202
+name = "Textura #202"
+path = "assets/background/decoration/31.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_203]
+id = 203
+name = "Textura #203"
+path = "assets/background/decoration/32.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_204]
+id = 204
+name = "Textura #204"
+path = "assets/background/decoration/33.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_205]
+id = 205
+name = "Textura #205"
+path = "assets/background/decoration/34.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_206]
+id = 206
+name = "Textura #206"
+path = "assets/background/decoration/35.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_207]
+id = 207
+name = "Textura #207"
+path = "assets/background/decoration/36.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_208]
+id = 208
+name = "Textura #208"
+path = "assets/background/decoration/37.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_209]
+id = 209
+name = "Textura #209"
+path = "assets/background/decoration/38.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_210]
+id = 210
+name = "Textura #210"
+path = "assets/background/decoration/39.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_211]
+id = 211
+name = "Textura #211"
+path = "assets/background/decoration/40.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_212]
+id = 212
+name = "Textura #212"
+path = "assets/background/decoration/41.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_213]
+id = 213
+name = "Textura #213"
+path = "assets/background/decoration/42.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_214]
+id = 214
+name = "Textura #214"
+path = "assets/background/decoration/43.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_215]
+id = 215
+name = "Textura #215"
+path = "assets/background/decoration/44.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_216]
+id = 216
+name = "Textura #216"
+path = "assets/background/decoration/45.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_217]
+id = 217
+name = "Textura #217"
+path = "assets/background/decoration/46.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_218]
+id = 218
+name = "Textura #218"
+path = "assets/background/decoration/47.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_219]
+id = 219
+name = "Textura #219"
+path = "assets/background/decoration/48.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_220]
+id = 220
+name = "Textura #220"
+path = "assets/background/decoration/49.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_221]
+id = 221
+name = "Textura #221"
+path = "assets/background/decoration/50.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_222]
+id = 222
+name = "Textura #222"
+path = "assets/background/decoration/51.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_223]
+id = 223
+name = "Textura #223"
+path = "assets/background/decoration/52.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_224]
+id = 224
+name = "Textura #224"
+path = "assets/background/decoration/53.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_225]
+id = 225
+name = "Textura #225"
+path = "assets/background/decoration/54.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_226]
+id = 226
+name = "Textura #226"
+path = "assets/background/decoration/55.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_227]
+id = 227
+name = "Textura #227"
+path = "assets/background/decoration/56.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_228]
+id = 228
+name = "Textura #228"
+path = "assets/background/decoration/57.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_229]
+id = 229
+name = "Textura #229"
+path = "assets/background/decoration/58.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_230]
+id = 230
+name = "Textura #230"
+path = "assets/background/decoration/59.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_231]
+id = 231
+name = "Textura #231"
+path = "assets/background/decoration/60.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_232]
+id = 232
+name = "Textura #232"
+path = "assets/background/decoration/61.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_233]
+id = 233
+name = "Textura #233"
+path = "assets/background/decoration/62.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_234]
+id = 234
+name = "Textura #234"
+path = "assets/background/decoration/63.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_235]
+id = 235
+name = "Textura #235"
+path = "assets/background/decoration/64.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_236]
+id = 236
+name = "Textura #236"
+path = "assets/background/decoration/65.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_237]
+id = 237
+name = "Textura #237"
+path = "assets/background/decoration/66.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_238]
+id = 238
+name = "Textura #238"
+path = "assets/background/decoration/67.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_239]
+id = 239
+name = "Textura #239"
+path = "assets/background/decoration/68.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_240]
+id = 240
+name = "Textura #240"
+path = "assets/background/decoration/69.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_241]
+id = 241
+name = "Textura #241"
+path = "assets/background/decoration/70.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_242]
+id = 242
+name = "Textura #242"
+path = "assets/background/decoration/71.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_243]
+id = 243
+name = "Textura #243"
+path = "assets/background/decoration/72.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_244]
+id = 244
+name = "Textura #244"
+path = "assets/background/decoration/73.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_245]
+id = 245
+name = "Textura #245"
+path = "assets/background/decoration/74.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_246]
+id = 246
+name = "Textura #246"
+path = "assets/background/decoration/75.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_247]
+id = 247
+name = "Textura #247"
+path = "assets/background/decoration/76.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_248]
+id = 248
+name = "Textura #248"
+path = "assets/background/decoration/77.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_249]
+id = 249
+name = "Textura #249"
+path = "assets/background/decoration/78.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_250]
+id = 250
+name = "Textura #250"
+path = "assets/background/decoration/79.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_251]
+id = 251
+name = "Textura #251"
+path = "assets/background/decoration/83.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_252]
+id = 252
+name = "Textura #252"
+path = "assets/background/decoration/84.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_253]
+id = 253
+name = "Textura #253"
+path = "assets/background/decoration/85.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_254]
+id = 254
+name = "Textura #254"
+path = "assets/background/decoration/86.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_255]
+id = 255
+name = "Textura #255"
+path = "assets/background/decoration/87.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.5
+
+[textures.tex_256]
+id = 256
+name = "Textura #256"
+path = "assets/background/decoration/88.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_257]
+id = 257
+name = "Textura #257"
+path = "assets/background/decoration/89.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_258]
+id = 258
+name = "Textura #258"
+path = "assets/background/decoration/90.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_259]
+id = 259
+name = "Textura #259"
+path = "assets/background/decoration/91.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_260]
+id = 260
+name = "Textura #260"
+path = "assets/background/decoration/92.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_261]
+id = 261
+name = "Textura #261"
+path = "assets/background/decoration/93.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_262]
+id = 262
+name = "Textura #262"
+path = "assets/background/decoration/94.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_263]
+id = 263
+name = "Textura #263"
+path = "assets/background/decoration/95.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_264]
+id = 264
+name = "Textura #264"
+path = "assets/background/decoration/96.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_265]
+id = 265
+name = "Textura #265"
+path = "assets/background/decoration/97.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_266]
+id = 266
+name = "Textura #266"
+path = "assets/background/decoration/98.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_267]
+id = 267
+name = "Textura #267"
+path = "assets/background/decoration/99.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_268]
+id = 268
+name = "Textura #268"
+path = "assets/background/decoration/100.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_269]
+id = 269
+name = "Textura #269"
+path = "assets/background/decoration/101.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_270]
+id = 270
+name = "Textura #270"
+path = "assets/background/decoration/102.png"
+collidable = false
+transparent = true
+priority = 1
+collidable_percentage = 0.0
+
+[textures.tex_271]
+id = 271
+name = "Textura #271"
+path = "assets/background/decoration/103.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_272]
+id = 272
+name = "Textura #272"
+path = "assets/background/decoration/104.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_273]
+id = 273
+name = "Textura #273"
+path = "assets/background/decoration/105.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_274]
+id = 274
+name = "Textura #274"
+path = "assets/background/decoration/106.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_275]
+id = 275
+name = "Textura #275"
+path = "assets/background/decoration/107.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_276]
+id = 276
+name = "Textura #276"
+path = "assets/background/decoration/108.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.45
+
+[textures.tex_277]
+id = 277
+name = "Textura #277" 
+path = "assets/background/decoration/109.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.45
+
+[textures.tex_278]
+id = 278
+name = "Textura #278"
+path = "assets/background/decoration/110.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.45
+
+[textures.tex_279]
+id = 279
+name = "Textura #279"
+path = "assets/background/decoration/111.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_280]
+id = 280
+name = "Textura #280"
+path = "assets/background/decoration/112.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.35
+
+[textures.tex_281]
+id = 281
+name = "Textura #281"
+path = "assets/background/decoration/113.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.35
+
+[textures.tex_282]
+id = 282
+name = "Textura #282"
+path = "assets/background/decoration/114.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_283]
+id = 283
+name = "Textura #283"
+path = "assets/background/decoration/116.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_284]
+id = 284
+name = "Textura #284"
+path = "assets/background/decoration/117.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.35
+
+[textures.tex_285]
+id = 285
+name = "Textura #285"
+path = "assets/background/decoration/118.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_286]
+id = 286
+name = "Textura #286"
+path = "assets/background/decoration/119.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_287]
+id = 287
+name = "Textura #287"
+path = "assets/background/decoration/120.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_288]
+id = 288
+name = "Textura #288"
+path = "assets/background/decoration/121.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.35
+
+[textures.tex_289]
+id = 289
+name = "Textura #289"
+path = "assets/background/decoration/122.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_290]
+id = 290
+name = "Textura #290"
+path = "assets/background/decoration/123.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_291]
+id = 291
+name = "Textura #291"
+path = "assets/background/decoration/124.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_292]
+id = 292
+name = "Textura #292"
+path = "assets/background/decoration/125.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_293]
+id = 293
+name = "Textura #293"
+path = "assets/background/decoration/126.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_294]
+id = 294
+name = "Textura #294"
+path = "assets/background/decoration/127.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.85
+
+[textures.tex_295]
+id = 295
+name = "Textura #295"
+path = "assets/background/decoration/128.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.7
+
+[textures.tex_296]
+id = 296
+name = "Textura #296"
+path = "assets/background/decoration/129.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.85
+
+[textures.tex_297]
+id = 297
+name = "Textura #297"
+path = "assets/background/decoration/130.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.7
+
+[textures.tex_298]
+id = 298
+name = "Textura #298"
+path = "assets/background/decoration/131.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.75
+
+[textures.tex_299]
+id = 299
+name = "Textura #299"
+path = "assets/background/decoration/132.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.85
+
+[textures.tex_300]
+id = 300
+name = "Textura #300"
+path = "assets/background/decoration/133.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.7
+
+[textures.tex_301]
+id = 301
+name = "Textura #301"
+path = "assets/background/decoration/134.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.85
+
+[textures.tex_302]
+id = 302
+name = "Textura #302"
+path = "assets/background/decoration/135.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_303]
+id = 303
+name = "Textura #303"
+path = "assets/background/decoration/136.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.35
+
+[textures.tex_304]
+id = 304
+name = "Textura #304"
+path = "assets/background/decoration/137.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_305]
+id = 305
+name = "Textura #305"
+path = "assets/background/decoration/138.png"
+collidable = false 
+transparent = true
+priority = 3
+collidable_percentage = 0.0
+
+[textures.tex_306]
+id = 306
+name = "Textura #306"
+path = "assets/background/decoration/139.png"
+collidable = false 
+transparent = true
+priority = 3
+collidable_percentage = 0.0
+
+[textures.tex_307]
+id = 307
+name = "Textura #307"
+path = "assets/background/decoration/140.png"
+collidable = false 
+transparent = true
+priority = 3
+collidable_percentage = 0.0
+
+[textures.tex_308]
+id = 308
+name = "Textura #308"
+path = "assets/background/decoration/141.png"
+collidable = false 
+transparent = true
+priority = 3
+collidable_percentage = 0.0
+
+[textures.tex_309]
+id = 309
+name = "Textura #309"
+path = "assets/background/decoration/142.png"
+collidable = false 
+transparent = true
+priority = 3
+collidable_percentage = 0.0
+
+[textures.tex_310]
+id = 310
+name = "Textura #310"
+path = "assets/background/decoration/143.png"
+collidable = false 
+transparent = true
+priority = 3
+collidable_percentage = 0.0
+
+[textures.tex_311]
+id = 311
+name = "Textura #311"
+path = "assets/background/decoration/144.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_312]
+id = 312
+name = "Textura #312"
+path = "assets/background/decoration/145.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_313]
+id = 313
+name = "Textura #313"
+path = "assets/background/decoration/146.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_314]
+id = 314
+name = "Textura #314"
+path = "assets/background/decoration/147.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_315]
+id = 315
+name = "Textura #315"
+path = "assets/background/decoration/148.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_316]
+id = 316
+name = "Textura #316"
+path = "assets/background/decoration/149.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_317]
+id = 317
+name = "Textura #317"
+path = "assets/background/decoration/150.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_318]
+id = 318
+name = "Textura #318"
+path = "assets/background/decoration/151.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_319]
+id = 319
+name = "Textura #319"
+path = "assets/background/decoration/152.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_320]
+id = 320
+name = "Textura #320"
+path = "assets/background/decoration/153.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_321]
+id = 321
+name = "Textura #321"
+path = "assets/background/decoration/154.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.5
+
+[textures.tex_322]
+id = 322
+name = "Textura #322"
+path = "assets/background/decoration/155.png"
+collidable = false
+transparent = true
+priority = 2
+collidable_percentage = 0.0
+
+[textures.tex_323]
+id = 323
+name = "Textura #323"
+path = "assets/background/decoration/156.png"
+collidable = false
+transparent = true
+priority = 2
+collidable_percentage = 0.0
+
+[textures.tex_324]
+id = 324
+name = "Textura #324"
+path = "assets/background/decoration/157.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_325]
+id = 325
+name = "Textura #325"
+path = "assets/background/decoration/158.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.9
+
+[textures.tex_326]
+id = 326
+name = "Textura #326"
+path = "assets/background/decoration/159.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_327]
+id = 327
+name = "Textura #327"
+path = "assets/background/decoration/160.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_328]
+id = 328
+name = "Textura #328"
+path = "assets/background/decoration/161.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_329]
+id = 329
+name = "Textura #329"
+path = "assets/background/decoration/162.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_330]
+id = 330
+name = "Textura #330"
+path = "assets/background/decoration/163.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_331]
+id = 331
+name = "Textura #331"
+path = "assets/background/decoration/164.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_332]
+id = 332
+name = "Textura #332"
+path = "assets/background/decoration/165.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_333]
+id = 333
+name = "Textura #333"
+path = "assets/background/decoration/166.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_334]
+id = 334
+name = "Textura #334"
+path = "assets/background/decoration/167.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_335]
+id = 335
+name = "Textura #335"
+path = "assets/background/decoration/168.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_336]
+id = 336
+name = "Textura #336"
+path = "assets/background/decoration/169.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_337]
+id = 337
+name = "Textura #337"
+path = "assets/background/decoration/170.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_338]
+id = 338
+name = "Textura #338"
+path = "assets/background/decoration/171.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_339]
+id = 339
+name = "Textura #339"
+path = "assets/background/decoration/173.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 0.25
+
+[textures.tex_340]
+id = 340
+name = "Textura #340"
+path = "assets/background/decoration/174.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_341]
+id = 341
+name = "Textura #341"
+path = "assets/background/decoration/175.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_342]
+id = 342
+name = "Textura #342"
+path = "assets/background/decoration/176.png"
+collidable = true
+transparent = true
+priority = 2
+collidable_percentage = 1.0
+
+[textures.tex_343]
+id = 343
+name = "Textura #343"
+path = "assets/background/decoration/177.png"
+collidable = true
+transparent = true
+priority = 2
 collidable_percentage = 0.25

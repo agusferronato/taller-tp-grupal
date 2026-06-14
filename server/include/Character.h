@@ -56,7 +56,9 @@ public:
   void setDirection(Direction dir);
   void stop();
   std::pair<int, int> getTargetPosition(Direction dir) const;
+  std::pair<int, int> getTargetPosition(Direction dir, uint32_t speed) const;
   std::pair<int, int> getTargetPosition() const;
+  std::pair<int, int> getTargetPosition(uint32_t speed) const;
   void move(int newX, int newY) { player.move(newX, newY); }
 
   // Inventory (delegates to Player)
@@ -64,6 +66,10 @@ public:
   bool equipItem(uint8_t slot) { return player.equipItem(slot); }
   bool unequipSlot(EquipSlot slot) { return player.unequipSlot(slot); }
   bool removeItem(uint8_t slot) { return player.removeItem(slot); }
+  bool hasItem(uint8_t itemId) const;
+  bool hasMoney(uint16_t amount) const;
+  void removeItemById(uint8_t itemId);
+  void resurrect();
 
   Inventory &getInventory() { return player.getInventory(); }
   const Inventory &getInventory() const { return player.getInventory(); }
@@ -82,6 +88,7 @@ public:
   void heal(uint32_t amount);
   void addMana(uint32_t amount) { player.addMana(amount); }
   void gainExperience(uint32_t xp);
+  void setLevel(uint32_t level) { player.setLevel(level); }
   void addGold(uint32_t amount);
   void spendGold(uint32_t amount);
 
@@ -102,8 +109,12 @@ public:
   bool assertAttackDistance(int16_t targetX, int16_t targetY) const;
   uint32_t dropGoldOnDeath();
   std::vector<uint8_t> die();
-
   void restore();
+
+  uint32_t getClanId() const { return player.getClanId(); }
+  bool hasClan() const { return player.hasClan(); }
+  void joinClan(uint32_t clanId) { player.joinClan(clanId); }
+  void leaveClan() { player.leaveClan(); }
 
 private:
   uint32_t id;

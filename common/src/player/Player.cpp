@@ -17,6 +17,8 @@ void Player::updateStats(uint32_t hp, uint32_t maxHp, uint32_t mana,
                          uint32_t maxMana, uint32_t gold, uint32_t level,
                          uint32_t experience) {
   stats.updateStats(hp, maxHp, mana, maxMana, gold, level, experience);
+  if (hp <= 0) 
+    death = true;
 }
 
 void Player::startMoving(Direction dir) {
@@ -44,6 +46,12 @@ uint32_t Player::takeDamage(uint32_t damage) {
 }
 
 void Player::heal(uint32_t amount) { stats.heal(amount); }
+
+void Player::resurrect() {
+  death = false;
+  stats.setHealth(stats.getMaxHp());
+  stats.setMana(stats.getMaxMana());
+}
 bool Player::useMana(uint32_t) { return false; }
 void Player::addMana(uint32_t amount) { stats.addMana(amount); }
 bool Player::gainExperience(uint32_t xp) { return stats.addExperience(xp); }
@@ -68,6 +76,11 @@ uint32_t Player::attack() const {
   const auto &weapon = ITEM_TABLE[getEquippedWeapon()];
   return Formulas::calcularDaño(stats.getStrength(), weapon.minDamage,
                                 weapon.maxDamage, rand());
+}
+
+void Player::setLevel(uint32_t level) {
+  stats.setLevel(level);
+  death = false;
 }
 
 bool Player::assertAttackDistance(int16_t targetX, int16_t targetY) const {

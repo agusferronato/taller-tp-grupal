@@ -13,7 +13,7 @@ class CityEntity : public Colisionable {
 protected:
     uint32_t id;
     Position gridPosition;
-    int range{128};
+    int range{80};
     int x, y;
     Direction direction{Direction::Down};
     bool isMoving{false};
@@ -33,7 +33,7 @@ public:
 
     virtual int getAncho() const = 0;
     virtual int getAlto() const = 0;
-    virtual int getRange() const = 0;
+    inline int getRange() { return range; }
 
     Direction getDirection() const { return direction; }
     bool getIsMoving() const { return isMoving; }

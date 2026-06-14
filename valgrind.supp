@@ -132,3 +132,27 @@
    fun:SDL_DBus_Init_Spinlocked
    ...
 }
+
+{
+   SDL_DBus_init_malloc_leak
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:malloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libdbus-1.so*
+   ...
+   fun:SDL_DBus_Init_Spinlocked
+   ...
+}
+
+{
+   SDL_DBus_init_realloc_indirect_leak
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:realloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libdbus-1.so*
+   ...
+   fun:SDL_DBus_Init_Spinlocked
+   ...
+}

@@ -1,6 +1,12 @@
 #include "GameModel.h"
+#include "AttackReceivedEventDTO.h"
+#include "AcceptClanRequestCommandDTO.h"
+#include "BanClanPlayerCommandDTO.h"
 #include "ChatMessageEventDTO.h"
+#include "CheatCommandDTO.h"
+#include "CreateClanCommandDTO.h"
 #include "DropItemCommandDTO.h"
+#include "CityEntityCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "GameWindow.h"
 #include "GlobalChatMessageCommandDTO.h"
@@ -9,6 +15,9 @@
 #include "GroundItemRemovedEventDTO.h"
 #include "GroundItemsListEventDTO.h"
 #include "InventoryUpdateEventDTO.h"
+#include "JoinClanCommandDTO.h"
+#include "KickClanMemberCommandDTO.h"
+#include "LeaveClanCommandDTO.h"
 #include "NPC.h"
 #include "NPCAppearedEventDTO.h"
 #include "NPCMovedEventDTO.h"
@@ -20,14 +29,20 @@
 #include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "PlayerRemovedEventDTO.h"
+#include "PlayerResurrectEventDTO.h"
 #include "PlayerStoppedEventDTO.h"
+#include "PrivateMessageCommandDTO.h"
 #include "PrivateMessageEventDTO.h"
 #include "Race.h"
 #include "RegisterPlayerEventDTO.h"
+#include "RejectClanRequestCommandDTO.h"
+#include "ReviewClanCommandDTO.h"
 #include "TextureInfoEventDTO.h"
 #include "UnequipCommandDTO.h"
 #include <iostream>
 #include <stdexcept>
+
+static constexpr int MAX_NUMBER_OF_MESSAGES = 100;
 
 GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
                      Queue<ServerEventDTO> &receptionQueue,
@@ -43,7 +58,6 @@ void GameModel::updateStateFromServer() {
     std::visit([this](const auto &e) { handle(e); }, event);
   }
 
-  gameView->updateGroundItems(groundItemManager.getAll());
 }
 
 void GameModel::handleInventoryClick(int screenX, int screenY, uint8_t button) {
@@ -79,6 +93,70 @@ void GameModel::equipItem(uint8_t slot) {
 
 void GameModel::unequipItem(uint8_t equipSlot) {
   sendingQueue.push(UnequipCommandDTO{myPlayerID, equipSlot});
+}
+
+void GameModel::sendCityEntityCommand(uint8_t cmdType, int16_t arg) {
+  sendingQueue.push(CityEntityCommandDTO{myPlayerID, cmdType, arg});
+}
+
+void GameModel::createClan(const std::string &clanName) {
+  sendingQueue.push(CreateClanCommandDTO{myPlayerID, clanName});
+}
+
+void GameModel::joinClan(const std::string &clanName) {
+  sendingQueue.push(JoinClanCommandDTO{myPlayerID, clanName});
+}
+
+void GameModel::acceptClanRequest(const std::string &playerName) {
+  sendingQueue.push(AcceptClanRequestCommandDTO{myPlayerID, playerName});
+}
+
+void GameModel::leaveClan() {
+  sendingQueue.push(LeaveClanCommandDTO{myPlayerID});
+}
+
+void GameModel::reviewClan() {
+  sendingQueue.push(ReviewClanCommandDTO{myPlayerID});
+}
+
+void GameModel::rejectClanRequest(const std::string &playerName) {
+  sendingQueue.push(RejectClanRequestCommandDTO{myPlayerID, playerName});
+}
+
+void GameModel::banClanPlayer(const std::string &playerName) {
+  sendingQueue.push(BanClanPlayerCommandDTO{myPlayerID, playerName});
+}
+
+void GameModel::kickClanMember(const std::string &playerName) {
+  sendingQueue.push(KickClanMemberCommandDTO{myPlayerID, playerName});
+}
+
+void GameModel::sendPrivateMessage(const std::string &targetName,
+                                   const std::string &message) {
+  sendingQueue.push(PrivateMessageCommandDTO{targetName, message});
+}
+
+void GameModel::addLocalChatMessage(std::string text,
+                                    ChatMessageCategory category) {
+  chatMessages.push_back(ChatMessage{std::move(text), category});
+
+  while (chatMessages.size() > MAX_NUMBER_OF_MESSAGES) {
+    chatMessages.pop_front();
+  }
+
+  updateChatView();
+}
+
+void GameModel::zoomOutCamera() {
+  gameView->zoomOutCamera();
+}
+
+void GameModel::resetCameraZoom() {
+  gameView->resetCameraZoom();
+}
+
+void GameModel::sendCheat(CheatType cheat, uint32_t arg) {
+  sendingQueue.push(CheatCommandDTO{cheat, arg});
 }
 
 void GameModel::moveMyPlayer(Direction direction) {
@@ -185,18 +263,43 @@ void GameModel::handle(const InventoryUpdateEventDTO &inv) {
 }
 void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &event) {
-  chatMessages.push_back(event.message);
-  while (chatMessages.size() > 100) {
+
+  std::istringstream stream(event.message);
+    std::string line;
+    while (std::getline(stream, line, '\n')) {
+        if (line.empty()) continue;
+
+        chatMessages.push_back(ChatMessage{line, event.category});
+        while (chatMessages.size() > 100)
+            chatMessages.pop_front();
+    }
+    updateChatView();
+}
+
+void GameModel::handle(const PrivateMessageEventDTO &event) {
+  std::string text = "[MP de " + event.senderName + "] " + event.message;
+  auto myPlayerIt = players.find(myPlayerID);
+  if (myPlayerIt != players.end() &&
+      event.senderName == myPlayerIt->second->getName()) {
+    text = "[MP para " + event.targetName + "] " + event.message;
+  }
+
+  chatMessages.push_back(
+      ChatMessage{std::move(text), ChatMessageCategory::Private});
+
+  while (chatMessages.size() > MAX_NUMBER_OF_MESSAGES) {
     chatMessages.pop_front();
   }
+
   updateChatView();
 }
-void GameModel::handle(const PrivateMessageEventDTO &) {}
 
 void GameModel::handle(const GlobalChatMessageEventDTO &event) {
-  chatMessages.push_back(event.message);
+  chatMessages.push_back(
+      ChatMessage{event.playerName + ": " + event.message,
+                  ChatMessageCategory::Global});
 
-  while (chatMessages.size() > 100) {
+  while (chatMessages.size() > MAX_NUMBER_OF_MESSAGES) {
     chatMessages.pop_front();
   }
 
@@ -207,7 +310,7 @@ void GameModel::updateChatView() {
   gameView->setChatState(chatMessages, currentChatInput, chatActive);
 }
 
-const std::deque<std::string> &GameModel::getChatMessages() const {
+const std::deque<ChatMessage> &GameModel::getChatMessages() const {
   return chatMessages;
 }
 
@@ -255,13 +358,15 @@ void GameModel::submitChat() {
   updateChatView();
 }
 void GameModel::handle(const GroundItemAppearedEventDTO &e) {
-  groundItemManager.add(e.groundItemId, e.itemId, e.x, e.y);
+  gameView->addGroundItem(e.groundItemId, e.itemId, e.x, e.y);
 }
 void GameModel::handle(const GroundItemRemovedEventDTO &e) {
-  groundItemManager.remove(e.groundItemId);
+  gameView->removeEntity(EntityType::GroundItem, e.groundItemId);
 }
 void GameModel::handle(const GroundItemsListEventDTO &e) {
-  groundItemManager.setAll(e.items);
+  for (auto& item : e.items) {
+    gameView->addGroundItem(item.groundItemId, item.itemId, item.x, item.y);
+  }
 }
 
 void GameModel::handle(const NPCMovedEventDTO &event) {
@@ -312,7 +417,21 @@ void GameModel::handle(const CityEntityStoppedEventDTO &event) {
   }
 }
 
+void GameModel::handle(const AttackReceivedEventDTO &event) {
+  if (event.entityType == EntityType::Player) {
+    auto it = players.find(event.entityId);
+    if (it != players.end())
+      it->second->setBeingAttacked(true);
+  } else if (event.entityType == EntityType::Npc) {
+    auto it = npcs.find(event.entityId);
+    if (it != npcs.end())
+      it->second->setBeingAttacked(true);
+  }
+}
+
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
+
+void GameModel::handle(const LoginResultEventDTO &) {}
 
 PlayerStatsInfo GameModel::playerStatsFrom(const PlayerInfoDTO &info) {
   PlayerStatsInfo stats{stats.health = info.hp,
@@ -336,6 +455,15 @@ PlayerStatsInfo GameModel::playerStatsFrom(const PlayerAppearedEventDTO &info) {
   return stats;
 }
 
+void GameModel::scrollChatUp() {
+  gameView->scrollChatUp();
+  updateChatView();
+}
+
+void GameModel::scrollChatDown() {
+  gameView->scrollChatDown();
+  updateChatView();
+}
 void GameModel::handleLeftMouseClick(int mouseX, int mouseY) {
   handleInventoryClick(mouseX, mouseY, SDL_BUTTON_LEFT);
 
@@ -351,5 +479,19 @@ void GameModel::handle(const PlayerDieEventDTO &event) {
   if (it == players.end()) {
     return;
   }
-  it->second->die();
+  if (event.playerId == myPlayerID) {
+    it->second->die();
+  } else {
+    gameView->removePlayer(event.playerId);
+    players.erase(event.playerId);
+  }
+}
+
+void GameModel::handle(const PlayerResurrectEventDTO &event) {
+  if (event.playerId != myPlayerID)
+    return;
+  auto it = players.find(myPlayerID);
+  if (it == players.end())
+    return;
+  it->second->resurrect(event.x, event.y);
 }
