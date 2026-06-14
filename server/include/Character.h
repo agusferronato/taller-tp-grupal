@@ -1,9 +1,11 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
+#include "Armor.h"
 #include "City.h"
 #include "Colisionable.h"
 #include "Direction.h"
+#include "Helmet.h"
 #include "Player.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerClass.h"
@@ -12,6 +14,8 @@
 #include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "Race.h"
+#include "Shield.h"
+#include "Weapon.h"
 #include <cstdint>
 #include <list>
 #include <memory>
@@ -75,13 +79,13 @@ public:
   const Inventory &getInventory() const { return player.getInventory(); }
 
   // Inventory getters
-  const std::array<uint8_t, MAX_INVENTORY_SLOTS> &getInventoryItems() const {
+  std::array<uint8_t, MAX_INVENTORY_SLOTS> getInventoryItems() const {
     return player.getInventoryItems();
   }
-  uint8_t getEquippedWeapon() const { return player.getEquippedWeapon(); }
-  uint8_t getEquippedArmor() const { return player.getEquippedArmor(); }
-  uint8_t getEquippedHelmet() const { return player.getEquippedHelmet(); }
-  uint8_t getEquippedShield() const { return player.getEquippedShield(); }
+  const Weapon &getEquippedWeapon() const { return player.getEquippedWeapon(); }
+  const Armor &getEquippedArmor() const { return player.getEquippedArmor(); }
+  const Helmet &getEquippedHelmet() const { return player.getEquippedHelmet(); }
+  const Shield &getEquippedShield() const { return player.getEquippedShield(); }
 
   // Stats management (delegates to Player)
   uint32_t takeDamage(uint32_t damage);

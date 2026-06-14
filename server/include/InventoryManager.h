@@ -9,9 +9,8 @@
 
 #include "Character.h"
 #include "DTO/Events/EventDTO.h"
-#include "ItemDef.h"
 
-class InventoryManager {
+class InventoryManager { 
 public:
   InventoryManager(
       std::unordered_map<uint32_t, std::unique_ptr<Character>> &players,
@@ -39,7 +38,7 @@ private:
 
   void broadcastInventoryUpdate(Character &player);
   void broadcastPlayerInfo(Character &player);
-  void consumePotion(Character &player, const ItemDef &def);
+  void consumePotion(Character &player, uint8_t itemId);
   bool isOnGroundItem(int px, int py, const GroundItem &gi) const;
 };
 

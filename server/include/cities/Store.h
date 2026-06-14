@@ -4,8 +4,8 @@
 #include <map>
 #include <set>
 #include <cstdint>
-#include <ItemDef.h>
 #include <CityEntityException.h>
+#include <ItemData.h>
 
 class Character;
 
@@ -16,19 +16,8 @@ struct ItemInStore {
 };
 
 inline ItemInStore getStoreItem(uint8_t itemId) {
-    static const std::map<uint8_t, std::pair<uint16_t, uint16_t>> prices = {
-        {1, {50, 25}}, {2, {80, 40}}, {3, {60, 30}},
-        {4, {100, 50}}, {5, {200, 100}}, {6, {80, 40}},
-        {7, {150, 75}}, {8, {200, 100}}, {9, {500, 250}},
-        {10, {100, 50}}, {11, {400, 200}}, {12, {200, 100}},
-        {13, {50, 25}}, {14, {100, 50}}, {15, {200, 100}},
-        {16, {50, 25}}, {17, {100, 50}}, {18, {30, 15}},
-        {19, {50, 25}}
-    };
-    auto it = prices.find(itemId);
-    if (it != prices.end())
-        return {it->second.first, it->second.second, 0};
-    return {0, 0, 0};
+    const PriceData &price = ItemData::instance().getPriceData(itemId);
+    return {price.buyPrice, price.sellPrice, 0};
 }
 
 

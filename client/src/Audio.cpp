@@ -1,5 +1,5 @@
 #include "Audio.h"
-#include "ItemDef.h"
+#include "ItemData.h"
 
 #include <algorithm>
 #include <iostream>
@@ -98,8 +98,8 @@ void Audio::playAttack(uint8_t weaponId, int distance) {
 }
 
 void Audio::playEquip(uint8_t itemId, int distance) {
-  const ItemDef &def = ITEM_TABLE[itemId];
-  if (def.type == ItemType::PotionHp || def.type == ItemType::PotionMana) {
+  auto &idata = ItemData::instance();
+  if (idata.isPotionHp(itemId) || idata.isPotionMana(itemId)) {
     playSfx("heal", distance);
   } else {
     playSfx("equip", distance);
