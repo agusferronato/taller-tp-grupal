@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Formulas.h"
+#include "ItemData.h"
 
 Player::Player(std::string name, Direction direction, int x, int y,
                const PlayerStatsInfo &statsInfo)
@@ -34,12 +35,13 @@ void Player::move(int newX, int newY) {
 }
 
 uint32_t Player::takeDamage(uint32_t damage) {
-  const auto &armor = ITEM_TABLE[getEquippedArmor()];
-  const auto &shield = ITEM_TABLE[getEquippedShield()];
-  const auto &helmet = ITEM_TABLE[getEquippedHelmet()];
+  Armor armor = getEquippedArmor();
+  Shield shield = getEquippedShield();
+  Helmet helmet = getEquippedHelmet();
   uint32_t defence = Formulas::calcularDefensa(
-      armor.minDefense, armor.maxDefense, shield.minDefense, shield.maxDefense,
-      helmet.minDefense, helmet.maxDefense, rand(), rand(), rand());
+      armor.minDefense(), armor.maxDefense(), shield.minDefense(),
+      shield.maxDefense(), helmet.minDefense(), helmet.maxDefense(), rand(),
+      rand(), rand());
   uint32_t actualDamage = damage > defence ? damage - defence : 0;
   stats.takeDamage(actualDamage);
   return actualDamage;
@@ -81,9 +83,9 @@ void Player::removeGold(uint32_t amount) {
 }
 
 uint32_t Player::attack() const {
-  const auto &weapon = ITEM_TABLE[getEquippedWeapon()];
-  return Formulas::calcularDaño(stats.getStrength(), weapon.minDamage,
-                                weapon.maxDamage, rand());
+  Weapon weapon = getEquippedWeapon();
+  return Formulas::calcularDaño(stats.getStrength(), weapon.minDamage(),
+                                weapon.maxDamage(), rand());
 }
 
 void Player::setLevel(uint32_t level) {
@@ -97,39 +99,39 @@ bool Player::assertAttackDistance(int16_t targetX, int16_t targetY) const {
   if (dx <= 64 && dy <= 64) {
     return true;
   }
-  const auto &weapon = ITEM_TABLE[getEquippedWeapon()];
-  return weapon.isRange;
+  Weapon weapon = getEquippedWeapon();
+  return weapon.longDistance() && weapon.hasRange(dx, dy);
 }
 
 std::vector<uint8_t> Player::die() {
   death = true;
   stats.die();
   std::vector<uint8_t> droppedItems;
+  auto ids = inventory.getItems();
   for (int i = 0; i < MAX_INVENTORY_SLOTS; i++) {
-    uint8_t itemId = inventory.getItems()[i];
-    if (itemId != EMPTY_ITEM) {
+    if (ids[i] != 0) {
       inventory.removeItem(i);
-      droppedItems.push_back(itemId);
+      droppedItems.push_back(ids[i]);
     }
   }
-  uint8_t weaponId = inventory.getWeapon();
-  if (weaponId != EMPTY_ITEM) {
-    inventory.setWeapon(EMPTY_ITEM);
+  uint8_t weaponId = inventory.getWeapon().getID();
+  if (weaponId != 0) {
+    inventory.setWeapon(0);
     droppedItems.push_back(weaponId);
   }
-  uint8_t armorId = inventory.getArmor();
-  if (armorId != EMPTY_ITEM) {
-    inventory.setArmor(EMPTY_ITEM);
+  uint8_t armorId = inventory.getArmor().getID();
+  if (armorId != 0) {
+    inventory.setArmor(0);
     droppedItems.push_back(armorId);
   }
-  uint8_t helmetId = inventory.getHelmet();
-  if (helmetId != EMPTY_ITEM) {
-    inventory.setHelmet(EMPTY_ITEM);
+  uint8_t helmetId = inventory.getHelmet().getID();
+  if (helmetId != 0) {
+    inventory.setHelmet(0);
     droppedItems.push_back(helmetId);
   }
-  uint8_t shieldId = inventory.getShield();
-  if (shieldId != EMPTY_ITEM) {
-    inventory.setShield(EMPTY_ITEM);
+  uint8_t shieldId = inventory.getShield().getID();
+  if (shieldId != 0) {
+    inventory.setShield(0);
     droppedItems.push_back(shieldId);
   }
   return droppedItems;

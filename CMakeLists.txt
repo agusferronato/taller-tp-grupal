@@ -52,6 +52,12 @@ configure_file(
   COPYONLY
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/common/items.toml
+  ${CMAKE_CURRENT_BINARY_DIR}/items.toml
+  COPYONLY
+)
+
 # HEY!! TODO XXX: you need to install some runtime and dev libraries *before*
 # compiling the client/editor code.
 #

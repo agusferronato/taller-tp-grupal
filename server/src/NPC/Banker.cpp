@@ -1,5 +1,6 @@
 #include "Banker.h"
 #include "Game.h"
+#include "ItemData.h"
 
 void Banker::saveItem(Game& game, Character& character, uint8_t id) {
     try {
@@ -59,7 +60,7 @@ void Banker::listItemsAvailables(Game& game, Character& character) {
 
     std::string msg = "Tus objetos en el banco: \n";
     for (auto& [id, item] : items) {
-        msg += "    (# " + std::to_string(id) + ") " + ITEM_TABLE[id].name 
+        msg += "    (# " + std::to_string(id) + ") " + ItemData::instance().getItemName(id)
             + " (x" + std::to_string(item.amount) + ") \n";
     }
     msg.erase(msg.size() - 2);

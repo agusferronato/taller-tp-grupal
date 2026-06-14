@@ -36,7 +36,8 @@
 #include "InventoryUpdateEventDTO.h"
 #include "GlobalChatMessageEventDTO.h"
 #include "MeditateCommandDTO.h"
-#include "ItemDef.h"
+#include "ItemData.h"
+#include "Weapon.h"
 #include <NPCType.h>
 
 namespace {
@@ -232,9 +233,10 @@ void Game::registerPlayer(const std::string &name, const Race race,
 
   messagesToSend.push_back(InventoryUpdateEventDTO{
       newId, players[newId]->getInventoryItems(),
-      players[newId]->getEquippedWeapon(), players[newId]->getEquippedArmor(),
-      players[newId]->getEquippedHelmet(),
-      players[newId]->getEquippedShield()});
+      players[newId]->getEquippedWeapon().getID(),
+      players[newId]->getEquippedArmor().getID(),
+      players[newId]->getEquippedHelmet().getID(),
+      players[newId]->getEquippedShield().getID()});
 
   {
     std::vector<GroundItemInfoDTO> groundItemList;
@@ -352,9 +354,10 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   messagesToSend.push_back(InventoryUpdateEventDTO{
       newId, players[newId]->getInventoryItems(),
-      players[newId]->getEquippedWeapon(), players[newId]->getEquippedArmor(),
-      players[newId]->getEquippedHelmet(),
-      players[newId]->getEquippedShield()});
+      players[newId]->getEquippedWeapon().getID(),
+      players[newId]->getEquippedArmor().getID(),
+      players[newId]->getEquippedHelmet().getID(),
+      players[newId]->getEquippedShield().getID()});
 
   {
     std::vector<GroundItemInfoDTO> groundItemList;
@@ -1269,6 +1272,12 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
   if (!consumeManaForAttack(attacker))
     return;
 
+  Weapon weapon = attacker.getEquippedWeapon();
+  if (weapon.isHealing()) {
+    target.heal(weapon.healValue());
+    return;
+  }
+
   stopMeditating(target.getId());
 
   uint32_t damage = calculateDamage(attacker);
@@ -1408,10 +1417,10 @@ void Game::playerAttackNPC(Character &attacker, NPC &target) {
 }
 
 bool Game::consumeManaForAttack(Character &attacker) {
-  const ItemDef &weapon = ITEM_TABLE[attacker.getEquippedWeapon()];
-  if (weapon.manaCost <= 0)
+  Weapon weapon = attacker.getEquippedWeapon();
+  if (weapon.manaCost() <= 0)
     return true;
-  if (!attacker.useMana(weapon.manaCost)) {
+  if (!attacker.useMana(weapon.manaCost())) {
     sendToPlayer(attacker.getId(),
       makeCombatMessage("No tenes suficiente mana para atacar."));
     return false;
@@ -1529,8 +1538,10 @@ void Game::sendInventoryUpdate(uint32_t playerId) {
     return;
   messagesToSend.push_back(InventoryUpdateEventDTO{
       playerId, it->second->getInventoryItems(),
-      it->second->getEquippedWeapon(), it->second->getEquippedArmor(),
-      it->second->getEquippedHelmet(), it->second->getEquippedShield()});
+      it->second->getEquippedWeapon().getID(),
+      it->second->getEquippedArmor().getID(),
+      it->second->getEquippedHelmet().getID(),
+      it->second->getEquippedShield().getID()});
 }
 
 void Game::sendPlayerInfoUpdate(uint32_t playerId) {

@@ -63,10 +63,10 @@ public:
   void setBeingAttacked(bool v) { beingAttacked = v; }
   void stopAttackEffect() const { beingAttacked = false; }
 
-  uint8_t getEquippedWeapon() const { return player.getEquippedWeapon(); }
-  uint8_t getEquippedArmor() const { return player.getEquippedArmor(); }
-  uint8_t getEquippedHelmet() const { return player.getEquippedHelmet(); }
-  uint8_t getEquippedShield() const { return player.getEquippedShield(); }
+  uint8_t getEquippedWeapon() const { return player.getEquippedWeapon().getID(); }
+  uint8_t getEquippedArmor() const { return player.getEquippedArmor().getID(); }
+  uint8_t getEquippedHelmet() const { return player.getEquippedHelmet().getID(); }
+  uint8_t getEquippedShield() const { return player.getEquippedShield().getID(); }
   const Inventory &getInventory() const { return player.getInventory(); }
   void die();
   void resurrect(int x, int y);
