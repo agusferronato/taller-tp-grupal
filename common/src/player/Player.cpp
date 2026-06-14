@@ -43,7 +43,7 @@ uint32_t Player::takeDamage(uint32_t damage) {
   return actualDamage;
 }
 
-uint32_t Player::heal(uint32_t) { return 0; }
+void Player::heal(uint32_t amount) { stats.heal(amount); }
 bool Player::useMana(uint32_t) { return false; }
 void Player::addMana(uint32_t amount) { stats.addMana(amount); }
 bool Player::gainExperience(uint32_t xp) { return stats.addExperience(xp); }

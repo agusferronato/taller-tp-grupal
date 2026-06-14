@@ -88,3 +88,11 @@ void PlayerStats::die() {
   health = 0;
   mana = 0;
 }
+
+void PlayerStats::heal(uint32_t amount) {
+  uint32_t newHealth = health + amount;
+  if (newHealth > maxHealth){
+    newHealth = maxHealth;
+  }
+  health = newHealth;
+}

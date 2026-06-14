@@ -61,6 +61,7 @@ public:
 
   void earnGold(uint32_t amount);
   void die();
+  void heal(uint32_t amount);
 };
 
 #endif

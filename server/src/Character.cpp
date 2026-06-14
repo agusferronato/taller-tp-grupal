@@ -7,7 +7,7 @@
 
 Character::Character(uint32_t id, std::string name, Race race,
                      PlayerClass playerClass, int x, int y, Direction dir)
-    : id(id), player(std::move(name), race, dir, playerClass, x, y) {}
+    : id(id), player(std::move(name), race, dir, playerClass, x, y), timeSinceLastHit(std::nullopt), timeSinceLastManaConsume(std::nullopt) {}
 
 Character::Character(uint32_t id, const PlayerData &data)
     : id(id), player(data.name, RaceUtils::stringToRace(data.race),
@@ -21,6 +21,14 @@ Character::Character(uint32_t id, const PlayerData &data)
   player.setEquippedArmor(data.equippedArmor);
   player.setEquippedHelmet(data.equippedHelmet);
   player.setEquippedShield(data.equippedShield);
+  if (data.hp != 0) {
+    if (player.getHp() < player.getMaxHp()) {
+      timeSinceLastHit = 0;
+    }
+    if (player.getMana() < player.getMaxMana()) {
+      timeSinceLastManaConsume = 0;
+    }
+  }
 }
 
 PlayerData Character::toPlayerData() const {
@@ -93,6 +101,7 @@ std::pair<int, int> Character::getTargetPosition(Direction dir) const {
 }
 
 uint32_t Character::takeDamage(uint32_t damage) {
+  timeSinceLastHit = 0;
   return player.takeDamage(damage);
 }
 
@@ -183,3 +192,22 @@ uint32_t Character::dropGoldOnDeath() {
 }
 
 std::vector<uint8_t> Character::die() { return player.die(); }
+
+void Character::restore() {
+  if (player.isDead()) {
+    return;
+  }
+  if (timeSinceLastHit.has_value()) {
+    *timeSinceLastHit += 1;
+    heal(Formulas::calcularRecuperacionVida(player.getRace(), timeSinceLastHit.value()));
+    if (player.getHp() == player.getMaxHp()) {
+      timeSinceLastHit = std::nullopt;
+    }
+  } else if (timeSinceLastManaConsume.has_value()) {
+    *timeSinceLastManaConsume += 1;
+    addMana(Formulas::calcularRecuperacionMana(player.getRace(), timeSinceLastManaConsume.value()));
+    if (player.getMana() == player.getMaxMana()) {
+      timeSinceLastManaConsume = std::nullopt;
+    }
+  }
+}

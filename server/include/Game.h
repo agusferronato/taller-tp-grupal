@@ -122,6 +122,7 @@ private:
   int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
 
   void killPlayer(Character &dyingPlayer);
+  void restorePlayers();
 };
 
 #endif

@@ -18,6 +18,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <optional>
 
 class Character : public Colisionable {
 public:
@@ -102,9 +103,14 @@ public:
   uint32_t dropGoldOnDeath();
   std::vector<uint8_t> die();
 
+  void restore();
+
 private:
   uint32_t id;
   Player player;
+
+  std::optional<uint8_t> timeSinceLastHit;
+  std::optional<uint8_t> timeSinceLastManaConsume;
 };
 
 #endif // CHARACTER_H

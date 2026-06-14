@@ -79,9 +79,7 @@ void Game::run() {
     }
 
     if (it % 60 == 0) {
-      for (auto &[pid, p] : players) {
-        messagesToSend.push_back(p->toPlayerInfoEvent());
-      }
+      restorePlayers();
     }
 
     rateloop.updateTimer(it);
@@ -661,8 +659,9 @@ uint32_t Game::calculateDamage(Character &attacker) {
 
 bool Game::validAttack(Character &attacker, Character &target) {
   if (attacker.isNewbie() || target.isNewbie()) {
-    // return false;
+    return false;
   }
+  // [TODO] que no esten el el mismo clan
   if (abs(static_cast<int>(attacker.getLevel()) -
           static_cast<int>(target.getLevel())) > 10) {
     return false;
@@ -706,4 +705,11 @@ void Game::killPlayer(Character &dyingPlayer) {
     inventoryManager.addGroundItem(itemId, x, y);
   }
   messagesToSend.push_back(PlayerDieEventDTO{dyingPlayer.getId()});
+}
+
+void Game::restorePlayers() {
+  for (auto &[pid, p] : players) {
+    p->restore();
+    messagesToSend.push_back(p->toPlayerInfoEvent());
+  }
 }
