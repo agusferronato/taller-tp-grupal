@@ -7,7 +7,8 @@
 
 Character::Character(uint32_t id, std::string name, Race race,
                      PlayerClass playerClass, int x, int y, Direction dir)
-    : id(id), player(std::move(name), race, dir, playerClass, x, y), timeSinceLastHit(std::nullopt), timeSinceLastManaConsume(std::nullopt) {}
+    : id(id), player(std::move(name), race, dir, playerClass, x, y),
+      timeSinceLastHit(std::nullopt), timeSinceLastManaConsume(std::nullopt) {}
 
 Character::Character(uint32_t id, const PlayerData &data)
     : id(id), player(data.name, RaceUtils::stringToRace(data.race),
@@ -210,18 +211,19 @@ void Character::restore() {
   }
   if (timeSinceLastHit.has_value()) {
     *timeSinceLastHit += 1;
-    heal(Formulas::calcularRecuperacionVida(player.getRace(), timeSinceLastHit.value()));
+    heal(Formulas::calcularRecuperacionVida(player.getRace(),
+                                            timeSinceLastHit.value()));
     if (player.getHp() == player.getMaxHp()) {
       timeSinceLastHit = std::nullopt;
     }
   } else if (timeSinceLastManaConsume.has_value()) {
     *timeSinceLastManaConsume += 1;
-    addMana(Formulas::calcularRecuperacionMana(player.getRace(), timeSinceLastManaConsume.value()));
+    addMana(Formulas::calcularRecuperacionMana(
+        player.getRace(), timeSinceLastManaConsume.value()));
     if (player.getMana() == player.getMaxMana()) {
       timeSinceLastManaConsume = std::nullopt;
     }
   }
-
 }
 
 bool Character::hasItem(uint8_t itemId) const {
@@ -232,13 +234,10 @@ bool Character::hasMoney(uint16_t amount) const {
   return player.getGold() >= amount;
 }
 
-
 void Character::removeItemById(uint8_t itemId) {
   uint8_t slot = player.getInventory().findItem(itemId);
   if (slot != MAX_INVENTORY_SLOTS)
     player.removeItem(slot);
 }
 
-void Character::resurrect() {
-  player.resurrect();
-}
+void Character::resurrect() { player.resurrect(); }

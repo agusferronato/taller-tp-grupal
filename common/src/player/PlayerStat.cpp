@@ -100,7 +100,7 @@ void PlayerStats::die() {
 
 void PlayerStats::heal(uint32_t amount) {
   uint32_t newHealth = health + amount;
-  if (newHealth > maxHealth){
+  if (newHealth > maxHealth) {
     newHealth = maxHealth;
   }
   health = newHealth;
