@@ -24,8 +24,10 @@ cmake --build build -j$(nproc)
 ## Ejecución
 Moverse al **directorio de build** y ejecutar
 ```bash
-# Editor de mapas
+# Editor de mapas (crear mapa nuevo de 0)
 ./taller_editor
+# Editor de mapas (con mapa preexistente)
+./taller_editor <ruta_del_mapa>
 # Servidor (requiere un mapa)
 ./taller_server <puerto> <ruta_del_mapa>
 # Cliente gráfico
