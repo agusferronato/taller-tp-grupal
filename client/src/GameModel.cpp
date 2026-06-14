@@ -435,24 +435,26 @@ void GameModel::handle(const RegisterPlayerEventDTO &) {}
 void GameModel::handle(const LoginResultEventDTO &) {}
 
 PlayerStatsInfo GameModel::playerStatsFrom(const PlayerInfoDTO &info) {
-  PlayerStatsInfo stats{stats.health = info.hp,
-                        stats.mana = info.mana,
-                        stats.gold = info.gold,
-                        stats.level = info.level,
-                        stats.experience = info.experience,
-                        stats.race = info.race,
-                        stats.playerClass = info.playerClass};
+  PlayerStatsInfo stats{};
+  stats.health = info.hp;
+  stats.mana = info.mana;
+  stats.level = info.level;
+  stats.experience = info.experience;
+  stats.gold = info.gold;
+  stats.race = info.race;
+  stats.playerClass = info.playerClass;
   return stats;
 }
 
 PlayerStatsInfo GameModel::playerStatsFrom(const PlayerAppearedEventDTO &info) {
-  PlayerStatsInfo stats{stats.health = info.hp,
-                        stats.mana = info.mana,
-                        stats.gold = info.gold,
-                        stats.level = info.level,
-                        stats.experience = info.experience,
-                        stats.race = info.race,
-                        stats.playerClass = info.playerClass};
+  PlayerStatsInfo stats{};
+  stats.health = info.hp;
+  stats.mana = info.mana;
+  stats.level = info.level;
+  stats.experience = info.experience;
+  stats.gold = info.gold;
+  stats.race = info.race;
+  stats.playerClass = info.playerClass;
   return stats;
 }
 
