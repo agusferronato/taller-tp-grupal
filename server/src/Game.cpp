@@ -35,6 +35,8 @@
 #include "AttackReceivedEventDTO.h"
 #include "InventoryUpdateEventDTO.h"
 #include "GlobalChatMessageEventDTO.h"
+#include "MeditateCommandDTO.h"
+#include "ItemDef.h"
 #include <NPCType.h>
 
 namespace {
@@ -103,6 +105,11 @@ void Game::run() {
     ClientMessage msg;
 
     if (gameloopQueue.try_pop(msg)) {
+      auto popIt = players.find(msg.connectionId);
+      if (popIt != players.end() && popIt->second->isMeditating() &&
+          !std::get_if<MeditateCommandDTO>(&msg.dto)) {
+        stopMeditating(msg.connectionId);
+      }
       auto command = factory.create(msg.dto);
       command->execute(*this, msg.connectionId);
     }
@@ -125,6 +132,14 @@ void Game::run() {
 
     if (it % 60 == 0) {
       for (auto &[pid, p] : players) {
+        uint32_t manaRecovered =
+            Formulas::calcularRecuperacionMana(p->getRace(), 1);
+        p->addMana(manaRecovered);
+        if (p->isMeditating()) {
+          manaRecovered = Formulas::calcularRecuperacionMeditacion(
+              p->getPlayerClass(), p->getIntelligence(), 1);
+          p->addMana(manaRecovered);
+        }
         messagesToSend.push_back(p->toPlayerInfoEvent());
       }
     }
@@ -1126,6 +1141,8 @@ void Game::tryAttack(NPC& npc, Character& target) {
   if (!npc.collidesWith(target) || !npc.reachesAttackCounter())
     return;
 
+  stopMeditating(target.getId());
+
   if (target.tryParry()) {
     senderQueueMonitor.sendToClient(
         target.getId(),
@@ -1248,6 +1265,12 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
   if (!validAttack(attacker, target)) {
     return;
   }
+
+  if (!consumeManaForAttack(attacker))
+    return;
+
+  stopMeditating(target.getId());
+
   uint32_t damage = calculateDamage(attacker);
   bool critico = (damage != attacker.getDamage());
 
@@ -1303,6 +1326,9 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
 void Game::playerAttackNPC(Character &attacker, NPC &target) {
 
   if (!validAttackToNpc(attacker))
+    return;
+
+  if (!consumeManaForAttack(attacker))
     return;
 
   uint32_t damage = calculateDamage(attacker);
@@ -1379,6 +1405,18 @@ void Game::playerAttackNPC(Character &attacker, NPC &target) {
   }
   messagesToSend.push_back(attacker.toPlayerInfoEvent());
 
+}
+
+bool Game::consumeManaForAttack(Character &attacker) {
+  const ItemDef &weapon = ITEM_TABLE[attacker.getEquippedWeapon()];
+  if (weapon.manaCost <= 0)
+    return true;
+  if (!attacker.useMana(weapon.manaCost)) {
+    sendToPlayer(attacker.getId(),
+      makeCombatMessage("No tenes suficiente mana para atacar."));
+    return false;
+  }
+  return true;
 }
 
 uint32_t Game::calculateDamage(Character &attacker) {
@@ -1473,6 +1511,7 @@ NPC *Game::findNPCByCoordinates(int16_t x, int16_t y) {
 }
 
 void Game::killPlayer(Character &dyingPlayer) {
+  stopMeditating(dyingPlayer.getId());
   dyingPlayer.dropGoldOnDeath();
   auto items = dyingPlayer.die();
   int16_t x = dyingPlayer.getX();
@@ -1536,6 +1575,26 @@ CityEntity *Game::findNearestEntity(uint32_t playerId, CityEntityType type) {
     }
   }
   return nearest;
+}
+
+void Game::startMeditating(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end() || it->second->isDead())
+    return;
+  if (it->second->getMaxMana() == 0) {
+    sendSystemMessage(playerId, "Tu clase no puede meditar.");
+    return;
+  }
+  it->second->setMeditating(true);
+  sendSystemMessage(playerId, "Comenzaste a meditar.");
+}
+
+void Game::stopMeditating(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end() || !it->second->isMeditating())
+    return;
+  it->second->setMeditating(false);
+  sendSystemMessage(playerId, "Dejaste de meditar.");
 }
 
 void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,

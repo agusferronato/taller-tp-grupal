@@ -191,6 +191,9 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
         case ChatCommandType::Revivir:
             gameModel->sendCheat(CheatType::Revive);
             break;
+        case ChatCommandType::Meditar:
+            gameModel->meditate();
+            break;
         default:
             break;
         }

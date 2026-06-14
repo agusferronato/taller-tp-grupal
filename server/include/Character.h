@@ -43,6 +43,7 @@ public:
   uint32_t getLevel() const { return player.getLevel(); }
   uint32_t getExperience() const { return player.getExperience(); }
   uint32_t getGold() const { return player.getGold(); }
+  uint32_t getIntelligence() const { return player.getIntelligence(); }
 
   // conversion para red o persistencia
   PlayerData toPlayerData() const;
@@ -86,6 +87,7 @@ public:
   uint32_t takeDamage(uint32_t damage);
   void heal(uint32_t amount);
   void addMana(uint32_t amount) { player.addMana(amount); }
+  bool useMana(uint32_t amount) { return player.useMana(amount); }
   void gainExperience(uint32_t xp);
   void setLevel(uint32_t level) { player.setLevel(level); }
   void addGold(uint32_t amount);
@@ -114,9 +116,13 @@ public:
   void joinClan(uint32_t clanId) { player.joinClan(clanId); }
   void leaveClan() { player.leaveClan(); }
 
+  bool isMeditating() const { return meditating; }
+  void setMeditating(bool value) { meditating = value; }
+
 private:
   uint32_t id;
   Player player;
+  bool meditating{false};
 };
 
 #endif // CHARACTER_H
