@@ -40,6 +40,7 @@
 #include "TextureInfoEventDTO.h"
 #include "UnequipCommandDTO.h"
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 
 static constexpr int MAX_NUMBER_OF_MESSAGES = 100;
