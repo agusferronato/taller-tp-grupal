@@ -87,12 +87,10 @@ void GameModel::handleInventoryClick(int screenX, int screenY, uint8_t button) {
 
 void GameModel::takeItem() {
   sendingQueue.push(TakeItemCommandDTO{myPlayerID});
-  audio->playPickup();
 }
 
 void GameModel::dropItem(uint8_t slot) {
   sendingQueue.push(DropItemCommandDTO{myPlayerID, slot});
-  audio->playPickup();
 }
 
 void GameModel::equipItem(uint8_t slot) {
@@ -197,10 +195,6 @@ void GameModel::attack(int mouseX, int mouseY) {
   auto [worldX, worldY] = gameView->screenToWorld(mouseX, mouseY);
   sendingQueue.push(AttackCommandDTO{myPlayerID, static_cast<int16_t>(worldX),
                                      static_cast<int16_t>(worldY)});
-  auto it = players.find(myPlayerID);
-  if (it != players.end()) {
-    audio->playAttack(it->second->getEquippedWeapon());
-  }
 }
 
 void GameModel::handle(const PlayerMovedEventDTO &moved) {
@@ -294,6 +288,11 @@ void GameModel::handle(const InventoryUpdateEventDTO &inv) {
   it->second->setEquippedArmor(inv.equippedArmor);
   it->second->setEquippedHelmet(inv.equippedHelmet);
   it->second->setEquippedShield(inv.equippedShield);
+
+  if (inv.playerId == myPlayerID) {
+    audio->playPickup();
+    audio->playSfx("equip", 0);
+  }
 }
 void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &event) {
@@ -456,15 +455,23 @@ void GameModel::handle(const AttackReceivedEventDTO &event) {
   if (event.entityType == EntityType::Player) {
     auto it = players.find(event.entityId);
     if (it != players.end())
-      it->second->setBeingAttacked(true);
+      it->second->setBeingAttacked(true, event.effectType);
+
+    if (event.entityId == myPlayerID)
+      audio->playHitReceived();
+
+    if (event.effectType != EffectType::None)
+      audio->playAttack(event.effectType);
+
   } else if (event.entityType == EntityType::Npc) {
     auto it = npcs.find(event.entityId);
     if (it != npcs.end())
-      it->second->setBeingAttacked(true);
+      it->second->setBeingAttacked(true, event.effectType);
+
+    audio->playAttack(event.effectType);
   }
-  if (event.entityId == myPlayerID) {
-    audio->playHitReceived();
-  }
+
+  
 }
 
 void GameModel::handle(const RegisterPlayerEventDTO &) {}

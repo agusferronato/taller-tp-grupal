@@ -1,13 +1,13 @@
 [weapon]
-1 = { name = "Espada", minDamage = 2, maxDamage = 5, manaCost = 0, range = 0, isHealing = false, healValue = 0 }
-2 = { name = "Hacha", minDamage = 4, maxDamage = 5, manaCost = 0, range = 0, isHealing = false, healValue = 0 }
-3 = { name = "Martillo", minDamage = 1, maxDamage = 9, manaCost = 0, range = 0, isHealing = false, healValue = 0 }
-4 = { name = "Arco simple", minDamage = 1, maxDamage = 4, manaCost = 0, range = 200, isHealing = false, healValue = 0 }
-5 = { name = "Arco compuesto", minDamage = 4, maxDamage = 16, manaCost = 0, range = 300, isHealing = false, healValue = 0 }
-6 = { name = "Vara de fresno", minDamage = 2, maxDamage = 4, manaCost = 5, range = 150, isHealing = false, healValue = 0 }
-7 = { name = "Flauta elfca", minDamage = 0, maxDamage = 0, manaCost = 100, range = 0, isHealing = true, healValue = 50 }
-8 = { name = "Baculo nudoso", minDamage = 4, maxDamage = 8, manaCost = 15, range = 150, isHealing = false, healValue = 0 }
-9 = { name = "Baculo engarzado", minDamage = 8, maxDamage = 20, manaCost = 30, range = 200, isHealing = false, healValue = 0 }
+1 = { name = "Espada", minDamage = 2, maxDamage = 5, manaCost = 0, range = 0, isHealing = false, healValue = 0, effect = "NormalAttack" }
+2 = { name = "Hacha", minDamage = 4, maxDamage = 5, manaCost = 0, range = 0, isHealing = false, healValue = 0, effect = "NormalAttack" }
+3 = { name = "Martillo", minDamage = 1, maxDamage = 9, manaCost = 0, range = 0, isHealing = false, healValue = 0, effect = "NormalAttack" }
+4 = { name = "Arco simple", minDamage = 1, maxDamage = 4, manaCost = 0, range = 200, isHealing = false, healValue = 0, effect = "Bow" }
+5 = { name = "Arco compuesto", minDamage = 4, maxDamage = 16, manaCost = 0, range = 300, isHealing = false, healValue = 0, effect = "Bow" }
+6 = { name = "Vara de fresno", minDamage = 2, maxDamage = 4, manaCost = 5, range = 150, isHealing = false, healValue = 0, effect = "None" }
+7 = { name = "Flauta elfca", minDamage = 0, maxDamage = 0, manaCost = 100, range = 0, isHealing = true, healValue = 50, effect = "Heal" }
+8 = { name = "Baculo nudoso", minDamage = 4, maxDamage = 8, manaCost = 15, range = 150, isHealing = false, healValue = 0, effect = "Misil" }
+9 = { name = "Baculo engarzado", minDamage = 8, maxDamage = 20, manaCost = 30, range = 200, isHealing = false, healValue = 0, effect = "Explosion" }
 
 [armor]
 10 = { name = "Armadura de cuero", minDefense = 2, maxDefense = 6 }

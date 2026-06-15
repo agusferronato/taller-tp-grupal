@@ -996,8 +996,11 @@ void Game::attack(uint32_t playerId, int16_t x, int16_t y) {
   if (!attacker->assertAttackDistance(x, y)) {
     return;
   }
+
+  
   auto targetNPC = findNPCByCoordinates(x, y);
   if (targetNPC != nullptr) {
+
     playerAttackNPC(*attacker, *targetNPC);
     return;
   }
@@ -1162,7 +1165,7 @@ void Game::tryAttack(NPC& npc, Character& target) {
 
   messagesToSend.push_back(
       AttackReceivedEventDTO{EntityType::Player, target.getId(),
-                             EffectType::NormalAttack});
+                             EffectType::None});
   messagesToSend.push_back(target.toPlayerInfoEvent());
 }
 
@@ -1265,16 +1268,23 @@ void Game::makeCitiesEntitiesFollowPlayers() {
     
 void Game::playerAttackPlayer(Character &attacker, Character &target) {
 
-  if (!validAttack(attacker, target)) {
+  Weapon weapon = attacker.getEquippedWeapon();
+
+  if (!weapon.isHealing() && !validAttack(attacker, target)) {
     return;
   }
 
   if (!consumeManaForAttack(attacker))
     return;
 
-  Weapon weapon = attacker.getEquippedWeapon();
   if (weapon.isHealing()) {
+
     target.heal(weapon.healValue());
+    messagesToSend.push_back(
+        AttackReceivedEventDTO{EntityType::Player, target.getId(),
+                               weapon.effectType()});
+    messagesToSend.push_back(attacker.toPlayerInfoEvent());
+    messagesToSend.push_back(target.toPlayerInfoEvent());
     return;
   }
 
@@ -1302,7 +1312,7 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
 
   messagesToSend.push_back(
       AttackReceivedEventDTO{EntityType::Player, target.getId(),
-                             EffectType::NormalAttack});
+                             weapon.effectType()});
 
   uint32_t xp = Formulas::calcularExperiencia(damage, attacker.getLevel(),
                                               target.getLevel());
@@ -1334,6 +1344,10 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
 
 void Game::playerAttackNPC(Character &attacker, NPC &target) {
 
+  Weapon weapon = attacker.getEquippedWeapon();
+  if (weapon.isHealing())
+    return; // No se puede curar NPCs
+
   if (!validAttackToNpc(attacker))
     return;
 
@@ -1355,7 +1369,7 @@ void Game::playerAttackNPC(Character &attacker, NPC &target) {
 
   messagesToSend.push_back(
       AttackReceivedEventDTO{EntityType::Npc, target.getId(),
-                             EffectType::NormalAttack});
+                             weapon.effectType()});
 
   uint32_t xp = Formulas::calcularExperiencia(damage, attacker.getLevel(),
                                               target.getLevel());

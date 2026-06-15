@@ -5,6 +5,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "EffectType.h"
+
 struct WeaponData {
   std::string name;
   uint32_t minDamage{0};
@@ -13,6 +15,7 @@ struct WeaponData {
   uint16_t range{0};
   bool isHealing{false};
   uint16_t healValue{0};
+  EffectType effectType{EffectType::NormalAttack};
 };
 
 struct ArmorData {
@@ -33,6 +36,11 @@ struct PriceData {
   uint16_t buyPrice{0};
   uint16_t sellPrice{0};
 };
+
+enum class EquipSlot : uint8_t { Weapon, Armor, Helmet, Shield };
+
+constexpr uint8_t MAX_ITEM_TYPES = 20;
+
 
 class ItemData {
 public:

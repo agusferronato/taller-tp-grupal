@@ -30,7 +30,6 @@
 #include "Direction.h"
 #include "Inventory.h"
 #include "InventoryManager.h"
-#include "ItemDef.h"
 #include "MapData.h"
 #include "NPC.h"
 #include "PlayerData.h"

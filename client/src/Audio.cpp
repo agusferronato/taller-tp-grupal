@@ -72,28 +72,26 @@ void Audio::playSfx(const std::string &name, int distance) {
 
 void Audio::stopAllSfx() { Mix_HaltChannel(-1); }
 
-void Audio::playAttack(uint8_t weaponId, int distance) {
-  if (weaponId == 0)
-    return;
-  switch (weaponId) {
-  case 4: case 5:
-    playSfx("bow_shoot", distance);
-    break;
-  case 6:
-    playSfx("magic_arrow", distance);
-    break;
-  case 7:
-    playSfx("heal", distance);
-    break;
-  case 8:
-    playSfx("magic_misil", distance);
-    break;
-  case 9:
+void Audio::playAttack(EffectType effectType, int distance) {
+  switch (effectType) {
+  case EffectType::Explosion:
     playSfx("explosion", distance);
     break;
-  default:
+  case EffectType::Heal:
+    playSfx("heal", distance);
+    break;
+  case EffectType::Misil:
+    playSfx("magic_misil", distance);
+    break;
+  case EffectType::Bow:
+    playSfx("bow_shoot", distance);
+    break;
+  case EffectType::NormalAttack:
     playSfx("sword_hit", distance);
     break;
+  default:
+    break;  
+
   }
 }
 
