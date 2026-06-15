@@ -17,7 +17,9 @@
 
 #include "Banker.h"
 #include "Biome.h"
+#include "BiomeData.h"
 #include "Character.h"
+#include "NPCData.h"
 #include "CheatType.h"
 #include "City.h"
 #include "CityEntityCommandDTO.h"

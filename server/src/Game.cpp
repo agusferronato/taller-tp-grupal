@@ -91,6 +91,14 @@ void Game::run() {
 
   biomes = std::move(mapLoader.GetBiomes());
   cities = std::move(mapLoader.GetCities());
+
+  BiomeData biomeData("biome_strategy.toml");
+  NPCData npcData("npc_info.toml");
+
+  for (auto& biome : biomes) {
+    biome->setData(biomeData, npcData);
+  }
+
   createCityEntities();
 
   for (uint8_t id = 1; id <= 19; ++id) {

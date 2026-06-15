@@ -39,12 +39,7 @@ MapLoader::MapLoader(const std::string &path) {
       int i_end = b["i_end"].value_or(0);
       int j_end = b["j_end"].value_or(0);
       Delimiter init{i_init, j_init}, end{i_end, j_end};
-      if (type == "Desert")
-        biomes.push_back(std::make_unique<Desert>(init, end));
-      else if (type == "Forest")
-        biomes.push_back(std::make_unique<Forest>(init, end));
-      else if (type == "Dungeon")
-        biomes.push_back(std::make_unique<Dungeon>(init, end));
+      biomes.push_back(std::make_unique<Biome>(type, init, end));
     }
   }
 
