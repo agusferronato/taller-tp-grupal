@@ -1623,7 +1623,7 @@ void Game::stopMeditating(uint32_t playerId) {
 }
 
 void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
-                                    int16_t arg) {
+                                    const std::string &arg) {
   auto playerIt = players.find(playerId);
   if (playerIt == players.end())
     return;
@@ -1668,11 +1668,11 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
   }
 
   case CityEntityCommandDTO::COMPRAR: {
-    if (arg < 1 || arg >= 20) {
-      sendSystemMessage(playerId, "ID de objeto invalido.");
+    uint8_t itemId = ItemData::instance().getItemIdByName(arg);
+    if (itemId == NOT_FOUND) {
+      sendSystemMessage(playerId, "Objeto no encontrado.");
       return;
     }
-    uint8_t itemId = static_cast<uint8_t>(arg);
     auto *priest = dynamic_cast<Priest *>(
         findNearestEntity(playerId, CityEntityType::Priest));
     if (priest && isNearEntity(*priest, *character)) {
@@ -1690,8 +1690,9 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
   }
 
   case CityEntityCommandDTO::VENDER: {
-    if (arg < 1 || arg >= 20) {
-      sendSystemMessage(playerId, "ID de objeto invalido.");
+    uint8_t itemId = ItemData::instance().getItemIdByName(arg);
+    if (itemId == NOT_FOUND) {
+      sendSystemMessage(playerId, "Objeto no encontrado.");
       return;
     }
     auto *trader = dynamic_cast<Trader *>(
@@ -1700,7 +1701,7 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       sendSystemMessage(playerId, "No estas cerca de un comerciante.");
       return;
     }
-    trader->sellItem(*this, *character, static_cast<uint8_t>(arg));
+    trader->sellItem(*this, *character, itemId);
     break;
   }
 
@@ -1739,8 +1740,9 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
   }
 
   case CityEntityCommandDTO::DEPOSITAR_ITEM: {
-    if (arg < 1 || arg >= 20) {
-      sendSystemMessage(playerId, "ID de objeto invalido.");
+    uint8_t itemId = ItemData::instance().getItemIdByName(arg);
+    if (itemId == NOT_FOUND) {
+      sendSystemMessage(playerId, "Objeto no encontrado.");
       return;
     }
     auto *banker = dynamic_cast<Banker *>(
@@ -1749,13 +1751,14 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       sendSystemMessage(playerId, "No estas cerca de un banquero.");
       return;
     }
-    banker->saveItem(*this, *character, static_cast<uint8_t>(arg));
+    banker->saveItem(*this, *character, itemId);
     break;
   }
 
   case CityEntityCommandDTO::RETIRAR_ITEM: {
-    if (arg < 1 || arg >= 20) {
-      sendSystemMessage(playerId, "ID de objeto invalido.");
+    uint8_t itemId = ItemData::instance().getItemIdByName(arg);
+    if (itemId == NOT_FOUND) {
+      sendSystemMessage(playerId, "Objeto no encontrado.");
       return;
     }
     auto *banker = dynamic_cast<Banker *>(
@@ -1764,12 +1767,19 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       sendSystemMessage(playerId, "No hay ningun banquero disponible.");
       return;
     }
-    banker->takeItem(*this, *character, static_cast<uint8_t>(arg));
+    banker->takeItem(*this, *character, itemId);
     break;
   }
 
   case CityEntityCommandDTO::DEPOSITAR_ORO: {
-    if (arg <= 0) {
+    int16_t amount = 0;
+    try {
+      amount = static_cast<int16_t>(std::stoi(arg));
+    } catch (...) {
+      sendSystemMessage(playerId, "Cantidad invalida.");
+      return;
+    }
+    if (amount <= 0) {
       sendSystemMessage(playerId, "Cantidad invalida.");
       return;
     }
@@ -1779,12 +1789,19 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       sendSystemMessage(playerId, "No estas cerca de un banquero.");
       return;
     }
-    banker->saveGold(*this, *character, static_cast<uint16_t>(arg));
+    banker->saveGold(*this, *character, static_cast<uint16_t>(amount));
     break;
   }
 
   case CityEntityCommandDTO::RETIRAR_ORO: {
-    if (arg <= 0) {
+    int16_t amount = 0;
+    try {
+      amount = static_cast<int16_t>(std::stoi(arg));
+    } catch (...) {
+      sendSystemMessage(playerId, "Cantidad invalida.");
+      return;
+    }
+    if (amount <= 0) {
       sendSystemMessage(playerId, "Cantidad invalida.");
       return;
     }
@@ -1794,7 +1811,7 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       sendSystemMessage(playerId, "No hay ningun banquero disponible.");
       return;
     }
-    banker->takeGold(*this, *character, static_cast<uint16_t>(arg));
+    banker->takeGold(*this, *character, static_cast<uint16_t>(amount));
     break;
   }
   }

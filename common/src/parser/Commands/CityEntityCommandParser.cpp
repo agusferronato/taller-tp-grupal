@@ -21,6 +21,6 @@ void CityEntityCommandParser::serialize(std::vector<uint8_t> &bytes,
 ClientCommandDTO CityEntityCommandParser::deserialize(Protocol &protocol) {
   uint32_t playerId = protocol.getUint32();
   uint8_t type = protocol.getUint8();
-  int16_t arg = protocol.getInt16();
-  return CityEntityCommandDTO{playerId, type, arg};
+  std::string arg = protocol.getStringData();
+  return CityEntityCommandDTO{playerId, type, std::move(arg)};
 }

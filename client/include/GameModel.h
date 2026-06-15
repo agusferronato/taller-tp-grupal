@@ -53,7 +53,7 @@ public:
   void dropItem(uint8_t slot);
   void equipItem(uint8_t slot);
   void unequipItem(uint8_t equipSlot);
-  void sendCityEntityCommand(uint8_t cmdType, int16_t arg);
+  void sendCityEntityCommand(uint8_t cmdType, const std::string &arg);
 
   void createClan(const std::string &clanName);
   void joinClan(const std::string &clanName);
