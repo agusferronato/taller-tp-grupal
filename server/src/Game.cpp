@@ -35,6 +35,9 @@
 #include "AttackReceivedEventDTO.h"
 #include "InventoryUpdateEventDTO.h"
 #include "GlobalChatMessageEventDTO.h"
+#include "MeditateCommandDTO.h"
+#include "ItemData.h"
+#include "Weapon.h"
 #include <NPCType.h>
 
 namespace {
@@ -88,6 +91,14 @@ void Game::run() {
 
   biomes = std::move(mapLoader.GetBiomes());
   cities = std::move(mapLoader.GetCities());
+
+  BiomeData biomeData("biome_strategy.toml");
+  NPCData npcData("npc_info.toml");
+
+  for (auto& biome : biomes) {
+    biome->setData(biomeData, npcData);
+  }
+
   createCityEntities();
 
   for (uint8_t id = 1; id <= 19; ++id) {
@@ -103,6 +114,11 @@ void Game::run() {
     ClientMessage msg;
 
     if (gameloopQueue.try_pop(msg)) {
+      auto popIt = players.find(msg.connectionId);
+      if (popIt != players.end() && popIt->second->isMeditating() &&
+          !std::get_if<MeditateCommandDTO>(&msg.dto)) {
+        stopMeditating(msg.connectionId);
+      }
       auto command = factory.create(msg.dto);
       command->execute(*this, msg.connectionId);
     }
@@ -125,6 +141,14 @@ void Game::run() {
 
     if (it % 60 == 0) {
       for (auto &[pid, p] : players) {
+        uint32_t manaRecovered =
+            Formulas::calcularRecuperacionMana(p->getRace(), 1);
+        p->addMana(manaRecovered);
+        if (p->isMeditating()) {
+          manaRecovered = Formulas::calcularRecuperacionMeditacion(
+              p->getPlayerClass(), p->getIntelligence(), 1);
+          p->addMana(manaRecovered);
+        }
         messagesToSend.push_back(p->toPlayerInfoEvent());
       }
     }
@@ -217,9 +241,10 @@ void Game::registerPlayer(const std::string &name, const Race race,
 
   messagesToSend.push_back(InventoryUpdateEventDTO{
       newId, players[newId]->getInventoryItems(),
-      players[newId]->getEquippedWeapon(), players[newId]->getEquippedArmor(),
-      players[newId]->getEquippedHelmet(),
-      players[newId]->getEquippedShield()});
+      players[newId]->getEquippedWeapon().getID(),
+      players[newId]->getEquippedArmor().getID(),
+      players[newId]->getEquippedHelmet().getID(),
+      players[newId]->getEquippedShield().getID()});
 
   {
     std::vector<GroundItemInfoDTO> groundItemList;
@@ -337,9 +362,10 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
 
   messagesToSend.push_back(InventoryUpdateEventDTO{
       newId, players[newId]->getInventoryItems(),
-      players[newId]->getEquippedWeapon(), players[newId]->getEquippedArmor(),
-      players[newId]->getEquippedHelmet(),
-      players[newId]->getEquippedShield()});
+      players[newId]->getEquippedWeapon().getID(),
+      players[newId]->getEquippedArmor().getID(),
+      players[newId]->getEquippedHelmet().getID(),
+      players[newId]->getEquippedShield().getID()});
 
   {
     std::vector<GroundItemInfoDTO> groundItemList;
@@ -978,8 +1004,11 @@ void Game::attack(uint32_t playerId, int16_t x, int16_t y) {
   if (!attacker->assertAttackDistance(x, y)) {
     return;
   }
+
+  
   auto targetNPC = findNPCByCoordinates(x, y);
   if (targetNPC != nullptr) {
+
     playerAttackNPC(*attacker, *targetNPC);
     return;
   }
@@ -1126,6 +1155,8 @@ void Game::tryAttack(NPC& npc, Character& target) {
   if (!npc.collidesWith(target) || !npc.reachesAttackCounter())
     return;
 
+  stopMeditating(target.getId());
+
   if (target.tryParry()) {
     senderQueueMonitor.sendToClient(
         target.getId(),
@@ -1142,7 +1173,7 @@ void Game::tryAttack(NPC& npc, Character& target) {
 
   messagesToSend.push_back(
       AttackReceivedEventDTO{EntityType::Player, target.getId(),
-                             EffectType::NormalAttack});
+                             EffectType::None});
   messagesToSend.push_back(target.toPlayerInfoEvent());
 }
 
@@ -1245,9 +1276,28 @@ void Game::makeCitiesEntitiesFollowPlayers() {
     
 void Game::playerAttackPlayer(Character &attacker, Character &target) {
 
-  if (!validAttack(attacker, target)) {
+  Weapon weapon = attacker.getEquippedWeapon();
+
+  if (!weapon.isHealing() && !validAttack(attacker, target)) {
     return;
   }
+
+  if (!consumeManaForAttack(attacker))
+    return;
+
+  if (weapon.isHealing()) {
+
+    target.heal(weapon.healValue());
+    messagesToSend.push_back(
+        AttackReceivedEventDTO{EntityType::Player, target.getId(),
+                               weapon.effectType()});
+    messagesToSend.push_back(attacker.toPlayerInfoEvent());
+    messagesToSend.push_back(target.toPlayerInfoEvent());
+    return;
+  }
+
+  stopMeditating(target.getId());
+
   uint32_t damage = calculateDamage(attacker);
   bool critico = (damage != attacker.getDamage());
 
@@ -1270,7 +1320,7 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
 
   messagesToSend.push_back(
       AttackReceivedEventDTO{EntityType::Player, target.getId(),
-                             EffectType::NormalAttack});
+                             weapon.effectType()});
 
   uint32_t xp = Formulas::calcularExperiencia(damage, attacker.getLevel(),
                                               target.getLevel());
@@ -1302,7 +1352,14 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
 
 void Game::playerAttackNPC(Character &attacker, NPC &target) {
 
+  Weapon weapon = attacker.getEquippedWeapon();
+  if (weapon.isHealing())
+    return; // No se puede curar NPCs
+
   if (!validAttackToNpc(attacker))
+    return;
+
+  if (!consumeManaForAttack(attacker))
     return;
 
   uint32_t damage = calculateDamage(attacker);
@@ -1320,7 +1377,7 @@ void Game::playerAttackNPC(Character &attacker, NPC &target) {
 
   messagesToSend.push_back(
       AttackReceivedEventDTO{EntityType::Npc, target.getId(),
-                             EffectType::NormalAttack});
+                             weapon.effectType()});
 
   uint32_t xp = Formulas::calcularExperiencia(damage, attacker.getLevel(),
                                               target.getLevel());
@@ -1379,6 +1436,18 @@ void Game::playerAttackNPC(Character &attacker, NPC &target) {
   }
   messagesToSend.push_back(attacker.toPlayerInfoEvent());
 
+}
+
+bool Game::consumeManaForAttack(Character &attacker) {
+  Weapon weapon = attacker.getEquippedWeapon();
+  if (weapon.manaCost() <= 0)
+    return true;
+  if (!attacker.useMana(weapon.manaCost())) {
+    sendToPlayer(attacker.getId(),
+      makeCombatMessage("No tenes suficiente mana para atacar."));
+    return false;
+  }
+  return true;
 }
 
 uint32_t Game::calculateDamage(Character &attacker) {
@@ -1473,6 +1542,7 @@ NPC *Game::findNPCByCoordinates(int16_t x, int16_t y) {
 }
 
 void Game::killPlayer(Character &dyingPlayer) {
+  stopMeditating(dyingPlayer.getId());
   dyingPlayer.dropGoldOnDeath();
   auto items = dyingPlayer.die();
   int16_t x = dyingPlayer.getX();
@@ -1490,8 +1560,10 @@ void Game::sendInventoryUpdate(uint32_t playerId) {
     return;
   messagesToSend.push_back(InventoryUpdateEventDTO{
       playerId, it->second->getInventoryItems(),
-      it->second->getEquippedWeapon(), it->second->getEquippedArmor(),
-      it->second->getEquippedHelmet(), it->second->getEquippedShield()});
+      it->second->getEquippedWeapon().getID(),
+      it->second->getEquippedArmor().getID(),
+      it->second->getEquippedHelmet().getID(),
+      it->second->getEquippedShield().getID()});
 }
 
 void Game::sendPlayerInfoUpdate(uint32_t playerId) {
@@ -1538,8 +1610,28 @@ CityEntity *Game::findNearestEntity(uint32_t playerId, CityEntityType type) {
   return nearest;
 }
 
+void Game::startMeditating(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end() || it->second->isDead())
+    return;
+  if (it->second->getMaxMana() == 0) {
+    sendSystemMessage(playerId, "Tu clase no puede meditar.");
+    return;
+  }
+  it->second->setMeditating(true);
+  sendSystemMessage(playerId, "Comenzaste a meditar.");
+}
+
+void Game::stopMeditating(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end() || !it->second->isMeditating())
+    return;
+  it->second->setMeditating(false);
+  sendSystemMessage(playerId, "Dejaste de meditar.");
+}
+
 void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
-                                    int16_t arg) {
+                                    const std::string &arg) {
   auto playerIt = players.find(playerId);
   if (playerIt == players.end())
     return;
@@ -1584,11 +1676,11 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
   }
 
   case CityEntityCommandDTO::COMPRAR: {
-    if (arg < 1 || arg >= 20) {
-      sendSystemMessage(playerId, "ID de objeto invalido.");
+    uint8_t itemId = ItemData::instance().getItemIdByName(arg);
+    if (itemId == NOT_FOUND) {
+      sendSystemMessage(playerId, "Objeto no encontrado.");
       return;
     }
-    uint8_t itemId = static_cast<uint8_t>(arg);
     auto *priest = dynamic_cast<Priest *>(
         findNearestEntity(playerId, CityEntityType::Priest));
     if (priest && isNearEntity(*priest, *character)) {
@@ -1606,8 +1698,9 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
   }
 
   case CityEntityCommandDTO::VENDER: {
-    if (arg < 1 || arg >= 20) {
-      sendSystemMessage(playerId, "ID de objeto invalido.");
+    uint8_t itemId = ItemData::instance().getItemIdByName(arg);
+    if (itemId == NOT_FOUND) {
+      sendSystemMessage(playerId, "Objeto no encontrado.");
       return;
     }
     auto *trader = dynamic_cast<Trader *>(
@@ -1616,7 +1709,7 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       sendSystemMessage(playerId, "No estas cerca de un comerciante.");
       return;
     }
-    trader->sellItem(*this, *character, static_cast<uint8_t>(arg));
+    trader->sellItem(*this, *character, itemId);
     break;
   }
 
@@ -1655,8 +1748,9 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
   }
 
   case CityEntityCommandDTO::DEPOSITAR_ITEM: {
-    if (arg < 1 || arg >= 20) {
-      sendSystemMessage(playerId, "ID de objeto invalido.");
+    uint8_t itemId = ItemData::instance().getItemIdByName(arg);
+    if (itemId == NOT_FOUND) {
+      sendSystemMessage(playerId, "Objeto no encontrado.");
       return;
     }
     auto *banker = dynamic_cast<Banker *>(
@@ -1665,13 +1759,14 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       sendSystemMessage(playerId, "No estas cerca de un banquero.");
       return;
     }
-    banker->saveItem(*this, *character, static_cast<uint8_t>(arg));
+    banker->saveItem(*this, *character, itemId);
     break;
   }
 
   case CityEntityCommandDTO::RETIRAR_ITEM: {
-    if (arg < 1 || arg >= 20) {
-      sendSystemMessage(playerId, "ID de objeto invalido.");
+    uint8_t itemId = ItemData::instance().getItemIdByName(arg);
+    if (itemId == NOT_FOUND) {
+      sendSystemMessage(playerId, "Objeto no encontrado.");
       return;
     }
     auto *banker = dynamic_cast<Banker *>(
@@ -1680,12 +1775,19 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       sendSystemMessage(playerId, "No hay ningun banquero disponible.");
       return;
     }
-    banker->takeItem(*this, *character, static_cast<uint8_t>(arg));
+    banker->takeItem(*this, *character, itemId);
     break;
   }
 
   case CityEntityCommandDTO::DEPOSITAR_ORO: {
-    if (arg <= 0) {
+    int16_t amount = 0;
+    try {
+      amount = static_cast<int16_t>(std::stoi(arg));
+    } catch (...) {
+      sendSystemMessage(playerId, "Cantidad invalida.");
+      return;
+    }
+    if (amount <= 0) {
       sendSystemMessage(playerId, "Cantidad invalida.");
       return;
     }
@@ -1695,12 +1797,19 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       sendSystemMessage(playerId, "No estas cerca de un banquero.");
       return;
     }
-    banker->saveGold(*this, *character, static_cast<uint16_t>(arg));
+    banker->saveGold(*this, *character, static_cast<uint16_t>(amount));
     break;
   }
 
   case CityEntityCommandDTO::RETIRAR_ORO: {
-    if (arg <= 0) {
+    int16_t amount = 0;
+    try {
+      amount = static_cast<int16_t>(std::stoi(arg));
+    } catch (...) {
+      sendSystemMessage(playerId, "Cantidad invalida.");
+      return;
+    }
+    if (amount <= 0) {
       sendSystemMessage(playerId, "Cantidad invalida.");
       return;
     }
@@ -1710,7 +1819,7 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       sendSystemMessage(playerId, "No hay ningun banquero disponible.");
       return;
     }
-    banker->takeGold(*this, *character, static_cast<uint16_t>(arg));
+    banker->takeGold(*this, *character, static_cast<uint16_t>(amount));
     break;
   }
   }

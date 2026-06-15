@@ -48,8 +48,10 @@ public:
   struct AttackFrameResult {
     Sprite sprite;
     int frame;
+    int max_ticks;
   };
-  AttackFrameResult getAttackFrame(int textureId, unsigned int it);
+  AttackFrameResult getAttackFrame(TextureLayoutType layoutType, int textureId,
+                                   unsigned int it);
 };
 
 #endif

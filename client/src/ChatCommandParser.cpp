@@ -80,16 +80,16 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
     return {ChatCommandType::ConsultarOro, -1};
 
   if (message.rfind("/comprar ", 0) == 0 && message.size() > 9) {
-    int id = parseIntArg(message, 9);
-    if (id > 0 && id < 20)
-      return {ChatCommandType::Comprar, id};
+    std::string itemName = message.substr(9);
+    if (!itemName.empty())
+      return {ChatCommandType::Comprar, 0, itemName};
     return {ChatCommandType::None, 0};
   }
 
   if (message.rfind("/vender ", 0) == 0 && message.size() > 8) {
-    int id = parseIntArg(message, 8);
-    if (id > 0 && id < 20)
-      return {ChatCommandType::Vender, id};
+    std::string itemName = message.substr(8);
+    if (!itemName.empty())
+      return {ChatCommandType::Vender, 0, itemName};
     return {ChatCommandType::None, 0};
   }
 
@@ -99,9 +99,9 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
       if (amount > 0)
         return {ChatCommandType::DepositarOro, amount};
     } else {
-      int id = parseIntArg(message, 11);
-      if (id > 0 && id < 20)
-        return {ChatCommandType::Depositar, id};
+      std::string itemName = message.substr(11);
+      if (!itemName.empty())
+        return {ChatCommandType::Depositar, 0, itemName};
     }
     return {ChatCommandType::None, 0};
   }
@@ -112,9 +112,9 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
       if (amount > 0)
         return {ChatCommandType::RetirarOro, amount};
     } else {
-      int id = parseIntArg(message, 9);
-      if (id > 0 && id < 20)
-        return {ChatCommandType::Retirar, id};
+      std::string itemName = message.substr(9);
+      if (!itemName.empty())
+        return {ChatCommandType::Retirar, 0, itemName};
     }
     return {ChatCommandType::Unknown, 0};
   }
@@ -195,6 +195,10 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
 
   if (message == "/revivir") {
     return {ChatCommandType::Revivir, 0};
+  }
+
+  if (message == "/meditar") {
+    return {ChatCommandType::Meditar, 0};
   }
 
   if (message == "/nivel") {

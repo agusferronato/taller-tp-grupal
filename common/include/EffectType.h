@@ -3,6 +3,6 @@
 
 #include <cstdint>
 
-enum class EffectType : uint8_t { NormalAttack };
+enum class EffectType : uint8_t { None, NormalAttack, Bow, Explosion, Heal, Misil };
 
 #endif

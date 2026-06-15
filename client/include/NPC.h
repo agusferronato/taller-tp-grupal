@@ -2,6 +2,7 @@
 #define CLIENT_NPC_H
 
 #include "Direction.h"
+#include "EffectType.h"
 
 class NPC {
 
@@ -10,6 +11,7 @@ private:
     Direction direction;
     bool isMoving;
     mutable bool beingAttacked{false};
+    mutable EffectType currentEffect{EffectType::NormalAttack};
 
 public:
 
@@ -24,9 +26,16 @@ public:
     void updateCoordinates(int x, int y, Direction direction);
     void stopMoving();
 
-    bool isBeingAttacked() const { return beingAttacked; }
-    void setBeingAttacked(bool v) { beingAttacked = v; }
-    void stopAttackEffect() const { beingAttacked = false; }
+    bool isBeingAttackOrCured() const { return beingAttacked; }
+    EffectType getEffect() const { return currentEffect; }
+    void setBeingAttacked(bool v, EffectType effect = EffectType::NormalAttack) {
+        beingAttacked = v;
+        if (v) currentEffect = effect;
+    }
+    void stopAttackEffect() const {
+        beingAttacked = false;
+        currentEffect = EffectType::NormalAttack;
+    }
 };
 
 #endif

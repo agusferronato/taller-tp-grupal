@@ -6,7 +6,7 @@
 #include <cstring>
 #include <string>
 
-#include "ItemDef.h"
+#include "InventoryConstants.h"
 
 #define PLAYER_NAME_MAX 32
 #define PLAYER_PASS_MAX 32

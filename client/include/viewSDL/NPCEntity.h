@@ -1,6 +1,7 @@
 #ifndef NPC_ENTITY_H
 #define NPC_ENTITY_H
 
+#include "EffectParser.h"
 #include "NPC.h"
 #include "RenderableEntity.h"
 #include "TextureLayoutType.h"
@@ -15,7 +16,8 @@ private:
   TextureLayoutType layoutType;
   int spriteWidth;
   int spriteHeight;
-  int attackNextFrame{-1};
+  int effectNextFrame{-1};
+  EffectParser effectParser;
 
 public:
   NPCEntity(NPC &npc, TextureManager &textureManager, int textureId,
