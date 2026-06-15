@@ -58,6 +58,18 @@ configure_file(
   COPYONLY
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/common/biome_strategy.toml
+  ${CMAKE_CURRENT_BINARY_DIR}/biome_strategy.toml
+  COPYONLY
+)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/common/npc_info.toml
+  ${CMAKE_CURRENT_BINARY_DIR}/npc_info.toml
+  COPYONLY
+)
+
 # HEY!! TODO XXX: you need to install some runtime and dev libraries *before*
 # compiling the client/editor code.
 #

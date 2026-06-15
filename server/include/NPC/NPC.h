@@ -19,35 +19,55 @@ struct ObjectDropped {
 
 class NPC : public Colisionable {
 
+public:
+    struct NPCStats {
+        NPCType type;
+        std::string name;
+        uint32_t level;
+        uint32_t hp;
+        uint32_t agility;
+        uint32_t damage;
+        int attackCounterMax;
+        int ancho;
+        int alto;
+        int range;
+    };
+
 protected:
     uint32_t id;
     Position gridPosition;
-    int range{128};
+    int range;
+    int attackCounterMax;
     int attackCounter{0};
     int x, y;
     Direction direction{Direction::Down};
     bool isMoving{false};
-    uint32_t hp{0};
-    uint32_t maxHp{0};
-    uint32_t level{1};
-    uint32_t agility{5};
+    uint32_t hp;
+    uint32_t maxHp;
+    uint32_t level;
+    uint32_t agility;
+    uint32_t damage;
+    int ancho;
+    int alto;
+    NPCType type;
+    std::string name;
 
 public:
-  explicit NPC(Position pos) : gridPosition(pos), x(0), y(0) {}
+  NPC(Position pos, const NPCStats& stats);
 
   virtual ~NPC() = default;
 
-  virtual NPCType getType() = 0;
+  NPCType getType() { return type; }
 
   void setId(uint32_t newId) { id = newId; }
   uint32_t getId() const { return id; }
-  const Position &getPosition() const { return gridPosition; }
+  const Position& getPosition() const { return gridPosition; }
   int getX() const override { return x; }
   int getY() const override { return y; }
 
-  virtual int getAncho() const = 0;
-  virtual int getAlto() const = 0;
-  virtual int getRange() const = 0;
+  int getAncho() const override { return ancho; }
+  int getAlto() const override { return alto; }
+  int getRange() const { return range; }
 
   Direction getDirection() const { return direction; }
   bool getIsMoving() const { return isMoving; }
@@ -62,17 +82,16 @@ public:
 
   bool updatePosition(const Character &character);
 
-
-    virtual uint32_t getDamage() = 0;
+    uint32_t getDamage() { return damage; }
     bool collidesWith(Character &character);
 
     uint32_t takeDamage(uint32_t damage);
 
     bool reachesAttackCounter();
 
-    virtual int getAttackCounterMax() = 0;
+    int getAttackCounterMax() { return attackCounterMax; }
 
-    virtual std::string getName() = 0;
+    std::string getName() { return name; }
 
     uint32_t getHP() const { return hp; }
     uint32_t getMaxHp() const { return maxHp; }
