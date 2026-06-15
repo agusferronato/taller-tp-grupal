@@ -98,40 +98,40 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
             gameModel->unequipItem(static_cast<uint8_t>(cmd.arg));
             break;
         case ChatCommandType::Curar:
-            gameModel->sendCityEntityCommand(CityEntityCommandDTO::CURAR, -1);
+            gameModel->sendCityEntityCommand(CityEntityCommandDTO::CURAR, "");
             break;
         case ChatCommandType::Resucitar:
-            gameModel->sendCityEntityCommand(CityEntityCommandDTO::RESUCITAR, -1);
+            gameModel->sendCityEntityCommand(CityEntityCommandDTO::RESUCITAR, "");
             break;
         case ChatCommandType::Comprar:
             gameModel->sendCityEntityCommand(CityEntityCommandDTO::COMPRAR,
-                                            static_cast<int16_t>(cmd.arg));
+                                            cmd.textArg);
             break;
         case ChatCommandType::Vender:
             gameModel->sendCityEntityCommand(CityEntityCommandDTO::VENDER,
-                                            static_cast<int16_t>(cmd.arg));
+                                            cmd.textArg);
             break;
         case ChatCommandType::Listar:
-            gameModel->sendCityEntityCommand(CityEntityCommandDTO::LISTAR, -1);
+            gameModel->sendCityEntityCommand(CityEntityCommandDTO::LISTAR, "");
             break;
         case ChatCommandType::ConsultarOro:
-            gameModel->sendCityEntityCommand(CityEntityCommandDTO::CONSULTAR_ORO, -1);
+            gameModel->sendCityEntityCommand(CityEntityCommandDTO::CONSULTAR_ORO, "");
             break;
         case ChatCommandType::Depositar:
             gameModel->sendCityEntityCommand(CityEntityCommandDTO::DEPOSITAR_ITEM,
-                                            static_cast<int16_t>(cmd.arg));
+                                            cmd.textArg);
             break;
         case ChatCommandType::Retirar:
             gameModel->sendCityEntityCommand(CityEntityCommandDTO::RETIRAR_ITEM,
-                                            static_cast<int16_t>(cmd.arg));
+                                            cmd.textArg);
             break;
         case ChatCommandType::DepositarOro:
             gameModel->sendCityEntityCommand(CityEntityCommandDTO::DEPOSITAR_ORO,
-                                            static_cast<int16_t>(cmd.arg));
+                                            std::to_string(cmd.arg));
             break;
         case ChatCommandType::RetirarOro:
             gameModel->sendCityEntityCommand(CityEntityCommandDTO::RETIRAR_ORO,
-                                            static_cast<int16_t>(cmd.arg));
+                                            std::to_string(cmd.arg));
             break;
         case ChatCommandType::FundarClan:
             gameModel->createClan(cmd.textArg);

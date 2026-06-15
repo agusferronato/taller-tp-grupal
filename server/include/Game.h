@@ -117,7 +117,7 @@ public:
   void startMeditating(uint32_t playerId);
   void stopMeditating(uint32_t playerId);
 
-  void executeCityEntityCommand(uint32_t playerId, uint8_t type, int16_t arg);
+  void executeCityEntityCommand(uint32_t playerId, uint8_t type, const std::string &arg);
   void sendInventoryUpdate(uint32_t playerId);
   void sendPlayerInfoUpdate(uint32_t playerId);
   void sendPlayerMoved(uint32_t playerId);

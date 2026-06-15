@@ -49,6 +49,7 @@ void ItemData::loadFromToml() {
         else
           wd.effectType = EffectType::None;
 
+        itemNameToId[wd.name] = id;
         weapons[id] = wd;
       }
     }
@@ -61,6 +62,7 @@ void ItemData::loadFromToml() {
         ad.name = item["name"].value_or("");
         ad.minDefense = item["minDefense"].value_or(0u);
         ad.maxDefense = item["maxDefense"].value_or(0u);
+        itemNameToId[ad.name] = id;
         armors[id] = ad;
       }
     }
@@ -73,6 +75,7 @@ void ItemData::loadFromToml() {
         hd.name = item["name"].value_or("");
         hd.minDefense = item["minDefense"].value_or(0u);
         hd.maxDefense = item["maxDefense"].value_or(0u);
+        itemNameToId[hd.name] = id;
         helmets[id] = hd;
       }
     }
@@ -85,6 +88,7 @@ void ItemData::loadFromToml() {
         sd.name = item["name"].value_or("");
         sd.minDefense = item["minDefense"].value_or(0u);
         sd.maxDefense = item["maxDefense"].value_or(0u);
+        itemNameToId[sd.name] = id;
         shields[id] = sd;
       }
     }
@@ -96,6 +100,7 @@ void ItemData::loadFromToml() {
         PotionData pd;
         pd.name = item["name"].value_or("");
         pd.healAmount = item["healAmount"].value_or(0u);
+        itemNameToId[pd.name] = id;
         potionsHp[id] = pd;
       }
     }
@@ -107,6 +112,7 @@ void ItemData::loadFromToml() {
         PotionData pd;
         pd.name = item["name"].value_or("");
         pd.healAmount = item["healAmount"].value_or(0u);
+        itemNameToId[pd.name] = id;
         potionsMana[id] = pd;
       }
     }
@@ -231,4 +237,11 @@ const std::string &ItemData::getItemName(uint8_t id) const {
       return it->second.name;
   }
   return DEFAULT_WEAPON.name;
+}
+
+uint8_t ItemData::getItemIdByName(const std::string &name) const {
+  auto it = itemNameToId.find(name);
+  if (it != itemNameToId.end())
+    return it->second;
+  return 0;
 }

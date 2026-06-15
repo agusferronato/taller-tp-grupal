@@ -105,7 +105,7 @@ void GameModel::unequipItem(uint8_t equipSlot) {
   sendingQueue.push(UnequipCommandDTO{myPlayerID, equipSlot});
 }
 
-void GameModel::sendCityEntityCommand(uint8_t cmdType, int16_t arg) {
+void GameModel::sendCityEntityCommand(uint8_t cmdType, const std::string &arg) {
   sendingQueue.push(CityEntityCommandDTO{myPlayerID, cmdType, arg});
   if (cmdType == CityEntityCommandDTO::CURAR) {
     audio->playHeal();
