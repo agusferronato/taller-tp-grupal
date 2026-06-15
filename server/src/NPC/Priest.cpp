@@ -3,6 +3,7 @@
 
 #include "Priest.h"
 #include "Game.h"
+#include "ItemData.h"
 
 Priest::Priest(Position position)
     : CityEntity(position),
@@ -40,7 +41,7 @@ void Priest::buyItem(Game& game, Character& character, uint8_t itemId) {
     try {
         store.buyItemWith(character, itemId);
         game.sendSystemMessage(character.getId(),
-            "Has comprado " + ITEM_TABLE[itemId].name + " por " +
+            "Has comprado " + ItemData::instance().getItemName(itemId) + " por " +
             std::to_string(getStoreItem(itemId).purchase_price) + " de oro.");
         game.sendInventoryUpdate(character.getId());
     } catch (const ItemNotAvailable& e) {
@@ -59,7 +60,7 @@ void Priest::listItems(Game& game, Character& character) {
     }
     std::string msg = "Objetos del sacerdote: \n";
     for (auto& [id, item] : items) {
-        msg += "    (# " + std::to_string(id) + ") " + ITEM_TABLE[id].name 
+        msg += "    (# " + std::to_string(id) + ") " + ItemData::instance().getItemName(id)
             + " (x" + std::to_string(item.stock) + "). Precio de compra: " 
             + std::to_string(item.purchase_price) + " \n";
     }

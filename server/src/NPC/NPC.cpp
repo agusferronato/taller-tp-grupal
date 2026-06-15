@@ -2,6 +2,15 @@
 #include "Character.h"
 #include "Formulas.h"
 
+NPC::NPC(Position pos, const NPCStats& stats)
+    : gridPosition(pos),
+      range(stats.range), attackCounterMax(stats.attackCounterMax),
+      x(0), y(0),
+      hp(stats.hp), maxHp(stats.hp), level(stats.level),
+      agility(stats.agility), damage(stats.damage),
+      ancho(stats.ancho), alto(stats.alto),
+      type(stats.type), name(stats.name) {}
+
 bool NPC::colisionaCon(int targetX, int targetY, int targetAncho,
                        int targetAlto) const {
     return !(targetX + targetAncho <= x ||

@@ -6,6 +6,7 @@
 #include <string>
 
 #include "ClientPlayer.h"
+#include "EffectParser.h"
 #include "EquipParser.h"
 #include "RenderableEntity.h"
 #include "TextureManager.h"
@@ -24,11 +25,12 @@ public:
   int get_h() override;
 
 private:
-  int attackNextFrame{-1};
+  int effectNextFrame{-1};
   const ClientPlayer &player;
   TextureManager &textureManager;
   SDL2pp::Font &nameFont;
   EquipParser equipParser;
+  EffectParser effectParser;
   std::unique_ptr<SDL2pp::Texture> cachedNameTexture;
   std::string cachedNameText;
   SDL_Color cachedNameColor{};

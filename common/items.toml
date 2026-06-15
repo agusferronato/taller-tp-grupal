@@ -1,0 +1,51 @@
+[weapon]
+1 = { name = "Espada", minDamage = 2, maxDamage = 5, manaCost = 0, range = 0, isHealing = false, healValue = 0, effect = "NormalAttack" }
+2 = { name = "Hacha", minDamage = 4, maxDamage = 5, manaCost = 0, range = 0, isHealing = false, healValue = 0, effect = "NormalAttack" }
+3 = { name = "Martillo", minDamage = 1, maxDamage = 9, manaCost = 0, range = 0, isHealing = false, healValue = 0, effect = "NormalAttack" }
+4 = { name = "Arco simple", minDamage = 1, maxDamage = 4, manaCost = 0, range = 200, isHealing = false, healValue = 0, effect = "Bow" }
+5 = { name = "Arco compuesto", minDamage = 4, maxDamage = 16, manaCost = 0, range = 300, isHealing = false, healValue = 0, effect = "Bow" }
+6 = { name = "Vara de fresno", minDamage = 2, maxDamage = 4, manaCost = 5, range = 150, isHealing = false, healValue = 0, effect = "None" }
+7 = { name = "Flauta elfca", minDamage = 0, maxDamage = 0, manaCost = 100, range = 0, isHealing = true, healValue = 50, effect = "Heal" }
+8 = { name = "Baculo nudoso", minDamage = 4, maxDamage = 8, manaCost = 15, range = 150, isHealing = false, healValue = 0, effect = "Misil" }
+9 = { name = "Baculo engarzado", minDamage = 8, maxDamage = 20, manaCost = 30, range = 200, isHealing = false, healValue = 0, effect = "Explosion" }
+
+[armor]
+10 = { name = "Armadura de cuero", minDefense = 2, maxDefense = 6 }
+11 = { name = "Armadura de placas", minDefense = 15, maxDefense = 30 }
+12 = { name = "Tunica azul", minDefense = 6, maxDefense = 10 }
+
+[helmet]
+13 = { name = "Capucha", minDefense = 1, maxDefense = 4 }
+14 = { name = "Casco de hierro", minDefense = 4, maxDefense = 8 }
+15 = { name = "Sombrero magico", minDefense = 4, maxDefense = 12 }
+
+[shield]
+16 = { name = "Escudo de tortuga", minDefense = 1, maxDefense = 2 }
+17 = { name = "Escudo de hierro", minDefense = 1, maxDefense = 4 }
+
+[potion_hp]
+18 = { name = "Pocion de vida", healAmount = 50 }
+
+[potion_mana]
+19 = { name = "Pocion de mana", healAmount = 50 }
+
+[prices]
+1 = { buy = 50, sell = 25 }
+2 = { buy = 80, sell = 40 }
+3 = { buy = 60, sell = 30 }
+4 = { buy = 100, sell = 50 }
+5 = { buy = 200, sell = 100 }
+6 = { buy = 80, sell = 40 }
+7 = { buy = 150, sell = 75 }
+8 = { buy = 200, sell = 100 }
+9 = { buy = 500, sell = 250 }
+10 = { buy = 100, sell = 50 }
+11 = { buy = 400, sell = 200 }
+12 = { buy = 200, sell = 100 }
+13 = { buy = 50, sell = 25 }
+14 = { buy = 100, sell = 50 }
+15 = { buy = 200, sell = 100 }
+16 = { buy = 50, sell = 25 }
+17 = { buy = 100, sell = 50 }
+18 = { buy = 30, sell = 15 }
+19 = { buy = 50, sell = 25 }

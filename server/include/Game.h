@@ -17,7 +17,9 @@
 
 #include "Banker.h"
 #include "Biome.h"
+#include "BiomeData.h"
 #include "Character.h"
+#include "NPCData.h"
 #include "CheatType.h"
 #include "City.h"
 #include "CityEntityCommandDTO.h"
@@ -30,7 +32,6 @@
 #include "Direction.h"
 #include "Inventory.h"
 #include "InventoryManager.h"
-#include "ItemDef.h"
 #include "MapData.h"
 #include "NPC.h"
 #include "PlayerData.h"
@@ -115,7 +116,10 @@ public:
   void leaveClan(uint32_t playerId);
   void reviewClan(uint32_t playerId);
 
-  void executeCityEntityCommand(uint32_t playerId, uint8_t type, int16_t arg);
+  void startMeditating(uint32_t playerId);
+  void stopMeditating(uint32_t playerId);
+
+  void executeCityEntityCommand(uint32_t playerId, uint8_t type, const std::string &arg);
   void sendInventoryUpdate(uint32_t playerId);
   void sendPlayerInfoUpdate(uint32_t playerId);
   void sendPlayerMoved(uint32_t playerId);
@@ -183,6 +187,7 @@ private:
 
   void updateResurrectingPlayers();
   bool isResurrecting(uint32_t playerId);
+  bool consumeManaForAttack(Character &attacker);
 
   std::list<ResurrectingPlayer> resurrectingPlayers;
 };

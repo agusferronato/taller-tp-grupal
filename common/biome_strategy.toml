@@ -1,0 +1,27 @@
+[biome.Desert]
+max_npc = 10
+npcs = [
+  { id = 3, probability = 0.05 },
+  { id = 4, probability = 0.05 },
+  { id = 5, probability = 0.05 },
+  { id = 6, probability = 0.05 },
+  { id = 10, probability = 0.02 }
+]
+
+[biome.Forest]
+max_npc = 10
+npcs = [
+  { id = 1, probability = 0.02 },
+  { id = 2, probability = 0.02 },
+  { id = 11, probability = 0.02 },
+  { id = 0, probability = 0.02 },
+  { id = 7, probability = 0.02 },
+  { id = 5, probability = 0.02 }
+]
+
+[biome.Dungeon]
+max_npc = 10
+npcs = [
+  { id = 8, probability = 0.02 },
+  { id = 9, probability = 0.02 }
+]

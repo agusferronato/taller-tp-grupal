@@ -40,7 +40,8 @@ enum class ChatCommandType {
   Supervelocidad,
   VelocidadNormal,
   SetLevel,
-  Revivir
+  Revivir,
+  Meditar
 };
 
 struct ChatCommand {
