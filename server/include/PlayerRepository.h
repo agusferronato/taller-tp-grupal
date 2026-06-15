@@ -6,6 +6,7 @@
 #include <unordered_map>
 
 #include "PlayerData.h"
+#include "ItemData.h"
 
 class PlayerRepository {
 public:

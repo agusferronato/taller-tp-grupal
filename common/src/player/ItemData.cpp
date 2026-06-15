@@ -34,6 +34,21 @@ void ItemData::loadFromToml() {
         wd.range = item["range"].value_or(0u);
         wd.isHealing = item["isHealing"].value_or(false);
         wd.healValue = item["healValue"].value_or(0u);
+
+        std::string effectStr = item["effect"].value_or("NormalAttack");
+        if (effectStr == "Explosion")
+          wd.effectType = EffectType::Explosion;
+        else if (effectStr == "Heal")
+          wd.effectType = EffectType::Heal;
+        else if (effectStr == "Misil")
+          wd.effectType = EffectType::Misil;
+        else if (effectStr == "Bow")
+          wd.effectType = EffectType::Bow;
+        else if (effectStr == "NormalAttack")
+          wd.effectType = EffectType::NormalAttack;
+        else
+          wd.effectType = EffectType::None;
+
         weapons[id] = wd;
       }
     }

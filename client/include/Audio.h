@@ -2,10 +2,12 @@
 #define AUDIO_H
 
 #include <SDL_mixer.h>
-#include <string>
-#include <vector>
-#include <unordered_map>
 #include <cstdint>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+#include "EffectType.h"
 
 class Audio {
 public:
@@ -22,7 +24,7 @@ public:
   void playSfx(const std::string &name, int distance = 0);
   void stopAllSfx();
 
-  void playAttack(uint8_t weaponId, int distance = 0);
+  void playAttack(EffectType effectType, int distance = 0);
   void playEquip(uint8_t itemId, int distance = 0);
   void playPickup(int distance = 0);
   void playHeal(int distance = 0);

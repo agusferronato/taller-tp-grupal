@@ -1,6 +1,7 @@
 #ifndef WEAPON_H
 #define WEAPON_H
 
+#include "EffectType.h"
 #include "Item.h"
 #include <string>
 
@@ -18,6 +19,7 @@ public:
   bool isHealing() const;
   uint16_t healValue() const;
   const std::string &name() const;
+  EffectType effectType() const;
   bool hasRange(int16_t dx, int16_t dy) const;
 };
 

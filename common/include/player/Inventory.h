@@ -9,9 +9,11 @@
 #include "Helmet.h"
 #include "InventoryConstants.h"
 #include "Item.h"
-#include "ItemDef.h"
+#include "ItemData.h"
+
 #include "Shield.h"
 #include "Weapon.h"
+
 
 class Inventory {
 public:

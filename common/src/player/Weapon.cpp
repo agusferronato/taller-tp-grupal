@@ -33,6 +33,10 @@ const std::string &Weapon::name() const {
   return ItemData::instance().getWeaponData(id).name;
 }
 
+EffectType Weapon::effectType() const {
+  return ItemData::instance().getWeaponData(id).effectType;
+}
+
 bool Weapon::hasRange(int16_t dx, int16_t dy) const {
   return std::max(dx, dy) <= range();
 }

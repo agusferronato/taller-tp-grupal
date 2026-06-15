@@ -2,6 +2,7 @@
 #define CLIENT_PLAYER_H
 
 #include "Direction.h"
+#include "EffectType.h"
 #include "Inventory.h"
 #include "InventoryConstants.h"
 #include "Player.h"
@@ -22,6 +23,7 @@ private:
   uint32_t id;
   Player player;
   mutable bool beingAttacked{false};
+  mutable EffectType currentEffect{EffectType::NormalAttack};
 
 public:
   ClientPlayer(uint32_t id, std::string name, int xOrigin, int yOrigin,
@@ -59,9 +61,16 @@ public:
 
   const Player &getPlayer() const { return player; }
 
-  bool isBeingAttacked() const { return beingAttacked; }
-  void setBeingAttacked(bool v) { beingAttacked = v; }
-  void stopAttackEffect() const { beingAttacked = false; }
+  bool isBeingAttackOrCured() const { return beingAttacked; }
+  EffectType getEffect() const { return currentEffect; }
+  void setBeingAttacked(bool v, EffectType effect = EffectType::NormalAttack) {
+    beingAttacked = v;
+    if (v) currentEffect = effect;
+  }
+  void stopAttackEffect() const {
+    beingAttacked = false;
+    currentEffect = EffectType::NormalAttack;
+  }
 
   uint8_t getEquippedWeapon() const { return player.getEquippedWeapon().getID(); }
   uint8_t getEquippedArmor() const { return player.getEquippedArmor().getID(); }

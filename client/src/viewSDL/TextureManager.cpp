@@ -130,18 +130,25 @@ void TextureManager::loadLayoutsFromToml(const std::string &path) {
   registerBody("Banker",         TextureLayoutType::Banker);
   registerBody("Ghost",         TextureLayoutType::Ghost);
 
-  if (auto *attack = tbl["Attack"].as_table()) {
-    std::vector<SpriteData> frames;
-    if (auto *arr = (*attack)["frames"].as_array()) {
-      for (auto &elem : *arr) {
-        auto &pt = *elem.as_table();
-        frames.push_back({pt["x"].value_or(0), pt["y"].value_or(0),
-                          pt["w"].value_or(0), pt["h"].value_or(0)});
+  auto loadAttackFrames = [&](const char *key, TextureLayoutType type) {
+    if (auto *section = tbl[key].as_table()) {
+      std::vector<SpriteData> frames;
+      if (auto *arr = (*section)["frames"].as_array()) {
+        for (auto &elem : *arr) {
+          auto &pt = *elem.as_table();
+          frames.push_back({pt["x"].value_or(0), pt["y"].value_or(0),
+                            pt["w"].value_or(0), pt["h"].value_or(0)});
+        }
       }
+      texturesFrames.erase(type);
+      texturesFrames.emplace(type, AttackLayout(frames));
     }
-    texturesFrames.erase(TextureLayoutType::Attack);
-    texturesFrames.emplace(TextureLayoutType::Attack, AttackLayout(frames));
-  }
+  };
+
+  loadAttackFrames("Attack",    TextureLayoutType::Attack);
+  loadAttackFrames("Explosion", TextureLayoutType::Explosion);
+  loadAttackFrames("Heal",      TextureLayoutType::Heal);
+  loadAttackFrames("Misil",     TextureLayoutType::Misil);
 }
 
 Sprite TextureManager::getBodySprite(uint32_t bodyID, Direction dir,
@@ -191,12 +198,14 @@ Sprite TextureManager::getEquipableSprite(const std::string &type,
 }
 
 TextureManager::AttackFrameResult TextureManager::getAttackFrame(
+    TextureLayoutType layoutType,
     int textureId, unsigned int it) {
   auto &layout =
-      std::get<AttackLayout>(texturesFrames.at(TextureLayoutType::Attack));
+      std::get<AttackLayout>(texturesFrames.at(layoutType));
   int frame = 0;
   SpriteData sd = layout.getLayout(it, frame);
-  return {{textures.at(textureId), sd.x, sd.y, sd.w, sd.h}, frame};
+  int max_ticks = layout.size() * 4;
+  return {{textures.at(textureId), sd.x, sd.y, sd.w, sd.h}, frame, max_ticks};
 }
 
 SDL2pp::Texture *TextureManager::getItemIcon(uint8_t itemId) const {

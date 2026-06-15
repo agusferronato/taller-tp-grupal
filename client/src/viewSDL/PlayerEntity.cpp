@@ -54,24 +54,28 @@ void PlayerEntity::renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera
                               unsigned int it) {
   (void)it;
 
-  if (!player.isBeingAttacked()) {
-    attackNextFrame = -1;
+  if (!player.isBeingAttackOrCured()) {
+    effectNextFrame = -1;
     return;
   }
 
-  if (attackNextFrame == -1) {
-    attackNextFrame = 0;
+  if (effectNextFrame == -1) {
+    effectNextFrame = 0;
   }
 
-  auto result = textureManager.getAttackFrame(350, attackNextFrame);
+  auto result = textureManager.getAttackFrame(
+    effectParser.getEffectLayout(player.getEffect()), 
+    effectParser.getEffectID(player.getEffect()), 
+    effectNextFrame
+  );
+
   Sprite &src = result.sprite;
 
-  attackNextFrame++; 
+  effectNextFrame++;
 
-  const int totalTicks = 24;
-  if (attackNextFrame >= totalTicks) {
+  if (effectNextFrame >= result.max_ticks) {
     player.stopAttackEffect();
-    attackNextFrame = -1;
+    effectNextFrame = -1;
     return;
   }
 
