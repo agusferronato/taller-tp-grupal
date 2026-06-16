@@ -1,4 +1,6 @@
 #include "GameModel.h"
+#include "Audio.h"
+#include "AttackCommandDTO.h"
 #include "AttackReceivedEventDTO.h"
 #include "AcceptClanRequestCommandDTO.h"
 #include "BanClanPlayerCommandDTO.h"
@@ -7,6 +9,7 @@
 #include "CreateClanCommandDTO.h"
 #include "DropItemCommandDTO.h"
 #include "CityEntityCommandDTO.h"
+#include "TakeItemCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "GameWindow.h"
 #include "GlobalChatMessageCommandDTO.h"
@@ -18,6 +21,7 @@
 #include "JoinClanCommandDTO.h"
 #include "KickClanMemberCommandDTO.h"
 #include "LeaveClanCommandDTO.h"
+#include "MeditateCommandDTO.h"
 #include "NPC.h"
 #include "NPCAppearedEventDTO.h"
 #include "NPCMovedEventDTO.h"
@@ -40,15 +44,17 @@
 #include "TextureInfoEventDTO.h"
 #include "UnequipCommandDTO.h"
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 
 static constexpr int MAX_NUMBER_OF_MESSAGES = 100;
 
 GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
                      Queue<ServerEventDTO> &receptionQueue,
-                     Queue<ClientCommandDTO> &sendingQueue)
+                     Queue<ClientCommandDTO> &sendingQueue,
+                     Audio *audio)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
-      myPlayerID(myPlayerID), gameView(gameView) {
+      myPlayerID(myPlayerID), gameView(gameView), audio(audio) {
   registerPlayers();
 }
 
@@ -89,14 +95,28 @@ void GameModel::dropItem(uint8_t slot) {
 
 void GameModel::equipItem(uint8_t slot) {
   sendingQueue.push(EquipCommandDTO{myPlayerID, slot});
+  auto it = players.find(myPlayerID);
+  if (it != players.end()) {
+    audio->playEquip(it->second->getInventory().getItemId(slot));
+  }
 }
 
 void GameModel::unequipItem(uint8_t equipSlot) {
   sendingQueue.push(UnequipCommandDTO{myPlayerID, equipSlot});
 }
 
-void GameModel::sendCityEntityCommand(uint8_t cmdType, int16_t arg) {
+void GameModel::sendCityEntityCommand(uint8_t cmdType, const std::string &arg) {
   sendingQueue.push(CityEntityCommandDTO{myPlayerID, cmdType, arg});
+  if (cmdType == CityEntityCommandDTO::CURAR) {
+    audio->playHeal();
+  } else if (cmdType == CityEntityCommandDTO::COMPRAR ||
+             cmdType == CityEntityCommandDTO::VENDER ||
+             cmdType == CityEntityCommandDTO::DEPOSITAR_ITEM ||
+             cmdType == CityEntityCommandDTO::RETIRAR_ITEM ||
+             cmdType == CityEntityCommandDTO::DEPOSITAR_ORO ||
+             cmdType == CityEntityCommandDTO::RETIRAR_ORO) {
+    audio->playCoin();
+  }
 }
 
 void GameModel::createClan(const std::string &clanName) {
@@ -159,6 +179,10 @@ void GameModel::sendCheat(CheatType cheat, uint32_t arg) {
   sendingQueue.push(CheatCommandDTO{cheat, arg});
 }
 
+void GameModel::meditate() {
+  sendingQueue.push(MeditateCommandDTO{myPlayerID});
+}
+
 void GameModel::moveMyPlayer(Direction direction) {
   sendingQueue.push(MoveCommandDTO{myPlayerID, direction});
 }
@@ -217,6 +241,10 @@ void GameModel::handle(const PlayerInfoEventDTO &event) {
     it->second->updateStats(event.hp, event.maxHp, event.mana, event.maxMana,
                             event.gold, event.level, event.experience);
   }
+  if (event.playerId == myPlayerID && event.level > lastKnownLevel) {
+    lastKnownLevel = event.level;
+    audio->playLevelUp();
+  }
 }
 
 void GameModel::handle(const TextureInfoEventDTO &texInfo) {
@@ -260,6 +288,11 @@ void GameModel::handle(const InventoryUpdateEventDTO &inv) {
   it->second->setEquippedArmor(inv.equippedArmor);
   it->second->setEquippedHelmet(inv.equippedHelmet);
   it->second->setEquippedShield(inv.equippedShield);
+
+  if (inv.playerId == myPlayerID) {
+    audio->playPickup();
+    audio->playSfx("equip", 0);
+  }
 }
 void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &event) {
@@ -386,6 +419,7 @@ void GameModel::handle(const NPCStoppedEventDTO &event) {
 void GameModel::handle(const NpcDefeatedEventDTO &event) {
   gameView->removeEntity(EntityType::Npc, event.npcId);
   npcs.erase(event.npcId);
+  audio->playNpcDeath();
 }
 
 void GameModel::handle(const NPCAppearedEventDTO &event) {
@@ -421,12 +455,23 @@ void GameModel::handle(const AttackReceivedEventDTO &event) {
   if (event.entityType == EntityType::Player) {
     auto it = players.find(event.entityId);
     if (it != players.end())
-      it->second->setBeingAttacked(true);
+      it->second->setBeingAttacked(true, event.effectType);
+
+    if (event.entityId == myPlayerID)
+      audio->playHitReceived();
+
+    if (event.effectType != EffectType::None)
+      audio->playAttack(event.effectType);
+
   } else if (event.entityType == EntityType::Npc) {
     auto it = npcs.find(event.entityId);
     if (it != npcs.end())
-      it->second->setBeingAttacked(true);
+      it->second->setBeingAttacked(true, event.effectType);
+
+    audio->playAttack(event.effectType);
   }
+
+  
 }
 
 void GameModel::handle(const RegisterPlayerEventDTO &) {}
@@ -481,6 +526,7 @@ void GameModel::handle(const PlayerDieEventDTO &event) {
   }
   if (event.playerId == myPlayerID) {
     it->second->die();
+    audio->playPlayerDeath();
   } else {
     gameView->removePlayer(event.playerId);
     players.erase(event.playerId);
@@ -494,4 +540,5 @@ void GameModel::handle(const PlayerResurrectEventDTO &event) {
   if (it == players.end())
     return;
   it->second->resurrect(event.x, event.y);
+  audio->playResurrect();
 }

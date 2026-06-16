@@ -54,10 +54,10 @@ PlayerData Character::toPlayerData() const {
   data.constitution = player.getConstitution();
   data.intelligence = player.getIntelligence();
   data.inventory = player.getInventoryItems();
-  data.equippedWeapon = player.getEquippedWeapon();
-  data.equippedArmor = player.getEquippedArmor();
-  data.equippedHelmet = player.getEquippedHelmet();
-  data.equippedShield = player.getEquippedShield();
+  data.equippedWeapon = player.getEquippedWeapon().getID();
+  data.equippedArmor = player.getEquippedArmor().getID();
+  data.equippedHelmet = player.getEquippedHelmet().getID();
+  data.equippedShield = player.getEquippedShield().getID();
   data.clanId = player.getClanId();
   return data;
 }

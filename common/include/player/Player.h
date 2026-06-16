@@ -73,13 +73,13 @@ public:
   bool equipItem(uint8_t slotIndex) { return inventory.equipItem(slotIndex); }
   bool unequipSlot(EquipSlot slot) { return inventory.unequipSlot(slot); }
   bool removeItem(uint8_t slotIndex) { return inventory.removeItem(slotIndex); }
-  const std::array<uint8_t, MAX_INVENTORY_SLOTS> &getInventoryItems() const {
-    return inventory.getItems(); 
+  std::array<uint8_t, MAX_INVENTORY_SLOTS> getInventoryItems() const {
+    return inventory.getItems();
   }
-  uint8_t getEquippedWeapon() const { return inventory.getWeapon(); }
-  uint8_t getEquippedArmor() const { return inventory.getArmor(); }
-  uint8_t getEquippedHelmet() const { return inventory.getHelmet(); }
-  uint8_t getEquippedShield() const { return inventory.getShield(); }
+  const Weapon &getEquippedWeapon() const { return inventory.getWeapon(); }
+  const Armor &getEquippedArmor() const { return inventory.getArmor(); }
+  const Helmet &getEquippedHelmet() const { return inventory.getHelmet(); }
+  const Shield &getEquippedShield() const { return inventory.getShield(); }
   void
   setInventoryItems(const std::array<uint8_t, MAX_INVENTORY_SLOTS> &items) {
     inventory.setItems(items);

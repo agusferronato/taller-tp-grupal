@@ -306,6 +306,23 @@ id = 350
 path = "assets/ataque/ataque_cuerpo.png"
 transparent = true
 
+[[sprites]]
+id = 351
+path = "assets/explosion_effect.png"
+layout_type = "Explosion"
+transparent = true
+
+[[sprites]]
+id = 352
+path = "assets/heal_effect.png"
+layout_type = "Heal"
+transparent = true
+
+[[sprites]]
+id = 353
+path = "assets/misil_effect.png"
+layout_type = "Misil"
+transparent = true
 
 [[sprites]]
 id = 534

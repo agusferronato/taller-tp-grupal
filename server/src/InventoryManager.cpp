@@ -5,6 +5,7 @@
 #include "DTO/Events/InventoryUpdateEventDTO.h"
 #include "DTO/Events/PlayerInfoEventDTO.h"
 #include "InventoryConstants.h"
+#include "ItemData.h"
 
 InventoryManager::InventoryManager(
     std::unordered_map<uint32_t, std::unique_ptr<Character>> &players,
@@ -21,12 +22,12 @@ void InventoryManager::equipItem(uint32_t playerId, uint8_t slotIndex) {
   if (itemId == EMPTY_ITEM)
     return;
 
-  const ItemDef &def = ITEM_TABLE[itemId];
+  auto &idata = ItemData::instance();
 
-  if (def.type == ItemType::PotionHp || def.type == ItemType::PotionMana) {
+  if (idata.isPotionHp(itemId) || idata.isPotionMana(itemId)) {
     if (!player.removeItem(slotIndex))
       return;
-    consumePotion(player, def);
+    consumePotion(player, itemId);
     broadcastInventoryUpdate(player);
     broadcastPlayerInfo(player);
     return;
@@ -103,8 +104,9 @@ void InventoryManager::takeItem(uint32_t playerId) {
 void InventoryManager::broadcastInventoryUpdate(Character &player) {
   messagesToSend.push_back(InventoryUpdateEventDTO{
       player.getId(), player.getInventoryItems(),
-      player.getEquippedWeapon(), player.getEquippedArmor(),
-      player.getEquippedHelmet(), player.getEquippedShield()});
+      player.getEquippedWeapon().getID(), player.getEquippedArmor().getID(),
+      player.getEquippedHelmet().getID(),
+      player.getEquippedShield().getID()});
 }
 
 void InventoryManager::broadcastPlayerInfo(Character &player) {
@@ -114,11 +116,12 @@ void InventoryManager::broadcastPlayerInfo(Character &player) {
       player.getExperience()});
 }
 
-void InventoryManager::consumePotion(Character &player, const ItemDef &def) {
-  if (def.type == ItemType::PotionHp) {
-    player.heal(def.healAmount);
-  } else if (def.type == ItemType::PotionMana) {
-    player.addMana(def.healAmount);
+void InventoryManager::consumePotion(Character &player, uint8_t itemId) {
+  auto &idata = ItemData::instance();
+  if (idata.isPotionHp(itemId)) {
+    player.heal(idata.getPotionData(itemId).healAmount);
+  } else if (idata.isPotionMana(itemId)) {
+    player.addMana(idata.getPotionData(itemId).healAmount);
   }
 }
 

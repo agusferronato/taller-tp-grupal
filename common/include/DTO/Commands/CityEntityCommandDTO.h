@@ -3,6 +3,7 @@
 
 #include "protocol/ProtocolCodes.h"
 #include <cstdint>
+#include <string>
 
 struct CityEntityCommandDTO {
   static constexpr ClientCommandOpCode opCode =
@@ -24,7 +25,7 @@ struct CityEntityCommandDTO {
   ClientCommandOpCode getCode() const { return opCode; }
   uint32_t playerId;
   uint8_t type;
-  int16_t arg;
+  std::string arg;
 };
 
 #endif
