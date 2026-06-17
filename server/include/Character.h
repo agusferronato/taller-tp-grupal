@@ -92,7 +92,7 @@ public:
   uint32_t takeDamage(uint32_t damage);
   void heal(uint32_t amount);
   void addMana(uint32_t amount) { player.addMana(amount); }
-  bool useMana(uint32_t amount) { return player.useMana(amount); }
+  bool useMana(uint32_t amount);
   void gainExperience(uint32_t xp);
   void setLevel(uint32_t level) { player.setLevel(level); }
   void addGold(uint32_t amount);
