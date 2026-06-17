@@ -117,9 +117,7 @@ con las opciones de crear personaje, continuar juego o salir:
 
 ### Continuar juego
  Inicia sesión con un personaje ya existente.
-<center>
-<img src="gif/crear_personaje.gif" alt="Crear_personaje" width="80%" />
-</center>
+
 Si el personaje ya fue creado previamente, se puede acceder ingresando
 su nombre en la pantalla de *Login*. Si el nombre no existe o el
 personaje ya está conectado, se mostrará un mensaje de error.
