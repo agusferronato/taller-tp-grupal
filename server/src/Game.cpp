@@ -1528,11 +1528,6 @@ void Game::killPlayer(Character &dyingPlayer) {
 void Game::restorePlayers() {
   for (auto &[pid, p] : players) {
     p->restore();
-    if (p->isMeditating()) {
-      uint32_t manaRecovered = Formulas::calcularRecuperacionMeditacion(
-          p->getPlayerClass(), p->getIntelligence(), 1);
-      p->addMana(manaRecovered);
-    }
     messagesToSend.push_back(p->toPlayerInfoEvent());
   }
 }
@@ -1601,7 +1596,7 @@ void Game::startMeditating(uint32_t playerId) {
     sendSystemMessage(playerId, "Tu clase no puede meditar.");
     return;
   }
-  it->second->setMeditating(true);
+  it->second->startMeditating();
   sendSystemMessage(playerId, "Comenzaste a meditar.");
 }
 
@@ -1609,7 +1604,7 @@ void Game::stopMeditating(uint32_t playerId) {
   auto it = players.find(playerId);
   if (it == players.end() || !it->second->isMeditating())
     return;
-  it->second->setMeditating(false);
+  it->second->stopMeditating();
   sendSystemMessage(playerId, "Dejaste de meditar.");
 }
 

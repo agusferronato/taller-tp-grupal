@@ -111,7 +111,7 @@ public:
   bool isNewbie() const { return player.getLevel() < 13; }
   bool isDead() const { return player.isDead(); }
   uint32_t getDamage() const;
-  bool tryParry() const;
+  bool tryParry();
   bool assertAttackDistance(int16_t targetX, int16_t targetY) const;
   uint32_t dropGoldOnDeath();
   std::vector<uint8_t> die();
@@ -122,8 +122,9 @@ public:
   void joinClan(uint32_t clanId) { player.joinClan(clanId); }
   void leaveClan() { player.leaveClan(); }
 
-  bool isMeditating() const { return meditating; }
-  void setMeditating(bool value) { meditating = value; }
+  bool isMeditating() const { return timeSinceMeditating.has_value(); }
+  void startMeditating();
+  void stopMeditating() { timeSinceMeditating = std::nullopt; }
 
 private:
   uint32_t id;
@@ -131,7 +132,7 @@ private:
 
   std::optional<uint8_t> timeSinceLastHit;
   std::optional<uint8_t> timeSinceLastManaConsume;
-  bool meditating{false};
+  std::optional<uint8_t> timeSinceMeditating;
 };
 
 #endif // CHARACTER_H

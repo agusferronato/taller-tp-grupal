@@ -188,7 +188,7 @@ std::pair<int, int> Character::getTargetPosition(uint32_t speed) const {
 
 uint32_t Character::getDamage() const { return player.attack(); }
 
-bool Character::tryParry() const {
+bool Character::tryParry() {
   return Formulas::calcularEsquivo(player.getAgility(), rand() % 2);
 }
 
@@ -203,12 +203,18 @@ uint32_t Character::dropGoldOnDeath() {
   return perdido;
 }
 
-std::vector<uint8_t> Character::die() { return player.die(); }
+std::vector<uint8_t> Character::die() {
+  timeSinceLastHit = std::nullopt;
+  timeSinceLastManaConsume = std::nullopt;
+  timeSinceMeditating = std::nullopt;
+  return player.die();
+}
 
 void Character::restore() {
   if (player.isDead()) {
     return;
   }
+
   if (timeSinceLastHit.has_value()) {
     *timeSinceLastHit += 1;
     heal(Formulas::calcularRecuperacionVida(player.getRace(),
@@ -216,6 +222,14 @@ void Character::restore() {
     if (player.getHp() == player.getMaxHp()) {
       timeSinceLastHit = std::nullopt;
     }
+  }
+
+  if (timeSinceMeditating.has_value()) {
+    *timeSinceMeditating += 1;
+    uint32_t manaRecovered = Formulas::calcularRecuperacionMeditacion(
+        player.getPlayerClass(), player.getIntelligence(),
+        timeSinceMeditating.value());
+    addMana(manaRecovered);
   } else if (timeSinceLastManaConsume.has_value()) {
     *timeSinceLastManaConsume += 1;
     addMana(Formulas::calcularRecuperacionMana(
@@ -241,3 +255,18 @@ void Character::removeItemById(uint8_t itemId) {
 }
 
 void Character::resurrect() { player.resurrect(); }
+
+void Character::startMeditating() {
+  if (player.isDead()) {
+    return;
+  }
+  timeSinceMeditating = 0;
+}
+
+bool Character::useMana(uint32_t amount) {
+  bool result = player.useMana(amount);
+  if (result) {
+    timeSinceLastManaConsume = 0;
+  }
+  return result;
+}
