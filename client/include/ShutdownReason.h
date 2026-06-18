@@ -1,6 +1,11 @@
-#ifndef SHUTDOWN_REASON_H
-#define SHUTDOWN_REASON_H
+#ifndef SHUT_DOWN_REASON_H
+#define SHUT_DOWN_REASON_H
 
-enum ShutdownReason { ConnectionClosed, SDLQuit };
+enum ShutdownReason {
+    WindowClose,
+    ConnectionEnd,
+    Unknown
+};
+
 
 #endif

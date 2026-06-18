@@ -24,13 +24,11 @@ void Sender::run() {
       protocol.sendEvent(serverMessage);
 
     } catch (const ClosedQueue &e) {
-      delete senderQueue;
       break;
 
     } catch (const CommunicationEnded &e) {
 
       senderQueueMonitor.deleteSenderQueue(this->clientId);
-      delete senderQueue;
       break;
 
     } catch (const std::exception &e) {
