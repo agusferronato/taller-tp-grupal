@@ -7,6 +7,12 @@
 class Game;
 class Character;
 
+
+#define BANKER_WIDTH 32
+#define BANKER_HEIGHT 64
+
+
+
 class Banker : public CityEntity {
 
 private:

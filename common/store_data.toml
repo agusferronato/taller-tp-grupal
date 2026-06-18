@@ -1,0 +1,7 @@
+[Trader]
+items = { 1 = { stock = 10 }, 2 = { stock = 8 }, 3 = { stock = 10 }, 4 = { stock = 6 }, 5 = { stock = 4 }, 10 = { stock = 8 }, 11 = { stock = 3 }, 12 = { stock = 5 }, 13 = { stock = 10 }, 14 = { stock = 8 }, 15 = { stock = 4 }, 16 = { stock = 10 }, 17 = { stock = 8 }, 18 = { stock = 20 }, 19 = { stock = 15 } }
+items_not_available_for_trading = [6, 7, 8, 9]
+
+[Priest]
+items = { 6 = { stock = 10 }, 7 = { stock = 5 }, 8 = { stock = 8 }, 9 = { stock = 3 }, 18 = { stock = 20 }, 19 = { stock = 15 } }
+items_not_available_for_trading = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]

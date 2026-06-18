@@ -5,22 +5,27 @@
 #include "Game.h"
 #include "ItemData.h"
 
+
 CityEntityType Priest::getCityEntityType() { return CityEntityType::Priest; }
 
-int Priest::getAncho() const { return 32; }
-int Priest::getAlto() const { return 64; }
+int Priest::getAncho() const { return PRIEST_WIDTH; }
+int Priest::getAlto() const { return PRIEST_HEIGHT; } 
 
-Priest::Priest(Position position)
+Priest::Priest(Position position, const EntityStoreData& storeData)
     : CityEntity(position),
-      store(
-          {{{6, {80, 40, 10}},
-            {7, {150, 75, 5}},
-            {8, {200, 100, 8}},
-            {9, {500, 250, 3}},
-            {18, {30, 15, 20}},
-            {19, {50, 25, 15}}}},
-          {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-           19}) {}
+      store(buildStoreItems(storeData.items), storeData.itemsNotForTrading) {}
+
+
+std::map<uint8_t, ItemInStore> Priest::buildStoreItems(const std::map<uint8_t, StoreItemEntry>& entries) {
+    std::map<uint8_t, ItemInStore> items;
+    for (const auto& [id, entry] : entries) {
+        const PriceData& price = ItemData::instance().getPriceData(id);
+        items[id] = {price.buyPrice, price.sellPrice, entry.stock};
+    }
+    return items;
+}
+
+
 
 void Priest::heal(Game& game, Character& character) {
     character.heal(character.getMaxHp());

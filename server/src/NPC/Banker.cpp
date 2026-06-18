@@ -6,8 +6,8 @@ Banker::Banker(Position position) : CityEntity(position) {}
 
 CityEntityType Banker::getCityEntityType() { return CityEntityType::Banker; }
 
-int Banker::getAncho() const { return 32; }
-int Banker::getAlto() const { return 64; }
+int Banker::getAncho() const { return BANKER_WIDTH; }
+int Banker::getAlto() const { return BANKER_HEIGHT; }
 
 void Banker::saveItem(Game& game, Character& character, uint8_t id) {
     try {
