@@ -179,7 +179,7 @@ private:
   bool validAttackToNpc(Character &attacker);
   Character *findPlayerByCoordinates(int16_t x, int16_t y);
   NPC *findNPCByCoordinates(int16_t x, int16_t y);
-  int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
+  int floorDiv(int a, int b);
 
   void killPlayer(Character &dyingPlayer);
   bool isNearEntity(CityEntity &entity, const Character &character);

@@ -2,6 +2,13 @@
 #include "Game.h"
 #include "ItemData.h"
 
+Banker::Banker(Position position) : CityEntity(position) {}
+
+CityEntityType Banker::getCityEntityType() { return CityEntityType::Banker; }
+
+int Banker::getAncho() const { return 32; }
+int Banker::getAlto() const { return 64; }
+
 void Banker::saveItem(Game& game, Character& character, uint8_t id) {
     try {
         bank.saveItem(character, id);

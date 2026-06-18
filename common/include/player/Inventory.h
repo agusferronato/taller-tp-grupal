@@ -31,15 +31,15 @@ public:
   std::array<uint8_t, MAX_INVENTORY_SLOTS> getItems() const;
   void setItems(const std::array<uint8_t, MAX_INVENTORY_SLOTS> &newItems);
 
-  const Weapon &getWeapon() const { return equippedWeapon; }
-  const Armor &getArmor() const { return equippedArmor; }
-  const Helmet &getHelmet() const { return equippedHelmet; }
-  const Shield &getShield() const { return equippedShield; }
+  const Weapon &getWeapon() const;
+  const Armor &getArmor() const;
+  const Helmet &getHelmet() const;
+  const Shield &getShield() const;
 
-  void setWeapon(uint8_t id) { equippedWeapon = Weapon(id); }
-  void setArmor(uint8_t id) { equippedArmor = Armor(id); }
-  void setHelmet(uint8_t id) { equippedHelmet = Helmet(id); }
-  void setShield(uint8_t id) { equippedShield = Shield(id); }
+  void setWeapon(uint8_t id);
+  void setArmor(uint8_t id);
+  void setHelmet(uint8_t id);
+  void setShield(uint8_t id);
 
   void setSlotItemId(uint8_t slotIndex, uint8_t itemId);
 

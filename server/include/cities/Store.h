@@ -15,10 +15,7 @@ struct ItemInStore {
     int stock{0};
 };
 
-inline ItemInStore getStoreItem(uint8_t itemId) {
-    const PriceData &price = ItemData::instance().getPriceData(itemId);
-    return {price.buyPrice, price.sellPrice, 0};
-}
+ItemInStore getStoreItem(uint8_t itemId);
 
 
 class Store {
@@ -32,19 +29,15 @@ public:
     Store(
         std::map<uint8_t, ItemInStore> items,
         std::set<uint8_t> itemsNotAvailablesForTrading
-    ) : items(std::move(items)), 
-        itemsNotAvailablesForTrading(std::move(itemsNotAvailablesForTrading)) { }
+    );
 
-    const std::map<uint8_t, ItemInStore>& getItems() const { return items; }
+    const std::map<uint8_t, ItemInStore>& getItems() const;
 
     void buyItemWith(Character& character, uint8_t item);
     void sellItem(Character& character, uint8_t item);
 
 private:
-    bool isAvailableForTrading(uint8_t item) {
-        auto it = itemsNotAvailablesForTrading.find(item);
-        return it == itemsNotAvailablesForTrading.end();
-    }
+    bool isAvailableForTrading(uint8_t item);
 };
 
 #endif

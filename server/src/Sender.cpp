@@ -1,4 +1,7 @@
 #include "Sender.h"
+
+#include <iostream>
+
 #include "protocol/RegisterAllParsers.h"
 
 Sender::Sender(SenderQueueMonitor &senderQueueMonitor, Socket &peer,

@@ -1,6 +1,19 @@
 #include "CityEntity.h"
 #include "Character.h"
 
+CityEntity::CityEntity(Position pos) : gridPosition(pos), x(0), y(0) {}
+
+void CityEntity::setId(uint32_t newId) { id = newId; }
+uint32_t CityEntity::getId() const { return id; }
+const Position& CityEntity::getPosition() const { return gridPosition; }
+int CityEntity::getX() const { return x; }
+int CityEntity::getY() const { return y; }
+int CityEntity::getRange() { return range; }
+Direction CityEntity::getDirection() const { return direction; }
+bool CityEntity::getIsMoving() const { return isMoving; }
+void CityEntity::setPixelPosition(int px, int py) { x = px; y = py; }
+void CityEntity::stop() { isMoving = false; }
+
 bool CityEntity::colisionaCon(int targetX, int targetY, int targetAncho,
                               int targetAlto) const {
     return !(targetX + targetAncho <= x ||

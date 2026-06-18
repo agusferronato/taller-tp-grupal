@@ -16,26 +16,17 @@ struct Clan {
   std::unordered_set<std::string> pendingRequests;
   std::unordered_set<std::string> bannedPlayers;
 
-  Clan(uint32_t id, std::string name, std::string founderName)
-      : id(id), name(std::move(name)), founderName(std::move(founderName)) {}
+  Clan(uint32_t id, std::string name, std::string founderName);
 
-  bool isFull() const { return members.size() >= MAX_MEMBERS; }
+  bool isFull() const;
 
-  bool isFounder(const std::string &playerName) const {
-    return founderName == playerName;
-  }
+  bool isFounder(const std::string &playerName) const;
 
-  bool hasMember(const std::string &playerName) const {
-    return members.contains(playerName);
-  }
+  bool hasMember(const std::string &playerName) const;
 
-  bool hasPendingRequest(const std::string &playerName) const {
-    return pendingRequests.contains(playerName);
-  }
+  bool hasPendingRequest(const std::string &playerName) const;
 
-  bool isBanned(const std::string &playerName) const {
-    return bannedPlayers.contains(playerName);
-  }
+  bool isBanned(const std::string &playerName) const;
 };
 
 #endif

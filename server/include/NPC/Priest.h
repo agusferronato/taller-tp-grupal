@@ -15,12 +15,10 @@ private:
 public:
     Priest(Position position);
 
-    CityEntityType getCityEntityType() override {
-        return CityEntityType::Priest;
-    }
+    CityEntityType getCityEntityType() override;
 
-    int getAncho() const override { return 32; }
-    int getAlto() const override { return 64; }
+    int getAncho() const override;
+    int getAlto() const override;
 
     void heal(Game& game, Character& character);
     void resurrect(Game& game, Character& character);

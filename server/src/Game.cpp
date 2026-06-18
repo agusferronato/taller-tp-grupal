@@ -1860,6 +1860,8 @@ void Game::updateResurrectingPlayers() {
   }
 }
 
+int Game::floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
+
 bool Game::isResurrecting(uint32_t playerId) {
   for (auto &rp : resurrectingPlayers) {
     if (rp.character->getId() == playerId)

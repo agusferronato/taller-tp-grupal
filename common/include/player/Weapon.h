@@ -7,8 +7,8 @@
 
 class Weapon : public Item {
 public:
-  explicit Weapon(uint8_t id) : Item(id) {}
-  uint8_t getID() const override { return id; }
+  explicit Weapon(uint8_t id);
+  uint8_t getID() const override;
   void switchInInventory(Inventory &inv, uint8_t slotIndex) override;
 
   uint32_t minDamage() const;

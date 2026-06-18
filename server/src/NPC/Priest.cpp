@@ -5,6 +5,11 @@
 #include "Game.h"
 #include "ItemData.h"
 
+CityEntityType Priest::getCityEntityType() { return CityEntityType::Priest; }
+
+int Priest::getAncho() const { return 32; }
+int Priest::getAlto() const { return 64; }
+
 Priest::Priest(Position position)
     : CityEntity(position),
       store(

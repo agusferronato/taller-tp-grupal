@@ -14,11 +14,9 @@ private:
 
 public:
 
-    Banker(Position position) : CityEntity(position) {}
+    Banker(Position position);
 
-    CityEntityType getCityEntityType() override {
-        return CityEntityType::Banker;
-    }
+    CityEntityType getCityEntityType() override;
 
     void saveItem(Game& game, Character& character, uint8_t id);
     void takeItem(Game& game, Character& character, uint8_t id);
@@ -27,8 +25,8 @@ public:
     void showGoldAvailable(Game& game, Character& character);
     void listItemsAvailables(Game& game, Character& character);
 
-    int getAncho() const override { return 32; }
-    int getAlto() const override { return 64; }
+    int getAncho() const override;
+    int getAlto() const override;
 };
 
 #endif

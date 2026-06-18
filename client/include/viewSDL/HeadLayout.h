@@ -10,10 +10,9 @@ private:
   std::map<Direction, SpriteData> frames;
 
 public:
-  explicit HeadLayout(std::map<Direction, SpriteData> &frames)
-      : frames(frames) {}
+  explicit HeadLayout(std::map<Direction, SpriteData> &frames);
 
-  SpriteData getLayout(Direction direction) { return frames.at(direction); }
+  SpriteData getLayout(Direction direction);
 };
 
 #endif

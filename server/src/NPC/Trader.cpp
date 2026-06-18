@@ -2,6 +2,11 @@
 #include "Game.h"
 #include "ItemData.h"
 
+CityEntityType Trader::getCityEntityType() { return CityEntityType::Trader; }
+
+int Trader::getAncho() const { return 32; }
+int Trader::getAlto() const { return 64; }
+
 Trader::Trader(Position position)
     : CityEntity(position),
       store(

@@ -15,12 +15,10 @@ private:
 public:
     Trader(Position position);
 
-    CityEntityType getCityEntityType() override {
-        return CityEntityType::Trader;
-    }
+    CityEntityType getCityEntityType() override;
 
-    int getAncho() const override { return 32; }
-    int getAlto() const override { return 64; }
+    int getAncho() const override;
+    int getAlto() const override;
 
     void buyItem(Game& game, Character& character, uint8_t itemId);
     void sellItem(Game& game, Character& character, uint8_t itemId);

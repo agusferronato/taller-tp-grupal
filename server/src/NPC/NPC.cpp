@@ -82,6 +82,27 @@ uint32_t NPC::takeDamage(uint32_t damage) {
     return damage;
 }
 
+NPCType NPC::getType() { return type; }
+
+void NPC::setId(uint32_t newId) { id = newId; }
+uint32_t NPC::getId() const { return id; }
+const Position& NPC::getPosition() const { return gridPosition; }
+int NPC::getX() const { return x; }
+int NPC::getY() const { return y; }
+int NPC::getAncho() const { return ancho; }
+int NPC::getAlto() const { return alto; }
+int NPC::getRange() const { return range; }
+Direction NPC::getDirection() const { return direction; }
+bool NPC::getIsMoving() const { return isMoving; }
+void NPC::setPixelPosition(int px, int py) { x = px; y = py; }
+void NPC::stop() { isMoving = false; }
+uint32_t NPC::getDamage() { return damage; }
+int NPC::getAttackCounterMax() { return attackCounterMax; }
+std::string NPC::getName() { return name; }
+uint32_t NPC::getHP() const { return hp; }
+uint32_t NPC::getMaxHp() const { return maxHp; }
+uint32_t NPC::getLevel() const { return level; }
+
 bool NPC::tryParry() const {
     return Formulas::calcularEsquivo(agility, std::rand() % 2);
 }

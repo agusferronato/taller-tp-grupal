@@ -5,9 +5,9 @@
 
 class EmptyItem : public Item {
 public:
-  EmptyItem() : Item(0) {}
-  uint8_t getID() const override { return id; }
-  void switchInInventory(Inventory &, uint8_t) override {}
+  EmptyItem();
+  uint8_t getID() const override;
+  void switchInInventory(Inventory &, uint8_t) override;
 };
 
 #endif

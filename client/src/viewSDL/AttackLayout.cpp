@@ -3,6 +3,8 @@
 AttackLayout::AttackLayout(std::vector<SpriteData> &frames)
     : frames(frames) {}
 
+int AttackLayout::size() const { return frames.size(); }
+
 SpriteData AttackLayout::getLayout(unsigned int iterator, int &frameOut) const {
     int count = frames.size();
     frameOut = static_cast<int>(iterator * 0.25) % count;
