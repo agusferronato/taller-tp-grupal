@@ -120,7 +120,7 @@ public:
   void joinClan(uint32_t clanId);
   void leaveClan();
 
-  bool isMeditating();
+  bool isMeditating() const;
   void startMeditating();
   void stopMeditating();
 

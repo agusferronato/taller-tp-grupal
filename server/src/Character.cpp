@@ -6,10 +6,12 @@
 #include <algorithm>
 
 uint32_t Character::getId() const { return id; }
-const std::string& Character::getName() const { return player.getName(); }
+const std::string &Character::getName() const { return player.getName(); }
 Direction Character::getDirection() const { return player.getDirection(); }
 Race Character::getRace() const { return player.getRace(); }
-PlayerClass Character::getPlayerClass() const { return player.getPlayerClass(); }
+PlayerClass Character::getPlayerClass() const {
+  return player.getPlayerClass();
+}
 uint32_t Character::getHp() const { return player.getHp(); }
 uint32_t Character::getMaxHp() const { return player.getMaxHp(); }
 uint32_t Character::getMana() const { return player.getMana(); }
@@ -24,15 +26,25 @@ bool Character::addItem(uint8_t itemId) { return player.addItem(itemId); }
 bool Character::equipItem(uint8_t slot) { return player.equipItem(slot); }
 bool Character::unequipSlot(EquipSlot slot) { return player.unequipSlot(slot); }
 bool Character::removeItem(uint8_t slot) { return player.removeItem(slot); }
-Inventory& Character::getInventory() { return player.getInventory(); }
-const Inventory& Character::getInventory() const { return player.getInventory(); }
-std::array<uint8_t, MAX_INVENTORY_SLOTS> Character::getInventoryItems() const { return player.getInventoryItems(); }
-const Weapon& Character::getEquippedWeapon() const { return player.getEquippedWeapon(); }
-const Armor& Character::getEquippedArmor() const { return player.getEquippedArmor(); }
-const Helmet& Character::getEquippedHelmet() const { return player.getEquippedHelmet(); }
-const Shield& Character::getEquippedShield() const { return player.getEquippedShield(); }
-void Character::addMana(uint32_t amount) { player.addMana(amount); }
-bool Character::useMana(uint32_t amount) { return player.useMana(amount); }
+Inventory &Character::getInventory() { return player.getInventory(); }
+const Inventory &Character::getInventory() const {
+  return player.getInventory();
+}
+std::array<uint8_t, MAX_INVENTORY_SLOTS> Character::getInventoryItems() const {
+  return player.getInventoryItems();
+}
+const Weapon &Character::getEquippedWeapon() const {
+  return player.getEquippedWeapon();
+}
+const Armor &Character::getEquippedArmor() const {
+  return player.getEquippedArmor();
+}
+const Helmet &Character::getEquippedHelmet() const {
+  return player.getEquippedHelmet();
+}
+const Shield &Character::getEquippedShield() const {
+  return player.getEquippedShield();
+}
 void Character::setLevel(uint32_t level) { player.setLevel(level); }
 bool Character::isNewbie() const { return player.getLevel() < 13; }
 bool Character::isDead() const { return player.isDead(); }
@@ -40,8 +52,6 @@ uint32_t Character::getClanId() const { return player.getClanId(); }
 bool Character::hasClan() const { return player.hasClan(); }
 void Character::joinClan(uint32_t clanId) { player.joinClan(clanId); }
 void Character::leaveClan() { player.leaveClan(); }
-bool Character::isMeditating() const { return meditating; }
-void Character::setMeditating(bool value) { meditating = value; }
 
 Character::Character(uint32_t id, std::string name, Race race,
                      PlayerClass playerClass, int x, int y, Direction dir)
