@@ -70,6 +70,18 @@ configure_file(
   COPYONLY
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/common/player_stats.toml
+  ${CMAKE_CURRENT_BINARY_DIR}/player_stats.toml
+  COPYONLY
+)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/common/store_data.toml
+  ${CMAKE_CURRENT_BINARY_DIR}/store_data.toml
+  COPYONLY
+)
+
 # HEY!! TODO XXX: you need to install some runtime and dev libraries *before*
 # compiling the client/editor code.
 #

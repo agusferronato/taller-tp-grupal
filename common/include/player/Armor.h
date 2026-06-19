@@ -6,8 +6,8 @@
 
 class Armor : public Item {
 public:
-  explicit Armor(uint8_t id) : Item(id) {}
-  uint8_t getID() const override { return id; }
+  explicit Armor(uint8_t id);
+  uint8_t getID() const override;
   void switchInInventory(Inventory &inv, uint8_t slotIndex) override;
 
   uint16_t minDefense() const;

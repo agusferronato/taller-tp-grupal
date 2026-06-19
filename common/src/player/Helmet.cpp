@@ -2,6 +2,10 @@
 #include "Inventory.h"
 #include "ItemData.h"
 
+Helmet::Helmet(uint8_t id) : Item(id) {}
+
+uint8_t Helmet::getID() const { return id; }
+
 uint16_t Helmet::minDefense() const {
   return ItemData::instance().getHelmetData(id).minDefense;
 }

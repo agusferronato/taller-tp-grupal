@@ -125,7 +125,7 @@ private:
   int maxSize, gridSize, commonGroundTextureId;
   int windowWidth, windowHeight;
 
-  std::vector<std::map<std::pair<int, int>, std::vector<GridItem>>>
+  std::vector<std::map<std::pair<int, int>, TextureRenderInfo>>
       tilesToRender;
 
 public:

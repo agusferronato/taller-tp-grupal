@@ -10,6 +10,14 @@
 
 #include "MapData.h"
 
+struct TextureRenderInfo {
+  int texture_id;
+  int origin_i;
+  int origin_j;
+  int width_px;
+  int height_px;
+};
+
 class TextureMapper {
 private:
   struct TextureInfo {
@@ -20,8 +28,7 @@ private:
 
   SDL2pp::Renderer &renderer;
   std::map<int, TextureInfo> textures;
-  std::vector<std::map<std::pair<int, int>, std::vector<GridItem>>>
-      tilesToRender;
+  std::vector<std::map<std::pair<int, int>, TextureRenderInfo>> tilesToRender;
 
 public:
   explicit TextureMapper(SDL2pp::Renderer &renderer);
@@ -30,7 +37,7 @@ public:
   void buildRenderGrid(const std::list<TileOrigin> &origins, int gridSizePx);
 
   SDL2pp::Texture &getTexture(int id);
-  const std::vector<std::map<std::pair<int, int>, std::vector<GridItem>>> &
+  const std::vector<std::map<std::pair<int, int>, TextureRenderInfo>> &
   getTilesToRender() const;
 };
 

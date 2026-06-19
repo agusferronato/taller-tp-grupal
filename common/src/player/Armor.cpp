@@ -2,6 +2,10 @@
 #include "Inventory.h"
 #include "ItemData.h"
 
+Armor::Armor(uint8_t id) : Item(id) {}
+
+uint8_t Armor::getID() const { return id; }
+
 uint16_t Armor::minDefense() const {
   return ItemData::instance().getArmorData(id).minDefense;
 }

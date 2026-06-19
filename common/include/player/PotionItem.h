@@ -6,9 +6,9 @@
 
 class PotionItem : public Item {
 public:
-  explicit PotionItem(uint8_t id) : Item(id) {}
-  uint8_t getID() const override { return id; }
-  void switchInInventory(Inventory &, uint8_t) override {}
+  explicit PotionItem(uint8_t id);
+  uint8_t getID() const override;
+  void switchInInventory(Inventory &, uint8_t) override;
 
   uint16_t healAmount() const;
   const std::string &name() const;

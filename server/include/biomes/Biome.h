@@ -37,31 +37,16 @@ public:
 
     void NPCgenerationStrategy(Game& game);
 
-    void registerNPC(uint32_t id) { npcIds.insert(id); }
-    void unregisterNPC(uint32_t id) { npcIds.erase(id); }
-    bool hasNPC(uint32_t id) const { return npcIds.find(id) != npcIds.end(); }
-    unsigned int getNPCCount() const { return npcIds.size(); }
+    void registerNPC(uint32_t id);
+    void unregisterNPC(uint32_t id);
+    bool hasNPC(uint32_t id) const;
+    unsigned int getNPCCount() const;
 
 protected:
 
-    double getRandomNumber() {
-        std::mt19937 gen(std::random_device{}());
-        std::uniform_real_distribution<double> dist(0.0, 1.0);
-        return dist(gen);
-    }
+    double getRandomNumber();
 
-    Position getRandomPositionBetween(Delimiter start, Delimiter end) {
-
-        std::mt19937 gen(std::random_device{}());
-
-        std::uniform_int_distribution<int> dist1(start.row, end.row);
-        std::uniform_int_distribution<int> dist2(start.column, end.column);
-
-        return Position {
-            dist1(gen),
-            dist2(gen)
-        };
-    }
+    Position getRandomPositionBetween(Delimiter start, Delimiter end);
 
 };
 

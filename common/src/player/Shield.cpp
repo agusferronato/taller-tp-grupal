@@ -2,6 +2,10 @@
 #include "Inventory.h"
 #include "ItemData.h"
 
+Shield::Shield(uint8_t id) : Item(id) {}
+
+uint8_t Shield::getID() const { return id; }
+
 uint16_t Shield::minDefense() const {
   return ItemData::instance().getShieldData(id).minDefense;
 }
