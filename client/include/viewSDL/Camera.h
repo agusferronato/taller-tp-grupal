@@ -17,57 +17,28 @@ private:
   int viewportH;
 
 public:
-  Camera(int screenW, int screenH) : viewportW(screenW), viewportH(screenH) {}
+  Camera(int screenW, int screenH);
 
-  void setViewport(int x, int y, int w, int h) {
-    viewportX = x;
-    viewportY = y;
-    viewportW = w;
-    viewportH = h;
-  }
+  void setViewport(int x, int y, int w, int h);
 
-  void follow(float targetX, float targetY, float targetW, float targetH) {
-    x = targetX + targetW / 2.0f - viewportW / (2.0f * zoom);
-    y = targetY + targetH / 2.0f - viewportH / (2.0f * zoom);
-  }
+  void follow(float targetX, float targetY, float targetW, float targetH);
 
-  void setZoom(float newZoom) { zoom = newZoom; }
+  void setZoom(float newZoom);
 
-  float getX() const { return x; }
-  float getY() const { return y; }
-  int getViewportX() const { return viewportX; }
-  int getViewportY() const { return viewportY; }
+  float getX() const;
+  float getY() const;
+  int getViewportX() const;
+  int getViewportY() const;
 
-  SDL2pp::Rect getViewportRect() const {
-    return SDL2pp::Rect(viewportX, viewportY, viewportW, viewportH);
-  }
+  SDL2pp::Rect getViewportRect() const;
 
-  bool isVisibleOnScreen(const SDL2pp::Rect &screenRect) const {
-    SDL_Rect rect{screenRect.GetX(), screenRect.GetY(), screenRect.GetW(),
-                  screenRect.GetH()};
-    SDL_Rect viewport{viewportX, viewportY, viewportW, viewportH};
-    return SDL_HasIntersection(&rect, &viewport) == SDL_TRUE;
-  }
+  bool isVisibleOnScreen(const SDL2pp::Rect &screenRect) const;
 
-  bool isVisibleInWorld(float wx, float wy, int w, int h) const {
-    SDL2pp::Rect screenRect = toScreen(wx, wy, w, h);
-    return isVisibleOnScreen(screenRect);
-  }
+  bool isVisibleInWorld(float wx, float wy, int w, int h) const;
 
-  std::pair<int, int> mouseToWorld(int mouseX, int mouseY) const {
-    return std::make_pair(
-        static_cast<int>((mouseX - viewportX) / zoom + x),
-        static_cast<int>((mouseY - viewportY) / zoom + y));
-  }
+  std::pair<int, int> mouseToWorld(int mouseX, int mouseY) const;
 
-  SDL2pp::Rect toScreen(float wx, float wy, int w, int h) const {
-    int left = viewportX + static_cast<int>(std::round((wx - x) * zoom));
-    int top = viewportY + static_cast<int>(std::round((wy - y) * zoom));
-    int right = viewportX + static_cast<int>(std::round((wx + w - x) * zoom));
-    int bottom = viewportY + static_cast<int>(std::round((wy + h - y) * zoom));
-
-    return SDL2pp::Rect(left, top, right - left, bottom - top);
-  }
+  SDL2pp::Rect toScreen(float wx, float wy, int w, int h) const;
 };
 
 #endif

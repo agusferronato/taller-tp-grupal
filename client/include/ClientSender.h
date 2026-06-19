@@ -6,7 +6,6 @@
 #include "CommunicationEnded.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "Queue.h"
-#include "ShutdownEvent.h"
 #include "Socket.h"
 #include "Thread.h"
 #include "protocol/Protocol.h"
@@ -16,12 +15,10 @@ class ClientSender : public Thread {
 private:
   Socket &socket;
   Queue<ClientCommandDTO> &sendingQueue;
-  ShutdownEvent &shutdownEvent;
   Protocol protocol;
 
 public:
-  ClientSender(Socket &socket, Queue<ClientCommandDTO> &sendingQueue,
-               ShutdownEvent &shutdownEvent);
+  ClientSender(Socket &socket, Queue<ClientCommandDTO> &sendingQueue);
 
   virtual void run() override;
 };

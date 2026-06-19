@@ -2,18 +2,23 @@
 #include "Game.h"
 #include "ItemData.h"
 
-Trader::Trader(Position position)
+std::map<uint8_t, ItemInStore> Trader::buildStoreItems(const std::map<uint8_t, StoreItemEntry>& entries) {
+    std::map<uint8_t, ItemInStore> items;
+    for (const auto& [id, entry] : entries) {
+        const PriceData& price = ItemData::instance().getPriceData(id);
+        items[id] = {price.buyPrice, price.sellPrice, entry.stock};
+    }
+    return items;
+}
+
+CityEntityType Trader::getCityEntityType() { return CityEntityType::Trader; }
+
+int Trader::getAncho() const { return TRADER_WIDTH; }
+int Trader::getAlto() const { return TRADER_HEIGHT; }
+
+Trader::Trader(Position position, const EntityStoreData& storeData)
     : CityEntity(position),
-      store(
-          {{{1, {50, 25, 10}},   {2, {80, 40, 8}},
-            {3, {60, 30, 10}},   {4, {100, 50, 6}},
-            {5, {200, 100, 4}},  {10, {100, 50, 8}},
-            {11, {400, 200, 3}}, {12, {200, 100, 5}},
-            {13, {50, 25, 10}},  {14, {100, 50, 8}},
-            {15, {200, 100, 4}}, {16, {50, 25, 10}},
-            {17, {100, 50, 8}},  {18, {30, 15, 20}},
-            {19, {50, 25, 15}}}},
-          {6, 7, 8, 9}) {}
+      store(buildStoreItems(storeData.items), storeData.itemsNotForTrading) {}
 
 void Trader::buyItem(Game& game, Character& character, uint8_t itemId) {
     try {

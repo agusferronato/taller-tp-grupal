@@ -57,45 +57,42 @@ public:
 
   virtual ~NPC() = default;
 
-  NPCType getType() { return type; }
+  NPCType getType();
 
-  void setId(uint32_t newId) { id = newId; }
-  uint32_t getId() const { return id; }
-  const Position& getPosition() const { return gridPosition; }
-  int getX() const override { return x; }
-  int getY() const override { return y; }
+  void setId(uint32_t newId);
+  uint32_t getId() const;
+  const Position& getPosition() const;
+  int getX() const override;
+  int getY() const override;
 
-  int getAncho() const override { return ancho; }
-  int getAlto() const override { return alto; }
-  int getRange() const { return range; }
+  int getAncho() const override;
+  int getAlto() const override;
+  int getRange() const;
 
-  Direction getDirection() const { return direction; }
-  bool getIsMoving() const { return isMoving; }
-  void setPixelPosition(int px, int py) {
-    x = px;
-    y = py;
-  }
-  void stop() { isMoving = false; }
+  Direction getDirection() const;
+  bool getIsMoving() const;
+  void setPixelPosition(int px, int py);
+  void stop();
 
   bool colisionaCon(int targetX, int targetY, int targetAncho,
                     int targetAlto) const override;
 
   bool updatePosition(const Character &character);
 
-    uint32_t getDamage() { return damage; }
+    uint32_t getDamage();
     bool collidesWith(Character &character);
 
     uint32_t takeDamage(uint32_t damage);
 
     bool reachesAttackCounter();
 
-    int getAttackCounterMax() { return attackCounterMax; }
+    int getAttackCounterMax();
 
-    std::string getName() { return name; }
+    std::string getName();
 
-    uint32_t getHP() const { return hp; }
-    uint32_t getMaxHp() const { return maxHp; }
-    uint32_t getLevel() const { return level; }
+    uint32_t getHP() const;
+    uint32_t getMaxHp() const;
+    uint32_t getLevel() const;
     bool tryParry() const;
     ObjectDropped getDroppedObject() const;
 

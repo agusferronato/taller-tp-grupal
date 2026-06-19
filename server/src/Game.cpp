@@ -79,7 +79,8 @@ Game::Game(Queue<ClientMessage> &gameloopQueue,
            SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository,
            ClanManager &clanManager, const std::string &mapPath)
     : gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor),
-      repository(repository), clanManager(clanManager), mapPath(mapPath) {}
+      repository(repository), clanManager(clanManager), mapPath(mapPath),
+      storeData("store_data.toml") {}
 
 void Game::run() {
   MapLoader mapLoader(mapPath);
@@ -1127,7 +1128,7 @@ bool Game::checkIfItCollides(Colisionable *entity) {
 
 void Game::createCityEntities() {
   for (auto &city : cities) {
-    city.createEntities(*this);
+    city.createEntities(*this, storeData);
 
     for (auto *entity : city.getEntities()) {
       int center = maxSize / 2;
@@ -1859,6 +1860,8 @@ void Game::updateResurrectingPlayers() {
     }
   }
 }
+
+int Game::floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
 
 bool Game::isResurrecting(uint32_t playerId) {
   for (auto &rp : resurrectingPlayers) {

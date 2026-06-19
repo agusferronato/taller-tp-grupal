@@ -2,6 +2,7 @@
 #define CITY_H
 
 #include "Banker.h"
+#include "CityEntitiesStoreData.h"
 #include "CityEntity.h"
 #include "Position.h"
 #include "Priest.h"
@@ -30,7 +31,7 @@ public:
 
     bool contains(int pixelX, int pixelY, int gridSize, int maxSize) const;
 
-    void createEntities(Game& game);
+    void createEntities(Game& game, const CityEntitiesStoreData& storeData);
 
     const std::vector<CityEntity*>& getEntities() const { return entities; }
 
