@@ -7,6 +7,10 @@
 #include "Shield.h"
 #include "Weapon.h"
 
+Item::Item(uint8_t id) : id(id) {}
+
+bool Item::isEmpty() const { return getID() == 0; }
+
 std::unique_ptr<Item> Item::create(uint8_t id) {
   auto &idata = ItemData::instance();
   if (id == 0)

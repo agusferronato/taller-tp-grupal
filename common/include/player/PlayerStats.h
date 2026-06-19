@@ -42,21 +42,21 @@ public:
   void updateStats(uint32_t hp, uint32_t maxHp, uint32_t mana, uint32_t maxMana,
                    uint32_t gold, uint32_t level, uint32_t experience);
 
-  uint32_t getGold() const { return gold; }
-  uint32_t getExperience() const { return experience; }
-  uint32_t getLevel() const { return level; }
-  uint32_t getHp() const { return health; }
-  uint32_t getMaxHp() const { return maxHealth; }
-  uint32_t getMana() const { return mana; }
-  uint32_t getMaxMana() const { return maxMana; }
+  uint32_t getGold() const;
+  uint32_t getExperience() const;
+  uint32_t getLevel() const;
+  uint32_t getHp() const;
+  uint32_t getMaxHp() const;
+  uint32_t getMana() const;
+  uint32_t getMaxMana() const;
   void addMana(uint32_t amount);
-  uint32_t getStrength() const { return strength; }
-  uint32_t getAgility() const { return agility; }
-  uint32_t getConstitution() const { return constitution; }
-  uint32_t getIntelligence() const { return intelligence; }
+  uint32_t getStrength() const;
+  uint32_t getAgility() const;
+  uint32_t getConstitution() const;
+  uint32_t getIntelligence() const;
 
-  void setHealth(uint32_t hp) { health = hp > maxHealth ? maxHealth : hp; }
-  void setMana(uint32_t mana) { this->mana = mana > maxMana ? maxMana : mana; }
+  void setHealth(uint32_t hp);
+  void setMana(uint32_t mana);
 
   void takeDamage(uint32_t damage);
   bool addExperience(uint32_t xp);

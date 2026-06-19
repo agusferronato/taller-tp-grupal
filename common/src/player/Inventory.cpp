@@ -2,6 +2,15 @@
 #include "EmptyItem.h"
 #include "ItemData.h"
 
+const Weapon &Inventory::getWeapon() const { return equippedWeapon; }
+const Armor &Inventory::getArmor() const { return equippedArmor; }
+const Helmet &Inventory::getHelmet() const { return equippedHelmet; }
+const Shield &Inventory::getShield() const { return equippedShield; }
+void Inventory::setWeapon(uint8_t id) { equippedWeapon = Weapon(id); }
+void Inventory::setArmor(uint8_t id) { equippedArmor = Armor(id); }
+void Inventory::setHelmet(uint8_t id) { equippedHelmet = Helmet(id); }
+void Inventory::setShield(uint8_t id) { equippedShield = Shield(id); }
+
 Inventory::Inventory() {
   for (auto &slot : items)
     slot = std::make_unique<EmptyItem>();

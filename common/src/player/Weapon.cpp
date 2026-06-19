@@ -3,6 +3,10 @@
 #include "ItemData.h"
 #include <algorithm>
 
+Weapon::Weapon(uint8_t id) : Item(id) {}
+
+uint8_t Weapon::getID() const { return id; }
+
 uint32_t Weapon::minDamage() const {
   return ItemData::instance().getWeaponData(id).minDamage;
 }

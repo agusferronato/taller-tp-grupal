@@ -19,26 +19,26 @@ protected:
     bool isMoving{false};
 
 public:
-    CityEntity(Position pos) : gridPosition(pos), x(0), y(0) {}
+    CityEntity(Position pos);
 
     virtual ~CityEntity() = default;
 
     virtual CityEntityType getCityEntityType() = 0;
 
-    void setId(uint32_t newId) { id = newId; }
-    uint32_t getId() const { return id; }
-    const Position& getPosition() const { return gridPosition; }
-    int getX() const override { return x; }
-    int getY() const override { return y; }
+    void setId(uint32_t newId);
+    uint32_t getId() const;
+    const Position& getPosition() const;
+    int getX() const override;
+    int getY() const override;
 
     virtual int getAncho() const = 0;
     virtual int getAlto() const = 0;
-    inline int getRange() { return range; }
+    int getRange();
 
-    Direction getDirection() const { return direction; }
-    bool getIsMoving() const { return isMoving; }
-    void setPixelPosition(int px, int py) { x = px; y = py; }
-    void stop() { isMoving = false; }
+    Direction getDirection() const;
+    bool getIsMoving() const;
+    void setPixelPosition(int px, int py);
+    void stop();
 
     bool colisionaCon(int targetX, int targetY, int targetAncho,
                       int targetAlto) const override;

@@ -11,14 +11,12 @@
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "Gameloop.h"
 #include "Queue.h"
-#include "ShutdownEvent.h"
 #include "Socket.h"
 
 class Client {
 
 private:
   Socket socket;
-  ShutdownEvent shutdownEvent;
   ClientData clientData;
 
 public:

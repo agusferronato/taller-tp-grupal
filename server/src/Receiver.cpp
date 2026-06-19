@@ -1,5 +1,7 @@
 #include "Receiver.h"
 
+#include <iostream>
+
 #include "DTO/Commands/ExitCommandDTO.h"
 #include "DTO/Commands/MoveCommandDTO.h"
 #include "DTO/Commands/PlayerStopCommandDTO.h"

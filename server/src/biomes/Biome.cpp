@@ -4,6 +4,26 @@
 #include "NPC.h"
 #include "NPCData.h"
 
+void Biome::registerNPC(uint32_t id) { npcIds.insert(id); }
+void Biome::unregisterNPC(uint32_t id) { npcIds.erase(id); }
+bool Biome::hasNPC(uint32_t id) const { return npcIds.find(id) != npcIds.end(); }
+unsigned int Biome::getNPCCount() const { return npcIds.size(); }
+
+double Biome::getRandomNumber() {
+  std::mt19937 gen(std::random_device{}());
+  std::uniform_real_distribution<double> dist(0.0, 1.0);
+  return dist(gen);
+}
+
+Position Biome::getRandomPositionBetween(Delimiter start, Delimiter end) {
+  std::mt19937 gen(std::random_device{}());
+  std::uniform_int_distribution<int> dist1(start.row, end.row);
+  std::uniform_int_distribution<int> dist2(start.column, end.column);
+  return Position{dist1(gen), dist2(gen)};
+}
+
+
+
 Biome::Biome(std::string type, Delimiter start, Delimiter end)
     : type(std::move(type)), start(start), end(end), maxNPC(0) {}
 

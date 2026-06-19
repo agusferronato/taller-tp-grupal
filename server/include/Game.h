@@ -18,6 +18,7 @@
 #include "Banker.h"
 #include "Biome.h"
 #include "BiomeData.h"
+#include "CityEntitiesStoreData.h"
 #include "Character.h"
 #include "NPCData.h"
 #include "CheatType.h"
@@ -77,6 +78,7 @@ private:
   std::list<std::unique_ptr<NPC>> npcs;
 
   std::string mapPath;
+  CityEntitiesStoreData storeData;
 
 public:
   Game(Queue<ClientMessage> &gameloopQueue,
@@ -181,7 +183,7 @@ private:
   bool validAttackToNpc(Character &attacker);
   Character *findPlayerByCoordinates(int16_t x, int16_t y);
   NPC *findNPCByCoordinates(int16_t x, int16_t y);
-  int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
+  int floorDiv(int a, int b);
 
   void killPlayer(Character &dyingPlayer);
   bool isNearEntity(CityEntity &entity, const Character &character);

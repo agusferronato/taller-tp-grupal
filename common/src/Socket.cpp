@@ -2,6 +2,10 @@
 
 #include <stdexcept>
 
+Socket Socket::from_fd(int skt) { return Socket(skt); }
+
+
+
 #include <arpa/inet.h>
 #include <assert.h>
 #include <errno.h>

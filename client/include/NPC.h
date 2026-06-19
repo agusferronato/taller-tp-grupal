@@ -19,23 +19,17 @@ public:
 
     int get_x() const;
     int get_y() const;
-    Direction getDirection() const { return direction; }
-    bool getIsMoving() const { return isMoving; }
+    Direction getDirection() const;
+    bool getIsMoving() const;
 
     void setCoordinates(int x, int y);
     void updateCoordinates(int x, int y, Direction direction);
     void stopMoving();
 
-    bool isBeingAttackOrCured() const { return beingAttacked; }
-    EffectType getEffect() const { return currentEffect; }
-    void setBeingAttacked(bool v, EffectType effect = EffectType::NormalAttack) {
-        beingAttacked = v;
-        if (v) currentEffect = effect;
-    }
-    void stopAttackEffect() const {
-        beingAttacked = false;
-        currentEffect = EffectType::NormalAttack;
-    }
+    bool isBeingAttackOrCured() const;
+    EffectType getEffect() const;
+    void setBeingAttacked(bool v, EffectType effect = EffectType::NormalAttack);
+    void stopAttackEffect() const;
 };
 
 #endif

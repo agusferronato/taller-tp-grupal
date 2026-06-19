@@ -24,10 +24,7 @@ public:
 
 private:
     void createAccountIfDoesNotExists(Character& character);
-    bool haveAnAccount(uint32_t player_id) {
-        auto it = accounts.find(player_id);
-        return !(it == accounts.end());
-    }
+    bool haveAnAccount(uint32_t player_id);
 };
 
 #endif

@@ -10,7 +10,7 @@ private:
 public:
     explicit AttackLayout(std::vector<SpriteData> &frames);
     SpriteData getLayout(unsigned int iterator, int &frameOut) const;
-    int size() const { return frames.size(); }
+    int size() const;
 };
 
 #endif

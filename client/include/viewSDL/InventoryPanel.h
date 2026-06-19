@@ -13,9 +13,7 @@
 
 struct SlotRect {
   int x, y, w, h;
-  bool hitTest(int px, int py) const {
-    return px >= x && px < x + w && py >= y && py < y + h;
-  }
+  bool hitTest(int px, int py) const;
 };
 
 enum class ClickTargetType { Equipment, Inventory, None };
