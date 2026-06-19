@@ -179,68 +179,7 @@ void Game::registerPlayer(const std::string &name, const Race race,
   senderQueueMonitor.sendToClient(
       connectionId, RegisterPlayerEventDTO{newId, RegisterStatus::Success});
 
-  {
-    std::vector<TextureOriginDTO> origins;
-    origins.reserve(textureOrigins.size());
-    for (const auto &o : textureOrigins) {
-      origins.push_back({static_cast<uint8_t>(o.priority),
-                         static_cast<uint16_t>(o.texture_id),
-                         static_cast<uint16_t>(o.x),
-                         static_cast<uint16_t>(o.y)});
-    }
-    senderQueueMonitor.sendToClient(
-        connectionId,
-        TextureInfoEventDTO{
-            static_cast<uint16_t>(maxSize), static_cast<uint16_t>(gridSize),
-            static_cast<uint16_t>(commonGroundTextureId), std::move(origins)});
-  }
-
-  std::vector<PlayerInfoDTO> playerList;
-  for (auto &[pid, info] : players) {
-    playerList.push_back(info->toPlayerInfo(pid));
-  }
-
-  senderQueueMonitor.sendToClient(connectionId,
-                                  PlayerListEventDTO{std::move(playerList)});
-
-  for (auto &npc : npcs) {
-    senderQueueMonitor.sendToClient(
-        connectionId,
-        NPCAppearedEventDTO{npc->getId(), static_cast<uint8_t>(npc->getType()),
-                            static_cast<int16_t>(npc->getX()),
-                            static_cast<int16_t>(npc->getY())});
-  }
-
-  for (auto &city : cities) {
-    for (auto *entity : city.getEntities()) {
-      senderQueueMonitor.sendToClient(
-          connectionId,
-          CityEntityAppearedEventDTO{
-              entity->getId(),
-              static_cast<uint8_t>(entity->getCityEntityType()),
-              static_cast<int16_t>(entity->getX()),
-              static_cast<int16_t>(entity->getY()), entity->getDirection()});
-    }
-  }
-
-  messagesToSend.push_back(players[newId]->toPlayerAppeared());
-
-  messagesToSend.push_back(
-      InventoryUpdateEventDTO{newId, players[newId]->getInventoryItems(),
-                              players[newId]->getEquippedWeapon().getID(),
-                              players[newId]->getEquippedArmor().getID(),
-                              players[newId]->getEquippedHelmet().getID(),
-                              players[newId]->getEquippedShield().getID()});
-
-  {
-    std::vector<GroundItemInfoDTO> groundItemList;
-    for (const auto &gi : inventoryManager.getGroundItems()) {
-      groundItemList.push_back({gi.id, gi.itemId, static_cast<int16_t>(gi.x),
-                                static_cast<int16_t>(gi.y)});
-    }
-    senderQueueMonitor.sendToClient(
-        connectionId, GroundItemsListEventDTO{std::move(groundItemList)});
-  }
+  sendPlayerNewConnection(*players[newId]);
 }
 
 void Game::validateLogin(const std::string &name, uint32_t connectionId) {
@@ -300,66 +239,10 @@ void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
   senderQueueMonitor.sendToClient(
       connectionId, LoginResultEventDTO{newId, LoginStatus::Success});
 
-  std::vector<TextureOriginDTO> origins;
-  origins.reserve(textureOrigins.size());
-  for (const auto &o : textureOrigins) {
-    origins.push_back({static_cast<uint8_t>(o.priority),
-                       static_cast<uint16_t>(o.texture_id),
-                       static_cast<uint16_t>(o.x), static_cast<uint16_t>(o.y)});
-  }
-  senderQueueMonitor.sendToClient(
-      connectionId,
-      TextureInfoEventDTO{
-          static_cast<uint16_t>(maxSize), static_cast<uint16_t>(gridSize),
-          static_cast<uint16_t>(commonGroundTextureId), std::move(origins)});
+  sendPlayerNewConnection(*players[newId]);
 
-  std::vector<PlayerInfoDTO> playerList;
-  for (auto &[pid, info] : players) {
-    playerList.push_back(info->toPlayerInfo(pid));
-  }
-  senderQueueMonitor.sendToClient(connectionId,
-                                  PlayerListEventDTO{std::move(playerList)});
-
-  for (auto &npc : npcs) {
-    senderQueueMonitor.sendToClient(
-        connectionId,
-        NPCAppearedEventDTO{npc->getId(), static_cast<uint8_t>(npc->getType()),
-                            static_cast<int16_t>(npc->getX()),
-                            static_cast<int16_t>(npc->getY())});
-  }
-
-  for (auto &city : cities) {
-    for (auto *entity : city.getEntities()) {
-      senderQueueMonitor.sendToClient(
-          connectionId,
-          CityEntityAppearedEventDTO{
-              entity->getId(),
-              static_cast<uint8_t>(entity->getCityEntityType()),
-              static_cast<int16_t>(entity->getX()),
-              static_cast<int16_t>(entity->getY()), entity->getDirection()});
-    }
-  }
-
-  messagesToSend.push_back(players[newId]->toPlayerAppeared());
-
-  if (players[newId]->isDead())
+  if (players[newId]->isDead()) {
     messagesToSend.push_back(PlayerDieEventDTO{players[newId]->getId()});
-
-  messagesToSend.push_back(
-      InventoryUpdateEventDTO{newId, players[newId]->getInventoryItems(),
-                              players[newId]->getEquippedWeapon().getID(),
-                              players[newId]->getEquippedArmor().getID(),
-                              players[newId]->getEquippedHelmet().getID(),
-                              players[newId]->getEquippedShield().getID()});
-
-  {
-    std::vector<GroundItemInfoDTO> groundItemList;
-    for (const auto &gi : inventoryManager.getGroundItems()) {
-      groundItemList.push_back({gi.id, gi.itemId, static_cast<int16_t>(gi.x),
-                                static_cast<int16_t>(gi.y)});
-    }
-    senderQueueMonitor.sendToClient(
-        connectionId, GroundItemsListEventDTO{std::move(groundItemList)});
   }
 
   uint32_t clanId = players[newId]->getClanId();
@@ -1278,9 +1161,9 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
   stopMeditating(target.getId());
 
   uint32_t damage = calculateDamage(attacker);
-  bool critico = (damage != attacker.getDamage());
+  bool critical = (damage != attacker.getDamage());
 
-  if (!critico && target.tryParry()) {
+  if (!critical && target.tryParry()) {
     senderQueueMonitor.sendToClient(
         attacker.getId(), makeCombatMessage("Atacaste a " + target.getName() +
                                             " pero el lo esquivo"));
@@ -1304,12 +1187,12 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
   attacker.gainExperience(xp);
 
   if (target.getHp() <= 0) {
-    uint32_t oro = target.dropGoldOnDeath();
-    attacker.addGold(oro);
-    uint32_t xpMuerte = Formulas::calcularExperienciaMuerte(
+    uint32_t gold = target.dropGoldOnDeath();
+    attacker.addGold(gold);
+    uint32_t xpDeath = Formulas::calcularExperienciaMuerte(
         target.getMaxHp(), attacker.getLevel(), target.getLevel(),
         (std::rand() % 100) / 100.0);
-    attacker.gainExperience(xpMuerte);
+    attacker.gainExperience(xpDeath);
     killPlayer(target);
   } else {
     senderQueueMonitor.sendToClient(
@@ -1376,10 +1259,10 @@ void Game::playerAttackNPC(Character &attacker, NPC &target) {
       break;
     }
 
-    uint32_t xpMuerte = Formulas::calcularExperienciaMuerte(
+    uint32_t xpDeath = Formulas::calcularExperienciaMuerte(
         target.getMaxHp(), attacker.getLevel(), target.getLevel(),
         (std::rand() % 100) / 100.0);
-    attacker.gainExperience(xpMuerte);
+    attacker.gainExperience(xpDeath);
 
     messagesToSend.push_back(NpcDefeatedEventDTO{target.getId()});
 
@@ -1847,4 +1730,69 @@ bool Game::isResurrecting(uint32_t playerId) {
       return true;
   }
   return false;
+}
+
+void Game::sendPlayerNewConnection(Character &player) {
+
+  {
+    std::vector<TextureOriginDTO> origins;
+    origins.reserve(textureOrigins.size());
+    for (const auto &o : textureOrigins) {
+      origins.push_back({static_cast<uint8_t>(o.priority),
+                         static_cast<uint16_t>(o.texture_id),
+                         static_cast<uint16_t>(o.x),
+                         static_cast<uint16_t>(o.y)});
+    }
+    senderQueueMonitor.sendToClient(
+        player.getId(),
+        TextureInfoEventDTO{
+            static_cast<uint16_t>(maxSize), static_cast<uint16_t>(gridSize),
+            static_cast<uint16_t>(commonGroundTextureId), std::move(origins)});
+  }
+
+  {
+    std::vector<PlayerInfoDTO> playerList;
+    for (auto &[pid, info] : players) {
+      playerList.push_back(info->toPlayerInfo(pid));
+    }
+    senderQueueMonitor.sendToClient(player.getId(),
+                                    PlayerListEventDTO{std::move(playerList)});
+  }
+
+  for (auto &npc : npcs) {
+    senderQueueMonitor.sendToClient(
+        player.getId(),
+        NPCAppearedEventDTO{npc->getId(), static_cast<uint8_t>(npc->getType()),
+                            static_cast<int16_t>(npc->getX()),
+                            static_cast<int16_t>(npc->getY())});
+  }
+
+  for (auto &city : cities) {
+    for (auto *entity : city.getEntities()) {
+      senderQueueMonitor.sendToClient(
+          player.getId(),
+          CityEntityAppearedEventDTO{
+              entity->getId(),
+              static_cast<uint8_t>(entity->getCityEntityType()),
+              static_cast<int16_t>(entity->getX()),
+              static_cast<int16_t>(entity->getY()), entity->getDirection()});
+    }
+  }
+
+  messagesToSend.push_back(player.toPlayerAppeared());
+
+  messagesToSend.push_back(InventoryUpdateEventDTO{
+      player.getId(), player.getInventoryItems(),
+      player.getEquippedWeapon().getID(), player.getEquippedArmor().getID(),
+      player.getEquippedHelmet().getID(), player.getEquippedShield().getID()});
+
+  {
+    std::vector<GroundItemInfoDTO> groundItemList;
+    for (const auto &gi : inventoryManager.getGroundItems()) {
+      groundItemList.push_back({gi.id, gi.itemId, static_cast<int16_t>(gi.x),
+                                static_cast<int16_t>(gi.y)});
+    }
+    senderQueueMonitor.sendToClient(
+        player.getId(), GroundItemsListEventDTO{std::move(groundItemList)});
+  }
 }

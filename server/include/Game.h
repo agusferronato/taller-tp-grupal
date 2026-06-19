@@ -18,10 +18,10 @@
 #include "Banker.h"
 #include "Biome.h"
 #include "BiomeData.h"
-#include "CityEntitiesStoreData.h"
 #include "Character.h"
 #include "CheatType.h"
 #include "City.h"
+#include "CityEntitiesStoreData.h"
 #include "CityEntityCommandDTO.h"
 #include "ClanManager.h"
 #include "Colisionable.h"
@@ -193,6 +193,7 @@ private:
   void updateResurrectingPlayers();
   bool isResurrecting(uint32_t playerId);
   bool consumeManaForAttack(Character &attacker);
+  void sendPlayerNewConnection(Character &player);
 
   std::list<ResurrectingPlayer> resurrectingPlayers;
 };
