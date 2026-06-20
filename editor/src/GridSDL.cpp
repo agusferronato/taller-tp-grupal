@@ -100,6 +100,12 @@ void GridSDL::initSDL() {
     sdl.emplace(SDL_INIT_VIDEO);
     sdlimage.emplace(IMG_INIT_PNG);
 
+    if (!windowHandle()) {
+      winId(); 
+    }
+    
+    QGuiApplication::sync();
+
     SDL_Window *sdlWindow = SDL_CreateWindowFrom((void *)winId());
 
     if (!sdlWindow) {

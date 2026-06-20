@@ -17,6 +17,8 @@
 #include <memory>
 #include <string>
 #include <QPushButton>
+#include <QGuiApplication>
+#include <QWindow>
 
 class Grid;
 
