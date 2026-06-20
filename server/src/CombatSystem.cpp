@@ -39,10 +39,12 @@ void CombatSystem::tryAttack(NPC &npc, Character &target) {
   if (!npc.collidesWith(target) || !npc.reachesAttackCounter()) {
     return;
   }
-  target.stopMeditating();
-  senderQueueMonitor.sendToClient(
-      target.getId(), ChatMessageEventDTO{ChatMessageCategory::System,
-                                          "Sistema", "dejaste de meditar"});
+  if (target.isMeditating()) {
+    target.stopMeditating();
+    senderQueueMonitor.sendToClient(
+        target.getId(), ChatMessageEventDTO{ChatMessageCategory::System,
+                                            "Sistema", "dejaste de meditar"});
+  }
 
   if (target.tryParry()) {
     senderQueueMonitor.sendToClient(
@@ -66,11 +68,13 @@ void CombatSystem::tryAttack(NPC &npc, Character &target) {
 }
 
 void CombatSystem::killPlayer(Character &dyingPlayer) {
-  dyingPlayer.stopMeditating();
-  senderQueueMonitor.sendToClient(
-      dyingPlayer.getId(),
-      ChatMessageEventDTO{ChatMessageCategory::System, "Sistema",
-                          "dejaste de meditar"});
+  if (dyingPlayer.isMeditating()) {
+    dyingPlayer.stopMeditating();
+    senderQueueMonitor.sendToClient(
+        dyingPlayer.getId(),
+        ChatMessageEventDTO{ChatMessageCategory::System, "Sistema",
+                            "dejaste de meditar"});
+  }
   dyingPlayer.dropGoldOnDeath();
   auto items = dyingPlayer.die();
   int16_t x = dyingPlayer.getX();
