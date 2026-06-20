@@ -31,6 +31,418 @@ j_init = 39
 type = 'City'
 
 [[collidable_cells]]
+i = -1
+j = 0
+
+[[collidable_cells]]
+i = -1
+j = 1
+
+[[collidable_cells]]
+i = -1
+j = 2
+
+[[collidable_cells]]
+i = -1
+j = 3
+
+[[collidable_cells]]
+i = -1
+j = 4
+
+[[collidable_cells]]
+i = -1
+j = 5
+
+[[collidable_cells]]
+i = -1
+j = 6
+
+[[collidable_cells]]
+i = -1
+j = 7
+
+[[collidable_cells]]
+i = -1
+j = 8
+
+[[collidable_cells]]
+i = -1
+j = 9
+
+[[collidable_cells]]
+i = -1
+j = 10
+
+[[collidable_cells]]
+i = -1
+j = 11
+
+[[collidable_cells]]
+i = -1
+j = 12
+
+[[collidable_cells]]
+i = -1
+j = 13
+
+[[collidable_cells]]
+i = -1
+j = 14
+
+[[collidable_cells]]
+i = -1
+j = 15
+
+[[collidable_cells]]
+i = -1
+j = 16
+
+[[collidable_cells]]
+i = -1
+j = 17
+
+[[collidable_cells]]
+i = -1
+j = 18
+
+[[collidable_cells]]
+i = -1
+j = 19
+
+[[collidable_cells]]
+i = -1
+j = 20
+
+[[collidable_cells]]
+i = -1
+j = 21
+
+[[collidable_cells]]
+i = -1
+j = 22
+
+[[collidable_cells]]
+i = -1
+j = 23
+
+[[collidable_cells]]
+i = -1
+j = 24
+
+[[collidable_cells]]
+i = -1
+j = 25
+
+[[collidable_cells]]
+i = -1
+j = 26
+
+[[collidable_cells]]
+i = -1
+j = 27
+
+[[collidable_cells]]
+i = -1
+j = 28
+
+[[collidable_cells]]
+i = -1
+j = 29
+
+[[collidable_cells]]
+i = -1
+j = 30
+
+[[collidable_cells]]
+i = -1
+j = 31
+
+[[collidable_cells]]
+i = -1
+j = 32
+
+[[collidable_cells]]
+i = -1
+j = 33
+
+[[collidable_cells]]
+i = -1
+j = 34
+
+[[collidable_cells]]
+i = -1
+j = 35
+
+[[collidable_cells]]
+i = -1
+j = 36
+
+[[collidable_cells]]
+i = -1
+j = 37
+
+[[collidable_cells]]
+i = -1
+j = 38
+
+[[collidable_cells]]
+i = -1
+j = 39
+
+[[collidable_cells]]
+i = -1
+j = 40
+
+[[collidable_cells]]
+i = -1
+j = 41
+
+[[collidable_cells]]
+i = -1
+j = 42
+
+[[collidable_cells]]
+i = -1
+j = 43
+
+[[collidable_cells]]
+i = -1
+j = 44
+
+[[collidable_cells]]
+i = -1
+j = 45
+
+[[collidable_cells]]
+i = -1
+j = 46
+
+[[collidable_cells]]
+i = -1
+j = 47
+
+[[collidable_cells]]
+i = -1
+j = 48
+
+[[collidable_cells]]
+i = -1
+j = 49
+
+[[collidable_cells]]
+i = -1
+j = 50
+
+[[collidable_cells]]
+i = -1
+j = 51
+
+[[collidable_cells]]
+i = -1
+j = 52
+
+[[collidable_cells]]
+i = -1
+j = 53
+
+[[collidable_cells]]
+i = -1
+j = 54
+
+[[collidable_cells]]
+i = -1
+j = 55
+
+[[collidable_cells]]
+i = -1
+j = 56
+
+[[collidable_cells]]
+i = -1
+j = 57
+
+[[collidable_cells]]
+i = -1
+j = 58
+
+[[collidable_cells]]
+i = -1
+j = 59
+
+[[collidable_cells]]
+i = -1
+j = 60
+
+[[collidable_cells]]
+i = -1
+j = 61
+
+[[collidable_cells]]
+i = -1
+j = 62
+
+[[collidable_cells]]
+i = -1
+j = 63
+
+[[collidable_cells]]
+i = -1
+j = 64
+
+[[collidable_cells]]
+i = -1
+j = 65
+
+[[collidable_cells]]
+i = -1
+j = 66
+
+[[collidable_cells]]
+i = -1
+j = 67
+
+[[collidable_cells]]
+i = -1
+j = 68
+
+[[collidable_cells]]
+i = -1
+j = 69
+
+[[collidable_cells]]
+i = -1
+j = 70
+
+[[collidable_cells]]
+i = -1
+j = 71
+
+[[collidable_cells]]
+i = -1
+j = 72
+
+[[collidable_cells]]
+i = -1
+j = 73
+
+[[collidable_cells]]
+i = -1
+j = 74
+
+[[collidable_cells]]
+i = -1
+j = 75
+
+[[collidable_cells]]
+i = -1
+j = 76
+
+[[collidable_cells]]
+i = -1
+j = 77
+
+[[collidable_cells]]
+i = -1
+j = 78
+
+[[collidable_cells]]
+i = -1
+j = 79
+
+[[collidable_cells]]
+i = -1
+j = 80
+
+[[collidable_cells]]
+i = -1
+j = 81
+
+[[collidable_cells]]
+i = -1
+j = 82
+
+[[collidable_cells]]
+i = -1
+j = 83
+
+[[collidable_cells]]
+i = -1
+j = 84
+
+[[collidable_cells]]
+i = -1
+j = 85
+
+[[collidable_cells]]
+i = -1
+j = 86
+
+[[collidable_cells]]
+i = -1
+j = 87
+
+[[collidable_cells]]
+i = -1
+j = 88
+
+[[collidable_cells]]
+i = -1
+j = 89
+
+[[collidable_cells]]
+i = -1
+j = 90
+
+[[collidable_cells]]
+i = -1
+j = 91
+
+[[collidable_cells]]
+i = -1
+j = 92
+
+[[collidable_cells]]
+i = -1
+j = 93
+
+[[collidable_cells]]
+i = -1
+j = 94
+
+[[collidable_cells]]
+i = -1
+j = 95
+
+[[collidable_cells]]
+i = -1
+j = 96
+
+[[collidable_cells]]
+i = -1
+j = 97
+
+[[collidable_cells]]
+i = -1
+j = 98
+
+[[collidable_cells]]
+i = -1
+j = 99
+
+[[collidable_cells]]
+i = 0
+j = -1
+
+[[collidable_cells]]
+i = 0
+j = 100
+
+[[collidable_cells]]
+i = 1
+j = -1
+
+[[collidable_cells]]
 i = 1
 j = 50
 
@@ -41,6 +453,14 @@ j = 51
 [[collidable_cells]]
 i = 1
 j = 52
+
+[[collidable_cells]]
+i = 1
+j = 100
+
+[[collidable_cells]]
+i = 2
+j = -1
 
 [[collidable_cells]]
 i = 2
@@ -59,6 +479,14 @@ i = 2
 j = 53
 
 [[collidable_cells]]
+i = 2
+j = 100
+
+[[collidable_cells]]
+i = 3
+j = -1
+
+[[collidable_cells]]
 i = 3
 j = 50
 
@@ -69,6 +497,14 @@ j = 51
 [[collidable_cells]]
 i = 3
 j = 52
+
+[[collidable_cells]]
+i = 3
+j = 100
+
+[[collidable_cells]]
+i = 4
+j = -1
 
 [[collidable_cells]]
 i = 4
@@ -79,6 +515,14 @@ i = 4
 j = 48
 
 [[collidable_cells]]
+i = 4
+j = 100
+
+[[collidable_cells]]
+i = 5
+j = -1
+
+[[collidable_cells]]
 i = 5
 j = 42
 
@@ -103,6 +547,14 @@ i = 5
 j = 55
 
 [[collidable_cells]]
+i = 5
+j = 100
+
+[[collidable_cells]]
+i = 6
+j = -1
+
+[[collidable_cells]]
 i = 6
 j = 42
 
@@ -117,6 +569,14 @@ j = 54
 [[collidable_cells]]
 i = 6
 j = 55
+
+[[collidable_cells]]
+i = 6
+j = 100
+
+[[collidable_cells]]
+i = 7
+j = -1
 
 [[collidable_cells]]
 i = 7
@@ -127,6 +587,14 @@ i = 7
 j = 55
 
 [[collidable_cells]]
+i = 7
+j = 100
+
+[[collidable_cells]]
+i = 8
+j = -1
+
+[[collidable_cells]]
 i = 8
 j = 34
 
@@ -145,6 +613,14 @@ j = 58
 [[collidable_cells]]
 i = 8
 j = 59
+
+[[collidable_cells]]
+i = 8
+j = 100
+
+[[collidable_cells]]
+i = 9
+j = -1
 
 [[collidable_cells]]
 i = 9
@@ -171,6 +647,14 @@ i = 9
 j = 60
 
 [[collidable_cells]]
+i = 9
+j = 100
+
+[[collidable_cells]]
+i = 10
+j = -1
+
+[[collidable_cells]]
 i = 10
 j = 54
 
@@ -191,6 +675,14 @@ i = 10
 j = 59
 
 [[collidable_cells]]
+i = 10
+j = 100
+
+[[collidable_cells]]
+i = 11
+j = -1
+
+[[collidable_cells]]
 i = 11
 j = 33
 
@@ -207,6 +699,14 @@ i = 11
 j = 55
 
 [[collidable_cells]]
+i = 11
+j = 100
+
+[[collidable_cells]]
+i = 12
+j = -1
+
+[[collidable_cells]]
 i = 12
 j = 33
 
@@ -221,6 +721,14 @@ j = 54
 [[collidable_cells]]
 i = 12
 j = 55
+
+[[collidable_cells]]
+i = 12
+j = 100
+
+[[collidable_cells]]
+i = 13
+j = -1
 
 [[collidable_cells]]
 i = 13
@@ -231,12 +739,52 @@ i = 13
 j = 34
 
 [[collidable_cells]]
+i = 13
+j = 100
+
+[[collidable_cells]]
+i = 14
+j = -1
+
+[[collidable_cells]]
 i = 14
 j = 33
 
 [[collidable_cells]]
 i = 14
 j = 34
+
+[[collidable_cells]]
+i = 14
+j = 100
+
+[[collidable_cells]]
+i = 15
+j = -1
+
+[[collidable_cells]]
+i = 15
+j = 100
+
+[[collidable_cells]]
+i = 16
+j = -1
+
+[[collidable_cells]]
+i = 16
+j = 100
+
+[[collidable_cells]]
+i = 17
+j = -1
+
+[[collidable_cells]]
+i = 17
+j = 100
+
+[[collidable_cells]]
+i = 18
+j = -1
 
 [[collidable_cells]]
 i = 18
@@ -249,6 +797,14 @@ j = 56
 [[collidable_cells]]
 i = 18
 j = 57
+
+[[collidable_cells]]
+i = 18
+j = 100
+
+[[collidable_cells]]
+i = 19
+j = -1
 
 [[collidable_cells]]
 i = 19
@@ -265,6 +821,14 @@ j = 61
 [[collidable_cells]]
 i = 19
 j = 62
+
+[[collidable_cells]]
+i = 19
+j = 100
+
+[[collidable_cells]]
+i = 20
+j = -1
 
 [[collidable_cells]]
 i = 20
@@ -275,6 +839,14 @@ i = 20
 j = 62
 
 [[collidable_cells]]
+i = 20
+j = 100
+
+[[collidable_cells]]
+i = 21
+j = -1
+
+[[collidable_cells]]
 i = 21
 j = 35
 
@@ -289,6 +861,14 @@ j = 57
 [[collidable_cells]]
 i = 21
 j = 58
+
+[[collidable_cells]]
+i = 21
+j = 100
+
+[[collidable_cells]]
+i = 22
+j = -1
 
 [[collidable_cells]]
 i = 22
@@ -321,6 +901,14 @@ j = 68
 [[collidable_cells]]
 i = 22
 j = 69
+
+[[collidable_cells]]
+i = 22
+j = 100
+
+[[collidable_cells]]
+i = 23
+j = -1
 
 [[collidable_cells]]
 i = 23
@@ -343,6 +931,14 @@ i = 23
 j = 70
 
 [[collidable_cells]]
+i = 23
+j = 100
+
+[[collidable_cells]]
+i = 24
+j = -1
+
+[[collidable_cells]]
 i = 24
 j = 34
 
@@ -357,6 +953,14 @@ j = 68
 [[collidable_cells]]
 i = 24
 j = 69
+
+[[collidable_cells]]
+i = 24
+j = 100
+
+[[collidable_cells]]
+i = 25
+j = -1
 
 [[collidable_cells]]
 i = 25
@@ -381,6 +985,14 @@ j = 72
 [[collidable_cells]]
 i = 25
 j = 73
+
+[[collidable_cells]]
+i = 25
+j = 100
+
+[[collidable_cells]]
+i = 26
+j = -1
 
 [[collidable_cells]]
 i = 26
@@ -419,6 +1031,14 @@ i = 26
 j = 74
 
 [[collidable_cells]]
+i = 26
+j = 100
+
+[[collidable_cells]]
+i = 27
+j = -1
+
+[[collidable_cells]]
 i = 27
 j = 42
 
@@ -447,6 +1067,14 @@ i = 27
 j = 73
 
 [[collidable_cells]]
+i = 27
+j = 100
+
+[[collidable_cells]]
+i = 28
+j = -1
+
+[[collidable_cells]]
 i = 28
 j = 42
 
@@ -471,6 +1099,14 @@ i = 28
 j = 69
 
 [[collidable_cells]]
+i = 28
+j = 100
+
+[[collidable_cells]]
+i = 29
+j = -1
+
+[[collidable_cells]]
 i = 29
 j = 39
 
@@ -493,6 +1129,14 @@ j = 68
 [[collidable_cells]]
 i = 29
 j = 69
+
+[[collidable_cells]]
+i = 29
+j = 100
+
+[[collidable_cells]]
+i = 30
+j = -1
 
 [[collidable_cells]]
 i = 30
@@ -521,6 +1165,14 @@ j = 68
 [[collidable_cells]]
 i = 30
 j = 69
+
+[[collidable_cells]]
+i = 30
+j = 100
+
+[[collidable_cells]]
+i = 31
+j = -1
 
 [[collidable_cells]]
 i = 31
@@ -549,6 +1201,14 @@ j = 68
 [[collidable_cells]]
 i = 31
 j = 69
+
+[[collidable_cells]]
+i = 31
+j = 100
+
+[[collidable_cells]]
+i = 32
+j = -1
 
 [[collidable_cells]]
 i = 32
@@ -593,6 +1253,14 @@ j = 80
 [[collidable_cells]]
 i = 32
 j = 81
+
+[[collidable_cells]]
+i = 32
+j = 100
+
+[[collidable_cells]]
+i = 33
+j = -1
 
 [[collidable_cells]]
 i = 33
@@ -647,6 +1315,14 @@ i = 33
 j = 81
 
 [[collidable_cells]]
+i = 33
+j = 100
+
+[[collidable_cells]]
+i = 34
+j = -1
+
+[[collidable_cells]]
 i = 34
 j = 39
 
@@ -699,6 +1375,14 @@ i = 34
 j = 81
 
 [[collidable_cells]]
+i = 34
+j = 100
+
+[[collidable_cells]]
+i = 35
+j = -1
+
+[[collidable_cells]]
 i = 35
 j = 39
 
@@ -749,6 +1433,14 @@ j = 88
 [[collidable_cells]]
 i = 35
 j = 89
+
+[[collidable_cells]]
+i = 35
+j = 100
+
+[[collidable_cells]]
+i = 36
+j = -1
 
 [[collidable_cells]]
 i = 36
@@ -847,6 +1539,14 @@ i = 36
 j = 89
 
 [[collidable_cells]]
+i = 36
+j = 100
+
+[[collidable_cells]]
+i = 37
+j = -1
+
+[[collidable_cells]]
 i = 37
 j = 31
 
@@ -939,6 +1639,14 @@ i = 37
 j = 89
 
 [[collidable_cells]]
+i = 37
+j = 100
+
+[[collidable_cells]]
+i = 38
+j = -1
+
+[[collidable_cells]]
 i = 38
 j = 31
 
@@ -1029,6 +1737,14 @@ j = 88
 [[collidable_cells]]
 i = 38
 j = 89
+
+[[collidable_cells]]
+i = 38
+j = 100
+
+[[collidable_cells]]
+i = 39
+j = -1
 
 [[collidable_cells]]
 i = 39
@@ -1119,6 +1835,14 @@ i = 39
 j = 69
 
 [[collidable_cells]]
+i = 39
+j = 100
+
+[[collidable_cells]]
+i = 40
+j = -1
+
+[[collidable_cells]]
 i = 40
 j = 31
 
@@ -1187,6 +1911,14 @@ i = 40
 j = 73
 
 [[collidable_cells]]
+i = 40
+j = 100
+
+[[collidable_cells]]
+i = 41
+j = -1
+
+[[collidable_cells]]
 i = 41
 j = 27
 
@@ -1247,6 +1979,14 @@ i = 41
 j = 58
 
 [[collidable_cells]]
+i = 41
+j = 100
+
+[[collidable_cells]]
+i = 42
+j = -1
+
+[[collidable_cells]]
 i = 42
 j = 27
 
@@ -1291,6 +2031,14 @@ i = 42
 j = 70
 
 [[collidable_cells]]
+i = 42
+j = 100
+
+[[collidable_cells]]
+i = 43
+j = -1
+
+[[collidable_cells]]
 i = 43
 j = 27
 
@@ -1347,12 +2095,28 @@ i = 43
 j = 70
 
 [[collidable_cells]]
+i = 43
+j = 100
+
+[[collidable_cells]]
+i = 44
+j = -1
+
+[[collidable_cells]]
 i = 44
 j = 39
 
 [[collidable_cells]]
 i = 44
 j = 40
+
+[[collidable_cells]]
+i = 44
+j = 100
+
+[[collidable_cells]]
+i = 45
+j = -1
 
 [[collidable_cells]]
 i = 45
@@ -1399,6 +2163,14 @@ i = 45
 j = 57
 
 [[collidable_cells]]
+i = 45
+j = 100
+
+[[collidable_cells]]
+i = 46
+j = -1
+
+[[collidable_cells]]
 i = 46
 j = 31
 
@@ -1439,6 +2211,14 @@ i = 46
 j = 57
 
 [[collidable_cells]]
+i = 46
+j = 100
+
+[[collidable_cells]]
+i = 47
+j = -1
+
+[[collidable_cells]]
 i = 47
 j = 26
 
@@ -1473,6 +2253,14 @@ j = 37
 [[collidable_cells]]
 i = 47
 j = 57
+
+[[collidable_cells]]
+i = 47
+j = 100
+
+[[collidable_cells]]
+i = 48
+j = -1
 
 [[collidable_cells]]
 i = 48
@@ -1513,6 +2301,14 @@ j = 68
 [[collidable_cells]]
 i = 48
 j = 69
+
+[[collidable_cells]]
+i = 48
+j = 100
+
+[[collidable_cells]]
+i = 49
+j = -1
 
 [[collidable_cells]]
 i = 49
@@ -1551,6 +2347,14 @@ i = 49
 j = 69
 
 [[collidable_cells]]
+i = 49
+j = 100
+
+[[collidable_cells]]
+i = 50
+j = -1
+
+[[collidable_cells]]
 i = 50
 j = 31
 
@@ -1573,6 +2377,14 @@ j = 68
 [[collidable_cells]]
 i = 50
 j = 69
+
+[[collidable_cells]]
+i = 50
+j = 100
+
+[[collidable_cells]]
+i = 51
+j = -1
 
 [[collidable_cells]]
 i = 51
@@ -1625,6 +2437,14 @@ j = 90
 [[collidable_cells]]
 i = 51
 j = 91
+
+[[collidable_cells]]
+i = 51
+j = 100
+
+[[collidable_cells]]
+i = 52
+j = -1
 
 [[collidable_cells]]
 i = 52
@@ -1683,6 +2503,14 @@ i = 52
 j = 91
 
 [[collidable_cells]]
+i = 52
+j = 100
+
+[[collidable_cells]]
+i = 53
+j = -1
+
+[[collidable_cells]]
 i = 53
 j = 39
 
@@ -1709,6 +2537,14 @@ j = 90
 [[collidable_cells]]
 i = 53
 j = 91
+
+[[collidable_cells]]
+i = 53
+j = 100
+
+[[collidable_cells]]
+i = 54
+j = -1
 
 [[collidable_cells]]
 i = 54
@@ -1785,6 +2621,14 @@ j = 90
 [[collidable_cells]]
 i = 54
 j = 91
+
+[[collidable_cells]]
+i = 54
+j = 100
+
+[[collidable_cells]]
+i = 55
+j = -1
 
 [[collidable_cells]]
 i = 55
@@ -1859,6 +2703,14 @@ i = 55
 j = 91
 
 [[collidable_cells]]
+i = 55
+j = 100
+
+[[collidable_cells]]
+i = 56
+j = -1
+
+[[collidable_cells]]
 i = 56
 j = 25
 
@@ -1929,6 +2781,14 @@ j = 90
 [[collidable_cells]]
 i = 56
 j = 91
+
+[[collidable_cells]]
+i = 56
+j = 100
+
+[[collidable_cells]]
+i = 57
+j = -1
 
 [[collidable_cells]]
 i = 57
@@ -2005,6 +2865,14 @@ j = 73
 [[collidable_cells]]
 i = 57
 j = 74
+
+[[collidable_cells]]
+i = 57
+j = 100
+
+[[collidable_cells]]
+i = 58
+j = -1
 
 [[collidable_cells]]
 i = 58
@@ -2083,6 +2951,14 @@ i = 58
 j = 77
 
 [[collidable_cells]]
+i = 58
+j = 100
+
+[[collidable_cells]]
+i = 59
+j = -1
+
+[[collidable_cells]]
 i = 59
 j = 24
 
@@ -2145,6 +3021,14 @@ j = 73
 [[collidable_cells]]
 i = 59
 j = 74
+
+[[collidable_cells]]
+i = 59
+j = 100
+
+[[collidable_cells]]
+i = 60
+j = -1
 
 [[collidable_cells]]
 i = 60
@@ -2223,6 +3107,14 @@ i = 60
 j = 84
 
 [[collidable_cells]]
+i = 60
+j = 100
+
+[[collidable_cells]]
+i = 61
+j = -1
+
+[[collidable_cells]]
 i = 61
 j = 25
 
@@ -2287,6 +3179,14 @@ i = 61
 j = 84
 
 [[collidable_cells]]
+i = 61
+j = 100
+
+[[collidable_cells]]
+i = 62
+j = -1
+
+[[collidable_cells]]
 i = 62
 j = 25
 
@@ -2341,6 +3241,14 @@ j = 73
 [[collidable_cells]]
 i = 62
 j = 84
+
+[[collidable_cells]]
+i = 62
+j = 100
+
+[[collidable_cells]]
+i = 63
+j = -1
 
 [[collidable_cells]]
 i = 63
@@ -2423,6 +3331,14 @@ i = 63
 j = 84
 
 [[collidable_cells]]
+i = 63
+j = 100
+
+[[collidable_cells]]
+i = 64
+j = -1
+
+[[collidable_cells]]
 i = 64
 j = 39
 
@@ -2453,6 +3369,14 @@ j = 68
 [[collidable_cells]]
 i = 64
 j = 84
+
+[[collidable_cells]]
+i = 64
+j = 100
+
+[[collidable_cells]]
+i = 65
+j = -1
 
 [[collidable_cells]]
 i = 65
@@ -2485,6 +3409,14 @@ j = 76
 [[collidable_cells]]
 i = 65
 j = 77
+
+[[collidable_cells]]
+i = 65
+j = 100
+
+[[collidable_cells]]
+i = 66
+j = -1
 
 [[collidable_cells]]
 i = 66
@@ -2531,6 +3463,14 @@ i = 66
 j = 77
 
 [[collidable_cells]]
+i = 66
+j = 100
+
+[[collidable_cells]]
+i = 67
+j = -1
+
+[[collidable_cells]]
 i = 67
 j = 32
 
@@ -2567,6 +3507,14 @@ i = 67
 j = 61
 
 [[collidable_cells]]
+i = 67
+j = 100
+
+[[collidable_cells]]
+i = 68
+j = -1
+
+[[collidable_cells]]
 i = 68
 j = 53
 
@@ -2585,6 +3533,14 @@ j = 58
 [[collidable_cells]]
 i = 68
 j = 59
+
+[[collidable_cells]]
+i = 68
+j = 100
+
+[[collidable_cells]]
+i = 69
+j = -1
 
 [[collidable_cells]]
 i = 69
@@ -2619,6 +3575,14 @@ i = 69
 j = 60
 
 [[collidable_cells]]
+i = 69
+j = 100
+
+[[collidable_cells]]
+i = 70
+j = -1
+
+[[collidable_cells]]
 i = 70
 j = 24
 
@@ -2647,12 +3611,68 @@ i = 70
 j = 59
 
 [[collidable_cells]]
+i = 70
+j = 100
+
+[[collidable_cells]]
+i = 71
+j = -1
+
+[[collidable_cells]]
+i = 71
+j = 100
+
+[[collidable_cells]]
+i = 72
+j = -1
+
+[[collidable_cells]]
+i = 72
+j = 100
+
+[[collidable_cells]]
+i = 73
+j = -1
+
+[[collidable_cells]]
+i = 73
+j = 100
+
+[[collidable_cells]]
+i = 74
+j = -1
+
+[[collidable_cells]]
+i = 74
+j = 100
+
+[[collidable_cells]]
+i = 75
+j = -1
+
+[[collidable_cells]]
+i = 75
+j = 100
+
+[[collidable_cells]]
+i = 76
+j = -1
+
+[[collidable_cells]]
 i = 76
 j = 69
 
 [[collidable_cells]]
 i = 76
 j = 70
+
+[[collidable_cells]]
+i = 76
+j = 100
+
+[[collidable_cells]]
+i = 77
+j = -1
 
 [[collidable_cells]]
 i = 77
@@ -2665,6 +3685,14 @@ j = 70
 [[collidable_cells]]
 i = 77
 j = 78
+
+[[collidable_cells]]
+i = 77
+j = 100
+
+[[collidable_cells]]
+i = 78
+j = -1
 
 [[collidable_cells]]
 i = 78
@@ -2675,6 +3703,14 @@ i = 78
 j = 79
 
 [[collidable_cells]]
+i = 78
+j = 100
+
+[[collidable_cells]]
+i = 79
+j = -1
+
+[[collidable_cells]]
 i = 79
 j = 71
 
@@ -2687,6 +3723,14 @@ i = 79
 j = 79
 
 [[collidable_cells]]
+i = 79
+j = 100
+
+[[collidable_cells]]
+i = 80
+j = -1
+
+[[collidable_cells]]
 i = 80
 j = 71
 
@@ -2695,12 +3739,28 @@ i = 80
 j = 72
 
 [[collidable_cells]]
+i = 80
+j = 100
+
+[[collidable_cells]]
+i = 81
+j = -1
+
+[[collidable_cells]]
 i = 81
 j = 71
 
 [[collidable_cells]]
 i = 81
 j = 72
+
+[[collidable_cells]]
+i = 81
+j = 100
+
+[[collidable_cells]]
+i = 82
+j = -1
 
 [[collidable_cells]]
 i = 82
@@ -2715,6 +3775,14 @@ i = 82
 j = 52
 
 [[collidable_cells]]
+i = 82
+j = 100
+
+[[collidable_cells]]
+i = 83
+j = -1
+
+[[collidable_cells]]
 i = 83
 j = 47
 
@@ -2725,6 +3793,14 @@ j = 48
 [[collidable_cells]]
 i = 83
 j = 49
+
+[[collidable_cells]]
+i = 83
+j = 100
+
+[[collidable_cells]]
+i = 84
+j = -1
 
 [[collidable_cells]]
 i = 84
@@ -2779,6 +3855,14 @@ i = 84
 j = 54
 
 [[collidable_cells]]
+i = 84
+j = 100
+
+[[collidable_cells]]
+i = 85
+j = -1
+
+[[collidable_cells]]
 i = 85
 j = 37
 
@@ -2819,6 +3903,14 @@ i = 85
 j = 50
 
 [[collidable_cells]]
+i = 85
+j = 100
+
+[[collidable_cells]]
+i = 86
+j = -1
+
+[[collidable_cells]]
 i = 86
 j = 37
 
@@ -2855,6 +3947,14 @@ i = 86
 j = 50
 
 [[collidable_cells]]
+i = 86
+j = 100
+
+[[collidable_cells]]
+i = 87
+j = -1
+
+[[collidable_cells]]
 i = 87
 j = 37
 
@@ -2887,6 +3987,14 @@ i = 87
 j = 44
 
 [[collidable_cells]]
+i = 87
+j = 100
+
+[[collidable_cells]]
+i = 88
+j = -1
+
+[[collidable_cells]]
 i = 88
 j = 37
 
@@ -2917,6 +4025,14 @@ j = 43
 [[collidable_cells]]
 i = 88
 j = 44
+
+[[collidable_cells]]
+i = 88
+j = 100
+
+[[collidable_cells]]
+i = 89
+j = -1
 
 [[collidable_cells]]
 i = 89
@@ -2959,6 +4075,14 @@ i = 89
 j = 71
 
 [[collidable_cells]]
+i = 89
+j = 100
+
+[[collidable_cells]]
+i = 90
+j = -1
+
+[[collidable_cells]]
 i = 90
 j = 37
 
@@ -2999,6 +4123,14 @@ i = 90
 j = 71
 
 [[collidable_cells]]
+i = 90
+j = 100
+
+[[collidable_cells]]
+i = 91
+j = -1
+
+[[collidable_cells]]
 i = 91
 j = 37
 
@@ -3031,12 +4163,28 @@ i = 91
 j = 44
 
 [[collidable_cells]]
+i = 91
+j = 100
+
+[[collidable_cells]]
+i = 92
+j = -1
+
+[[collidable_cells]]
 i = 92
 j = 49
 
 [[collidable_cells]]
 i = 92
 j = 50
+
+[[collidable_cells]]
+i = 92
+j = 100
+
+[[collidable_cells]]
+i = 93
+j = -1
 
 [[collidable_cells]]
 i = 93
@@ -3057,6 +4205,14 @@ j = 49
 [[collidable_cells]]
 i = 93
 j = 50
+
+[[collidable_cells]]
+i = 93
+j = 100
+
+[[collidable_cells]]
+i = 94
+j = -1
 
 [[collidable_cells]]
 i = 94
@@ -3077,6 +4233,14 @@ j = 48
 [[collidable_cells]]
 i = 94
 j = 49
+
+[[collidable_cells]]
+i = 94
+j = 100
+
+[[collidable_cells]]
+i = 95
+j = -1
 
 [[collidable_cells]]
 i = 95
@@ -3097,6 +4261,14 @@ j = 48
 [[collidable_cells]]
 i = 95
 j = 49
+
+[[collidable_cells]]
+i = 95
+j = 100
+
+[[collidable_cells]]
+i = 96
+j = -1
 
 [[collidable_cells]]
 i = 96
@@ -3123,6 +4295,14 @@ i = 96
 j = 55
 
 [[collidable_cells]]
+i = 96
+j = 100
+
+[[collidable_cells]]
+i = 97
+j = -1
+
+[[collidable_cells]]
 i = 97
 j = 34
 
@@ -3137,6 +4317,426 @@ j = 47
 [[collidable_cells]]
 i = 97
 j = 55
+
+[[collidable_cells]]
+i = 97
+j = 100
+
+[[collidable_cells]]
+i = 98
+j = -1
+
+[[collidable_cells]]
+i = 98
+j = 100
+
+[[collidable_cells]]
+i = 99
+j = -1
+
+[[collidable_cells]]
+i = 99
+j = 100
+
+[[collidable_cells]]
+i = 100
+j = 0
+
+[[collidable_cells]]
+i = 100
+j = 1
+
+[[collidable_cells]]
+i = 100
+j = 2
+
+[[collidable_cells]]
+i = 100
+j = 3
+
+[[collidable_cells]]
+i = 100
+j = 4
+
+[[collidable_cells]]
+i = 100
+j = 5
+
+[[collidable_cells]]
+i = 100
+j = 6
+
+[[collidable_cells]]
+i = 100
+j = 7
+
+[[collidable_cells]]
+i = 100
+j = 8
+
+[[collidable_cells]]
+i = 100
+j = 9
+
+[[collidable_cells]]
+i = 100
+j = 10
+
+[[collidable_cells]]
+i = 100
+j = 11
+
+[[collidable_cells]]
+i = 100
+j = 12
+
+[[collidable_cells]]
+i = 100
+j = 13
+
+[[collidable_cells]]
+i = 100
+j = 14
+
+[[collidable_cells]]
+i = 100
+j = 15
+
+[[collidable_cells]]
+i = 100
+j = 16
+
+[[collidable_cells]]
+i = 100
+j = 17
+
+[[collidable_cells]]
+i = 100
+j = 18
+
+[[collidable_cells]]
+i = 100
+j = 19
+
+[[collidable_cells]]
+i = 100
+j = 20
+
+[[collidable_cells]]
+i = 100
+j = 21
+
+[[collidable_cells]]
+i = 100
+j = 22
+
+[[collidable_cells]]
+i = 100
+j = 23
+
+[[collidable_cells]]
+i = 100
+j = 24
+
+[[collidable_cells]]
+i = 100
+j = 25
+
+[[collidable_cells]]
+i = 100
+j = 26
+
+[[collidable_cells]]
+i = 100
+j = 27
+
+[[collidable_cells]]
+i = 100
+j = 28
+
+[[collidable_cells]]
+i = 100
+j = 29
+
+[[collidable_cells]]
+i = 100
+j = 30
+
+[[collidable_cells]]
+i = 100
+j = 31
+
+[[collidable_cells]]
+i = 100
+j = 32
+
+[[collidable_cells]]
+i = 100
+j = 33
+
+[[collidable_cells]]
+i = 100
+j = 34
+
+[[collidable_cells]]
+i = 100
+j = 35
+
+[[collidable_cells]]
+i = 100
+j = 36
+
+[[collidable_cells]]
+i = 100
+j = 37
+
+[[collidable_cells]]
+i = 100
+j = 38
+
+[[collidable_cells]]
+i = 100
+j = 39
+
+[[collidable_cells]]
+i = 100
+j = 40
+
+[[collidable_cells]]
+i = 100
+j = 41
+
+[[collidable_cells]]
+i = 100
+j = 42
+
+[[collidable_cells]]
+i = 100
+j = 43
+
+[[collidable_cells]]
+i = 100
+j = 44
+
+[[collidable_cells]]
+i = 100
+j = 45
+
+[[collidable_cells]]
+i = 100
+j = 46
+
+[[collidable_cells]]
+i = 100
+j = 47
+
+[[collidable_cells]]
+i = 100
+j = 48
+
+[[collidable_cells]]
+i = 100
+j = 49
+
+[[collidable_cells]]
+i = 100
+j = 50
+
+[[collidable_cells]]
+i = 100
+j = 51
+
+[[collidable_cells]]
+i = 100
+j = 52
+
+[[collidable_cells]]
+i = 100
+j = 53
+
+[[collidable_cells]]
+i = 100
+j = 54
+
+[[collidable_cells]]
+i = 100
+j = 55
+
+[[collidable_cells]]
+i = 100
+j = 56
+
+[[collidable_cells]]
+i = 100
+j = 57
+
+[[collidable_cells]]
+i = 100
+j = 58
+
+[[collidable_cells]]
+i = 100
+j = 59
+
+[[collidable_cells]]
+i = 100
+j = 60
+
+[[collidable_cells]]
+i = 100
+j = 61
+
+[[collidable_cells]]
+i = 100
+j = 62
+
+[[collidable_cells]]
+i = 100
+j = 63
+
+[[collidable_cells]]
+i = 100
+j = 64
+
+[[collidable_cells]]
+i = 100
+j = 65
+
+[[collidable_cells]]
+i = 100
+j = 66
+
+[[collidable_cells]]
+i = 100
+j = 67
+
+[[collidable_cells]]
+i = 100
+j = 68
+
+[[collidable_cells]]
+i = 100
+j = 69
+
+[[collidable_cells]]
+i = 100
+j = 70
+
+[[collidable_cells]]
+i = 100
+j = 71
+
+[[collidable_cells]]
+i = 100
+j = 72
+
+[[collidable_cells]]
+i = 100
+j = 73
+
+[[collidable_cells]]
+i = 100
+j = 74
+
+[[collidable_cells]]
+i = 100
+j = 75
+
+[[collidable_cells]]
+i = 100
+j = 76
+
+[[collidable_cells]]
+i = 100
+j = 77
+
+[[collidable_cells]]
+i = 100
+j = 78
+
+[[collidable_cells]]
+i = 100
+j = 79
+
+[[collidable_cells]]
+i = 100
+j = 80
+
+[[collidable_cells]]
+i = 100
+j = 81
+
+[[collidable_cells]]
+i = 100
+j = 82
+
+[[collidable_cells]]
+i = 100
+j = 83
+
+[[collidable_cells]]
+i = 100
+j = 84
+
+[[collidable_cells]]
+i = 100
+j = 85
+
+[[collidable_cells]]
+i = 100
+j = 86
+
+[[collidable_cells]]
+i = 100
+j = 87
+
+[[collidable_cells]]
+i = 100
+j = 88
+
+[[collidable_cells]]
+i = 100
+j = 89
+
+[[collidable_cells]]
+i = 100
+j = 90
+
+[[collidable_cells]]
+i = 100
+j = 91
+
+[[collidable_cells]]
+i = 100
+j = 92
+
+[[collidable_cells]]
+i = 100
+j = 93
+
+[[collidable_cells]]
+i = 100
+j = 94
+
+[[collidable_cells]]
+i = 100
+j = 95
+
+[[collidable_cells]]
+i = 100
+j = 96
+
+[[collidable_cells]]
+i = 100
+j = 97
+
+[[collidable_cells]]
+i = 100
+j = 98
+
+[[collidable_cells]]
+i = 100
+j = 99
 
 [[textures]]
 i = 46
