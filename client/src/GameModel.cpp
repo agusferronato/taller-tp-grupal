@@ -175,8 +175,9 @@ void GameModel::resetCameraZoom() {
   gameView->resetCameraZoom();
 }
 
-void GameModel::sendCheat(CheatType cheat, uint32_t arg) {
-  sendingQueue.push(CheatCommandDTO{cheat, arg});
+void GameModel::sendCheat(CheatType cheat, uint32_t arg,
+                          const std::string &itemName) {
+  sendingQueue.push(CheatCommandDTO{cheat, arg, itemName});
 }
 
 void GameModel::meditate() {
