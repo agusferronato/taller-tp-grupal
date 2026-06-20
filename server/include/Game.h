@@ -20,12 +20,9 @@
 #include "BiomeData.h"
 #include "CityEntitiesStoreData.h"
 #include "Character.h"
-#include "NPCData.h"
 #include "CheatType.h"
 #include "City.h"
 #include "CityEntityCommandDTO.h"
-#include "Priest.h"
-#include "Trader.h"
 #include "ClanManager.h"
 #include "Colisionable.h"
 #include "DTO/Commands/ClientCommandDTO.h"
@@ -35,12 +32,15 @@
 #include "InventoryManager.h"
 #include "MapData.h"
 #include "NPC.h"
+#include "NPCData.h"
 #include "PlayerData.h"
 #include "PlayerRepository.h"
+#include "Priest.h"
 #include "Queue.h"
 #include "Race.h"
 #include "SenderQueueMonitor.h"
 #include "Thread.h"
+#include "Trader.h"
 
 class Game : public Thread {
 
@@ -121,7 +121,8 @@ public:
   void startMeditating(uint32_t playerId);
   void stopMeditating(uint32_t playerId);
 
-  void executeCityEntityCommand(uint32_t playerId, uint8_t type, const std::string &arg);
+  void executeCityEntityCommand(uint32_t playerId, uint8_t type,
+                                const std::string &arg);
   void sendInventoryUpdate(uint32_t playerId);
   void sendPlayerInfoUpdate(uint32_t playerId);
   void sendPlayerMoved(uint32_t playerId);
@@ -184,6 +185,8 @@ private:
   int floorDiv(int a, int b);
 
   void killPlayer(Character &dyingPlayer);
+  void restorePlayers();
+
   bool isNearEntity(CityEntity &entity, const Character &character);
   CityEntity *findNearestEntity(uint32_t playerId, CityEntityType type);
 

@@ -58,7 +58,7 @@ void Player::updateStats(uint32_t hp, uint32_t maxHp, uint32_t mana,
                          uint32_t maxMana, uint32_t gold, uint32_t level,
                          uint32_t experience) {
   stats.updateStats(hp, maxHp, mana, maxMana, gold, level, experience);
-  if (hp <= 0) 
+  if (hp <= 0)
     death = true;
 }
 
@@ -87,10 +87,7 @@ uint32_t Player::takeDamage(uint32_t damage) {
   return actualDamage;
 }
 
-uint32_t Player::heal(uint32_t) {
-  stats.setHealth(stats.getMaxHp());
-  return stats.getHp();
-}
+void Player::heal(uint32_t amount) { stats.heal(amount); }
 
 void Player::resurrect() {
   death = false;
