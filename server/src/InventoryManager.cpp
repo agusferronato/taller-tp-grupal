@@ -9,8 +9,10 @@
 
 InventoryManager::InventoryManager(
     std::unordered_map<uint32_t, std::unique_ptr<Character>> &players,
-    std::list<ServerEventDTO> &messagesToSend)
-    : players(players), messagesToSend(messagesToSend) {}
+    std::list<ServerEventDTO> &messagesToSend,
+    std::vector<GroundItem> &groundItems)
+    : players(players), messagesToSend(messagesToSend),
+      groundItems(groundItems) {}
 
 void InventoryManager::equipItem(uint32_t playerId, uint8_t slotIndex) {
   auto it = players.find(playerId);
@@ -71,9 +73,9 @@ void InventoryManager::dropItem(uint32_t playerId, uint8_t slotIndex) {
   gi.y = player.getY();
   groundItems.push_back(gi);
 
-  messagesToSend.push_back(GroundItemAppearedEventDTO{
-      gi.id, gi.itemId, static_cast<int16_t>(gi.x),
-      static_cast<int16_t>(gi.y)});
+  messagesToSend.push_back(
+      GroundItemAppearedEventDTO{gi.id, gi.itemId, static_cast<int16_t>(gi.x),
+                                 static_cast<int16_t>(gi.y)});
 
   broadcastInventoryUpdate(player);
 }
@@ -105,8 +107,7 @@ void InventoryManager::broadcastInventoryUpdate(Character &player) {
   messagesToSend.push_back(InventoryUpdateEventDTO{
       player.getId(), player.getInventoryItems(),
       player.getEquippedWeapon().getID(), player.getEquippedArmor().getID(),
-      player.getEquippedHelmet().getID(),
-      player.getEquippedShield().getID()});
+      player.getEquippedHelmet().getID(), player.getEquippedShield().getID()});
 }
 
 void InventoryManager::broadcastPlayerInfo(Character &player) {
@@ -125,11 +126,6 @@ void InventoryManager::consumePotion(Character &player, uint8_t itemId) {
   }
 }
 
-const std::vector<InventoryManager::GroundItem> &
-InventoryManager::getGroundItems() const {
-  return groundItems;
-}
-
 void InventoryManager::addGroundItem(uint8_t itemId, int x, int y) {
   GroundItem gi;
   gi.id = nextGroundItemId++;
@@ -138,13 +134,13 @@ void InventoryManager::addGroundItem(uint8_t itemId, int x, int y) {
   gi.y = y;
   groundItems.push_back(gi);
 
-  messagesToSend.push_back(GroundItemAppearedEventDTO{
-      gi.id, gi.itemId, static_cast<int16_t>(gi.x),
-      static_cast<int16_t>(gi.y)});
+  messagesToSend.push_back(
+      GroundItemAppearedEventDTO{gi.id, gi.itemId, static_cast<int16_t>(gi.x),
+                                 static_cast<int16_t>(gi.y)});
 }
 
 bool InventoryManager::isOnGroundItem(int px, int py,
-                                       const GroundItem &gi) const {
+                                      const GroundItem &gi) const {
   constexpr int margin = 16;
   return gi.x >= px - margin && gi.x < px + Character::ANCHO + margin &&
          gi.y >= py - margin && gi.y < py + Character::ALTO + margin;

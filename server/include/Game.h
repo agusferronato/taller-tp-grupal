@@ -31,10 +31,12 @@
 #include "Inventory.h"
 #include "InventoryManager.h"
 #include "MapData.h"
+#include "MapLoader.h"
 #include "NPC.h"
 #include "NPCData.h"
 #include "PlayerData.h"
 #include "PlayerRepository.h"
+#include "PlayerService.h"
 #include "Priest.h"
 #include "Queue.h"
 #include "Race.h"
@@ -55,18 +57,14 @@ private:
   SenderQueueMonitor &senderQueueMonitor;
   PlayerRepository &repository;
   ClanManager &clanManager;
-
   std::list<ServerEventDTO> messagesToSend;
   bool keepRunning = true;
 
   int nextSpawnX{0};
-  std::unordered_map<uint32_t, std::unique_ptr<Character>> players;
-  std::unordered_map<std::string, uint32_t> playerIdByName;
   std::vector<Colisionable *> colisionables;
   std::unordered_map<uint32_t, PlayerCheats> cheatsByPlayer;
 
-  InventoryManager inventoryManager{players, messagesToSend};
-
+  MapLoader mapLoader;
   int maxSize;
   int gridSize;
   int commonGroundTextureId;
@@ -77,8 +75,12 @@ private:
   std::list<City> cities;
   std::list<std::unique_ptr<NPC>> npcs;
 
-  std::string mapPath;
   CityEntitiesStoreData storeData;
+
+  std::vector<GroundItem> groundItems;
+  PlayerService playerService;
+  std::unordered_map<uint32_t, std::unique_ptr<Character>> &players;
+  InventoryManager inventoryManager;
 
 public:
   Game(Queue<ClientMessage> &gameloopQueue,
@@ -193,7 +195,6 @@ private:
   void updateResurrectingPlayers();
   bool isResurrecting(uint32_t playerId);
   bool consumeManaForAttack(Character &attacker);
-  void sendPlayerNewConnection(Character &player);
 
   std::list<ResurrectingPlayer> resurrectingPlayers;
 };
