@@ -89,7 +89,7 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
             gameModel->takeItem();
             break;
         case ChatCommandType::Tirar:
-            gameModel->dropItem(static_cast<uint8_t>(cmd.arg));
+            gameModel->dropItem(static_cast<uint8_t>(cmd.arg)); 
             break;
         case ChatCommandType::Equipar:
             gameModel->equipItem(static_cast<uint8_t>(cmd.arg));
@@ -193,6 +193,9 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
             break;
         case ChatCommandType::Meditar:
             gameModel->meditate();
+            break;
+        case ChatCommandType::Obtener:
+            gameModel->sendCheat(CheatType::Obtener, 0, cmd.textArg);
             break;
         default:
             break;

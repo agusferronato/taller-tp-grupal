@@ -21,7 +21,7 @@ static int parseIntArg(const std::string &message, size_t prefixLen) {
 
 ChatCommand ChatCommandParser::parse(const std::string &message) {
   if (message.empty()) {
-    return {ChatCommandType::None, 0};
+    return {ChatCommandType::None, 0}; 
   }
 
   if (message[0] == '@') {
@@ -211,6 +211,13 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
       return {ChatCommandType::SetLevel, level};
     }
     return {ChatCommandType::SetLevel, 0};
+  }
+
+  if (message.rfind("/obtener ", 0) == 0 && message.size() > 9) {
+    std::string itemName = message.substr(9);
+    if (!itemName.empty())
+      return {ChatCommandType::Obtener, 0, itemName};
+    return {ChatCommandType::None, 0};
   }
 
   if (message.rfind("/clan-rechazar ", 0) == 0 && message.size() > 15) {
