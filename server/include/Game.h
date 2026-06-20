@@ -34,6 +34,7 @@
 #include "MapLoader.h"
 #include "NPC.h"
 #include "NPCData.h"
+#include "PlayerCheats.h"
 #include "PlayerData.h"
 #include "PlayerRepository.h"
 #include "PlayerService.h"
@@ -47,12 +48,6 @@
 class Game : public Thread {
 
 private:
-  struct PlayerCheats {
-    bool infiniteHealth{false};
-    bool infiniteMana{false};
-    bool superSpeed{false};
-  };
-
   Queue<ClientMessage> &gameloopQueue;
   SenderQueueMonitor &senderQueueMonitor;
   PlayerRepository &repository;
