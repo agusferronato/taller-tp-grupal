@@ -38,7 +38,7 @@ public:
   void stopMoving();
   void move(int newX, int newY);
   uint32_t takeDamage(uint32_t damage);
-  uint32_t heal(uint32_t amount);
+  void heal(uint32_t amount);
   bool useMana(uint32_t amount);
   void addMana(uint32_t amount);
   bool gainExperience(uint32_t amount);

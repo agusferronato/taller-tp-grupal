@@ -68,7 +68,8 @@ public:
   void addLocalChatMessage(std::string text, ChatMessageCategory category);
   void zoomOutCamera();
   void resetCameraZoom();
-  void sendCheat(CheatType cheat, uint32_t arg = 0);
+  void sendCheat(CheatType cheat, uint32_t arg = 0,
+                 const std::string &itemName = "");
   void meditate();
 
   void handleLeftMouseClick(int mouseX, int mouseY);

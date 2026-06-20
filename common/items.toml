@@ -5,7 +5,7 @@
 4 = { name = "Arco simple", minDamage = 1, maxDamage = 4, manaCost = 0, range = 200, isHealing = false, healValue = 0, effect = "Bow" }
 5 = { name = "Arco compuesto", minDamage = 4, maxDamage = 16, manaCost = 0, range = 300, isHealing = false, healValue = 0, effect = "Bow" }
 6 = { name = "Vara de fresno", minDamage = 2, maxDamage = 4, manaCost = 5, range = 150, isHealing = false, healValue = 0, effect = "None" }
-7 = { name = "Flauta elfca", minDamage = 0, maxDamage = 0, manaCost = 100, range = 0, isHealing = true, healValue = 50, effect = "Heal" }
+7 = { name = "Flauta elfica", minDamage = 0, maxDamage = 0, manaCost = 100, range = 0, isHealing = true, healValue = 50, effect = "Heal" }
 8 = { name = "Baculo nudoso", minDamage = 4, maxDamage = 8, manaCost = 15, range = 150, isHealing = false, healValue = 0, effect = "Misil" }
 9 = { name = "Baculo engarzado", minDamage = 8, maxDamage = 20, manaCost = 30, range = 200, isHealing = false, healValue = 0, effect = "Explosion" }
 

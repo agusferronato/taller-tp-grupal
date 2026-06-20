@@ -19,6 +19,7 @@
 #include <cstdint>
 #include <list>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -108,10 +109,11 @@ public:
   bool isNewbie() const;
   bool isDead() const;
   uint32_t getDamage() const;
-  bool tryParry() const;
+  bool tryParry();
   bool assertAttackDistance(int16_t targetX, int16_t targetY) const;
   uint32_t dropGoldOnDeath();
   std::vector<uint8_t> die();
+  void restore();
 
   uint32_t getClanId() const;
   bool hasClan() const;
@@ -119,12 +121,16 @@ public:
   void leaveClan();
 
   bool isMeditating() const;
-  void setMeditating(bool value);
+  void startMeditating();
+  void stopMeditating();
 
 private:
   uint32_t id;
   Player player;
-  bool meditating{false};
+
+  std::optional<uint8_t> timeSinceLastHit;
+  std::optional<uint8_t> timeSinceLastManaConsume;
+  std::optional<uint8_t> timeSinceMeditating;
 };
 
 #endif // CHARACTER_H
