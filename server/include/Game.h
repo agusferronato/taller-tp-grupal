@@ -25,6 +25,7 @@
 #include "CityEntityCommandDTO.h"
 #include "ClanManager.h"
 #include "Colisionable.h"
+#include "CombatSystem.h"
 #include "DTO/Commands/ClientCommandDTO.h"
 #include "DTO/Events/EventDTO.h"
 #include "Direction.h"
@@ -75,7 +76,9 @@ private:
   std::vector<GroundItem> groundItems;
   PlayerService playerService;
   std::unordered_map<uint32_t, std::unique_ptr<Character>> &players;
-  InventoryManager inventoryManager;
+  InventoryManager inventoryManager{players, messagesToSend, groundItems};
+
+  CombatSystem combatSystem;
 
 public:
   Game(Queue<ClientMessage> &gameloopQueue,
@@ -151,8 +154,7 @@ private:
 
   void appearNPCs();
 
-  std::optional<uint32_t> findPlayerIdByName(const std::string &name) const;
-  std::string getPlayerName(uint32_t playerId) const;
+  std::string getPlayerName(uint32_t playerId);
   void sendToPlayer(uint32_t playerId, const ServerEventDTO &event);
   void sendToPlayers(const std::vector<uint32_t> &playerIds,
                      const ServerEventDTO &event);
@@ -166,22 +168,12 @@ private:
   bool hasInfiniteMana(uint32_t playerId) const;
 
   void makeNPCsfollowPlayers();
-  void tryAttack(NPC &npc, Character &target);
   void makeCitiesEntitiesFollowPlayers();
   void createCityEntities();
 
   bool checkIfItCollides(Colisionable *entity);
-
-  void playerAttackPlayer(Character &attacker, Character &target);
-  void playerAttackNPC(Character &attacker, NPC &target);
-  uint32_t calculateDamage(Character &attacker);
-  bool validAttack(Character &attacker, Character &target);
-  bool validAttackToNpc(Character &attacker);
-  Character *findPlayerByCoordinates(int16_t x, int16_t y);
-  NPC *findNPCByCoordinates(int16_t x, int16_t y);
   int floorDiv(int a, int b);
 
-  void killPlayer(Character &dyingPlayer);
   void restorePlayers();
 
   bool isNearEntity(CityEntity &entity, const Character &character);
