@@ -81,6 +81,7 @@ private:
 public:
   Grid(Camera &camera, SDL2pp::Renderer &renderer, int max_priority);
 
+
   void loadMap(const std::string &mapPath, TextureMap &textureMap);
 
   void setHoverTexture(TextureMap &textureMap, int texture_id);
@@ -115,6 +116,7 @@ private:
 
   std::shared_ptr<Tile> createTileInstance(TextureMap &textureMap, int texture_id, int start_i, int start_j);
   bool checkCollisions(const std::shared_ptr<Tile> &tile);
+  void initMapBoundary();
 
 
   void updateSelectedBiome();
