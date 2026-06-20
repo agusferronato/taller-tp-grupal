@@ -4,7 +4,37 @@ Grid::Grid(Camera &camera, SDL2pp::Renderer &renderer, int max_priority)
     : tilesToRender(
           std::vector<std::multimap<std::pair<int, int>, std::shared_ptr<Tile>>>(max_priority)),
       camera(camera), font("fonts/Timeless.ttf", 16),
-      colissionTexture(renderer, "assets/colision.png") {}
+      colissionTexture(renderer, "assets/colision.png") {
+
+    initMapBoundary();
+
+}
+
+
+void Grid::initMapBoundary() {
+
+    // top
+    for (int j = 0; j < MAX_SIZE; j++) {
+        collidableCells.insert({-1, j});
+    }
+
+    // down
+    for (int j = 0; j < MAX_SIZE; j++) {
+        collidableCells.insert({MAX_SIZE, j});
+    }
+
+    //left
+    for (int i = 0; i < MAX_SIZE; i++) {
+        collidableCells.insert({i, -1});
+    }
+
+    //right
+    for (int i = 0; i < MAX_SIZE; i++) {
+        collidableCells.insert({i, MAX_SIZE});
+    }
+
+}
+
 
 void Grid::loadMap(const std::string &mapPath, TextureMap &textureMap) {
     std::list<TileOrigin> loadedOrigins;
@@ -17,6 +47,7 @@ void Grid::loadMap(const std::string &mapPath, TextureMap &textureMap) {
     txtOrigins = std::move(loadedOrigins);
     collidableCells = std::move(loadedCells);
     biomes = std::move(loadedBiomes);
+    initMapBoundary();
 
     for (auto &origin : txtOrigins) {
         auto tile = createTileInstance(textureMap, origin.texture_id, origin.x, origin.y);

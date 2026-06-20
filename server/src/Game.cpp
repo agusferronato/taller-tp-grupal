@@ -97,10 +97,6 @@ void Game::run() {
 
   createCityEntities();
 
-  for (uint8_t id = 1; id <= 19; ++id) {
-    inventoryManager.addGroundItem(id, (id - 1) * 64, 32);
-  }
-
   ConstantRateLoop rateloop(FPS_SERVER);
   CommandFactory factory;
   unsigned int it = 0;
@@ -227,7 +223,8 @@ void Game::sendPrivateMessage(uint32_t connectionId,
                PrivateMessageEventDTO{senderName, targetName, message});
 }
 
-void Game::applyCheat(uint32_t connectionId, CheatType cheat, uint32_t arg) {
+void Game::applyCheat(uint32_t connectionId, CheatType cheat, uint32_t arg,
+                      const std::string &itemName) {
   uint32_t playerId = connectionId;
   auto playerIt = players.find(playerId);
   if (playerIt == players.end()) {
@@ -310,6 +307,24 @@ void Game::applyCheat(uint32_t connectionId, CheatType cheat, uint32_t arg) {
     sendPlayerInfoUpdate(playerId);
     sendSystemMessageToPlayer(playerId, "Has revivido");
     return;
+
+  case CheatType::Obtener: {
+    uint8_t itemId = ItemData::instance().getItemIdByName(itemName);
+    if (itemId == 0) {
+      sendToPlayer(playerId,
+                   makeSystemErrorMessage("Item no encontrado"));
+      return;
+    }
+    if (!player.addItem(itemId)) {
+      sendToPlayer(playerId,
+                   makeSystemErrorMessage("Inventario lleno"));
+      return;
+    }
+    sendInventoryUpdate(playerId);
+    sendSystemMessageToPlayer(
+        playerId, "Has obtenido " + ItemData::instance().getItemName(itemId));
+    return;
+  }
   }
 }
 
