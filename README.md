@@ -321,6 +321,14 @@ ciudades:
     monedas de oro.\
     **Requisito:** El mensaje debe ser enviado a un *Comerciante*.
 
+Otro comando util que no necesita de npc de ciudad
+
+`/meditar`
+   \
+    Permite recuperar mana mientras se medita\
+    **Requisito:** En el estado de meditación el jugador no puede 
+    realizar otra acción, cualquier acción lo sacaran del estado de meditación.
+
 # Cheats
 <center>
 <img src="gif/morir.gif" alt="morir cheat" width="95%" />
@@ -340,6 +348,9 @@ ventana de chat:
 | `/velocidad-normal` | Restaura la velocidad normal |
 | `/alejar-camara` | Aleja la cámara (zoom out) |
 | `/camara-normal` | Restaura el zoom de cámara normal |
+| `/obtener <nombre_item>` | Agrega al inventario del personaje una instancia del ítem especificado |
+| `/setoro X` | Cambia la cantidad de oro del personaje |
+| `/nivel X` | Cambia el nivel del personaje |
 
 # Sistema de Clanes
 <img src="gif/clanes.png" alt="clanes" width="95%" />
@@ -462,6 +473,17 @@ La ventana se divide en tres áreas:
     Mover/Borrar.
 
 5.  Guardar con el botón *Guardar mapa*.
+
+# Archivos de configuración 
+
+Se incluyen un conjunto de archivos de configuración en formato TOML que permiten parametrizar distintos aspectos de la lógica del juego sin necesidad de recompilar el proyecto.
+
+- **biome_strategy.toml:** define los NPC que pueden aparecer en cada bioma junto con sus probabilidades de generación. 
+- **items.toml:** almacena la definición de los ítems del juego, incluyendo atributos como daño mínimo y máximo, costo de maná, efectos asociados a su uso y demás propiedades relevantes.
+- **npc_info.toml:** contiene la información de los NPC, tales como frecuencia de ataque, daño, puntos de vida, nivel, agilidad y otros atributos de combate.
+- **player_stats.toml:** define las estadísticas base de las distintas clases y razas disponibles para los jugadores, incluyendo vida, maná, recuperación, fuerza, habilidad y demás parámetros utilizados por las ecuaciones del juego.
+- **tore_data.toml:** especifica los ítems comercializados por comerciantes y sacerdotes dentro de las ciudades, así como las restricciones sobre aquellos objetos que no pueden vender.
+
 
 # Errores comunes y Solución de problemas
 
