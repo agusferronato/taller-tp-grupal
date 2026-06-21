@@ -11,8 +11,8 @@ void CityEntityCommandParser::serialize(std::vector<uint8_t> &bytes,
                                         const ClientCommandDTO &dto) {
   const auto &cmd = std::get<CityEntityCommandDTO>(dto);
 
-  utils.appendBytes(static_cast<uint8_t>(ClientCommandOpCode::CityEntityCommand),
-                    bytes);
+  utils.appendBytes(
+      static_cast<uint8_t>(ClientCommandOpCode::CityEntityCommand), bytes);
   utils.appendBytes(cmd.playerId, bytes);
   utils.appendBytes(cmd.type, bytes);
   utils.appendBytes(cmd.arg, bytes);

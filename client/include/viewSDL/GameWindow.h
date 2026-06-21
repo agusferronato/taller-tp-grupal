@@ -22,8 +22,8 @@
 #include "GameChatView.h"
 #include "InventoryPanel.h"
 
-#include "MapData.h"
 #include "CityEntityParser.h"
+#include "MapData.h"
 #include "NPCParser.h"
 #include "Player.h"
 #include "RenderableEntity.h"
@@ -36,7 +36,6 @@ class PlayerEntity;
 
 class GameWindow {
 private:
-
   struct Layout {
     SDL2pp::Rect windowRect;
     SDL2pp::Rect chatMessagesRect;
@@ -57,20 +56,20 @@ private:
   };
 
   const Layout layout{
-    // Pantalla completa
-    SDL2pp::Rect(0, 0, 960, 540),
-    // Chat messages
-    SDL2pp::Rect(3, 3, 676, 113),
-    // Chat input
-    SDL2pp::Rect(3, 122, 676, 20),
-    // Juego principal
-    SDL2pp::Rect(8, 145, 668, 385),
-    // Informacion/Experiencia
-    SDL2pp::Rect(686, 7, 267, 114),
-    // Inventario/Equipamiento/Oro
-    SDL2pp::Rect(686, 128, 267, 294),
-    // Vida/Mana
-    SDL2pp::Rect(686, 429, 267, 104),
+      // Pantalla completa
+      SDL2pp::Rect(0, 0, 960, 540),
+      // Chat messages
+      SDL2pp::Rect(3, 3, 676, 113),
+      // Chat input
+      SDL2pp::Rect(3, 122, 676, 20),
+      // Juego principal
+      SDL2pp::Rect(8, 145, 668, 385),
+      // Informacion/Experiencia
+      SDL2pp::Rect(686, 7, 267, 114),
+      // Inventario/Equipamiento/Oro
+      SDL2pp::Rect(686, 128, 267, 294),
+      // Vida/Mana
+      SDL2pp::Rect(686, 429, 267, 104),
   };
 
   SDL2pp::SDL sdl{SDL_INIT_VIDEO};
@@ -120,13 +119,10 @@ private:
   std::unique_ptr<TextureMapper> textureMapper;
   std::unique_ptr<InventoryPanel> invPanel;
 
-
-
   int maxSize, gridSize, commonGroundTextureId;
   int windowWidth, windowHeight;
 
-  std::vector<std::map<std::pair<int, int>, TextureRenderInfo>>
-      tilesToRender;
+  std::vector<std::map<std::pair<int, int>, TextureRenderInfo>> tilesToRender;
 
 public:
   explicit GameWindow(uint32_t myPlayerID);
@@ -135,7 +131,8 @@ public:
                  std::unique_ptr<RenderableEntity> entity);
   void addPlayer(uint32_t ID, const ClientPlayer &player);
   void addNpc(uint32_t ID, NPC &npc, NPCType npcType);
-  void addCityEntity(uint32_t ID, CityEntityModel &entity, CityEntityType entityType);
+  void addCityEntity(uint32_t ID, CityEntityModel &entity,
+                     CityEntityType entityType);
   void removeCityEntity(uint32_t ID);
   void removeEntity(EntityType type, uint32_t id);
   void removePlayer(uint32_t ID);

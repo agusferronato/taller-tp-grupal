@@ -24,7 +24,8 @@ void Protocol::sendCommand(const ClientCommandDTO &command) {
 
   auto it = commandParsers.find(code);
   if (it == commandParsers.end()) {
-    throw ProtocolError("Unknown command opcode to send: " + std::to_string(code));
+    throw ProtocolError("Unknown command opcode to send: " +
+                        std::to_string(code));
   }
 
   it->second->serialize(bytes, command);
@@ -47,7 +48,8 @@ ClientCommandDTO Protocol::receiveCommand() {
 
   auto it = commandParsers.find(code);
   if (it == commandParsers.end()) {
-    throw ProtocolError("Unknown command opcode received: " + std::to_string(code));
+    throw ProtocolError("Unknown command opcode received: " +
+                        std::to_string(code));
   }
 
   return it->second->deserialize(*this);
@@ -60,7 +62,8 @@ void Protocol::sendEvent(const ServerEventDTO &event) {
 
   auto it = eventParsers.find(code);
   if (it == eventParsers.end()) {
-    throw ProtocolError("Unknown event opcode to send: " + std::to_string(code));
+    throw ProtocolError("Unknown event opcode to send: " +
+                        std::to_string(code));
   }
 
   it->second->serialize(bytes, event);
@@ -83,7 +86,8 @@ ServerEventDTO Protocol::receiveEvent() {
 
   auto it = eventParsers.find(code);
   if (it == eventParsers.end()) {
-    throw ProtocolError("Unknown event opcode to receive: " + std::to_string(code));
+    throw ProtocolError("Unknown event opcode to receive: " +
+                        std::to_string(code));
   }
 
   return it->second->deserialize(*this);

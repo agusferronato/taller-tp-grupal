@@ -7,7 +7,7 @@
 #include <variant>
 
 void PrivateMessageCommandParser::serialize(std::vector<uint8_t> &bytes,
-                                     const ClientCommandDTO &dto) {
+                                            const ClientCommandDTO &dto) {
   const auto &request = std::get<PrivateMessageCommandDTO>(dto);
 
   utils.appendBytes(

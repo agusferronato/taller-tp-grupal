@@ -46,8 +46,18 @@ ServerEventDTO PlayerAppearedEventParser::deserialize(Protocol &protocol) {
   uint32_t level = protocol.getUint32();
   uint32_t experience = protocol.getUint32();
 
-  return PlayerAppearedEventDTO{
-      playerId,    x,              y,             direction, race,
-      playerClass, std::move(playerName), hp,      maxHp,     mana,
-      maxMana,     gold,           level,         experience};
+  return PlayerAppearedEventDTO{playerId,
+                                x,
+                                y,
+                                direction,
+                                race,
+                                playerClass,
+                                std::move(playerName),
+                                hp,
+                                maxHp,
+                                mana,
+                                maxMana,
+                                gold,
+                                level,
+                                experience};
 }

@@ -6,14 +6,14 @@
 #include <string>
 
 struct CityEntityInfo {
-    int textureId;
-    TextureLayoutType layoutType;
-    std::string name;
+  int textureId;
+  TextureLayoutType layoutType;
+  std::string name;
 };
 
 class CityEntityParser {
 public:
-    CityEntityInfo getInfo(CityEntityType type) const;
+  CityEntityInfo getInfo(CityEntityType type) const;
 };
 
 #endif

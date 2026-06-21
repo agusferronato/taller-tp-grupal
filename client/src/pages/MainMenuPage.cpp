@@ -43,11 +43,12 @@ MainMenuPage::MainMenuPage(QWidget *parent) : BackgroundPage(parent) {
   quitBtn = new QPushButton(this);
   quitBtn->setObjectName("quitBtn");
   quitBtn->setFixedSize(300, 70);
-  quitBtn->setStyleSheet("QPushButton {"
-                          "  border-image: url(assets/menu/boton_exit.png) stretch;"
-                         "  background: transparent;"
-                         "  border: none;"
-                         "}");
+  quitBtn->setStyleSheet(
+      "QPushButton {"
+      "  border-image: url(assets/menu/boton_exit.png) stretch;"
+      "  background: transparent;"
+      "  border: none;"
+      "}");
   layout->addWidget(quitBtn, 0, Qt::AlignCenter);
 
   connect(continueBtn, &QPushButton::clicked, this,

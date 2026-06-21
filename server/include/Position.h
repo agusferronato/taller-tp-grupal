@@ -1,14 +1,12 @@
 #ifndef POSITION_H
 #define POSITION_H
 
-
 struct Delimiter {
-    int row, column;
+  int row, column;
 };
 
 struct Position {
-    int row, column;
+  int row, column;
 };
-
 
 #endif

@@ -5,13 +5,13 @@
 #include "TextureLayoutType.h"
 
 struct NPCInfo {
-    int textureId;
-    TextureLayoutType layoutType;
+  int textureId;
+  TextureLayoutType layoutType;
 };
 
 class NPCParser {
 public:
-    NPCInfo getInfo(NPCType npcType) const;
+  NPCInfo getInfo(NPCType npcType) const;
 };
 
 #endif

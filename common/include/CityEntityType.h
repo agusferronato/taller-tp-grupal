@@ -3,10 +3,6 @@
 
 #include <cstdint>
 
-enum class CityEntityType : uint8_t {
-    Priest,
-    Trader,
-    Banker
-};
+enum class CityEntityType : uint8_t { Priest, Trader, Banker };
 
 #endif

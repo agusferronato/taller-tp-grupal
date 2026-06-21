@@ -42,7 +42,6 @@ enum class EquipSlot : uint8_t { Weapon, Armor, Helmet, Shield };
 constexpr uint8_t MAX_ITEM_TYPES = 20;
 constexpr uint8_t NOT_FOUND = 0;
 
-
 class ItemData {
 public:
   static ItemData &instance();
@@ -80,6 +79,7 @@ private:
   std::unordered_map<uint8_t, PriceData> prices;
 
   std::unordered_map<std::string, uint8_t> itemNameToId;
+  std::string toLower(std::string s) const;
 
   static const WeaponData DEFAULT_WEAPON;
   static const ArmorData DEFAULT_ARMOR;

@@ -40,8 +40,7 @@ private:
 public:
   GameModel(uint32_t myPlayerID, GameWindow *gameView,
             Queue<ServerEventDTO> &receptionQueue,
-            Queue<ClientCommandDTO> &sendingQueue,
-            Audio *audio);
+            Queue<ClientCommandDTO> &sendingQueue, Audio *audio);
   void updateStateFromServer();
 
 public:

@@ -8,12 +8,13 @@
 
 class BloodOverlay {
 private:
-    SDL2pp::Renderer &renderer;
-    std::vector<SDL2pp::Texture> textures;
+  SDL2pp::Renderer &renderer;
+  std::vector<SDL2pp::Texture> textures;
+
 public:
-    explicit BloodOverlay(SDL2pp::Renderer &renderer);
-    void loadTextures(const std::string &directory);
-    void render(uint32_t currentHp, uint32_t maxHp);
+  explicit BloodOverlay(SDL2pp::Renderer &renderer);
+  void loadTextures(const std::string &directory);
+  void render(uint32_t currentHp, uint32_t maxHp);
 };
 
 #endif

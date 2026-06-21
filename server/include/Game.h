@@ -147,7 +147,8 @@ public:
   void sendSystemMessage(uint32_t playerId, const std::string &msg);
   void sendSystemMessageToPlayer(uint32_t playerId, const std::string &message);
 
-  void sendExistingPlayersInventory(uint32_t connectionId, uint32_t newPlayerId);
+  void sendExistingPlayersInventory(uint32_t connectionId,
+                                    uint32_t newPlayerId);
 
 private:
   void execute(ClientMessage clientMessage);

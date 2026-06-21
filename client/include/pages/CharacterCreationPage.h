@@ -17,8 +17,8 @@ public:
                                  QWidget *parent = nullptr);
 
 signals:
-  void characterCreated(const QString &username,
-                        const QString &race, const QString &playerClass);
+  void characterCreated(const QString &username, const QString &race,
+                        const QString &playerClass);
   void backToMenuRequested();
 
 private slots:

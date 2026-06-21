@@ -2,6 +2,7 @@
 #define NPC_MOVED_EVENT_PARSER_H
 
 #include "ServerEventParser.h"
+#include <vector>
 
 class NPCMovedEventParser : public ServerEventParser {
 public:

@@ -2,6 +2,7 @@
 #define CITY_ENTITY_STOPPED_EVENT_PARSER_H
 
 #include "ServerEventParser.h"
+#include <vector>
 
 class CityEntityStoppedEventParser : public ServerEventParser {
 public:

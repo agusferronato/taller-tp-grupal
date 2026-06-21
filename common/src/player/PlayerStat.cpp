@@ -14,8 +14,12 @@ uint32_t PlayerStats::getStrength() const { return strength; }
 uint32_t PlayerStats::getAgility() const { return agility; }
 uint32_t PlayerStats::getConstitution() const { return constitution; }
 uint32_t PlayerStats::getIntelligence() const { return intelligence; }
-void PlayerStats::setHealth(uint32_t hp) { health = hp > maxHealth ? maxHealth : hp; }
-void PlayerStats::setMana(uint32_t mana) { this->mana = mana > maxMana ? maxMana : mana; }
+void PlayerStats::setHealth(uint32_t hp) {
+  health = hp > maxHealth ? maxHealth : hp;
+}
+void PlayerStats::setMana(uint32_t mana) {
+  this->mana = mana > maxMana ? maxMana : mana;
+}
 
 PlayerStats::PlayerStats(const PlayerStatsInfo &info)
     : gold(info.gold), experience(info.experience), level(info.level),
@@ -105,7 +109,7 @@ void PlayerStats::takeDamage(uint32_t damage) {
 
 void PlayerStats::earnGold(uint32_t amount) {
   uint64_t newGold = static_cast<uint64_t>(gold) + amount;
-  
+
   // Si da mas que el maximo permitido, se setea al maximo permitido
   if (newGold > std::numeric_limits<uint32_t>::max()) {
     setGold(std::numeric_limits<uint32_t>::max());

@@ -7,11 +7,11 @@
 #include <variant>
 
 void GroundItemAppearedEventParser::serialize(std::vector<uint8_t> &bytes,
-                                               const ServerEventDTO &dto) {
+                                              const ServerEventDTO &dto) {
   const auto &event = std::get<GroundItemAppearedEventDTO>(dto);
 
-  utils.appendBytes(
-      static_cast<uint8_t>(EventOpcode::GroundItemAppearedEvent), bytes);
+  utils.appendBytes(static_cast<uint8_t>(EventOpcode::GroundItemAppearedEvent),
+                    bytes);
   utils.appendBytes(event.groundItemId, bytes);
   utils.appendBytes(event.itemId, bytes);
   utils.appendBytes(event.x, bytes);

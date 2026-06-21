@@ -54,9 +54,9 @@ ServerEventDTO PlayerListEventParser::deserialize(Protocol &protocol) {
     uint32_t level = protocol.getUint32();
     uint32_t experience = protocol.getUint32();
 
-    players.push_back(PlayerInfoDTO{playerId, x, y, direction, race, playerClass,
-                                    std::move(playerName), hp, maxHp, mana,
-                                    maxMana, gold, level, experience});
+    players.push_back(PlayerInfoDTO{
+        playerId, x, y, direction, race, playerClass, std::move(playerName), hp,
+        maxHp, mana, maxMana, gold, level, experience});
   }
 
   return PlayerListEventDTO{std::move(players)};

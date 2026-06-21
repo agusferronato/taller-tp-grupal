@@ -18,45 +18,42 @@ bool Store::isAvailableForTrading(uint8_t item) {
   return it == itemsNotAvailablesForTrading.end();
 }
 
-void Store::buyItemWith(Character& character, uint8_t item) {
-    auto it = items.find(item);
-    if (it == items.end())
-        throw ItemNotAvailable();
+void Store::buyItemWith(Character &character, uint8_t item) {
+  auto it = items.find(item);
+  if (it == items.end())
+    throw ItemNotAvailable();
 
-    uint16_t purchase_price = it->second.purchase_price;
+  uint16_t purchase_price = it->second.purchase_price;
 
-    if (purchase_price > character.getGold())
-        throw InsufficientGold();
+  if (purchase_price > character.getGold())
+    throw InsufficientGold();
 
-    if (!character.addItem(item))
-        return;
+  if (!character.addItem(item))
+    return;
 
-    it->second.stock--;
+  it->second.stock--;
 
-    if (!it->second.stock)
-        items.erase(item);
+  if (!it->second.stock)
+    items.erase(item);
 
-    character.spendGold(purchase_price);
+  character.spendGold(purchase_price);
 }
 
-void Store::sellItem(Character& character, uint8_t item) {
-    if (!character.hasItem(item))
-        throw PlayerDoesNotHaveTheItem();
+void Store::sellItem(Character &character, uint8_t item) {
+  if (!character.hasItem(item))
+    throw PlayerDoesNotHaveTheItem();
 
-    if (!isAvailableForTrading(item))
-        throw ItemNotAvailable();
+  if (!isAvailableForTrading(item))
+    throw ItemNotAvailable();
 
-    auto it = items.find(item);
-    if (it == items.end()) {
-        auto result = items.insert({
-            item,
-            getStoreItem(item)
-        });
-        it = result.first;
-    }
+  auto it = items.find(item);
+  if (it == items.end()) {
+    auto result = items.insert({item, getStoreItem(item)});
+    it = result.first;
+  }
 
-    it->second.stock++;
+  it->second.stock++;
 
-    character.removeItemById(item);
-    character.addGold(it->second.sell_price);
+  character.removeItemById(item);
+  character.addGold(it->second.sell_price);
 }

@@ -35,12 +35,6 @@ target_include_directories(taller_common PUBLIC .)
 target_link_libraries(taller_common PUBLIC tomlplusplus::tomlplusplus)
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/map.toml
-  ${CMAKE_CURRENT_BINARY_DIR}/map.toml
-  COPYONLY
-)
-
-configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/common/items.toml
   ${CMAKE_CURRENT_BINARY_DIR}/items.toml
   COPYONLY

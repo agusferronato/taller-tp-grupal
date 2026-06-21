@@ -21,7 +21,7 @@ TextureMap::TextureMap(SDL2pp::Renderer &renderer) {
             entry["collidable_percentage"].value_or(1.0f);
 
         if (data.priority > maxPriority)
-            maxPriority = data.priority;
+          maxPriority = data.priority;
 
         SDL2pp::Surface surface(data.path);
         if (data.transparent) {

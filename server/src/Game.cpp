@@ -152,10 +152,8 @@ void Game::sendExistingPlayersInventory(uint32_t connectionId,
     senderQueueMonitor.sendToClient(
         connectionId,
         InventoryUpdateEventDTO{
-            pid, info->getInventoryItems(),
-            info->getEquippedWeapon().getID(),
-            info->getEquippedArmor().getID(),
-            info->getEquippedHelmet().getID(),
+            pid, info->getInventoryItems(), info->getEquippedWeapon().getID(),
+            info->getEquippedArmor().getID(), info->getEquippedHelmet().getID(),
             info->getEquippedShield().getID()});
   }
 }
@@ -252,118 +250,117 @@ void Game::applyCheat(uint32_t connectionId, CheatType cheat, uint32_t arg,
   PlayerCheats &cheats = cheatsByPlayer[playerId];
 
   switch (cheat) {
-    case CheatType::Die:
-      if (player.isDead()) {
-        sendToPlayer(playerId, makeSystemErrorMessage("Ya estas muerto"));
-        return;
-      }
-      combatSystem.killPlayer(player);
-      messagesToSend.push_back(player.toPlayerInfoEvent());
-      sendSystemMessageToPlayer(playerId, "Has muerto");
-      return;
-
-    case CheatType::InfiniteHealth:
-      cheats.infiniteHealth = true;
-      sendSystemMessageToPlayer(playerId, "Vida infinita activada");
-      return;
-
-    case CheatType::NormalHealth:
-      cheats.infiniteHealth = false;
-      sendSystemMessageToPlayer(playerId, "Vida infinita desactivada");
-      return;
-
-    case CheatType::InfiniteMana:
-      cheats.infiniteMana = true;
-      sendSystemMessageToPlayer(playerId, "Mana infinito activado");
-      return;
-
-    case CheatType::NormalMana:
-      cheats.infiniteMana = false;
-      sendSystemMessageToPlayer(playerId, "Mana infinito desactivado");
-      return;
-
-    case CheatType::SuperSpeed:
-      cheats.superSpeed = true;
-      sendSystemMessageToPlayer(playerId, "Supervelocidad activada");
-      return;
-
-    case CheatType::NormalSpeed:
-      cheats.superSpeed = false;
-      sendSystemMessageToPlayer(playerId, "Supervelocidad desactivada");
-      return;
-
-    case CheatType::SetLevel:
-      if (arg < 1) {
-        sendToPlayer(playerId, makeSystemErrorMessage("Nivel invalido"));
-        return;
-      }
-      player.setLevel(arg);
-      messagesToSend.push_back(player.toPlayerInfoEvent());
-      sendSystemMessageToPlayer(playerId,
-                                "Nivel seteado a " + std::to_string(arg));
-      return;
-
-    case CheatType::Revive:
-      if (!player.isDead()) {
-        sendSystemMessageToPlayer(playerId, "Ya estas vivo");
-        return;
-      }
-      // Si el jugador estaba en proceso de resurreccion, se lo saca de ese proceso para revivirlo
-      resurrectingPlayers.remove_if(
-          [playerId](const ResurrectingPlayer &resurrectingPlayer) {
-            return resurrectingPlayer.character->getId() == playerId;
-          });
-      player.resurrect();
-      senderQueueMonitor.sendToClient(
-          playerId,
-          PlayerResurrectEventDTO{playerId, static_cast<int16_t>(player.getX()),
-                                  static_cast<int16_t>(player.getY())});
-      messagesToSend.push_back(player.toPlayerAppeared());
-      sendPlayerInfoUpdate(playerId);
-      sendSystemMessageToPlayer(playerId, "Has revivido");
-      return;
-
-    case CheatType::SetGold: {
-      uint32_t previousGold = player.getGold();
-      player.setGold(arg);
-      
-      uint32_t currentGold = player.getGold();
-      int64_t appliedGold = static_cast<int64_t>(currentGold) -
-      static_cast<int64_t>(previousGold);
-      
-      bool goldWasRemoved = appliedGold < 0;
-      if (goldWasRemoved) {
-        sendSystemMessageToPlayer(
-          playerId, "Oro solicitado: " + std::to_string(arg) +
-          ". Oro removido: " + std::to_string(-appliedGold) +
-          ". Oro actual: " + std::to_string(currentGold) + ".");
-        } else {
-          sendSystemMessageToPlayer(
-            playerId, "Oro solicitado: " + std::to_string(arg) +
-            ". Oro agregado: " + std::to_string(appliedGold) +
-            ". Oro actual: " + std::to_string(currentGold) + ".");
-        }
-      sendPlayerInfoUpdate(playerId);
+  case CheatType::Die:
+    if (player.isDead()) {
+      sendToPlayer(playerId, makeSystemErrorMessage("Ya estas muerto"));
       return;
     }
+    combatSystem.killPlayer(player);
+    messagesToSend.push_back(player.toPlayerInfoEvent());
+    sendSystemMessageToPlayer(playerId, "Has muerto");
+    return;
 
-    case CheatType::Obtener: {
-      uint8_t itemId = ItemData::instance().getItemIdByName(itemName);
-      if (itemId == 0) {
-        sendToPlayer(playerId,
-                    makeSystemErrorMessage("Item no encontrado"));
-        return;
-      }
-      if (!player.addItem(itemId)) {
-        sendToPlayer(playerId,
-                    makeSystemErrorMessage("Inventario lleno"));
-        return;
-      }
-      sendInventoryUpdate(playerId);
+  case CheatType::InfiniteHealth:
+    cheats.infiniteHealth = true;
+    sendSystemMessageToPlayer(playerId, "Vida infinita activada");
+    return;
+
+  case CheatType::NormalHealth:
+    cheats.infiniteHealth = false;
+    sendSystemMessageToPlayer(playerId, "Vida infinita desactivada");
+    return;
+
+  case CheatType::InfiniteMana:
+    cheats.infiniteMana = true;
+    sendSystemMessageToPlayer(playerId, "Mana infinito activado");
+    return;
+
+  case CheatType::NormalMana:
+    cheats.infiniteMana = false;
+    sendSystemMessageToPlayer(playerId, "Mana infinito desactivado");
+    return;
+
+  case CheatType::SuperSpeed:
+    cheats.superSpeed = true;
+    sendSystemMessageToPlayer(playerId, "Supervelocidad activada");
+    return;
+
+  case CheatType::NormalSpeed:
+    cheats.superSpeed = false;
+    sendSystemMessageToPlayer(playerId, "Supervelocidad desactivada");
+    return;
+
+  case CheatType::SetLevel:
+    if (arg < 1) {
+      sendToPlayer(playerId, makeSystemErrorMessage("Nivel invalido"));
+      return;
+    }
+    player.setLevel(arg);
+    messagesToSend.push_back(player.toPlayerInfoEvent());
+    sendSystemMessageToPlayer(playerId,
+                              "Nivel seteado a " + std::to_string(arg));
+    return;
+
+  case CheatType::Revive:
+    if (!player.isDead()) {
+      sendSystemMessageToPlayer(playerId, "Ya estas vivo");
+      return;
+    }
+    // Si el jugador estaba en proceso de resurreccion, se lo saca de ese
+    // proceso para revivirlo
+    resurrectingPlayers.remove_if(
+        [playerId](const ResurrectingPlayer &resurrectingPlayer) {
+          return resurrectingPlayer.character->getId() == playerId;
+        });
+    player.resurrect();
+    senderQueueMonitor.sendToClient(
+        playerId,
+        PlayerResurrectEventDTO{playerId, static_cast<int16_t>(player.getX()),
+                                static_cast<int16_t>(player.getY())});
+    messagesToSend.push_back(player.toPlayerAppeared());
+    sendPlayerInfoUpdate(playerId);
+    sendSystemMessageToPlayer(playerId, "Has revivido");
+    return;
+
+  case CheatType::SetGold: {
+    uint32_t previousGold = player.getGold();
+    player.setGold(arg);
+
+    uint32_t currentGold = player.getGold();
+    int64_t appliedGold =
+        static_cast<int64_t>(currentGold) - static_cast<int64_t>(previousGold);
+
+    bool goldWasRemoved = appliedGold < 0;
+    if (goldWasRemoved) {
       sendSystemMessageToPlayer(
-          playerId, "Has obtenido " + ItemData::instance().getItemName(itemId));
+          playerId, "Oro solicitado: " + std::to_string(arg) +
+                        ". Oro removido: " + std::to_string(-appliedGold) +
+                        ". Oro actual: " + std::to_string(currentGold) + ".");
+    } else {
+      sendSystemMessageToPlayer(
+          playerId, "Oro solicitado: " + std::to_string(arg) +
+                        ". Oro agregado: " + std::to_string(appliedGold) +
+                        ". Oro actual: " + std::to_string(currentGold) + ".");
+    }
+    sendPlayerInfoUpdate(playerId);
+    return;
+  }
+
+  case CheatType::Obtener: {
+    uint8_t itemId = ItemData::instance().getItemIdByName(itemName);
+    if (itemId == 0) {
+      sendToPlayer(playerId, makeSystemErrorMessage("Item no encontrado"));
       return;
     }
+    if (!player.addItem(itemId)) {
+      sendToPlayer(playerId, makeSystemErrorMessage("Inventario lleno"));
+      return;
+    }
+    sendInventoryUpdate(playerId);
+    sendSystemMessageToPlayer(
+        playerId, "Has obtenido " + ItemData::instance().getItemName(itemId));
+    return;
+  }
   }
 }
 

@@ -14,7 +14,6 @@
 #include "Shield.h"
 #include "Weapon.h"
 
-
 class Inventory {
 public:
   Inventory();

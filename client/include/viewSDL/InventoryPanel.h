@@ -8,8 +8,8 @@
 #include <string>
 #include <unordered_map>
 
-#include "TextureManager.h"
 #include "ClientPlayer.h"
+#include "TextureManager.h"
 
 struct SlotRect {
   int x, y, w, h;

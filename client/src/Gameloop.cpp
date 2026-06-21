@@ -11,7 +11,8 @@
 #include <string>
 
 Gameloop::Gameloop(Queue<ServerEventDTO> &receptionQueue,
-                   Queue<ClientCommandDTO> &sendingQueue, const ClientData &clientData)
+                   Queue<ClientCommandDTO> &sendingQueue,
+                   const ClientData &clientData)
     : clientData(clientData) {
   makeGame(receptionQueue, sendingQueue, clientData);
 }
@@ -104,10 +105,10 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
   gameView = std::make_unique<GameWindow>(myPlayerId);
   audio = std::make_unique<Audio>();
 
-  gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
-                                          receptionQueue, sendingQueue,
-                                          audio.get());
-  gameController = std::make_unique<GameController>(gameModel.get(), audio.get());
+  gameModel = std::make_unique<GameModel>(
+      myPlayerId, gameView.get(), receptionQueue, sendingQueue, audio.get());
+  gameController =
+      std::make_unique<GameController>(gameModel.get(), audio.get());
   audio->startMusic();
 
   for (auto &deferred : deferredEvents) {

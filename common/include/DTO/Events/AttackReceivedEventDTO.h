@@ -7,11 +7,11 @@
 #include <cstdint>
 
 struct AttackReceivedEventDTO {
-    static constexpr EventOpcode opCode = EventOpcode::AttackReceivedEvent;
-    EventOpcode getCode() const { return opCode; }
-    EntityType entityType;
-    uint32_t entityId;
-    EffectType effectType;
+  static constexpr EventOpcode opCode = EventOpcode::AttackReceivedEvent;
+  EventOpcode getCode() const { return opCode; }
+  EntityType entityType;
+  uint32_t entityId;
+  EffectType effectType;
 };
 
 #endif

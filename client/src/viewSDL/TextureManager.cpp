@@ -32,15 +32,15 @@ void TextureManager::loadTexturesFromToml(const std::string &path) {
 }
 
 std::map<Direction, std::vector<SpriteData>>
-TextureManager::parseBodyFrames(const toml::table& table) {
+TextureManager::parseBodyFrames(const toml::table &table) {
   std::map<Direction, std::vector<SpriteData>> frames;
 
-  auto parseDir = [&](const std::string& dirName, Direction dir) {
-    if (auto* dirTable = table[dirName].as_table()) {
-      if (auto* arr = (*dirTable)["frames"].as_array()) {
+  auto parseDir = [&](const std::string &dirName, Direction dir) {
+    if (auto *dirTable = table[dirName].as_table()) {
+      if (auto *arr = (*dirTable)["frames"].as_array()) {
         std::vector<SpriteData> dirFrames;
-        for (auto& elem : *arr) {
-          auto& pt = *elem.as_table();
+        for (auto &elem : *arr) {
+          auto &pt = *elem.as_table();
           dirFrames.push_back({pt["x"].value_or(0), pt["y"].value_or(0),
                                pt["w"].value_or(0), pt["h"].value_or(0)});
         }
@@ -58,12 +58,12 @@ TextureManager::parseBodyFrames(const toml::table& table) {
 }
 
 std::map<Direction, SpriteData>
-TextureManager::parseHeadFrames(const toml::table& table) {
+TextureManager::parseHeadFrames(const toml::table &table) {
   std::map<Direction, SpriteData> frames;
 
-  auto parseDir = [&](const std::string& dirName, Direction dir) {
-    if (auto* dirTable = table[dirName].as_table()) {
-      if (auto* pt = (*dirTable)["point"].as_table()) {
+  auto parseDir = [&](const std::string &dirName, Direction dir) {
+    if (auto *dirTable = table[dirName].as_table()) {
+      if (auto *pt = (*dirTable)["point"].as_table()) {
         frames[dir] = {(*pt)["x"].value_or(0), (*pt)["y"].value_or(0),
                        (*pt)["w"].value_or(0), (*pt)["h"].value_or(0)};
       }
@@ -107,28 +107,28 @@ void TextureManager::loadLayoutsFromToml(const std::string &path) {
   loadEquipable("Helmet");
 
   // Load NPC body frames
-  auto registerBody = [&](const char* key, TextureLayoutType type) {
-    if (auto* t = tbl[key].as_table()) {
+  auto registerBody = [&](const char *key, TextureLayoutType type) {
+    if (auto *t = tbl[key].as_table()) {
       auto frames = parseBodyFrames(*t);
       texturesFrames.erase(type);
       texturesFrames.emplace(type, BodyLayout(frames));
     }
   };
 
-  registerBody("Zombie",         TextureLayoutType::Zombie);
-  registerBody("Skeleton",       TextureLayoutType::Skeleton);
-  registerBody("Spider",         TextureLayoutType::Spider);
-  registerBody("Golem",          TextureLayoutType::Golem);
-  registerBody("GreatReamer",    TextureLayoutType::GreatReamer);
-  registerBody("Giant",          TextureLayoutType::Giant);
-  registerBody("Elf",            TextureLayoutType::Elf);
-  registerBody("SpecialSpider",  TextureLayoutType::SpecialSpider);
-  registerBody("SpecialSkeleton",TextureLayoutType::SpecialSkeleton);
-  registerBody("Orc",            TextureLayoutType::Orc);
-  registerBody("Priest",         TextureLayoutType::Priest);
-  registerBody("Trader",         TextureLayoutType::Trader);
-  registerBody("Banker",         TextureLayoutType::Banker);
-  registerBody("Ghost",         TextureLayoutType::Ghost);
+  registerBody("Zombie", TextureLayoutType::Zombie);
+  registerBody("Skeleton", TextureLayoutType::Skeleton);
+  registerBody("Spider", TextureLayoutType::Spider);
+  registerBody("Golem", TextureLayoutType::Golem);
+  registerBody("GreatReamer", TextureLayoutType::GreatReamer);
+  registerBody("Giant", TextureLayoutType::Giant);
+  registerBody("Elf", TextureLayoutType::Elf);
+  registerBody("SpecialSpider", TextureLayoutType::SpecialSpider);
+  registerBody("SpecialSkeleton", TextureLayoutType::SpecialSkeleton);
+  registerBody("Orc", TextureLayoutType::Orc);
+  registerBody("Priest", TextureLayoutType::Priest);
+  registerBody("Trader", TextureLayoutType::Trader);
+  registerBody("Banker", TextureLayoutType::Banker);
+  registerBody("Ghost", TextureLayoutType::Ghost);
 
   auto loadAttackFrames = [&](const char *key, TextureLayoutType type) {
     if (auto *section = tbl[key].as_table()) {
@@ -145,16 +145,16 @@ void TextureManager::loadLayoutsFromToml(const std::string &path) {
     }
   };
 
-  loadAttackFrames("Attack",    TextureLayoutType::Attack);
+  loadAttackFrames("Attack", TextureLayoutType::Attack);
   loadAttackFrames("Explosion", TextureLayoutType::Explosion);
-  loadAttackFrames("Heal",      TextureLayoutType::Heal);
-  loadAttackFrames("Misil",     TextureLayoutType::Misil);
+  loadAttackFrames("Heal", TextureLayoutType::Heal);
+  loadAttackFrames("Misil", TextureLayoutType::Misil);
 }
 
 Sprite TextureManager::getBodySprite(uint32_t bodyID, Direction dir,
                                      unsigned int it) {
-  
-                                      auto &layout =
+
+  auto &layout =
       std::get<BodyLayout>(texturesFrames.at(TextureLayoutType::Body));
   SpriteData frame = layout.getLayout(dir, it);
   return Sprite{textures.at(bodyID), frame.x, frame.y, frame.w, frame.h};
@@ -174,19 +174,14 @@ Sprite TextureManager::getHeadSprite(uint32_t headId, Direction dir) {
   return Sprite{textures.at(headId), frame.x, frame.y, frame.w, frame.h};
 }
 
-Sprite TextureManager::getZombieSprite(int txtID, Direction dir, unsigned int it)
-{
-  auto& layout = std::get<BodyLayout>(texturesFrames.at(TextureLayoutType::Zombie));
+Sprite TextureManager::getZombieSprite(int txtID, Direction dir,
+                                       unsigned int it) {
+  auto &layout =
+      std::get<BodyLayout>(texturesFrames.at(TextureLayoutType::Zombie));
 
-    SpriteData frame = layout.getLayout(dir, it);
+  SpriteData frame = layout.getLayout(dir, it);
 
-    return Sprite{
-        textures.at(txtID),
-        frame.x,
-        frame.y,
-        frame.w,
-        frame.h
-    };
+  return Sprite{textures.at(txtID), frame.x, frame.y, frame.w, frame.h};
 }
 
 Sprite TextureManager::getEquipableSprite(const std::string &type,
@@ -197,11 +192,10 @@ Sprite TextureManager::getEquipableSprite(const std::string &type,
   return Sprite{textures.at(textureId), frame.x, frame.y, frame.w, frame.h};
 }
 
-TextureManager::AttackFrameResult TextureManager::getAttackFrame(
-    TextureLayoutType layoutType,
-    int textureId, unsigned int it) {
-  auto &layout =
-      std::get<AttackLayout>(texturesFrames.at(layoutType));
+TextureManager::AttackFrameResult
+TextureManager::getAttackFrame(TextureLayoutType layoutType, int textureId,
+                               unsigned int it) {
+  auto &layout = std::get<AttackLayout>(texturesFrames.at(layoutType));
   int frame = 0;
   SpriteData sd = layout.getLayout(it, frame);
   int max_ticks = layout.size() * 4;
