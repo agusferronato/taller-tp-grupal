@@ -148,6 +148,7 @@ if(TALLER_CLIENT OR TALLER_EDITOR)
 
     set(SDL2PP_WITH_IMAGE ON CACHE BOOL "" FORCE)
     set(SDL2PP_WITH_TTF   ON CACHE BOOL "" FORCE)
+    set(SDL2PP_WITH_MIXER ON CACHE BOOL "" FORCE)
 
     FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf libSDL2pp)
 endif()

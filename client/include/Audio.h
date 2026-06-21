@@ -1,11 +1,15 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
-#include <SDL_mixer.h>
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+#include <SDL2pp/Chunk.hh>
+#include <SDL2pp/Mixer.hh>
+#include <SDL2pp/Music.hh>
 
 #include "EffectType.h"
 
@@ -38,11 +42,11 @@ public:
 private:
   static constexpr int MAX_CONCURRENT_SFX = 8;
 
-  std::vector<Mix_Music *> tracks;
-  std::unordered_map<std::string, Mix_Chunk *> sfx;
+  std::unique_ptr<SDL2pp::Mixer> mixer;
+  std::vector<SDL2pp::Music> tracks;
+  std::unordered_map<std::string, SDL2pp::Chunk> sfx;
   int currentIndex = -1;
 
-  void unloadAll();
   void loadSfx(const std::string &name, const std::string &path);
 };
 

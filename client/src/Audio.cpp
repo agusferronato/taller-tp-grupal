@@ -5,12 +5,14 @@
 #include <iostream>
 
 Audio::Audio() {
-  if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-    std::cerr << "Audio: Mix_OpenAudio failed: " << Mix_GetError() << std::endl;
+  try {
+    mixer = std::make_unique<SDL2pp::Mixer>(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+  } catch (const std::exception &e) {
+    std::cerr << "Audio: Mix_OpenAudio failed: " << e.what() << std::endl;
     return;
   }
 
-  Mix_AllocateChannels(16);
+  mixer->AllocateChannels(16);
 
   const char *paths[] = {
       "assets/audio/Music0.mp3",
@@ -19,11 +21,10 @@ Audio::Audio() {
   };
 
   for (const char *path : paths) {
-    Mix_Music *mus = Mix_LoadMUS(path);
-    if (mus) {
-      tracks.push_back(mus);
-    } else {
-      std::cerr << "Audio: failed to load " << path << ": " << Mix_GetError()
+    try {
+      tracks.emplace_back(path);
+    } catch (const std::exception &e) {
+      std::cerr << "Audio: failed to load " << path << ": " << e.what()
                 << std::endl;
     }
   }
@@ -44,33 +45,38 @@ Audio::Audio() {
   loadSfx("hit_received","assets/audio/sfx/hit_received.wav");
 }
 
-Audio::~Audio() { unloadAll(); }
+Audio::~Audio() = default;
 
 void Audio::loadSfx(const std::string &name, const std::string &path) {
-  Mix_Chunk *chunk = Mix_LoadWAV(path.c_str());
-  if (chunk) {
-    sfx[name] = chunk;
-  } else {
-    std::cerr << "Audio: failed to load sfx " << path << ": "
-              << Mix_GetError() << std::endl;
+  try {
+    sfx.emplace(name, path);
+  } catch (const std::exception &e) {
+    std::cerr << "Audio: failed to load sfx " << path << ": " << e.what()
+              << std::endl;
   }
 }
 
 void Audio::playSfx(const std::string &name, int distance) {
+  if (!mixer)
+    return;
+
   auto it = sfx.find(name);
   if (it == sfx.end())
     return;
 
-  if (Mix_Playing(-1) >= MAX_CONCURRENT_SFX)
+  if (mixer->IsChannelPlaying(-1) >= MAX_CONCURRENT_SFX)
     return;
 
   int volume = std::max(0, MIX_MAX_VOLUME - distance / 3);
-  int channel = Mix_PlayChannel(-1, it->second, 0);
+  int channel = mixer->PlayChannel(-1, it->second, 0);
   if (channel >= 0)
-    Mix_Volume(channel, volume);
+    mixer->SetVolume(channel, volume);
 }
 
-void Audio::stopAllSfx() { Mix_HaltChannel(-1); }
+void Audio::stopAllSfx() {
+  if (mixer)
+    mixer->HaltChannel(-1);
+}
 
 void Audio::playAttack(EffectType effectType, int distance) {
   switch (effectType) {
@@ -113,35 +119,27 @@ void Audio::playHitReceived(int distance) { playSfx("hit_received", distance); }
 void Audio::playLevelUp(int distance) { playSfx("level_up", distance); }
 void Audio::playCoin(int distance) { playSfx("coin", distance); }
 
-void Audio::unloadAll() {
-  stopMusic();
-  for (Mix_Music *mus : tracks) {
-    Mix_FreeMusic(mus);
-  }
-  tracks.clear();
-  for (auto &[_, chunk] : sfx) {
-    Mix_FreeChunk(chunk);
-  }
-  sfx.clear();
-  Mix_CloseAudio();
-}
-
 void Audio::startMusic() {
-  if (tracks.empty())
+  if (!mixer || tracks.empty())
     return;
-  Mix_VolumeMusic(MIX_MAX_VOLUME * 3 / 4);
+  mixer->SetMusicVolume(MIX_MAX_VOLUME * 3 / 4);
   currentIndex = 0;
-  Mix_PlayMusic(tracks[0], -1);
+  mixer->PlayMusic(tracks[0], -1);
 }
 
 void Audio::nextTrack() {
+  if (!mixer)
+    return;
   stopMusic();
   currentIndex++;
   if (currentIndex < static_cast<int>(tracks.size())) {
-    Mix_PlayMusic(tracks[currentIndex], -1);
+    mixer->PlayMusic(tracks[currentIndex], -1);
   } else {
     currentIndex = -1;
   }
 }
 
-void Audio::stopMusic() { Mix_HaltMusic(); }
+void Audio::stopMusic() {
+  if (mixer)
+    mixer->HaltMusic();
+}

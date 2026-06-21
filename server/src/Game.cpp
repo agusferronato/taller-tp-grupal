@@ -144,6 +144,22 @@ void Game::run() {
 
 void Game::kill() { keepRunning = false; }
 
+void Game::sendExistingPlayersInventory(uint32_t connectionId,
+                                        uint32_t newPlayerId) {
+  for (auto &[pid, info] : players) {
+    if (pid == newPlayerId)
+      continue;
+    senderQueueMonitor.sendToClient(
+        connectionId,
+        InventoryUpdateEventDTO{
+            pid, info->getInventoryItems(),
+            info->getEquippedWeapon().getID(),
+            info->getEquippedArmor().getID(),
+            info->getEquippedHelmet().getID(),
+            info->getEquippedShield().getID()});
+  }
+}
+
 void Game::registerPlayer(const std::string &name, const Race race,
                           const PlayerClass playerClass,
                           uint32_t connectionId) {
