@@ -16,7 +16,7 @@ if [[ -r /etc/os-release ]]; then
 fi
 
 packages=(
-  # C++ build toolchain and CMake FetchContent downloads.
+  # C++ build toolchain and helpers used by this installer.
   build-essential
   ca-certificates
   cmake
@@ -28,7 +28,7 @@ packages=(
   # Qt widgets used by client/editor: find_package(Qt6 COMPONENTS Core Gui Widgets).
   qt6-base-dev
 
-  # SDL2 native Linux backends used while building SDL from FetchContent.
+  # Native Linux backends used by SDL2 and SDL2pp.
   libasound2-dev
   libdbus-1-dev
   libegl1-mesa-dev
@@ -59,13 +59,17 @@ packages=(
   libfreetype-dev
   libharfbuzz-dev
 
-  # SDL development headers used directly by project includes.
+  # SDL development packages resolved by CMake with find_package().
   libsdl2-dev
   libsdl2-image-dev
   libsdl2-ttf-dev
   libsdl2-mixer-dev
 
-  # SDL2_mixer codecs/backends used by the current CMake comment and mixer build.
+  # C++ libraries resolved with find_package() from CMake.
+  libtomlplusplus-dev
+  libgtest-dev
+
+  # SDL2_mixer codec/runtime support used by the client audio stack.
   fluidsynth
   libfluidsynth-dev
   libopus-dev
@@ -75,9 +79,36 @@ packages=(
   wavpack
 )
 
-echo "Installing build dependencies for taller_client and taller_server..."
+SDL2PP_REPO="https://github.com/libSDL2pp/libSDL2pp.git"
+SDL2PP_REV="cc198c9a5657048bee67ece82de620b2d5661084"
+DEPS_DIR="${TMPDIR:-/tmp}/argentum-deps"
+SDL2PP_SRC="${DEPS_DIR}/libSDL2pp"
+SDL2PP_BUILD="${SDL2PP_SRC}/build"
+
+echo "Installing build dependencies for taller_client, taller_editor and taller_server..."
 $SUDO apt-get update
 $SUDO apt-get install -y --no-install-recommends "${packages[@]}"
+
+mkdir -p "$DEPS_DIR"
+
+if [[ -d "${SDL2PP_SRC}/.git" ]]; then
+  echo "Updating libSDL2pp source..."
+  git -C "$SDL2PP_SRC" fetch --tags --prune origin
+else
+  echo "Cloning libSDL2pp source..."
+  git clone "$SDL2PP_REPO" "$SDL2PP_SRC"
+fi
+
+git -C "$SDL2PP_SRC" checkout "$SDL2PP_REV"
+
+cmake -S "$SDL2PP_SRC" -B "$SDL2PP_BUILD" -G Ninja \
+  -DSDL2PP_WITH_IMAGE=ON \
+  -DSDL2PP_WITH_TTF=ON \
+  -DSDL2PP_WITH_MIXER=ON \
+  -DSDL2PP_STATIC=OFF \
+  -DCMAKE_BUILD_TYPE=Release
+cmake --build "$SDL2PP_BUILD"
+$SUDO cmake --install "$SDL2PP_BUILD"
 
 cat <<'EOF'
 

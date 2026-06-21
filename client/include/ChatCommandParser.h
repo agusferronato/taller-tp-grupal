@@ -41,6 +41,7 @@ enum class ChatCommandType {
   VelocidadNormal,
   SetLevel,
   Revivir,
+  SetGold,
   Meditar,
   Obtener
 };
@@ -49,6 +50,9 @@ struct ChatCommand {
   ChatCommandType type{ChatCommandType::None};
   int arg{0};
   std::string textArg{};
+
+  // Para Oro
+  uint32_t unsignedArg{0};
 };
 
 class ChatCommandParser {

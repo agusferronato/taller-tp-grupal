@@ -167,6 +167,8 @@ void Character::gainExperience(uint32_t xp) { player.gainExperience(xp); }
 
 void Character::addGold(uint32_t amount) { player.earnGold(amount); }
 
+void Character::setGold(uint32_t amount) { player.setGold(amount); }
+
 void Character::spendGold(uint32_t amount) { player.expentGold(amount); }
 
 bool Character::colisionaCon(int targetX, int targetY, int ancho,

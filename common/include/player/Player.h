@@ -44,6 +44,7 @@ public:
   bool gainExperience(uint32_t amount);
   bool expentGold(uint32_t amount);
   void earnGold(uint32_t);
+  void setGold(uint32_t amount);
   void removeGold(uint32_t amount);
   uint32_t attack() const;
   void setLevel(uint32_t level);

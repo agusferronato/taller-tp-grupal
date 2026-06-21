@@ -383,9 +383,11 @@ void GameWindow::renderPlayerStats() {
   int x = layout.rightTopRect.GetX();
   int y = layout.rightTopRect.GetY();
 
-  renderCachedText(levelTextCache, x + 40, y + 28, std::to_string(p.getLevel()),
-                   SDL_Color{255, 255, 200, 255});
-
+  SDL2pp::Rect levelRect(x + 27, y + 17, 36, 36);
+  renderCachedCenteredUIText(levelTextCache, levelRect,
+                             std::to_string(p.getLevel()),
+                             SDL_Color{255, 255, 200, 255});
+                             
   int xpX = x + 20;
   int xpY = y + 84;
   int xpW = 227;
@@ -506,6 +508,24 @@ void GameWindow::renderCachedCenteredText(CachedTextTexture &cache,
     return;
 
   updateTextCache(cache, *font, text, color);
+
+  int x = rect.GetX() + (rect.GetW() - cache.w) / 2;
+  int y = rect.GetY() + (rect.GetH() - cache.h) / 2;
+
+  renderer->Copy(*cache.texture, SDL2pp::NullOpt,
+                 SDL2pp::Rect(x, y, cache.w, cache.h));
+}
+
+void GameWindow::renderCachedCenteredUIText(CachedTextTexture &cache,
+                                            const SDL2pp::Rect &rect,
+                                            const std::string &text,
+                                            SDL_Color color) {
+  SDL2pp::Font *activeFont = uiFont ? uiFont.get() : font.get();
+
+  if (!activeFont)
+    return;
+
+  updateTextCache(cache, *activeFont, text, color);
 
   int x = rect.GetX() + (rect.GetW() - cache.w) / 2;
   int y = rect.GetY() + (rect.GetH() - cache.h) / 2;

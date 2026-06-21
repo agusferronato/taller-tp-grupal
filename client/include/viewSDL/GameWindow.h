@@ -179,6 +179,9 @@ private:
   void renderCachedCenteredText(CachedTextTexture &cache,
                                 const SDL2pp::Rect &rect,
                                 const std::string &text, SDL_Color color);
+  void renderCachedCenteredUIText(CachedTextTexture &cache,
+                                  const SDL2pp::Rect &rect,
+                                  const std::string &text, SDL_Color color);
   void updateTextCache(CachedTextTexture &cache, SDL2pp::Font &activeFont,
                        const std::string &text, SDL_Color color);
   void drawBar(int x, int y, int w, int h, uint32_t cur, uint32_t max,
