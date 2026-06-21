@@ -59,7 +59,7 @@ void TextureMapper::buildRenderGrid(const std::list<TileOrigin> &origins,
 }
 
 SDL2pp::Texture &TextureMapper::getTexture(int id) {
-  SDL2pp::Texture& texture = textures.at(id).texture;
+  SDL2pp::Texture &texture = textures.at(id).texture;
   return texture;
 }
 

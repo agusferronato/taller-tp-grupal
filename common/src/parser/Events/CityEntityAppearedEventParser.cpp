@@ -5,9 +5,10 @@
 #include <variant>
 
 void CityEntityAppearedEventParser::serialize(std::vector<uint8_t> &bytes,
-                                               const ServerEventDTO &dto) {
+                                              const ServerEventDTO &dto) {
   const auto &event = std::get<CityEntityAppearedEventDTO>(dto);
-  utils.appendBytes(static_cast<uint8_t>(EventOpcode::CityEntityAppearedEvent), bytes);
+  utils.appendBytes(static_cast<uint8_t>(EventOpcode::CityEntityAppearedEvent),
+                    bytes);
   utils.appendBytes(event.entityId, bytes);
   utils.appendBytes(event.type, bytes);
   utils.appendBytes(event.x, bytes);

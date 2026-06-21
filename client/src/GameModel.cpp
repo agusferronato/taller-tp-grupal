@@ -1,15 +1,14 @@
 #include "GameModel.h"
-#include "Audio.h"
+#include "AcceptClanRequestCommandDTO.h"
 #include "AttackCommandDTO.h"
 #include "AttackReceivedEventDTO.h"
-#include "AcceptClanRequestCommandDTO.h"
+#include "Audio.h"
 #include "BanClanPlayerCommandDTO.h"
 #include "ChatMessageEventDTO.h"
 #include "CheatCommandDTO.h"
+#include "CityEntityCommandDTO.h"
 #include "CreateClanCommandDTO.h"
 #include "DropItemCommandDTO.h"
-#include "CityEntityCommandDTO.h"
-#include "TakeItemCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "GameWindow.h"
 #include "GlobalChatMessageCommandDTO.h"
@@ -41,6 +40,7 @@
 #include "RegisterPlayerEventDTO.h"
 #include "RejectClanRequestCommandDTO.h"
 #include "ReviewClanCommandDTO.h"
+#include "TakeItemCommandDTO.h"
 #include "TextureInfoEventDTO.h"
 #include "UnequipCommandDTO.h"
 #include <iostream>
@@ -51,8 +51,7 @@ static constexpr int MAX_NUMBER_OF_MESSAGES = 100;
 
 GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
                      Queue<ServerEventDTO> &receptionQueue,
-                     Queue<ClientCommandDTO> &sendingQueue,
-                     Audio *audio)
+                     Queue<ClientCommandDTO> &sendingQueue, Audio *audio)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
       myPlayerID(myPlayerID), gameView(gameView), audio(audio) {
   registerPlayers();
@@ -63,7 +62,6 @@ void GameModel::updateStateFromServer() {
   while (receptionQueue.try_pop(event)) {
     std::visit([this](const auto &e) { handle(e); }, event);
   }
-
 }
 
 void GameModel::handleInventoryClick(int screenX, int screenY, uint8_t button) {
@@ -167,13 +165,9 @@ void GameModel::addLocalChatMessage(std::string text,
   updateChatView();
 }
 
-void GameModel::zoomOutCamera() {
-  gameView->zoomOutCamera();
-}
+void GameModel::zoomOutCamera() { gameView->zoomOutCamera(); }
 
-void GameModel::resetCameraZoom() {
-  gameView->resetCameraZoom();
-}
+void GameModel::resetCameraZoom() { gameView->resetCameraZoom(); }
 
 void GameModel::sendCheat(CheatType cheat, uint32_t arg,
                           const std::string &itemName) {
@@ -299,15 +293,16 @@ void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &event) {
 
   std::istringstream stream(event.message);
-    std::string line;
-    while (std::getline(stream, line, '\n')) {
-        if (line.empty()) continue;
+  std::string line;
+  while (std::getline(stream, line, '\n')) {
+    if (line.empty())
+      continue;
 
-        chatMessages.push_back(ChatMessage{line, event.category});
-        while (chatMessages.size() > 100)
-            chatMessages.pop_front();
-    }
-    updateChatView();
+    chatMessages.push_back(ChatMessage{line, event.category});
+    while (chatMessages.size() > 100)
+      chatMessages.pop_front();
+  }
+  updateChatView();
 }
 
 void GameModel::handle(const PrivateMessageEventDTO &event) {
@@ -329,9 +324,8 @@ void GameModel::handle(const PrivateMessageEventDTO &event) {
 }
 
 void GameModel::handle(const GlobalChatMessageEventDTO &event) {
-  chatMessages.push_back(
-      ChatMessage{event.playerName + ": " + event.message,
-                  ChatMessageCategory::Global});
+  chatMessages.push_back(ChatMessage{event.playerName + ": " + event.message,
+                                     ChatMessageCategory::Global});
 
   while (chatMessages.size() > MAX_NUMBER_OF_MESSAGES) {
     chatMessages.pop_front();
@@ -398,7 +392,7 @@ void GameModel::handle(const GroundItemRemovedEventDTO &e) {
   gameView->removeEntity(EntityType::GroundItem, e.groundItemId);
 }
 void GameModel::handle(const GroundItemsListEventDTO &e) {
-  for (auto& item : e.items) {
+  for (auto &item : e.items) {
     gameView->addGroundItem(item.groundItemId, item.itemId, item.x, item.y);
   }
 }
@@ -471,8 +465,6 @@ void GameModel::handle(const AttackReceivedEventDTO &event) {
 
     audio->playAttack(event.effectType);
   }
-
-  
 }
 
 void GameModel::handle(const RegisterPlayerEventDTO &) {}

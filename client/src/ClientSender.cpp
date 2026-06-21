@@ -3,8 +3,7 @@
 
 ClientSender::ClientSender(Socket &socket,
                            Queue<ClientCommandDTO> &sendingQueue)
-    : socket(socket), sendingQueue(sendingQueue),
-      protocol(Protocol(socket)) {
+    : socket(socket), sendingQueue(sendingQueue), protocol(Protocol(socket)) {
   registerAllParsers(protocol);
 }
 

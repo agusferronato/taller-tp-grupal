@@ -75,12 +75,11 @@ void ToolBar::initToolBar() {
   connect(collisionButton, &QPushButton::toggled, this,
           &ToolBar::collisionVisibilityChanged);
 
-
   QPushButton *selectModeBtn = new QPushButton("Seleccionar", this);
-    selectModeBtn->setFixedHeight(34);
-    selectModeBtn->setCursor(Qt::PointingHandCursor);
-    selectModeBtn->setCheckable(true);
-    selectModeBtn->setStyleSheet(R"(
+  selectModeBtn->setFixedHeight(34);
+  selectModeBtn->setCursor(Qt::PointingHandCursor);
+  selectModeBtn->setCheckable(true);
+  selectModeBtn->setStyleSheet(R"(
         QPushButton {
             font-size: 12px;
             font-weight: 600;
@@ -105,12 +104,12 @@ void ToolBar::initToolBar() {
             border-color: #7F77DD;
         }
     )");
-    layout->addWidget(selectModeBtn);
+  layout->addWidget(selectModeBtn);
 
-    connect(selectModeBtn, &QPushButton::toggled, this, [this](bool checked) {
-        if (checked) 
-            emit interactionModeSelected();
-    });
+  connect(selectModeBtn, &QPushButton::toggled, this, [this](bool checked) {
+    if (checked)
+      emit interactionModeSelected();
+  });
 
   layout->addStretch();
 
@@ -157,18 +156,17 @@ void ToolBar::initToolBar() {
         }
     )";
 
-    for (const BiomeInfo &b : biomes) {
-        QPushButton *btn = new QPushButton(b.name, this);
-        btn->setFixedHeight(34);
-        btn->setCursor(Qt::PointingHandCursor);
-        btn->setCheckable(true);
-        btn->setAutoExclusive(true);
-        btn->setStyleSheet(
-            biomeButtonStyle.arg(b.bg).arg(b.border).arg(b.color).arg(b.hoverBg));
-        layout->addWidget(btn);
-        biomeButtons.append(btn);
-    }
-
+  for (const BiomeInfo &b : biomes) {
+    QPushButton *btn = new QPushButton(b.name, this);
+    btn->setFixedHeight(34);
+    btn->setCursor(Qt::PointingHandCursor);
+    btn->setCheckable(true);
+    btn->setAutoExclusive(true);
+    btn->setStyleSheet(
+        biomeButtonStyle.arg(b.bg).arg(b.border).arg(b.color).arg(b.hoverBg));
+    layout->addWidget(btn);
+    biomeButtons.append(btn);
+  }
 
   connect(saveButton, &QPushButton::clicked, this, &ToolBar::saveMap);
 

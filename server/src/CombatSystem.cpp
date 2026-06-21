@@ -360,11 +360,11 @@ void CombatSystem::killPlayer(Character &dyingPlayer, bool dropExcessGold) {
   if (dyingPlayer.isMeditating()) {
     dyingPlayer.stopMeditating();
     senderQueueMonitor.sendToClient(
-    dyingPlayer.getId(),
-    ChatMessageEventDTO{ChatMessageCategory::System, "Sistema",
-                          "dejaste de meditar"});
+        dyingPlayer.getId(),
+        ChatMessageEventDTO{ChatMessageCategory::System, "Sistema",
+                            "dejaste de meditar"});
   }
-  
+
   if (dropExcessGold) {
     dyingPlayer.dropGoldOnDeath();
   }

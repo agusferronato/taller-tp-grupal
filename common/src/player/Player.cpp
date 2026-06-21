@@ -23,15 +23,30 @@ uint32_t Player::getIntelligence() const { return stats.getIntelligence(); }
 Inventory &Player::getInventory() { return inventory; }
 const Inventory &Player::getInventory() const { return inventory; }
 bool Player::addItem(uint8_t itemId) { return inventory.addItem(itemId); }
-bool Player::equipItem(uint8_t slotIndex) { return inventory.equipItem(slotIndex); }
+bool Player::equipItem(uint8_t slotIndex) {
+  return inventory.equipItem(slotIndex);
+}
 bool Player::unequipSlot(EquipSlot slot) { return inventory.unequipSlot(slot); }
-bool Player::removeItem(uint8_t slotIndex) { return inventory.removeItem(slotIndex); }
-std::array<uint8_t, MAX_INVENTORY_SLOTS> Player::getInventoryItems() const { return inventory.getItems(); }
-const Weapon &Player::getEquippedWeapon() const { return inventory.getWeapon(); }
+bool Player::removeItem(uint8_t slotIndex) {
+  return inventory.removeItem(slotIndex);
+}
+std::array<uint8_t, MAX_INVENTORY_SLOTS> Player::getInventoryItems() const {
+  return inventory.getItems();
+}
+const Weapon &Player::getEquippedWeapon() const {
+  return inventory.getWeapon();
+}
 const Armor &Player::getEquippedArmor() const { return inventory.getArmor(); }
-const Helmet &Player::getEquippedHelmet() const { return inventory.getHelmet(); }
-const Shield &Player::getEquippedShield() const { return inventory.getShield(); }
-void Player::setInventoryItems(const std::array<uint8_t, MAX_INVENTORY_SLOTS> &items) { inventory.setItems(items); }
+const Helmet &Player::getEquippedHelmet() const {
+  return inventory.getHelmet();
+}
+const Shield &Player::getEquippedShield() const {
+  return inventory.getShield();
+}
+void Player::setInventoryItems(
+    const std::array<uint8_t, MAX_INVENTORY_SLOTS> &items) {
+  inventory.setItems(items);
+}
 void Player::setEquippedWeapon(uint8_t id) { inventory.setWeapon(id); }
 void Player::setEquippedArmor(uint8_t id) { inventory.setArmor(id); }
 void Player::setEquippedHelmet(uint8_t id) { inventory.setHelmet(id); }
@@ -108,13 +123,9 @@ bool Player::expentGold(uint32_t amount) {
   stats.setGold(stats.getGold() - amount);
   return true;
 }
-void Player::earnGold(uint32_t amount) {
-  stats.earnGold(amount);
-}
+void Player::earnGold(uint32_t amount) { stats.earnGold(amount); }
 
-void Player::setGold(uint32_t amount) {
-  stats.setGold(amount);
-}
+void Player::setGold(uint32_t amount) { stats.setGold(amount); }
 
 void Player::removeGold(uint32_t amount) {
   if (amount >= stats.getGold()) {

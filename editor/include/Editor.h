@@ -29,8 +29,7 @@ private:
   std::string mapPath;
 
 public:
-  explicit Editor(const std::string &mapPath = "",
-                  QWidget *parent = nullptr);
+  explicit Editor(const std::string &mapPath = "", QWidget *parent = nullptr);
 
 private:
   void initEditor();

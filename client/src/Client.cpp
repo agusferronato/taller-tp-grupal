@@ -3,8 +3,7 @@
 #include "DTO/Events/EventDTO.h"
 
 Client::Client(const char *hostname, const char *port, const ClientData &data)
-    : socket(Socket(hostname, port)),
-      clientData(data) {}
+    : socket(Socket(hostname, port)), clientData(data) {}
 
 void Client::run() {
   Queue<ClientCommandDTO> sendingQueue;
@@ -17,17 +16,16 @@ void Client::run() {
 
   Gameloop gameloop(receptionQueue, sendingQueue, clientData);
 
-
   ShutdownReason shutdownReason = gameloop.run();
 
   if (shutdownReason == ShutdownReason::WindowClose) {
-    socket.shutdown(SHUT_RDWR); 
-    socket.close(); 
+    socket.shutdown(SHUT_RDWR);
+    socket.close();
   }
 
-  sendingQueue.close(); 
-  receptionQueue.close(); 
-    
+  sendingQueue.close();
+  receptionQueue.close();
+
   receiver.join();
   sender.join();
 }

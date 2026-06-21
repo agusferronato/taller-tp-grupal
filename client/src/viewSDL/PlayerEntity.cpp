@@ -15,8 +15,7 @@ void PlayerEntity::render(SDL2pp::Renderer &renderer, Camera &camera,
                           unsigned int it) {
   SDL2pp::Rect bounds = camera.toScreen(
       player.get_x() - ClientPlayer::Width,
-      player.get_y() - ClientPlayer::HeadHeight - 32,
-      ClientPlayer::Width * 3,
+      player.get_y() - ClientPlayer::HeadHeight - 32, ClientPlayer::Width * 3,
       ClientPlayer::Height + ClientPlayer::HeadHeight + 64);
   if (!camera.isVisibleOnScreen(bounds)) {
     wasRendered = true;
@@ -48,10 +47,8 @@ void PlayerEntity::renderAlive(SDL2pp::Renderer &renderer, Camera &camera,
   wasRendered = true;
 }
 
-
-
-void PlayerEntity::renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera,
-                              unsigned int it) {
+void PlayerEntity::renderAttackEffect(SDL2pp::Renderer &renderer,
+                                      Camera &camera, unsigned int it) {
   (void)it;
 
   if (!player.isBeingAttackOrCured()) {
@@ -64,10 +61,8 @@ void PlayerEntity::renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera
   }
 
   auto result = textureManager.getAttackFrame(
-    effectParser.getEffectLayout(player.getEffect()), 
-    effectParser.getEffectID(player.getEffect()), 
-    effectNextFrame
-  );
+      effectParser.getEffectLayout(player.getEffect()),
+      effectParser.getEffectID(player.getEffect()), effectNextFrame);
 
   Sprite &src = result.sprite;
 
@@ -79,19 +74,15 @@ void PlayerEntity::renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera
     return;
   }
 
-  SDL2pp::Rect dst = camera.toScreen(
-    player.get_x() - ClientPlayer::Width, player.get_y() - ClientPlayer::Height / 2, 64, 64);
+  SDL2pp::Rect dst =
+      camera.toScreen(player.get_x() - ClientPlayer::Width,
+                      player.get_y() - ClientPlayer::Height / 2, 64, 64);
 
   if (!camera.isVisibleOnScreen(dst))
     return;
 
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
 }
-
-
-
-
-
 
 void PlayerEntity::renderBody(SDL2pp::Renderer &renderer, Camera &camera,
                               unsigned int it) {
@@ -261,13 +252,13 @@ int PlayerEntity::getRaceHeadID(Race race) const {
 
 void PlayerEntity::renderGhostBody(SDL2pp::Renderer &renderer, Camera &camera,
                                    unsigned int it) {
-  
+
   unsigned int animationIt = player.getIsMoving() ? it : 0;
-  
-  Sprite src = textureManager.getBodySprite(
-    TextureLayoutType::Ghost, 535, player.getDirection(), animationIt);
-    
-  int ox = (ClientPlayer::Width - src.w) / 2; 
+
+  Sprite src = textureManager.getBodySprite(TextureLayoutType::Ghost, 535,
+                                            player.getDirection(), animationIt);
+
+  int ox = (ClientPlayer::Width - src.w) / 2;
   SDL2pp::Rect dst = camera.toScreen(player.get_x() + ox, player.get_y(), src.w,
                                      ClientPlayer::Height);
   if (!camera.isVisibleOnScreen(dst))
@@ -279,7 +270,7 @@ void PlayerEntity::renderGhostBody(SDL2pp::Renderer &renderer, Camera &camera,
 void PlayerEntity::renderGhostHead(SDL2pp::Renderer &renderer, Camera &camera) {
   Direction playerDirection = player.getDirection();
 
-  Sprite src = textureManager.getHeadSprite(534, playerDirection); 
+  Sprite src = textureManager.getHeadSprite(534, playerDirection);
 
   int head_x = get_head_x(camera);
   int head_y = get_head_y(camera);
@@ -293,6 +284,6 @@ void PlayerEntity::renderGhostHead(SDL2pp::Renderer &renderer, Camera &camera) {
                    ClientPlayer::HeadHeight};
   if (!camera.isVisibleOnScreen(dst))
     return;
-  
+
   renderer.Copy(src.txt, SDL2pp::Rect(src.x, src.y, src.w, src.h), dst);
 }

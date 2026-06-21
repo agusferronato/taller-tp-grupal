@@ -1,8 +1,8 @@
 #ifndef CHAT_COMMAND_PARSER_H
 #define CHAT_COMMAND_PARSER_H
 
-#include <string>
 #include <cstdint>
+#include <string>
 
 enum class ChatCommandType {
   None,

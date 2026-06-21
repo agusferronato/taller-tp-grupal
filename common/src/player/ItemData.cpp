@@ -1,8 +1,10 @@
 #include "ItemData.h"
 #include "InventoryConstants.h"
-#include <toml++/toml.hpp>
+#include <algorithm>
+#include <cctype>
 #include <cstdlib>
 #include <iostream>
+#include <toml++/toml.hpp>
 
 const WeaponData ItemData::DEFAULT_WEAPON{};
 const ArmorData ItemData::DEFAULT_ARMOR{};
@@ -16,6 +18,12 @@ ItemData &ItemData::instance() {
   return inst;
 }
 
+std::string ItemData::toLower(std::string s) const {
+  std::transform(s.begin(), s.end(), s.begin(),
+                 [](unsigned char c) { return std::tolower(c); });
+  return s;
+}
+
 ItemData::ItemData() { loadFromToml(); }
 
 void ItemData::loadFromToml() {
@@ -27,7 +35,7 @@ void ItemData::loadFromToml() {
         uint8_t id = static_cast<uint8_t>(std::stoul(std::string(key)));
         auto &item = *val.as_table();
         WeaponData wd;
-        wd.name = item["name"].value_or("");
+        wd.name = toLower(item["name"].value_or(""));
         wd.minDamage = item["minDamage"].value_or(0u);
         wd.maxDamage = item["maxDamage"].value_or(0u);
         wd.manaCost = item["manaCost"].value_or(0);
@@ -59,7 +67,7 @@ void ItemData::loadFromToml() {
         uint8_t id = static_cast<uint8_t>(std::stoul(std::string(key)));
         auto &item = *val.as_table();
         ArmorData ad;
-        ad.name = item["name"].value_or("");
+        ad.name = toLower(item["name"].value_or(""));
         ad.minDefense = item["minDefense"].value_or(0u);
         ad.maxDefense = item["maxDefense"].value_or(0u);
         itemNameToId[ad.name] = id;
@@ -72,7 +80,7 @@ void ItemData::loadFromToml() {
         uint8_t id = static_cast<uint8_t>(std::stoul(std::string(key)));
         auto &item = *val.as_table();
         HelmetData hd;
-        hd.name = item["name"].value_or("");
+        hd.name = toLower(item["name"].value_or(""));
         hd.minDefense = item["minDefense"].value_or(0u);
         hd.maxDefense = item["maxDefense"].value_or(0u);
         itemNameToId[hd.name] = id;
@@ -85,7 +93,7 @@ void ItemData::loadFromToml() {
         uint8_t id = static_cast<uint8_t>(std::stoul(std::string(key)));
         auto &item = *val.as_table();
         ShieldData sd;
-        sd.name = item["name"].value_or("");
+        sd.name = toLower(item["name"].value_or(""));
         sd.minDefense = item["minDefense"].value_or(0u);
         sd.maxDefense = item["maxDefense"].value_or(0u);
         itemNameToId[sd.name] = id;
@@ -98,7 +106,7 @@ void ItemData::loadFromToml() {
         uint8_t id = static_cast<uint8_t>(std::stoul(std::string(key)));
         auto &item = *val.as_table();
         PotionData pd;
-        pd.name = item["name"].value_or("");
+        pd.name = toLower(item["name"].value_or(""));
         pd.healAmount = item["healAmount"].value_or(0u);
         itemNameToId[pd.name] = id;
         potionsHp[id] = pd;
@@ -110,7 +118,7 @@ void ItemData::loadFromToml() {
         uint8_t id = static_cast<uint8_t>(std::stoul(std::string(key)));
         auto &item = *val.as_table();
         PotionData pd;
-        pd.name = item["name"].value_or("");
+        pd.name = toLower(item["name"].value_or(""));
         pd.healAmount = item["healAmount"].value_or(0u);
         itemNameToId[pd.name] = id;
         potionsMana[id] = pd;
@@ -240,7 +248,9 @@ const std::string &ItemData::getItemName(uint8_t id) const {
 }
 
 uint8_t ItemData::getItemIdByName(const std::string &name) const {
-  auto it = itemNameToId.find(name);
+  std::string lowerName(toLower(name));
+
+  auto it = itemNameToId.find(lowerName);
   if (it != itemNameToId.end())
     return it->second;
   return 0;

@@ -11,8 +11,7 @@ private:
   std::string playerName;
 
 public:
-  RejectClanRequestCommand(uint32_t founderId,
-                           const std::string &playerName);
+  RejectClanRequestCommand(uint32_t founderId, const std::string &playerName);
 
   void execute(Game &game, uint32_t connectionId) override;
 };

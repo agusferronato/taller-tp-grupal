@@ -29,20 +29,20 @@ Audio::Audio() {
     }
   }
 
-  loadSfx("sword_hit",   "assets/audio/sfx/sword_hit.wav");
-  loadSfx("bow_shoot",   "assets/audio/sfx/bow_shoot.wav");
+  loadSfx("sword_hit", "assets/audio/sfx/sword_hit.wav");
+  loadSfx("bow_shoot", "assets/audio/sfx/bow_shoot.wav");
   loadSfx("magic_arrow", "assets/audio/sfx/magic_arrow.wav");
   loadSfx("magic_misil", "assets/audio/sfx/magic_misil.wav");
-  loadSfx("explosion",   "assets/audio/sfx/explosion.wav");
-  loadSfx("heal",        "assets/audio/sfx/heal.wav");
-  loadSfx("player_death","assets/audio/sfx/player_death.wav");
-  loadSfx("npc_death",   "assets/audio/sfx/npc_death.wav");
-  loadSfx("resurrect",   "assets/audio/sfx/resurrect.wav");
+  loadSfx("explosion", "assets/audio/sfx/explosion.wav");
+  loadSfx("heal", "assets/audio/sfx/heal.wav");
+  loadSfx("player_death", "assets/audio/sfx/player_death.wav");
+  loadSfx("npc_death", "assets/audio/sfx/npc_death.wav");
+  loadSfx("resurrect", "assets/audio/sfx/resurrect.wav");
   loadSfx("pickup_item", "assets/audio/sfx/pickup_item.wav");
-  loadSfx("coin",        "assets/audio/sfx/coin.wav");
-  loadSfx("level_up",    "assets/audio/sfx/levelup.wav");
-  loadSfx("equip",       "assets/audio/sfx/equip.wav");
-  loadSfx("hit_received","assets/audio/sfx/hit_received.wav");
+  loadSfx("coin", "assets/audio/sfx/coin.wav");
+  loadSfx("level_up", "assets/audio/sfx/levelup.wav");
+  loadSfx("equip", "assets/audio/sfx/equip.wav");
+  loadSfx("hit_received", "assets/audio/sfx/hit_received.wav");
 }
 
 Audio::~Audio() = default;
@@ -96,8 +96,7 @@ void Audio::playAttack(EffectType effectType, int distance) {
     playSfx("sword_hit", distance);
     break;
   default:
-    break;  
-
+    break;
   }
 }
 

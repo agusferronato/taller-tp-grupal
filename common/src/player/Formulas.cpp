@@ -39,18 +39,6 @@ double Formulas::getFClaseMeditacion(const PlayerClass playerClass) {
   return PlayerDataLoader::instance().getClassData(playerClass).meditacion;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 uint32_t Formulas::calcularVidaMax(uint32_t constitucion, const Race race,
                                    const PlayerClass playerClass,
                                    uint32_t nivel) {
@@ -181,14 +169,14 @@ uint32_t Formulas::calcularOroPerdidoMuerte(uint32_t oroActual,
 
 std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
 Formulas::getRaceStats(const Race race) {
-  const auto& data = PlayerDataLoader::instance().getRaceData(race);
+  const auto &data = PlayerDataLoader::instance().getRaceData(race);
   return {data.strengthRace, data.agilityRace, data.constitutionRace,
           data.intelligenceRace};
 }
 
 std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
 Formulas::getPlayerClassStats(const PlayerClass playerClass) {
-  const auto& data = PlayerDataLoader::instance().getClassData(playerClass);
+  const auto &data = PlayerDataLoader::instance().getClassData(playerClass);
   return {data.strengthClass, data.agilityClass, data.constitutionClass,
           data.intelligenceClass};
 }

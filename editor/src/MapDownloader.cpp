@@ -5,11 +5,10 @@
 #include <fstream>
 #include <toml++/toml.hpp>
 
-void MapDownloader::saveMap(
-    GridSDL &gridSDL, const std::string &path,
-    std::list<TileOrigin> &txtOrigins,
-    std::set<std::pair<int, int>> &collidableCells,
-    const std::map<int, BiomeGrid> &biomes) {
+void MapDownloader::saveMap(GridSDL &gridSDL, const std::string &path,
+                            std::list<TileOrigin> &txtOrigins,
+                            std::set<std::pair<int, int>> &collidableCells,
+                            const std::map<int, BiomeGrid> &biomes) {
 
   toml::table tbl;
 

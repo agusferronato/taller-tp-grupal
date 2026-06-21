@@ -40,10 +40,8 @@ void NPCEntity::renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera,
   }
 
   auto result = textureManager.getAttackFrame(
-    effectParser.getEffectLayout(npc.getEffect()), 
-    effectParser.getEffectID(npc.getEffect()), 
-    effectNextFrame
-  );
+      effectParser.getEffectLayout(npc.getEffect()),
+      effectParser.getEffectID(npc.getEffect()), effectNextFrame);
 
   Sprite &src = result.sprite;
 
@@ -55,8 +53,8 @@ void NPCEntity::renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera,
     return;
   }
 
-  SDL2pp::Rect dst = camera.toScreen(
-      get_x() + spriteWidth / 2 - 32, get_y() + spriteHeight / 2 - 32, 64, 64);
+  SDL2pp::Rect dst = camera.toScreen(get_x() + spriteWidth / 2 - 32,
+                                     get_y() + spriteHeight / 2 - 32, 64, 64);
 
   if (!camera.isVisibleOnScreen(dst))
     return;

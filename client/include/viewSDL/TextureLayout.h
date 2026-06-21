@@ -10,4 +10,4 @@
 
 using TextureLayout = std::variant<BodyLayout, HeadLayout, AttackLayout>;
 
-#endif 
+#endif

@@ -6,8 +6,8 @@
 
 class EffectParser {
 public:
-    TextureLayoutType getEffectLayout(EffectType type) const;
-    int getEffectID(EffectType type) const;
+  TextureLayoutType getEffectLayout(EffectType type) const;
+  int getEffectID(EffectType type) const;
 };
 
 #endif

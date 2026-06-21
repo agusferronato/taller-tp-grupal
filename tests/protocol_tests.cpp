@@ -186,7 +186,8 @@ TEST_F(ProtocolTest, SendsAndReceivesChatMessageEvent) {
   registerAllParsers(server);
   registerAllParsers(client);
 
-  ServerEventDTO original = ChatMessageEventDTO{ChatMessageCategory::System, "ServerBot", "Welcome"};
+  ServerEventDTO original =
+      ChatMessageEventDTO{ChatMessageCategory::System, "ServerBot", "Welcome"};
 
   server.sendEvent(original);
 

@@ -5,8 +5,8 @@
 
 static constexpr uint8_t EQUIP_SLOT_FROM_VISUAL[4] = {0, 2, 1, 3};
 
-// Para soportar nombres de clan con espacios, se pueden escribir entre comillas. Ejemplo:
-// /fundar-clan "Los Guerreros"
+// Para soportar nombres de clan con espacios, se pueden escribir entre
+// comillas. Ejemplo: /fundar-clan "Los Guerreros"
 static std::string stripQuotes(std::string s) {
   if (s.size() >= 2 && s.front() == '"' && s.back() == '"') {
     return s.substr(1, s.size() - 2);
@@ -46,7 +46,7 @@ static bool parseUint32Arg(const std::string &message, size_t prefixLen,
 
 ChatCommand ChatCommandParser::parse(const std::string &message) {
   if (message.empty()) {
-    return {ChatCommandType::None, 0}; 
+    return {ChatCommandType::None, 0};
   }
 
   if (message[0] == '@') {
@@ -245,7 +245,7 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
     }
     return {ChatCommandType::Unknown, 0};
   }
-  
+
   if (message.rfind("/obtener ", 0) == 0 && message.size() > 9) {
     std::string itemName = message.substr(9);
     if (!itemName.empty())

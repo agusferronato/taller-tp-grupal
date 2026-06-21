@@ -24,10 +24,10 @@ int main(int argc, char *argv[]) {
 
     MainWindow window(hostname, port);
     QObject::connect(&window, &MainWindow::gameStartRequested,
-                 [&](const ClientData &d) {
-                   clientData = d;
-                   app.quit();
-                 });
+                     [&](const ClientData &d) {
+                       clientData = d;
+                       app.quit();
+                     });
     window.show();
     app.exec();
   }

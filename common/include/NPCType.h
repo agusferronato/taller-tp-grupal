@@ -4,18 +4,18 @@
 #include <cstdint>
 
 enum class NPCType : uint8_t {
-    ZombieT,
-    SpiderT,
-    SpecialSpiderT,
-    ElfT,
-    SpecialElfT,
-    SkeletonT,
-    SpecialSkeletonT,
-    OrcT,
-    GreatReamerT,
-    GiantT,
-    GolemT,
-    SpecialGolemT
+  ZombieT,
+  SpiderT,
+  SpecialSpiderT,
+  ElfT,
+  SpecialElfT,
+  SkeletonT,
+  SpecialSkeletonT,
+  OrcT,
+  GreatReamerT,
+  GiantT,
+  GolemT,
+  SpecialGolemT
 };
 
 #endif

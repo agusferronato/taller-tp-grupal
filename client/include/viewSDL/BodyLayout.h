@@ -16,4 +16,4 @@ public:
   SpriteData getLayout(Direction direction, unsigned int iterator);
 };
 
-#endif 
+#endif

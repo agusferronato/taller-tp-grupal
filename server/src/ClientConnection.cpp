@@ -27,7 +27,6 @@ void ClientConnection::run() {
   sender.start();
 }
 
-
 void ClientConnection::join() {
   receiver.join();
   sender.join();

@@ -17,9 +17,9 @@
 #include "PlayerMovedEventDTO.h"
 #include "Queue.h"
 #include "RegisterPlayerEventDTO.h"
+#include "ShutdownReason.h"
 #include "Thread.h"
 #include "WindowClosed.h"
-#include "ShutdownReason.h"
 
 class Gameloop {
 
@@ -33,8 +33,7 @@ private:
 
 public:
   Gameloop(Queue<ServerEventDTO> &receptionQueue,
-           Queue<ClientCommandDTO> &sendingQueue,
-           const ClientData &clientData);
+           Queue<ClientCommandDTO> &sendingQueue, const ClientData &clientData);
 
   ShutdownReason run();
 

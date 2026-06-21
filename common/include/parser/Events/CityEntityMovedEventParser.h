@@ -2,6 +2,7 @@
 #define CITY_ENTITY_MOVED_EVENT_PARSER_H
 
 #include "ServerEventParser.h"
+#include <vector>
 
 class CityEntityMovedEventParser : public ServerEventParser {
 public:

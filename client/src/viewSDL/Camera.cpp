@@ -10,7 +10,8 @@ void Camera::setViewport(int x, int y, int w, int h) {
   viewportH = h;
 }
 
-void Camera::follow(float targetX, float targetY, float targetW, float targetH) {
+void Camera::follow(float targetX, float targetY, float targetW,
+                    float targetH) {
   x = targetX + targetW / 2.0f - viewportW / (2.0f * zoom);
   y = targetY + targetH / 2.0f - viewportH / (2.0f * zoom);
 }
@@ -39,9 +40,8 @@ bool Camera::isVisibleInWorld(float wx, float wy, int w, int h) const {
 }
 
 std::pair<int, int> Camera::mouseToWorld(int mouseX, int mouseY) const {
-  return std::make_pair(
-      static_cast<int>((mouseX - viewportX) / zoom + x),
-      static_cast<int>((mouseY - viewportY) / zoom + y));
+  return std::make_pair(static_cast<int>((mouseX - viewportX) / zoom + x),
+                        static_cast<int>((mouseY - viewportY) / zoom + y));
 }
 
 SDL2pp::Rect Camera::toScreen(float wx, float wy, int w, int h) const {

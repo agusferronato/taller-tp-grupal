@@ -46,14 +46,15 @@ void Editor::initEditor() {
   connect(gridSDL, &GridSDL::mapSavedSuccesfully, this,
           &Editor::onSavedMapSuccesfully);
 
-  connect(toolBar, &ToolBar::interactionModeSelected, gridSDL, &GridSDL::setInteractionMode);
+  connect(toolBar, &ToolBar::interactionModeSelected, gridSDL,
+          &GridSDL::setInteractionMode);
 }
 
 void Editor::onSaveMapButtonClick() {
-    QDialog dialog(this);
-    dialog.setWindowTitle("Guardar mapa");
-    dialog.setFixedSize(380, 180);
-    dialog.setStyleSheet(R"(
+  QDialog dialog(this);
+  dialog.setWindowTitle("Guardar mapa");
+  dialog.setFixedSize(380, 180);
+  dialog.setStyleSheet(R"(
         QDialog {
             background: palette(base);
             border-radius: 10px;
@@ -111,49 +112,49 @@ void Editor::onSaveMapButtonClick() {
         }
     )");
 
-    auto *root = new QVBoxLayout(&dialog);
-    root->setContentsMargins(24, 20, 24, 20);
-    root->setSpacing(10);
+  auto *root = new QVBoxLayout(&dialog);
+  root->setContentsMargins(24, 20, 24, 20);
+  root->setSpacing(10);
 
-    auto *titleLabel = new QLabel("Guardar mapa", &dialog);
-    titleLabel->setObjectName("title");
-    root->addWidget(titleLabel);
+  auto *titleLabel = new QLabel("Guardar mapa", &dialog);
+  titleLabel->setObjectName("title");
+  root->addWidget(titleLabel);
 
-    auto *subtitleLabel = new QLabel("Nombre del archivo:", &dialog);
-    subtitleLabel->setObjectName("subtitle");
-    root->addWidget(subtitleLabel);
+  auto *subtitleLabel = new QLabel("Nombre del archivo:", &dialog);
+  subtitleLabel->setObjectName("subtitle");
+  root->addWidget(subtitleLabel);
 
-    auto *lineEdit = new QLineEdit("map.toml", &dialog);
-    lineEdit->selectAll();
-    root->addWidget(lineEdit);
+  auto *lineEdit = new QLineEdit("map.toml", &dialog);
+  lineEdit->selectAll();
+  root->addWidget(lineEdit);
 
-    root->addSpacing(4);
+  root->addSpacing(4);
 
-    auto *btnRow = new QHBoxLayout();
-    btnRow->setSpacing(8);
-    btnRow->addStretch();
+  auto *btnRow = new QHBoxLayout();
+  btnRow->setSpacing(8);
+  btnRow->addStretch();
 
-    auto *cancelBtn = new QPushButton("Cancelar", &dialog);
-    cancelBtn->setObjectName("cancelBtn");
-    cancelBtn->setCursor(Qt::PointingHandCursor);
+  auto *cancelBtn = new QPushButton("Cancelar", &dialog);
+  cancelBtn->setObjectName("cancelBtn");
+  cancelBtn->setCursor(Qt::PointingHandCursor);
 
-    auto *saveBtn = new QPushButton("Guardar", &dialog);
-    saveBtn->setObjectName("saveBtn");
-    saveBtn->setCursor(Qt::PointingHandCursor);
-    saveBtn->setDefault(true);
+  auto *saveBtn = new QPushButton("Guardar", &dialog);
+  saveBtn->setObjectName("saveBtn");
+  saveBtn->setCursor(Qt::PointingHandCursor);
+  saveBtn->setDefault(true);
 
-    btnRow->addWidget(cancelBtn);
-    btnRow->addWidget(saveBtn);
-    root->addLayout(btnRow);
+  btnRow->addWidget(cancelBtn);
+  btnRow->addWidget(saveBtn);
+  root->addLayout(btnRow);
 
-    connect(cancelBtn, &QPushButton::clicked, &dialog, &QDialog::reject);
-    connect(saveBtn,   &QPushButton::clicked, &dialog, &QDialog::accept);
+  connect(cancelBtn, &QPushButton::clicked, &dialog, &QDialog::reject);
+  connect(saveBtn, &QPushButton::clicked, &dialog, &QDialog::accept);
 
-    if (dialog.exec() == QDialog::Accepted) {
-        QString name = lineEdit->text().trimmed();
-        if (!name.isEmpty())
-            this->gridSDL->saveMap(name.toStdString());
-    }
+  if (dialog.exec() == QDialog::Accepted) {
+    QString name = lineEdit->text().trimmed();
+    if (!name.isEmpty())
+      this->gridSDL->saveMap(name.toStdString());
+  }
 }
 void Editor::onSavedMapSuccesfully(const std::string &path) {
 
