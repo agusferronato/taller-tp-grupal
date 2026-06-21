@@ -177,7 +177,7 @@ private:
   NPC *findNPCByCoordinates(int16_t x, int16_t y);
   int floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
 
-  void killPlayer(Character &dyingPlayer);
+  void killPlayer(Character &dyingPlayer, bool dropExcessGold = true);
   bool isNearEntity(CityEntity &entity, const Character &character);
   CityEntity *findNearestEntity(uint32_t playerId, CityEntityType type);
 

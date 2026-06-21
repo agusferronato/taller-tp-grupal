@@ -1301,13 +1301,41 @@ void Game::playerAttackPlayer(Character &attacker, Character &target) {
   attacker.gainExperience(xp);
 
   if (target.getHp() <= 0) {
-    uint32_t oro = target.dropGoldOnDeath();
-    attacker.addGold(oro);
+    uint32_t excessGold =
+        Formulas::calcularOroExceso(target.getGold(), target.getLevel());
+    if (excessGold > 0) {
+      uint32_t previousAttackerGold = attacker.getGold();
+      attacker.addGold(excessGold);
+      uint32_t receivedGold = attacker.getGold() - previousAttackerGold;
+
+      if (receivedGold > 0) {
+        target.spendGold(receivedGold);
+        senderQueueMonitor.sendToClient(
+            target.getId(),
+            makeCombatMessage("Has perdido " + std::to_string(receivedGold) +
+                              " de oro en exceso al morir."));
+      }
+
+      if (receivedGold == excessGold) {
+        senderQueueMonitor.sendToClient(
+            attacker.getId(),
+            makeCombatMessage("Has obtenido " + std::to_string(receivedGold) +
+                              " de oro en exceso de " + target.getName() +
+                              "."));
+      } else {
+        senderQueueMonitor.sendToClient(
+            attacker.getId(),
+            makeCombatMessage("Has obtenido " + std::to_string(receivedGold) +
+                              " de " + std::to_string(excessGold) +
+                              " de oro en exceso de " + target.getName() +
+                              " por tu limite de oro."));
+      }
+    }
     uint32_t xpMuerte = Formulas::calcularExperienciaMuerte(
         target.getMaxHp(), attacker.getLevel(), target.getLevel(),
         (std::rand() % 100) / 100.0);
     attacker.gainExperience(xpMuerte);
-    killPlayer(target);
+    killPlayer(target, false);
   } else {
     senderQueueMonitor.sendToClient(
         attacker.getId(),
@@ -1496,8 +1524,10 @@ NPC *Game::findNPCByCoordinates(int16_t x, int16_t y) {
   return nullptr;
 }
 
-void Game::killPlayer(Character &dyingPlayer) {
-  dyingPlayer.dropGoldOnDeath();
+void Game::killPlayer(Character &dyingPlayer, bool dropExcessGold) {
+  if (dropExcessGold) {
+    dyingPlayer.dropGoldOnDeath();
+  }
   auto items = dyingPlayer.die();
   int16_t x = dyingPlayer.getX();
   int16_t y = dyingPlayer.getY();
