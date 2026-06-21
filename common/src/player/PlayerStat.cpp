@@ -121,6 +121,7 @@ void PlayerStats::earnGold(uint32_t amount) {
 void PlayerStats::die() {
   health = 0;
   mana = 0;
+  experience = 0;
 }
 
 void PlayerStats::heal(uint32_t amount) {
