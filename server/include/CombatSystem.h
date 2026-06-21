@@ -48,7 +48,7 @@ public:
 
   void attack(Character &attacker, int16_t x, int16_t y);
   void tryAttack(NPC &npc, Character &target);
-  void killPlayer(Character &dyingPlayer);
+  void killPlayer(Character &dyingPlayer, bool dropExcessGold = true);
   bool hasInfiniteHealth(uint32_t playerId) const;
 
 private:

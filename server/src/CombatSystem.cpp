@@ -67,24 +67,6 @@ void CombatSystem::tryAttack(NPC &npc, Character &target) {
   messagesToSend.push_back(target.toPlayerInfoEvent());
 }
 
-void CombatSystem::killPlayer(Character &dyingPlayer) {
-  if (dyingPlayer.isMeditating()) {
-    dyingPlayer.stopMeditating();
-    senderQueueMonitor.sendToClient(
-        dyingPlayer.getId(),
-        ChatMessageEventDTO{ChatMessageCategory::System, "Sistema",
-                            "dejaste de meditar"});
-  }
-  dyingPlayer.dropGoldOnDeath();
-  auto items = dyingPlayer.die();
-  int16_t x = dyingPlayer.getX();
-  int16_t y = dyingPlayer.getY();
-  for (auto itemId : items) {
-    inventoryManager.addGroundItem(itemId, x, y);
-  }
-  messagesToSend.push_back(PlayerDieEventDTO{dyingPlayer.getId()});
-}
-
 bool CombatSystem::hasInfiniteHealth(uint32_t playerId) const {
   auto it = cheatsByPlayer.find(playerId);
   return it != cheatsByPlayer.end() && it->second.infiniteHealth;
@@ -372,4 +354,25 @@ bool CombatSystem::consumeManaForAttack(Character &attacker) {
     return false;
   }
   return true;
+}
+
+void CombatSystem::killPlayer(Character &dyingPlayer, bool dropExcessGold) {
+  if (dyingPlayer.isMeditating()) {
+    dyingPlayer.stopMeditating();
+    senderQueueMonitor.sendToClient(
+    dyingPlayer.getId(),
+    ChatMessageEventDTO{ChatMessageCategory::System, "Sistema",
+                          "dejaste de meditar"});
+  }
+  
+  if (dropExcessGold) {
+    dyingPlayer.dropGoldOnDeath();
+  }
+  auto items = dyingPlayer.die();
+  int16_t x = dyingPlayer.getX();
+  int16_t y = dyingPlayer.getY();
+  for (auto itemId : items) {
+    inventoryManager.addGroundItem(itemId, x, y);
+  }
+  messagesToSend.push_back(PlayerDieEventDTO{dyingPlayer.getId()});
 }

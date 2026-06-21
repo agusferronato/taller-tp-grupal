@@ -193,6 +193,7 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
             break;
         case ChatCommandType::SetGold:
             gameModel->sendCheat(CheatType::SetGold, cmd.unsignedArg);
+            break;
         case ChatCommandType::Meditar:
             gameModel->meditate();
             break;
