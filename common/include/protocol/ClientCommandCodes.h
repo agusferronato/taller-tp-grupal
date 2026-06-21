@@ -8,10 +8,6 @@
 #include <type_traits>
 #include <variant>
 
-inline ClientCommandOpCode getCode(const ClientCommandDTO &command) {
-  return std::visit(
-      [](const auto &concreteCommand) { return concreteCommand.getCode(); },
-      command);
-}
+ClientCommandOpCode getCode(const ClientCommandDTO &command);
 
 #endif

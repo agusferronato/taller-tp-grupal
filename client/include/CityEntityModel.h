@@ -14,8 +14,8 @@ public:
 
     int get_x() const;
     int get_y() const;
-    Direction getDirection() const { return direction; }
-    bool getIsMoving() const { return isMoving; }
+    Direction getDirection() const;
+    bool getIsMoving() const;
 
     void setCoordinates(int x, int y);
     void updateCoordinates(int x, int y, Direction direction);

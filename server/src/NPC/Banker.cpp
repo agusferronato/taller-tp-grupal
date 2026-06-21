@@ -1,5 +1,13 @@
 #include "Banker.h"
 #include "Game.h"
+#include "ItemData.h"
+
+Banker::Banker(Position position) : CityEntity(position) {}
+
+CityEntityType Banker::getCityEntityType() { return CityEntityType::Banker; }
+
+int Banker::getAncho() const { return BANKER_WIDTH; }
+int Banker::getAlto() const { return BANKER_HEIGHT; }
 
 void Banker::saveItem(Game& game, Character& character, uint8_t id) {
     try {
@@ -59,7 +67,7 @@ void Banker::listItemsAvailables(Game& game, Character& character) {
 
     std::string msg = "Tus objetos en el banco: \n";
     for (auto& [id, item] : items) {
-        msg += "    (# " + std::to_string(id) + ") " + ITEM_TABLE[id].name 
+        msg += "    (# " + std::to_string(id) + ") " + ItemData::instance().getItemName(id)
             + " (x" + std::to_string(item.amount) + ") \n";
     }
     msg.erase(msg.size() - 2);

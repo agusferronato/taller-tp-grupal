@@ -23,6 +23,7 @@
 #include "TakeItemCommandDTO.h"
 #include "UnequipCommandDTO.h"
 #include "ValidateLoginCommandDTO.h"
+#include "MeditateCommandDTO.h"
 #include "command/AcceptClanRequestCommand.h"
 #include "command/AttackCommand.h"
 #include "command/CityEntityCommand.h"
@@ -37,6 +38,7 @@
 #include "command/KickClanMemberCommand.h"
 #include "command/LeaveClanCommand.h"
 #include "command/LoginPlayerCommand.h"
+#include "command/MeditateCommand.h"
 #include "command/MovePlayerCommand.h"
 #include "command/PlayerStoppedCommand.h"
 #include "command/PrivateMessageCommand.h"
@@ -148,11 +150,16 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
   }
 
   if (const auto *request = std::get_if<CheatCommandDTO>(&dto)) {
-    return std::make_unique<CheatCommand>(request->cheat, request->arg);
+    return std::make_unique<CheatCommand>(request->cheat, request->arg,
+                                           request->itemName);
   }
   
   if (const auto *request = std::get_if<ValidateLoginCommandDTO>(&dto)) {
     return std::make_unique<ValidateLoginCommand>(request->playerName);
+  }
+
+  if (const auto *request = std::get_if<MeditateCommandDTO>(&dto)) {
+    return std::make_unique<MeditateCommand>(request->playerId);
   }
 
   throw std::runtime_error("Unknown client request DTO type");

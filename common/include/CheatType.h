@@ -14,6 +14,7 @@ enum class CheatType : uint8_t {
   SetLevel,
   Revive,
   SetGold,
+  Obtener,
 };
 
 #endif

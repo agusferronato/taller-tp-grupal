@@ -3,6 +3,20 @@
 
 #include <limits>
 
+uint32_t PlayerStats::getGold() const { return gold; }
+uint32_t PlayerStats::getExperience() const { return experience; }
+uint32_t PlayerStats::getLevel() const { return level; }
+uint32_t PlayerStats::getHp() const { return health; }
+uint32_t PlayerStats::getMaxHp() const { return maxHealth; }
+uint32_t PlayerStats::getMana() const { return mana; }
+uint32_t PlayerStats::getMaxMana() const { return maxMana; }
+uint32_t PlayerStats::getStrength() const { return strength; }
+uint32_t PlayerStats::getAgility() const { return agility; }
+uint32_t PlayerStats::getConstitution() const { return constitution; }
+uint32_t PlayerStats::getIntelligence() const { return intelligence; }
+void PlayerStats::setHealth(uint32_t hp) { health = hp > maxHealth ? maxHealth : hp; }
+void PlayerStats::setMana(uint32_t mana) { this->mana = mana > maxMana ? maxMana : mana; }
+
 PlayerStats::PlayerStats(const PlayerStatsInfo &info)
     : gold(info.gold), experience(info.experience), level(info.level),
       health(info.health), mana(info.mana) {
@@ -103,4 +117,12 @@ void PlayerStats::earnGold(uint32_t amount) {
 void PlayerStats::die() {
   health = 0;
   mana = 0;
+}
+
+void PlayerStats::heal(uint32_t amount) {
+  uint32_t newHealth = health + amount;
+  if (newHealth > maxHealth) {
+    newHealth = maxHealth;
+  }
+  health = newHealth;
 }

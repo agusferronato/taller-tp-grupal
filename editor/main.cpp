@@ -1,9 +1,11 @@
 #include <QApplication>
+#include <QByteArray>
 
 #include "Editor.h"
 
 int main(int argc, char *argv[]) {
 
+  qputenv("QT_QPA_PLATFORM", "xcb");
   QApplication app(argc, argv);
 
   std::string mapPath;

@@ -20,11 +20,11 @@ public:
   virtual int get_y() = 0;
   virtual int get_h() = 0;
 
-  inline bool rendered() { return wasRendered; }
+  bool rendered();
 
-  inline bool hasPriority(int priority) { return this->priority == priority; }
+  bool hasPriority(int priority);
 
-  inline void clear() { wasRendered = false; }
+  void clear();
 
   virtual ~RenderableEntity() = default;
 };

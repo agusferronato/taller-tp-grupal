@@ -11,15 +11,9 @@ private:
   std::map<Direction, std::vector<SpriteData>> layout;
 
 public:
-  explicit BodyLayout(std::map<Direction, std::vector<SpriteData>> &layout)
-      : layout(layout) {}
+  explicit BodyLayout(std::map<Direction, std::vector<SpriteData>> &layout);
 
-  SpriteData getLayout(Direction direction, unsigned int iterator) {
-    const auto &frames = layout.at(direction);
-    int count = frames.size();
-    int frame = static_cast<int>(iterator * 0.25) % count;
-    return frames[frame];
-  }
+  SpriteData getLayout(Direction direction, unsigned int iterator);
 };
 
 #endif 

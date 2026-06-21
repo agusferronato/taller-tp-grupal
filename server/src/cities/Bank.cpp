@@ -1,6 +1,11 @@
 #include "Bank.h"
 #include "Character.h"
 
+bool Bank::haveAnAccount(uint32_t player_id) {
+  auto it = accounts.find(player_id);
+  return !(it == accounts.end());
+}
+
 void Bank::takeItem(Character& character, uint8_t item) {
     createAccountIfDoesNotExists(character);
     auto account = accounts.find(character.getId());

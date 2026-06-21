@@ -5,9 +5,58 @@
 #include "Race.h"
 #include <algorithm>
 
+uint32_t Character::getId() const { return id; }
+const std::string &Character::getName() const { return player.getName(); }
+Direction Character::getDirection() const { return player.getDirection(); }
+Race Character::getRace() const { return player.getRace(); }
+PlayerClass Character::getPlayerClass() const {
+  return player.getPlayerClass();
+}
+uint32_t Character::getHp() const { return player.getHp(); }
+uint32_t Character::getMaxHp() const { return player.getMaxHp(); }
+uint32_t Character::getMana() const { return player.getMana(); }
+uint32_t Character::getMaxMana() const { return player.getMaxMana(); }
+uint32_t Character::getLevel() const { return player.getLevel(); }
+uint32_t Character::getExperience() const { return player.getExperience(); }
+uint32_t Character::getGold() const { return player.getGold(); }
+uint32_t Character::getIntelligence() const { return player.getIntelligence(); }
+bool Character::isMoving() const { return player.isMoving(); }
+void Character::move(int newX, int newY) { player.move(newX, newY); }
+bool Character::addItem(uint8_t itemId) { return player.addItem(itemId); }
+bool Character::equipItem(uint8_t slot) { return player.equipItem(slot); }
+bool Character::unequipSlot(EquipSlot slot) { return player.unequipSlot(slot); }
+bool Character::removeItem(uint8_t slot) { return player.removeItem(slot); }
+Inventory &Character::getInventory() { return player.getInventory(); }
+const Inventory &Character::getInventory() const {
+  return player.getInventory();
+}
+std::array<uint8_t, MAX_INVENTORY_SLOTS> Character::getInventoryItems() const {
+  return player.getInventoryItems();
+}
+const Weapon &Character::getEquippedWeapon() const {
+  return player.getEquippedWeapon();
+}
+const Armor &Character::getEquippedArmor() const {
+  return player.getEquippedArmor();
+}
+const Helmet &Character::getEquippedHelmet() const {
+  return player.getEquippedHelmet();
+}
+const Shield &Character::getEquippedShield() const {
+  return player.getEquippedShield();
+}
+void Character::setLevel(uint32_t level) { player.setLevel(level); }
+bool Character::isNewbie() const { return player.getLevel() < 13; }
+bool Character::isDead() const { return player.isDead(); }
+uint32_t Character::getClanId() const { return player.getClanId(); }
+bool Character::hasClan() const { return player.hasClan(); }
+void Character::joinClan(uint32_t clanId) { player.joinClan(clanId); }
+void Character::leaveClan() { player.leaveClan(); }
+
 Character::Character(uint32_t id, std::string name, Race race,
                      PlayerClass playerClass, int x, int y, Direction dir)
-    : id(id), player(std::move(name), race, dir, playerClass, x, y) {}
+    : id(id), player(std::move(name), race, dir, playerClass, x, y),
+      timeSinceLastHit(std::nullopt), timeSinceLastManaConsume(std::nullopt) {}
 
 Character::Character(uint32_t id, const PlayerData &data)
     : id(id), player(data.name, RaceUtils::stringToRace(data.race),
@@ -21,6 +70,14 @@ Character::Character(uint32_t id, const PlayerData &data)
   player.setEquippedArmor(data.equippedArmor);
   player.setEquippedHelmet(data.equippedHelmet);
   player.setEquippedShield(data.equippedShield);
+  if (data.hp != 0) {
+    if (player.getHp() < player.getMaxHp()) {
+      timeSinceLastHit = 0;
+    }
+    if (player.getMana() < player.getMaxMana()) {
+      timeSinceLastManaConsume = 0;
+    }
+  }
   player.joinClan(data.clanId);
 }
 
@@ -45,10 +102,10 @@ PlayerData Character::toPlayerData() const {
   data.constitution = player.getConstitution();
   data.intelligence = player.getIntelligence();
   data.inventory = player.getInventoryItems();
-  data.equippedWeapon = player.getEquippedWeapon();
-  data.equippedArmor = player.getEquippedArmor();
-  data.equippedHelmet = player.getEquippedHelmet();
-  data.equippedShield = player.getEquippedShield();
+  data.equippedWeapon = player.getEquippedWeapon().getID();
+  data.equippedArmor = player.getEquippedArmor().getID();
+  data.equippedHelmet = player.getEquippedHelmet().getID();
+  data.equippedShield = player.getEquippedShield().getID();
   data.clanId = player.getClanId();
   return data;
 }
@@ -100,6 +157,7 @@ std::pair<int, int> Character::getTargetPosition(Direction dir,
 }
 
 uint32_t Character::takeDamage(uint32_t damage) {
+  timeSinceLastHit = 0;
   return player.takeDamage(damage);
 }
 
@@ -180,7 +238,7 @@ std::pair<int, int> Character::getTargetPosition(uint32_t speed) const {
 
 uint32_t Character::getDamage() const { return player.attack(); }
 
-bool Character::tryParry() const {
+bool Character::tryParry() {
   return Formulas::calcularEsquivo(player.getAgility(), rand() % 2);
 }
 
@@ -195,7 +253,42 @@ uint32_t Character::dropGoldOnDeath() {
   return perdido;
 }
 
-std::vector<uint8_t> Character::die() { return player.die(); }
+std::vector<uint8_t> Character::die() {
+  timeSinceLastHit = std::nullopt;
+  timeSinceLastManaConsume = std::nullopt;
+  timeSinceMeditating = std::nullopt;
+  return player.die();
+}
+
+void Character::restore() {
+  if (player.isDead()) {
+    return;
+  }
+
+  if (timeSinceLastHit.has_value()) {
+    *timeSinceLastHit += 1;
+    heal(Formulas::calcularRecuperacionVida(player.getRace(),
+                                            timeSinceLastHit.value()));
+    if (player.getHp() == player.getMaxHp()) {
+      timeSinceLastHit = std::nullopt;
+    }
+  }
+
+  if (timeSinceMeditating.has_value()) {
+    *timeSinceMeditating += 1;
+    uint32_t manaRecovered = Formulas::calcularRecuperacionMeditacion(
+        player.getPlayerClass(), player.getIntelligence(),
+        timeSinceMeditating.value());
+    addMana(manaRecovered);
+  } else if (timeSinceLastManaConsume.has_value()) {
+    *timeSinceLastManaConsume += 1;
+    addMana(Formulas::calcularRecuperacionMana(
+        player.getRace(), timeSinceLastManaConsume.value()));
+    if (player.getMana() == player.getMaxMana()) {
+      timeSinceLastManaConsume = std::nullopt;
+    }
+  }
+}
 
 bool Character::hasItem(uint8_t itemId) const {
   return player.getInventory().findItem(itemId) != MAX_INVENTORY_SLOTS;
@@ -205,13 +298,31 @@ bool Character::hasMoney(uint16_t amount) const {
   return player.getGold() >= amount;
 }
 
-
 void Character::removeItemById(uint8_t itemId) {
   uint8_t slot = player.getInventory().findItem(itemId);
   if (slot != MAX_INVENTORY_SLOTS)
     player.removeItem(slot);
 }
 
-void Character::resurrect() {
-  player.resurrect();
+void Character::resurrect() { player.resurrect(); }
+
+void Character::startMeditating() {
+  if (player.isDead()) {
+    return;
+  }
+  timeSinceMeditating = 0;
 }
+
+bool Character::useMana(uint32_t amount) {
+  bool result = player.useMana(amount);
+  if (result) {
+    timeSinceLastManaConsume = 0;
+  }
+  return result;
+}
+
+bool Character::isMeditating() const { return timeSinceMeditating.has_value(); }
+
+void Character::stopMeditating() { timeSinceMeditating = std::nullopt; }
+
+void Character::addMana(uint32_t amount) { player.addMana(amount); }

@@ -1,4 +1,7 @@
 #include "Server.h"
+
+#include <iostream>
+
 #include "PlayerRepository.h"
 
 Server::Server(const char *port, const char *mapPath)

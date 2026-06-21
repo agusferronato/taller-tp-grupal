@@ -11,18 +11,17 @@
 #include <string>
 
 Gameloop::Gameloop(Queue<ServerEventDTO> &receptionQueue,
-                   Queue<ClientCommandDTO> &sendingQueue,
-                   ShutdownEvent &shutdownEvent, const ClientData &clientData)
-    : shutdownEvent(shutdownEvent), clientData(clientData) {
+                   Queue<ClientCommandDTO> &sendingQueue, const ClientData &clientData)
+    : clientData(clientData) {
   makeGame(receptionQueue, sendingQueue, clientData);
 }
 
-void Gameloop::run() {
+ShutdownReason Gameloop::run() {
   unsigned int it = 0;
 
   ConstantRateLoop rateloop(FPS);
 
-  while (!shutdownEvent.finished()) {
+  while (true) {
 
     try {
       gameController->update();
@@ -30,19 +29,19 @@ void Gameloop::run() {
       gameView->show(it);
 
     } catch (const ClosedQueue &e) {
-      return;
+      return ShutdownReason::ConnectionEnd;
 
     } catch (const WindowClosed &e) {
-      shutdownEvent.put(ShutdownReason::SDLQuit);
-      return;
+
+      return ShutdownReason::WindowClose;
 
     } catch (const std::exception &e) {
       std::cerr << "[ERROR] Exception in gameloop: " << e.what() << std::endl;
-      return;
+      return ShutdownReason::Unknown;
 
     } catch (...) {
       std::cerr << "[ERROR] Unknown exception in gameloop" << std::endl;
-      return;
+      return ShutdownReason::Unknown;
     }
 
     rateloop.updateTimer(it);
@@ -103,10 +102,11 @@ void Gameloop::makeGame(Queue<ServerEventDTO> &receptionQueue,
   }
 
   gameView = std::make_unique<GameWindow>(myPlayerId);
+  audio = std::make_unique<Audio>();
 
   gameModel = std::make_unique<GameModel>(myPlayerId, gameView.get(),
-                                          receptionQueue, sendingQueue);
-  audio = std::make_unique<Audio>();
+                                          receptionQueue, sendingQueue,
+                                          audio.get());
   gameController = std::make_unique<GameController>(gameModel.get(), audio.get());
   audio->startMusic();
 

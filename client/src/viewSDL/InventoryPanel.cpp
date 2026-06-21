@@ -3,6 +3,12 @@
 #include "Formulas.h"
 
 #include <string>
+
+bool SlotRect::hitTest(int px, int py) const {
+  return px >= x && px < x + w && py >= y && py < y + h;
+}
+
+
 #include <unordered_map>
 
 InventoryPanel::InventoryPanel(SDL2pp::Renderer &renderer,

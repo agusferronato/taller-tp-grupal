@@ -1,4 +1,5 @@
 #include "Formulas.h"
+#include "PlayerData.h"
 
 #include <algorithm>
 #include <cctype>
@@ -15,93 +16,40 @@ bool Formulas::isGuerrero(const PlayerClass playerClass) {
 }
 
 double Formulas::getFRazaVida(const Race race) {
-  switch (race) {
-  case Race::Human:
-    return 1;
-  case Race::Elf:
-    return 0.8;
-  case Race::Dwarf:
-    return 1.3;
-  case Race::Gnome:
-    return 1.1;
-  }
-  return 0;
+  return PlayerDataLoader::instance().getRaceData(race).vida;
 }
 
 double Formulas::getFRazaMana(const Race race) {
-  switch (race) {
-  case Race::Human:
-    return 1;
-  case Race::Elf:
-    return 1.3;
-  case Race::Dwarf:
-    return 0.7;
-  case Race::Gnome:
-    return 1.2;
-  default:
-    return 0;
-  }
+  return PlayerDataLoader::instance().getRaceData(race).mana;
 }
 
 double Formulas::getFRazaRecuperacion(const Race race) {
-  switch (race) {
-  case Race::Human:
-    return 1;
-  case Race::Elf:
-    return 1.2;
-  case Race::Dwarf:
-    return 0.8;
-  case Race::Gnome:
-    return 0.9;
-  default:
-    return 0;
-  }
+  return PlayerDataLoader::instance().getRaceData(race).recuperacion;
 }
 
 double Formulas::getFClaseVida(const PlayerClass playerClass) {
-  switch (playerClass) {
-  case PlayerClass::Warrior:
-    return 1.4;
-  case PlayerClass::Mage:
-    return 0.7;
-  case PlayerClass::Priest:
-    return 1.0;
-  case PlayerClass::Paladin:
-    return 1.2;
-  default:
-    return 0;
-  }
+  return PlayerDataLoader::instance().getClassData(playerClass).vida;
 }
 
 double Formulas::getFClaseMana(const PlayerClass playerClass) {
-  switch (playerClass) {
-  case PlayerClass::Warrior:
-    return 0.0;
-  case PlayerClass::Mage:
-    return 1.5;
-  case PlayerClass::Priest:
-    return 1.2;
-  case PlayerClass::Paladin:
-    return 0.8;
-  default:
-    return 1.0;
-  }
+  return PlayerDataLoader::instance().getClassData(playerClass).mana;
 }
 
 double Formulas::getFClaseMeditacion(const PlayerClass playerClass) {
-  switch (playerClass) {
-  case PlayerClass::Mage:
-    return 1.5;
-  case PlayerClass::Priest:
-    return 1.2;
-  case PlayerClass::Paladin:
-    return 0.5;
-  case PlayerClass::Warrior:
-    return 0.0;
-  default:
-    return 1;
-  }
+  return PlayerDataLoader::instance().getClassData(playerClass).meditacion;
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 uint32_t Formulas::calcularVidaMax(uint32_t constitucion, const Race race,
                                    const PlayerClass playerClass,
@@ -233,32 +181,14 @@ uint32_t Formulas::calcularOroPerdidoMuerte(uint32_t oroActual,
 
 std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
 Formulas::getRaceStats(const Race race) {
-  switch (race) {
-  case Race::Human:
-    return {10, 10, 10, 10};
-  case Race::Elf:
-    return {6, 13, 5, 16};
-  case Race::Dwarf:
-    return {13, 4, 16, 7};
-  case Race::Gnome:
-    return {7, 6, 14, 13};
-  default:
-    return {0, 0, 0, 0};
-  }
+  const auto& data = PlayerDataLoader::instance().getRaceData(race);
+  return {data.strengthRace, data.agilityRace, data.constitutionRace,
+          data.intelligenceRace};
 }
 
 std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
 Formulas::getPlayerClassStats(const PlayerClass playerClass) {
-  switch (playerClass) {
-  case PlayerClass::Mage:
-    return {3, 5, 5, 15};
-  case PlayerClass::Priest:
-    return {7, 7, 9, 10};
-  case PlayerClass::Paladin:
-    return {10, 6, 10, 8};
-  case PlayerClass::Warrior:
-    return {10, 8, 10, 3};
-  default:
-    return {0, 0, 0, 0};
-  }
+  const auto& data = PlayerDataLoader::instance().getClassData(playerClass);
+  return {data.strengthClass, data.agilityClass, data.constitutionClass,
+          data.intelligenceClass};
 }

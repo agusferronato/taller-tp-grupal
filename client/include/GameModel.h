@@ -16,6 +16,7 @@
 #include <string>
 #include <unordered_map>
 
+class Audio;
 class GameWindow;
 
 class GameModel {
@@ -33,11 +34,14 @@ private:
   bool chatActive = false;
 
   GameWindow *gameView;
+  Audio *audio;
+  uint32_t lastKnownLevel = 0;
 
 public:
   GameModel(uint32_t myPlayerID, GameWindow *gameView,
             Queue<ServerEventDTO> &receptionQueue,
-            Queue<ClientCommandDTO> &sendingQueue);
+            Queue<ClientCommandDTO> &sendingQueue,
+            Audio *audio);
   void updateStateFromServer();
 
 public:
@@ -49,7 +53,7 @@ public:
   void dropItem(uint8_t slot);
   void equipItem(uint8_t slot);
   void unequipItem(uint8_t equipSlot);
-  void sendCityEntityCommand(uint8_t cmdType, int16_t arg);
+  void sendCityEntityCommand(uint8_t cmdType, const std::string &arg);
 
   void createClan(const std::string &clanName);
   void joinClan(const std::string &clanName);
@@ -64,7 +68,9 @@ public:
   void addLocalChatMessage(std::string text, ChatMessageCategory category);
   void zoomOutCamera();
   void resetCameraZoom();
-  void sendCheat(CheatType cheat, uint32_t arg = 0);
+  void sendCheat(CheatType cheat, uint32_t arg = 0,
+                 const std::string &itemName = "");
+  void meditate();
 
   void handleLeftMouseClick(int mouseX, int mouseY);
   void handleRightMouseClick(int mouseX, int mouseY);

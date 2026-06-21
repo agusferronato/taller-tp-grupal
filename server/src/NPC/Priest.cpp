@@ -3,18 +3,29 @@
 
 #include "Priest.h"
 #include "Game.h"
+#include "ItemData.h"
 
-Priest::Priest(Position position)
+
+CityEntityType Priest::getCityEntityType() { return CityEntityType::Priest; }
+
+int Priest::getAncho() const { return PRIEST_WIDTH; }
+int Priest::getAlto() const { return PRIEST_HEIGHT; } 
+
+Priest::Priest(Position position, const EntityStoreData& storeData)
     : CityEntity(position),
-      store(
-          {{{6, {80, 40, 10}},
-            {7, {150, 75, 5}},
-            {8, {200, 100, 8}},
-            {9, {500, 250, 3}},
-            {18, {30, 15, 20}},
-            {19, {50, 25, 15}}}},
-          {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-           19}) {}
+      store(buildStoreItems(storeData.items), storeData.itemsNotForTrading) {}
+
+
+std::map<uint8_t, ItemInStore> Priest::buildStoreItems(const std::map<uint8_t, StoreItemEntry>& entries) {
+    std::map<uint8_t, ItemInStore> items;
+    for (const auto& [id, entry] : entries) {
+        const PriceData& price = ItemData::instance().getPriceData(id);
+        items[id] = {price.buyPrice, price.sellPrice, entry.stock};
+    }
+    return items;
+}
+
+
 
 void Priest::heal(Game& game, Character& character) {
     character.heal(character.getMaxHp());
@@ -40,7 +51,7 @@ void Priest::buyItem(Game& game, Character& character, uint8_t itemId) {
     try {
         store.buyItemWith(character, itemId);
         game.sendSystemMessage(character.getId(),
-            "Has comprado " + ITEM_TABLE[itemId].name + " por " +
+            "Has comprado " + ItemData::instance().getItemName(itemId) + " por " +
             std::to_string(getStoreItem(itemId).purchase_price) + " de oro.");
         game.sendInventoryUpdate(character.getId());
     } catch (const ItemNotAvailable& e) {
@@ -59,7 +70,7 @@ void Priest::listItems(Game& game, Character& character) {
     }
     std::string msg = "Objetos del sacerdote: \n";
     for (auto& [id, item] : items) {
-        msg += "    (# " + std::to_string(id) + ") " + ITEM_TABLE[id].name 
+        msg += "    (# " + std::to_string(id) + ") " + ItemData::instance().getItemName(id)
             + " (x" + std::to_string(item.stock) + "). Precio de compra: " 
             + std::to_string(item.purchase_price) + " \n";
     }

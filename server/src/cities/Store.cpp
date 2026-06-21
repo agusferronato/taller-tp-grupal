@@ -1,6 +1,23 @@
 #include "Store.h"
 #include "Character.h"
 
+ItemInStore getStoreItem(uint8_t itemId) {
+  const PriceData &price = ItemData::instance().getPriceData(itemId);
+  return {price.buyPrice, price.sellPrice, 0};
+}
+
+Store::Store(std::map<uint8_t, ItemInStore> items,
+             std::set<uint8_t> itemsNotAvailablesForTrading)
+    : items(std::move(items)),
+      itemsNotAvailablesForTrading(std::move(itemsNotAvailablesForTrading)) {}
+
+const std::map<uint8_t, ItemInStore> &Store::getItems() const { return items; }
+
+bool Store::isAvailableForTrading(uint8_t item) {
+  auto it = itemsNotAvailablesForTrading.find(item);
+  return it == itemsNotAvailablesForTrading.end();
+}
+
 void Store::buyItemWith(Character& character, uint8_t item) {
     auto it = items.find(item);
     if (it == items.end())

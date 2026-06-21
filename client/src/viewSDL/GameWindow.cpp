@@ -239,7 +239,7 @@ void GameWindow::renderWorld(unsigned int it) {
   for (size_t i = 0; i < tilesToRender.size(); i++) {
     auto &priority = tilesToRender[i];
 
-    for (auto &[pair, items] : priority) {
+    for (auto &[pair, info] : priority) {
       int maxRow = pair.first;
       int yMax = (maxRow - maxSize / 2 + 1) * gridSize;
 
@@ -251,22 +251,14 @@ void GameWindow::renderWorld(unsigned int it) {
         }
       }
 
-      for (auto &item : items) {
-        SDL2pp::Rect dstRect = camera.toScreen(
-            (item.i - maxSize / 2) * gridSize,
-            (item.j - maxSize / 2) * gridSize, gridSize, gridSize);
+      SDL2pp::Rect dstRect = camera.toScreen(
+          (info.origin_i - maxSize / 2) * gridSize,
+          (info.origin_j - maxSize / 2) * gridSize,
+          info.width_px, info.height_px);
 
-        if (!camera.isVisibleOnScreen(dstRect))
-          continue;
-
-        SDL2pp::Rect srcRect = {
-            item.x_start,
-            item.y_start,
-            item.x_end - item.x_start,
-            item.y_end - item.y_start,
-        };
-
-        renderer->Copy(textureMapper->getTexture(item.texture_id), srcRect,
+      if (camera.isVisibleOnScreen(dstRect)) {
+        SDL2pp::Rect srcRect = {0, 0, info.width_px, info.height_px};
+        renderer->Copy(textureMapper->getTexture(info.texture_id), srcRect,
                        dstRect);
       }
     }

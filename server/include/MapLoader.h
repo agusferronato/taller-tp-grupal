@@ -9,9 +9,6 @@
 
 #include "Biome.h"
 #include "City.h"
-#include "Desert.h"
-#include "Dungeon.h"
-#include "Forest.h"
 #include "MapData.h"
 
 class MapLoader {
