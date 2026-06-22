@@ -43,7 +43,7 @@ void CombatSystem::tryAttack(NPC &npc, Character &target) {
     target.stopMeditating();
     senderQueueMonitor.sendToClient(
         target.getId(), ChatMessageEventDTO{ChatMessageCategory::System,
-                                            "Sistema", "dejaste de meditar"});
+                                            "Sistema", "Dejaste de meditar."});
   }
 
   if (target.tryParry()) {
@@ -94,10 +94,12 @@ void CombatSystem::playerAttackPlayer(Character &attacker, Character &target) {
     return;
   }
 
-  target.stopMeditating();
-  senderQueueMonitor.sendToClient(
-      target.getId(), ChatMessageEventDTO{ChatMessageCategory::System,
-                                          "Sistema", "dejaste de meditar"});
+  if (target.isMeditating()) {
+    target.stopMeditating();
+    senderQueueMonitor.sendToClient(
+        target.getId(), ChatMessageEventDTO{ChatMessageCategory::System,
+                                            "Sistema", "Dejaste de meditar."});
+  }
 
   uint32_t damage = calculateDamage(attacker);
   bool critical = (damage != attacker.getDamage());
@@ -362,7 +364,7 @@ void CombatSystem::killPlayer(Character &dyingPlayer, bool dropExcessGold) {
     senderQueueMonitor.sendToClient(
         dyingPlayer.getId(),
         ChatMessageEventDTO{ChatMessageCategory::System, "Sistema",
-                            "dejaste de meditar"});
+                            "Dejaste de meditar."});
   }
 
   if (dropExcessGold) {
