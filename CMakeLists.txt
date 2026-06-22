@@ -64,75 +64,29 @@ configure_file(
   COPYONLY
 )
 
-# HEY!! TODO XXX: you need to install some runtime and dev libraries *before*
-# compiling the client/editor code.
-#
-# In xubuntu 24.04 these are:
-#
-# sudo apt-get install libopus-dev libopusfile-dev libxmp-dev libfluidsynth-dev fluidsynth libwavpack1 libwavpack-dev libfreetype-dev wavpack
-#
-
-# Install libSDL2 and libSDL2pp (for client or editor)
-# HEY!! TODO XXX: add more dependendies (either for client, server or editor)
 if(TALLER_CLIENT OR TALLER_EDITOR)
     find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
-    include(FetchContent)
-    FetchContent_Declare(
-        SDL2
-        GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-        GIT_TAG release-2.30.8
-        GIT_SHALLOW TRUE
-        GIT_PROGRESS TRUE
-        OVERRIDE_FIND_PACKAGE
-    )
+    find_package(SDL2 REQUIRED)
+    find_package(SDL2_image REQUIRED)
+    find_package(SDL2_mixer REQUIRED)
+    find_package(SDL2_ttf REQUIRED)
+    find_package(SDL2pp QUIET)
 
-    FetchContent_Declare(
-        SDL2_image
-        GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
-        GIT_TAG release-2.8.2
-        GIT_SHALLOW TRUE
-        GIT_PROGRESS TRUE
-        OVERRIDE_FIND_PACKAGE
-    )
+    if(NOT SDL2pp_FOUND)
+        include(FetchContent)
 
-    FetchContent_Declare(
-        SDL2_mixer
-        GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
-        GIT_TAG release-2.8.0
-        GIT_SHALLOW TRUE
-        GIT_PROGRESS TRUE
-        OVERRIDE_FIND_PACKAGE
-    )
+        FetchContent_Declare(
+            libSDL2pp
+            URL https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
+            DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+        )
 
-    FetchContent_Declare(
-        SDL2_ttf
-        GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
-        GIT_TAG release-2.22.0
-        GIT_SHALLOW TRUE
-        GIT_PROGRESS TRUE
-        OVERRIDE_FIND_PACKAGE
-    )
+        set(SDL2PP_WITH_IMAGE ON CACHE BOOL "" FORCE)
+        set(SDL2PP_WITH_TTF   ON CACHE BOOL "" FORCE)
+        set(SDL2PP_WITH_MIXER ON CACHE BOOL "" FORCE)
 
-    FetchContent_Declare(
-        libSDL2pp
-        OVERRIDE_FIND_PACKAGE
-        URL https://github.com/libSDL2pp/libSDL2pp/archive/cc198c9a5657048bee67ece82de620b2d5661084.zip
-    )
-
-    FetchContent_Declare(
-        tomlplusplus
-        GIT_REPOSITORY https://github.com/marzer/tomlplusplus.git
-        GIT_TAG        v3.4.0
-        GIT_SHALLOW    TRUE
-        GIT_PROGRESS   TRUE
-    )
-    FetchContent_MakeAvailable(tomlplusplus)
-
-    set(SDL2PP_WITH_IMAGE ON CACHE BOOL "" FORCE)
-    set(SDL2PP_WITH_TTF   ON CACHE BOOL "" FORCE)
-    set(SDL2PP_WITH_MIXER ON CACHE BOOL "" FORCE)
-
-    FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf libSDL2pp)
+        FetchContent_MakeAvailable(libSDL2pp)
+    endif()
 endif()
 
 # Program section
