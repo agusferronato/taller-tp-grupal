@@ -39,8 +39,7 @@ void CombatSystem::tryAttack(NPC &npc, Character &target) {
   if (!npc.collidesWith(target) || !npc.reachesAttackCounter()) {
     return;
   }
-  if (target.isMeditating()) {
-    target.stopMeditating();
+  if (target.stopMeditating()) {
     senderQueueMonitor.sendToClient(
         target.getId(), ChatMessageEventDTO{ChatMessageCategory::System,
                                             "Sistema", "dejaste de meditar"});
@@ -94,10 +93,11 @@ void CombatSystem::playerAttackPlayer(Character &attacker, Character &target) {
     return;
   }
 
-  target.stopMeditating();
-  senderQueueMonitor.sendToClient(
-      target.getId(), ChatMessageEventDTO{ChatMessageCategory::System,
-                                          "Sistema", "dejaste de meditar"});
+  if (target.stopMeditating()) {
+    senderQueueMonitor.sendToClient(
+        target.getId(), ChatMessageEventDTO{ChatMessageCategory::System,
+                                            "Sistema", "dejaste de meditar"});
+  }
 
   uint32_t damage = calculateDamage(attacker);
   bool critical = (damage != attacker.getDamage());
@@ -249,6 +249,18 @@ bool CombatSystem::validAttack(Character &attacker, Character &target) {
     return false;
   }
 
+  if (attacker.isDead()) {
+    senderQueueMonitor.sendToClient(
+        attacker.getId(),
+        ChatMessageEventDTO{ChatMessageCategory::Combat, "Sistema",
+                            "No podes atacar estando muerto."});
+    return false;
+  }
+
+  if (target.isDead()) {
+    return false;
+  }
+
   if (attacker.isNewbie()) {
     senderQueueMonitor.sendToClient(
         attacker.getId(),
@@ -293,13 +305,6 @@ bool CombatSystem::validAttack(Character &attacker, Character &target) {
       return false;
     }
   }
-  if (attacker.isDead() || target.isDead()) {
-    senderQueueMonitor.sendToClient(
-        attacker.getId(),
-        ChatMessageEventDTO{ChatMessageCategory::Combat, "Sistema",
-                            "No podes atacar o ser atacado estando muerto."});
-    return false;
-  }
   return true;
 }
 
@@ -316,7 +321,7 @@ bool CombatSystem::validAttackToNpc(Character &attacker) {
 
 Character *CombatSystem::findPlayerByCoordinates(int16_t x, int16_t y) {
   for (auto &[pid, player] : playerService.getPlayers()) {
-    if (player->colisionaCon(x, y, 16, 16)) {
+    if (!player->isDead() && player->colisionaCon(x, y, 16, 16)) {
       return player.get();
     }
   }
@@ -357,8 +362,7 @@ bool CombatSystem::consumeManaForAttack(Character &attacker) {
 }
 
 void CombatSystem::killPlayer(Character &dyingPlayer, bool dropExcessGold) {
-  if (dyingPlayer.isMeditating()) {
-    dyingPlayer.stopMeditating();
+  if (dyingPlayer.stopMeditating()) {
     senderQueueMonitor.sendToClient(
         dyingPlayer.getId(),
         ChatMessageEventDTO{ChatMessageCategory::System, "Sistema",

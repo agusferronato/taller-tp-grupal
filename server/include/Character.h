@@ -123,7 +123,7 @@ public:
 
   bool isMeditating() const;
   void startMeditating();
-  void stopMeditating();
+  bool stopMeditating();
 
 private:
   uint32_t id;

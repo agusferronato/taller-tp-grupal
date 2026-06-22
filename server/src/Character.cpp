@@ -323,6 +323,12 @@ bool Character::useMana(uint32_t amount) {
 
 bool Character::isMeditating() const { return timeSinceMeditating.has_value(); }
 
-void Character::stopMeditating() { timeSinceMeditating = std::nullopt; }
+bool Character::stopMeditating() {
+  if (!isMeditating()) {
+    return false;
+  }
+  timeSinceMeditating = std::nullopt;
+  return true;
+}
 
 void Character::addMana(uint32_t amount) { player.addMana(amount); }
