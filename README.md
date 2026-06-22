@@ -20,40 +20,110 @@ https://youtu.be/IMtriMDLMLw
 <details> <summary> <b> Para saber sobre el proceso de instalación y requisitos del sistema clic aquí</b> </summary>
 
 
-## Compilación
-Ubicarse en la raiz del proyecto y ejecutar:
+## Instalación
+
+El instalador está pensado para Ubuntu 24.04. Ubicarse en la raíz del
+proyecto y ejecutar:
+
 ```bash
-# Instalar dependencias
+chmod +x install.sh
 ./install.sh
-# Configurar (solo la primera vez o si cambia CMakeLists.txt)
-mkdir -p build && cmake -S . -B build/ -G Ninja
-# Compilar
-cmake --build build -j$(nproc)
 ```
 
-## Ejecución
-Moverse al **directorio de build** y ejecutar
+El script instala dependencias con `apt-get`, por lo que puede pedir
+contraseña de `sudo`. Luego configura el proyecto con CMake/Ninja en
+`build/`, compila y corre los tests automaticamente.
+
+Si los tests pasan, instala:
+
+-   Wrappers ejecutables:
+    -   `~/.local/bin/taller_client`
+    -   `~/.local/bin/taller_server`
+    -   `~/.local/bin/taller_editor`
+-   Binarios reales: `~/.local/share/argentum/bin/`
+-   Assets, mapas y archivos runtime: `~/.local/share/argentum/`
+-   Configuraciones: `~/.config/argentum/`
+
+Los wrappers exportan `ARGENTUM_DATA_DIR` y `ARGENTUM_CONFIG_DIR`, hacen
+`cd "$ARGENTUM_DATA_DIR"` y ejecutan el binario real preservando los
+argumentos. Por eso los programas instalados se pueden ejecutar desde
+cualquier directorio.
+
+
+## PATH
+
+Para ejecutar los wrappers, `~/.local/bin` debe estar en `PATH`. Si el
+sistema no encuentra `taller_client`, `taller_server` o `taller_editor`,
+ejecutar:
+
 ```bash
-# Editor de mapas (crear mapa nuevo de 0)
-./taller_editor
-# Editor de mapas (con mapa preexistente)
-./taller_editor <ruta_del_mapa>
-# Servidor (requiere un mapa)
-./taller_server <puerto> <ruta_del_mapa>
-# Cliente gráfico
-./taller_client <host> <puerto>
-# Tests unitarios
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+Para dejarlo permanente:
+
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
+source "$HOME/.bashrc"
+```
+
+## Ejecución instalada
+
+Después de instalar, no hace falta moverse al directorio `build/` ni a
+`~/.local/share/argentum`. La forma recomendada es:
+
+```bash
+taller_server 8080 maps/mapa_final.toml
+taller_client localhost 8080
+taller_editor maps/mapa_final.toml
+```
+
+Las rutas relativas, como `maps/mapa_final.toml`, se resuelven desde
+`~/.local/share/argentum`, porque el wrapper cambia automáticamente a
+ese directorio antes de ejecutar el binario real.
+
+Si no se hace por default, se recomienda forzar el uso de X11 sobre
+Wayland, ya que este último presenta leaks y otros problemas
+relacionados con SDL/Qt. Para ello, se puede forzar escribiendo
+`QT_QPA_PLATFORM=xcb` para Qt y `SDL_VIDEODRIVER=x11` para SDL antes del
+comando:
+
+```bash
+QT_QPA_PLATFORM=xcb SDL_VIDEODRIVER=x11 taller_client localhost 8080
+QT_QPA_PLATFORM=xcb SDL_VIDEODRIVER=x11 taller_editor maps/mapa_final.toml
+```
+
+En caso de correr Valgrind, se provee un archivo de supresiones en la
+raíz del proyecto, llamado `valgrind.supp`. De esta manera se suprimen
+reportes de memoria conocidos provenientes de Qt, SDL y bibliotecas
+relacionadas.
+
+## Desarrollo local
+
+Para desarrollo, también se puede compilar manualmente desde la raíz del
+repositorio:
+
+```bash
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+cmake --build build
+ctest --test-dir build --output-on-failure
+```
+
+En este modo los binarios quedan en `build/` y la ejecución puede
+depender de que CMake haya copiado assets y configs al layout de build:
+
+```bash
+cd build
+./taller_server 8080 ../mapa_final.toml
+./taller_client localhost 8080
+./taller_editor ../mapa_final.toml
 ./taller_tests
 ```
-Por ejemplo, desde el directorio build:
-`./taller_server 8080 map.toml` para crear el server con el mapa de map.toml.
-`./taller_client localhost 8080` para conectarse al server creado.
 
-Si no se hace por default, se recomienda forzar el uso de X11 sobre Wayland, ya que este ultimo presenta leaks y otros problemas relacionados con SDL/Qt. Para ello, se puede forzar escribiendo `QT_QPA_PLATFORM=xcb` para QT y `SDL_VIDEODRIVER=x11` para SDL, antes del comando. Por ejemplo `QT_QPA_PLATFORM=xcb SDL_VIDEODRIVER=x11 ./taller_editor`.
-
-En caso de correr Valgrind, se provee un archivo de supresiones en la raiz del proyecto, llamado `valgrind.supp`. De esta manera se suprimen reportes de memoria conocidos provenientes de Qt, SDL y bibliotecas relacionadas.
-
-Adicionalmente, tambien se provee un mapa de prueba en la raiz del proyecto, hecho con el editor. Para ejecutar el server con este mapa, correr `./taller_server 8080 ../mapa_de_prueba.toml`
+Adicionalmente, se proveen mapas de prueba en la raíz del proyecto. El
+instalador copia `map.toml`, `mapa_de_prueba.toml` si existe,
+`mapa_final.toml` si existe y `editor/map.toml` dentro de
+`~/.local/share/argentum/maps/`.
 
 # Requisitos del sistema
 
@@ -73,7 +143,7 @@ especificaciones técnicas:
 
 **Bibliotecas del Sistema**\
 El sistema utiliza las siguientes librerías, las cuales serán
-gestionadas y descargadas de forma automática por el Cmake:
+instaladas por `install.sh` mediante `apt-get` y resueltas por CMake:
 
 -   **SDL2 (v2.0+):** Motor principal de renderizado empleado por el
     *Cliente*.
@@ -83,9 +153,11 @@ gestionadas y descargadas de forma automática por el Cmake:
     respectivamente.
 
 -   **SDL2pp:** Wrapper de C++ para una gestión de recursos orientada al
-    paradigma RAII *(utilizado en GameWindow y PlayerEntity)*.
+    paradigma RAII *(utilizado en GameWindow y PlayerEntity)*. CMake lo
+    busca en el sistema y puede descargarlo como fallback si no está
+    instalado.
 
--   **Qt6 / Qt5:** Requisito exclusivo y obligatorio para la ejecución
+-   **Qt6:** Requisito exclusivo y obligatorio para la ejecución
     del *Editor Gráfico*.
 
 -   **Toml++:** Biblioteca para el procesamiento eficiente de los
@@ -462,8 +534,9 @@ La ventana se divide en tres áreas:
 
 ## Uso básico
 
-1.  Ejecutar `./taller_editor` (o `./taller_editor mapa.toml` para
-    cargar uno existente).
+1.  Ejecutar `taller_editor maps/mapa_final.toml` después de instalar.
+    En modo desarrollo, desde `build/`, se puede usar
+    `./taller_editor ../mapa_final.toml`.
 
 2.  Seleccionar una textura del panel derecho y hacer clic en la grilla
     para colocarla.
@@ -498,7 +571,7 @@ antes de lanzar el binario:
 
 ``` {.bash language="bash"}
 export QT_QPA_PLATFORM=xcb
-./taller_editor
+taller_editor maps/mapa_final.toml
 ```
 
 ## El cursor del mouse no es visible en el Cliente
@@ -510,5 +583,5 @@ Wayland ejecutando:
 
 ``` {.bash language="bash"}
 export SDL_VIDEODRIVER=wayland
-./taller_cliente
+taller_client localhost 8080
 ```

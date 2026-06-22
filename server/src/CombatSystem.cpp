@@ -251,6 +251,18 @@ bool CombatSystem::validAttack(Character &attacker, Character &target) {
     return false;
   }
 
+  if (attacker.isDead()) {
+    senderQueueMonitor.sendToClient(
+        attacker.getId(),
+        ChatMessageEventDTO{ChatMessageCategory::Combat, "Sistema",
+                            "No podes atacar estando muerto."});
+    return false;
+  }
+
+  if (target.isDead()) {
+    return false;
+  }
+
   if (attacker.isNewbie()) {
     senderQueueMonitor.sendToClient(
         attacker.getId(),
@@ -295,13 +307,6 @@ bool CombatSystem::validAttack(Character &attacker, Character &target) {
       return false;
     }
   }
-  if (attacker.isDead() || target.isDead()) {
-    senderQueueMonitor.sendToClient(
-        attacker.getId(),
-        ChatMessageEventDTO{ChatMessageCategory::Combat, "Sistema",
-                            "No podes atacar o ser atacado estando muerto."});
-    return false;
-  }
   return true;
 }
 
@@ -318,7 +323,7 @@ bool CombatSystem::validAttackToNpc(Character &attacker) {
 
 Character *CombatSystem::findPlayerByCoordinates(int16_t x, int16_t y) {
   for (auto &[pid, player] : playerService.getPlayers()) {
-    if (player->colisionaCon(x, y, 16, 16)) {
+    if (!player->isDead() && player->colisionaCon(x, y, 16, 16)) {
       return player.get();
     }
   }
