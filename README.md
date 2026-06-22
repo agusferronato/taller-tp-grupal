@@ -4,6 +4,8 @@
   <em>Taller de Programación I (75.42) — FIUBA</em>
 </center>
 
+## Video Promocional 
+https://youtu.be/IMtriMDLMLw
 
 
 ## Integrantes
