@@ -194,6 +194,19 @@ void PlayerService::sendPlayerNewConnection(Character &player) {
                                     PlayerListEventDTO{std::move(playerList)});
   }
 
+  for (auto &[pid, info] : players) {
+    if (pid == player.getId())
+      continue;
+    senderQueueMonitor.sendToClient(
+        player.getId(),
+        InventoryUpdateEventDTO{
+            pid, info->getInventoryItems(),
+            info->getEquippedWeapon().getID(),
+            info->getEquippedArmor().getID(),
+            info->getEquippedHelmet().getID(),
+            info->getEquippedShield().getID()});
+  }
+
   for (auto &npc : npcs) {
     senderQueueMonitor.sendToClient(
         player.getId(),
