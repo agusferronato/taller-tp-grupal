@@ -174,9 +174,9 @@ cat <<EOF
 Install complete.
 
 Commands:
-  taller_server 8080 maps/map.toml
+  taller_server 8080 maps/mapa_final.toml
   taller_client localhost 8080
-  taller_editor maps/map.toml
+  taller_editor maps/mapa_final.toml
 
 Installed in:
   binaries: ${SHARE_BIN_DIR}
