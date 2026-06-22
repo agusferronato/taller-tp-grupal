@@ -200,10 +200,8 @@ void PlayerService::sendPlayerNewConnection(Character &player) {
     senderQueueMonitor.sendToClient(
         player.getId(),
         InventoryUpdateEventDTO{
-            pid, info->getInventoryItems(),
-            info->getEquippedWeapon().getID(),
-            info->getEquippedArmor().getID(),
-            info->getEquippedHelmet().getID(),
+            pid, info->getInventoryItems(), info->getEquippedWeapon().getID(),
+            info->getEquippedArmor().getID(), info->getEquippedHelmet().getID(),
             info->getEquippedShield().getID()});
   }
 
