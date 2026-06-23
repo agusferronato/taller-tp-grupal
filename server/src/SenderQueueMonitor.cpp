@@ -22,9 +22,9 @@ void SenderQueueMonitor::deleteSenderQueue(uint32_t clientId) {
     return;
 
   it->second->close();
+  delete it->second;
   senderQueues.erase(clientId);
   queuesPendingMessages.erase(clientId);
-  delete it->second;
 }
 
 void SenderQueueMonitor::broadCast(std::list<ServerEventDTO> &messagesToSend) {
