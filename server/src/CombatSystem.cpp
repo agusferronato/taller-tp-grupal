@@ -231,6 +231,16 @@ void CombatSystem::playerAttackNPC(Character &attacker, NPC &target) {
   messagesToSend.push_back(AttackReceivedEventDTO{
       EntityType::Npc, target.getId(), weapon.effectType()});
 
+  senderQueueMonitor.sendToClient(
+      attacker.getId(),
+      ChatMessageEventDTO{ChatMessageCategory::Combat, "Sistema",
+                          "Atacaste a un " + target.getName() +
+                              " y le hiciste " + std::to_string(damage) +
+                              " de daño!" +
+                              clanBonusMessage("ataque",
+                                               attackerNearbyClanMembers,
+                                               attackerAttackBonusPercent)});
+
   uint32_t xp = Formulas::calcularExperiencia(damage, attacker.getLevel(),
                                               target.getLevel());
   attacker.gainExperience(xp);
@@ -278,17 +288,6 @@ void CombatSystem::playerAttackNPC(Character &attacker, NPC &target) {
       }
       npcs.erase(npcIt);
     }
-
-  } else {
-    senderQueueMonitor.sendToClient(
-        attacker.getId(),
-        ChatMessageEventDTO{ChatMessageCategory::Combat, "Sistema",
-                            "Atacaste a un " + target.getName() +
-                                " y le hiciste " + std::to_string(damage) +
-                                " de daño!" +
-                                clanBonusMessage("ataque",
-                                                 attackerNearbyClanMembers,
-                                                 attackerAttackBonusPercent)});
   }
   messagesToSend.push_back(attacker.toPlayerInfoEvent());
 }
