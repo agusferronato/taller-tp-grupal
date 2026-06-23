@@ -33,28 +33,31 @@ bool City::contains(int pixelX, int pixelY, int gridSize, int maxSize) const {
 void City::createEntities(Game &game, const CityEntitiesStoreData &storeData) {
   std::vector<Position> occupiedPositions;
   banker = std::make_unique<Banker>(
-      getRandomPositionInCity(game, occupiedPositions));
+      getRandomPositionInCity(game, occupiedPositions, BANKER_WIDTH, BANKER_HEIGHT));
   occupiedPositions.push_back(banker->getPosition());
   priest =
-      std::make_unique<Priest>(getRandomPositionInCity(game, occupiedPositions),
+      std::make_unique<Priest>(getRandomPositionInCity(game, occupiedPositions,
+                                                       PRIEST_WIDTH, PRIEST_HEIGHT),
                                storeData.getPriestData());
   occupiedPositions.push_back(priest->getPosition());
   trader =
-      std::make_unique<Trader>(getRandomPositionInCity(game, occupiedPositions),
+      std::make_unique<Trader>(getRandomPositionInCity(game, occupiedPositions,
+                                                       TRADER_WIDTH, TRADER_HEIGHT),
                                storeData.getTraderData());
   entities = {banker.get(), priest.get(), trader.get()};
 }
 
 Position
 City::getRandomPositionInCity(Game &game,
-                              const std::vector<Position> &existingPositions) {
+                              const std::vector<Position> &existingPositions,
+                              int width, int height) {
   Position pos = getRandomPositionBetween(init, end);
-  while (game.thereIsACollidableEntityAt(pos)) {
+  while (game.thereIsACollidableEntityAt(pos, width, height)) {
     pos = getRandomPositionBetween(init, end);
   }
   for (const auto &existing : existingPositions) {
     if (pos.row == existing.row && pos.column == existing.column) {
-      return getRandomPositionInCity(game, existingPositions);
+      return getRandomPositionInCity(game, existingPositions, width, height);
     }
   }
   return pos;
