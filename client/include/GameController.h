@@ -1,0 +1,30 @@
+#ifndef GAMECONTROLLER_H
+#define GAMECONTROLLER_H
+
+#include "Audio.h"
+#include "Direction.h"
+#include "GameModel.h"
+#include <SDL2pp/SDL2pp.hh>
+#include <memory>
+#include <optional>
+
+class GameController {
+
+private:
+  Audio *audio;
+  GameModel *gameModel;
+  SDL_Keycode pressedLastMovementKey{SDLK_UNKNOWN};
+
+public:
+  explicit GameController(GameModel *gameModel, Audio *audio);
+  void update();
+
+private:
+  void handleEvent(const SDL_Event &event);
+  void handleKeyDown(const SDL_Keycode &key);
+  void handleKeyUp(const SDL_Keycode &key);
+  std::optional<Direction> getDirectionFromKey(const SDL_Keycode &key) const;
+  void handleMouseDown(const SDL_MouseButtonEvent &buttonEvent);
+};
+
+#endif

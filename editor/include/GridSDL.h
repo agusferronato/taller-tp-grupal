@@ -1,0 +1,88 @@
+#ifndef GRID_SDL_H
+#define GRID_SDL_H
+
+#include "Action.h"
+#include "Biome.h"
+#include "Camera.h"
+#include "TextureMap.h"
+#include <QGuiApplication>
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QPaintEngine>
+#include <QPushButton>
+#include <QResizeEvent>
+#include <QTimer>
+#include <QWidget>
+#include <QWindow>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2pp/SDL2pp.hh>
+#include <memory>
+#include <string>
+
+class Grid;
+
+class GridSDL : public QWidget {
+  Q_OBJECT
+
+private:
+  QTimer timer;
+
+  QPushButton *moveBtn{nullptr};
+  QPushButton *deleteBtn{nullptr};
+
+  std::optional<SDL2pp::SDL> sdl;
+  std::optional<SDL2pp::Window> window;
+  std::optional<SDL2pp::Renderer> renderer;
+  SDL2pp::SDLTTF ttf;
+  std::optional<SDL2pp::SDLImage> sdlimage;
+  int x{0}, y{0}, mouse_x{0}, mouse_y{0};
+  Action actionToPerform{Action::SelectTexture};
+  Biome biomeSelected;
+
+  bool mouseIsBeingPressed{false};
+  std::unique_ptr<TextureMap> textureMap;
+  std::unique_ptr<Grid> grid;
+  std::unique_ptr<Camera> camera;
+
+  int texture_id{0};
+
+  std::string initMapPath;
+
+public:
+  explicit GridSDL(QWidget *parent = nullptr);
+  ~GridSDL() override;
+
+  void initSDL();
+  void loadMapOnInit(const std::string &mapPath);
+
+  void saveMap(const std::string &path);
+
+private:
+  void updateFloatingButtonsPos();
+  void hideFloatingButtons();
+
+signals:
+  void mapSavedSuccesfully(const std::string &path);
+
+private slots:
+  void renderLoop();
+
+public slots:
+  void setInteractionMode();
+  void changeCollidableCellsVisibility();
+  void setTextureID(int texture_id);
+  void setBiome(Biome biome);
+
+protected:
+  QPaintEngine *paintEngine() const override { return nullptr; }
+  void keyPressEvent(QKeyEvent *event) override;
+  void showEvent(QShowEvent *event) override;
+
+  void mouseMoveEvent(QMouseEvent *event) override;
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseReleaseEvent(QMouseEvent *event) override;
+  void resizeEvent(QResizeEvent *event) override;
+};
+
+#endif

@@ -1,0 +1,10423 @@
+COMMON_GROUND_TEXTURE_ID = 0
+GRID_SIZE = 32
+MAX_SIZE = 100
+
+[[biomes]]
+i_end = 95
+i_init = 55
+j_end = 95
+j_init = 71
+type = 'Dungeon'
+
+[[biomes]]
+i_end = 99
+i_init = 38
+j_end = 16
+j_init = 0
+type = 'Desert'
+
+[[biomes]]
+i_end = 22
+i_init = 0
+j_end = 57
+j_init = 18
+type = 'Forest'
+
+[[cities]]
+i_end = 81
+i_init = 45
+j_end = 46
+j_init = 39
+type = 'City'
+
+[[collidable_cells]]
+i = -1
+j = 0
+
+[[collidable_cells]]
+i = -1
+j = 1
+
+[[collidable_cells]]
+i = -1
+j = 2
+
+[[collidable_cells]]
+i = -1
+j = 3
+
+[[collidable_cells]]
+i = -1
+j = 4
+
+[[collidable_cells]]
+i = -1
+j = 5
+
+[[collidable_cells]]
+i = -1
+j = 6
+
+[[collidable_cells]]
+i = -1
+j = 7
+
+[[collidable_cells]]
+i = -1
+j = 8
+
+[[collidable_cells]]
+i = -1
+j = 9
+
+[[collidable_cells]]
+i = -1
+j = 10
+
+[[collidable_cells]]
+i = -1
+j = 11
+
+[[collidable_cells]]
+i = -1
+j = 12
+
+[[collidable_cells]]
+i = -1
+j = 13
+
+[[collidable_cells]]
+i = -1
+j = 14
+
+[[collidable_cells]]
+i = -1
+j = 15
+
+[[collidable_cells]]
+i = -1
+j = 16
+
+[[collidable_cells]]
+i = -1
+j = 17
+
+[[collidable_cells]]
+i = -1
+j = 18
+
+[[collidable_cells]]
+i = -1
+j = 19
+
+[[collidable_cells]]
+i = -1
+j = 20
+
+[[collidable_cells]]
+i = -1
+j = 21
+
+[[collidable_cells]]
+i = -1
+j = 22
+
+[[collidable_cells]]
+i = -1
+j = 23
+
+[[collidable_cells]]
+i = -1
+j = 24
+
+[[collidable_cells]]
+i = -1
+j = 25
+
+[[collidable_cells]]
+i = -1
+j = 26
+
+[[collidable_cells]]
+i = -1
+j = 27
+
+[[collidable_cells]]
+i = -1
+j = 28
+
+[[collidable_cells]]
+i = -1
+j = 29
+
+[[collidable_cells]]
+i = -1
+j = 30
+
+[[collidable_cells]]
+i = -1
+j = 31
+
+[[collidable_cells]]
+i = -1
+j = 32
+
+[[collidable_cells]]
+i = -1
+j = 33
+
+[[collidable_cells]]
+i = -1
+j = 34
+
+[[collidable_cells]]
+i = -1
+j = 35
+
+[[collidable_cells]]
+i = -1
+j = 36
+
+[[collidable_cells]]
+i = -1
+j = 37
+
+[[collidable_cells]]
+i = -1
+j = 38
+
+[[collidable_cells]]
+i = -1
+j = 39
+
+[[collidable_cells]]
+i = -1
+j = 40
+
+[[collidable_cells]]
+i = -1
+j = 41
+
+[[collidable_cells]]
+i = -1
+j = 42
+
+[[collidable_cells]]
+i = -1
+j = 43
+
+[[collidable_cells]]
+i = -1
+j = 44
+
+[[collidable_cells]]
+i = -1
+j = 45
+
+[[collidable_cells]]
+i = -1
+j = 46
+
+[[collidable_cells]]
+i = -1
+j = 47
+
+[[collidable_cells]]
+i = -1
+j = 48
+
+[[collidable_cells]]
+i = -1
+j = 49
+
+[[collidable_cells]]
+i = -1
+j = 50
+
+[[collidable_cells]]
+i = -1
+j = 51
+
+[[collidable_cells]]
+i = -1
+j = 52
+
+[[collidable_cells]]
+i = -1
+j = 53
+
+[[collidable_cells]]
+i = -1
+j = 54
+
+[[collidable_cells]]
+i = -1
+j = 55
+
+[[collidable_cells]]
+i = -1
+j = 56
+
+[[collidable_cells]]
+i = -1
+j = 57
+
+[[collidable_cells]]
+i = -1
+j = 58
+
+[[collidable_cells]]
+i = -1
+j = 59
+
+[[collidable_cells]]
+i = -1
+j = 60
+
+[[collidable_cells]]
+i = -1
+j = 61
+
+[[collidable_cells]]
+i = -1
+j = 62
+
+[[collidable_cells]]
+i = -1
+j = 63
+
+[[collidable_cells]]
+i = -1
+j = 64
+
+[[collidable_cells]]
+i = -1
+j = 65
+
+[[collidable_cells]]
+i = -1
+j = 66
+
+[[collidable_cells]]
+i = -1
+j = 67
+
+[[collidable_cells]]
+i = -1
+j = 68
+
+[[collidable_cells]]
+i = -1
+j = 69
+
+[[collidable_cells]]
+i = -1
+j = 70
+
+[[collidable_cells]]
+i = -1
+j = 71
+
+[[collidable_cells]]
+i = -1
+j = 72
+
+[[collidable_cells]]
+i = -1
+j = 73
+
+[[collidable_cells]]
+i = -1
+j = 74
+
+[[collidable_cells]]
+i = -1
+j = 75
+
+[[collidable_cells]]
+i = -1
+j = 76
+
+[[collidable_cells]]
+i = -1
+j = 77
+
+[[collidable_cells]]
+i = -1
+j = 78
+
+[[collidable_cells]]
+i = -1
+j = 79
+
+[[collidable_cells]]
+i = -1
+j = 80
+
+[[collidable_cells]]
+i = -1
+j = 81
+
+[[collidable_cells]]
+i = -1
+j = 82
+
+[[collidable_cells]]
+i = -1
+j = 83
+
+[[collidable_cells]]
+i = -1
+j = 84
+
+[[collidable_cells]]
+i = -1
+j = 85
+
+[[collidable_cells]]
+i = -1
+j = 86
+
+[[collidable_cells]]
+i = -1
+j = 87
+
+[[collidable_cells]]
+i = -1
+j = 88
+
+[[collidable_cells]]
+i = -1
+j = 89
+
+[[collidable_cells]]
+i = -1
+j = 90
+
+[[collidable_cells]]
+i = -1
+j = 91
+
+[[collidable_cells]]
+i = -1
+j = 92
+
+[[collidable_cells]]
+i = -1
+j = 93
+
+[[collidable_cells]]
+i = -1
+j = 94
+
+[[collidable_cells]]
+i = -1
+j = 95
+
+[[collidable_cells]]
+i = -1
+j = 96
+
+[[collidable_cells]]
+i = -1
+j = 97
+
+[[collidable_cells]]
+i = -1
+j = 98
+
+[[collidable_cells]]
+i = -1
+j = 99
+
+[[collidable_cells]]
+i = 0
+j = -1
+
+[[collidable_cells]]
+i = 0
+j = 100
+
+[[collidable_cells]]
+i = 1
+j = -1
+
+[[collidable_cells]]
+i = 1
+j = 100
+
+[[collidable_cells]]
+i = 2
+j = -1
+
+[[collidable_cells]]
+i = 2
+j = 2
+
+[[collidable_cells]]
+i = 2
+j = 3
+
+[[collidable_cells]]
+i = 2
+j = 4
+
+[[collidable_cells]]
+i = 2
+j = 12
+
+[[collidable_cells]]
+i = 2
+j = 13
+
+[[collidable_cells]]
+i = 2
+j = 59
+
+[[collidable_cells]]
+i = 2
+j = 60
+
+[[collidable_cells]]
+i = 2
+j = 61
+
+[[collidable_cells]]
+i = 2
+j = 88
+
+[[collidable_cells]]
+i = 2
+j = 89
+
+[[collidable_cells]]
+i = 2
+j = 90
+
+[[collidable_cells]]
+i = 2
+j = 100
+
+[[collidable_cells]]
+i = 3
+j = -1
+
+[[collidable_cells]]
+i = 3
+j = 2
+
+[[collidable_cells]]
+i = 3
+j = 3
+
+[[collidable_cells]]
+i = 3
+j = 4
+
+[[collidable_cells]]
+i = 3
+j = 5
+
+[[collidable_cells]]
+i = 3
+j = 12
+
+[[collidable_cells]]
+i = 3
+j = 13
+
+[[collidable_cells]]
+i = 3
+j = 54
+
+[[collidable_cells]]
+i = 3
+j = 59
+
+[[collidable_cells]]
+i = 3
+j = 60
+
+[[collidable_cells]]
+i = 3
+j = 61
+
+[[collidable_cells]]
+i = 3
+j = 62
+
+[[collidable_cells]]
+i = 3
+j = 88
+
+[[collidable_cells]]
+i = 3
+j = 89
+
+[[collidable_cells]]
+i = 3
+j = 90
+
+[[collidable_cells]]
+i = 3
+j = 91
+
+[[collidable_cells]]
+i = 3
+j = 100
+
+[[collidable_cells]]
+i = 4
+j = -1
+
+[[collidable_cells]]
+i = 4
+j = 2
+
+[[collidable_cells]]
+i = 4
+j = 3
+
+[[collidable_cells]]
+i = 4
+j = 4
+
+[[collidable_cells]]
+i = 4
+j = 12
+
+[[collidable_cells]]
+i = 4
+j = 13
+
+[[collidable_cells]]
+i = 4
+j = 23
+
+[[collidable_cells]]
+i = 4
+j = 24
+
+[[collidable_cells]]
+i = 4
+j = 54
+
+[[collidable_cells]]
+i = 4
+j = 55
+
+[[collidable_cells]]
+i = 4
+j = 59
+
+[[collidable_cells]]
+i = 4
+j = 60
+
+[[collidable_cells]]
+i = 4
+j = 61
+
+[[collidable_cells]]
+i = 4
+j = 88
+
+[[collidable_cells]]
+i = 4
+j = 89
+
+[[collidable_cells]]
+i = 4
+j = 90
+
+[[collidable_cells]]
+i = 4
+j = 100
+
+[[collidable_cells]]
+i = 5
+j = -1
+
+[[collidable_cells]]
+i = 5
+j = 23
+
+[[collidable_cells]]
+i = 5
+j = 24
+
+[[collidable_cells]]
+i = 5
+j = 54
+
+[[collidable_cells]]
+i = 5
+j = 55
+
+[[collidable_cells]]
+i = 5
+j = 62
+
+[[collidable_cells]]
+i = 5
+j = 63
+
+[[collidable_cells]]
+i = 5
+j = 64
+
+[[collidable_cells]]
+i = 5
+j = 65
+
+[[collidable_cells]]
+i = 5
+j = 66
+
+[[collidable_cells]]
+i = 5
+j = 67
+
+[[collidable_cells]]
+i = 5
+j = 68
+
+[[collidable_cells]]
+i = 5
+j = 79
+
+[[collidable_cells]]
+i = 5
+j = 100
+
+[[collidable_cells]]
+i = 6
+j = -1
+
+[[collidable_cells]]
+i = 6
+j = 33
+
+[[collidable_cells]]
+i = 6
+j = 34
+
+[[collidable_cells]]
+i = 6
+j = 54
+
+[[collidable_cells]]
+i = 6
+j = 62
+
+[[collidable_cells]]
+i = 6
+j = 63
+
+[[collidable_cells]]
+i = 6
+j = 64
+
+[[collidable_cells]]
+i = 6
+j = 66
+
+[[collidable_cells]]
+i = 6
+j = 67
+
+[[collidable_cells]]
+i = 6
+j = 68
+
+[[collidable_cells]]
+i = 6
+j = 79
+
+[[collidable_cells]]
+i = 6
+j = 100
+
+[[collidable_cells]]
+i = 7
+j = -1
+
+[[collidable_cells]]
+i = 7
+j = 33
+
+[[collidable_cells]]
+i = 7
+j = 34
+
+[[collidable_cells]]
+i = 7
+j = 62
+
+[[collidable_cells]]
+i = 7
+j = 63
+
+[[collidable_cells]]
+i = 7
+j = 64
+
+[[collidable_cells]]
+i = 7
+j = 66
+
+[[collidable_cells]]
+i = 7
+j = 67
+
+[[collidable_cells]]
+i = 7
+j = 68
+
+[[collidable_cells]]
+i = 7
+j = 79
+
+[[collidable_cells]]
+i = 7
+j = 100
+
+[[collidable_cells]]
+i = 8
+j = -1
+
+[[collidable_cells]]
+i = 8
+j = 62
+
+[[collidable_cells]]
+i = 8
+j = 63
+
+[[collidable_cells]]
+i = 8
+j = 64
+
+[[collidable_cells]]
+i = 8
+j = 66
+
+[[collidable_cells]]
+i = 8
+j = 67
+
+[[collidable_cells]]
+i = 8
+j = 68
+
+[[collidable_cells]]
+i = 8
+j = 79
+
+[[collidable_cells]]
+i = 8
+j = 80
+
+[[collidable_cells]]
+i = 8
+j = 100
+
+[[collidable_cells]]
+i = 9
+j = -1
+
+[[collidable_cells]]
+i = 9
+j = 62
+
+[[collidable_cells]]
+i = 9
+j = 63
+
+[[collidable_cells]]
+i = 9
+j = 64
+
+[[collidable_cells]]
+i = 9
+j = 66
+
+[[collidable_cells]]
+i = 9
+j = 67
+
+[[collidable_cells]]
+i = 9
+j = 68
+
+[[collidable_cells]]
+i = 9
+j = 79
+
+[[collidable_cells]]
+i = 9
+j = 100
+
+[[collidable_cells]]
+i = 10
+j = -1
+
+[[collidable_cells]]
+i = 10
+j = 62
+
+[[collidable_cells]]
+i = 10
+j = 63
+
+[[collidable_cells]]
+i = 10
+j = 64
+
+[[collidable_cells]]
+i = 10
+j = 66
+
+[[collidable_cells]]
+i = 10
+j = 67
+
+[[collidable_cells]]
+i = 10
+j = 68
+
+[[collidable_cells]]
+i = 10
+j = 79
+
+[[collidable_cells]]
+i = 10
+j = 86
+
+[[collidable_cells]]
+i = 10
+j = 87
+
+[[collidable_cells]]
+i = 10
+j = 100
+
+[[collidable_cells]]
+i = 11
+j = -1
+
+[[collidable_cells]]
+i = 11
+j = 62
+
+[[collidable_cells]]
+i = 11
+j = 63
+
+[[collidable_cells]]
+i = 11
+j = 64
+
+[[collidable_cells]]
+i = 11
+j = 66
+
+[[collidable_cells]]
+i = 11
+j = 67
+
+[[collidable_cells]]
+i = 11
+j = 86
+
+[[collidable_cells]]
+i = 11
+j = 87
+
+[[collidable_cells]]
+i = 11
+j = 100
+
+[[collidable_cells]]
+i = 12
+j = -1
+
+[[collidable_cells]]
+i = 12
+j = 31
+
+[[collidable_cells]]
+i = 12
+j = 32
+
+[[collidable_cells]]
+i = 12
+j = 62
+
+[[collidable_cells]]
+i = 12
+j = 63
+
+[[collidable_cells]]
+i = 12
+j = 64
+
+[[collidable_cells]]
+i = 12
+j = 65
+
+[[collidable_cells]]
+i = 12
+j = 66
+
+[[collidable_cells]]
+i = 12
+j = 67
+
+[[collidable_cells]]
+i = 12
+j = 68
+
+[[collidable_cells]]
+i = 12
+j = 100
+
+[[collidable_cells]]
+i = 13
+j = -1
+
+[[collidable_cells]]
+i = 13
+j = 31
+
+[[collidable_cells]]
+i = 13
+j = 32
+
+[[collidable_cells]]
+i = 13
+j = 87
+
+[[collidable_cells]]
+i = 13
+j = 100
+
+[[collidable_cells]]
+i = 14
+j = -1
+
+[[collidable_cells]]
+i = 14
+j = 31
+
+[[collidable_cells]]
+i = 14
+j = 32
+
+[[collidable_cells]]
+i = 14
+j = 100
+
+[[collidable_cells]]
+i = 15
+j = -1
+
+[[collidable_cells]]
+i = 15
+j = 31
+
+[[collidable_cells]]
+i = 15
+j = 32
+
+[[collidable_cells]]
+i = 15
+j = 55
+
+[[collidable_cells]]
+i = 15
+j = 65
+
+[[collidable_cells]]
+i = 15
+j = 66
+
+[[collidable_cells]]
+i = 15
+j = 100
+
+[[collidable_cells]]
+i = 16
+j = -1
+
+[[collidable_cells]]
+i = 16
+j = 56
+
+[[collidable_cells]]
+i = 16
+j = 65
+
+[[collidable_cells]]
+i = 16
+j = 66
+
+[[collidable_cells]]
+i = 16
+j = 100
+
+[[collidable_cells]]
+i = 17
+j = -1
+
+[[collidable_cells]]
+i = 17
+j = 4
+
+[[collidable_cells]]
+i = 17
+j = 5
+
+[[collidable_cells]]
+i = 17
+j = 6
+
+[[collidable_cells]]
+i = 17
+j = 100
+
+[[collidable_cells]]
+i = 18
+j = -1
+
+[[collidable_cells]]
+i = 18
+j = 4
+
+[[collidable_cells]]
+i = 18
+j = 5
+
+[[collidable_cells]]
+i = 18
+j = 6
+
+[[collidable_cells]]
+i = 18
+j = 7
+
+[[collidable_cells]]
+i = 18
+j = 100
+
+[[collidable_cells]]
+i = 19
+j = -1
+
+[[collidable_cells]]
+i = 19
+j = 4
+
+[[collidable_cells]]
+i = 19
+j = 5
+
+[[collidable_cells]]
+i = 19
+j = 6
+
+[[collidable_cells]]
+i = 19
+j = 100
+
+[[collidable_cells]]
+i = 20
+j = -1
+
+[[collidable_cells]]
+i = 20
+j = 56
+
+[[collidable_cells]]
+i = 20
+j = 57
+
+[[collidable_cells]]
+i = 20
+j = 100
+
+[[collidable_cells]]
+i = 21
+j = -1
+
+[[collidable_cells]]
+i = 21
+j = 6
+
+[[collidable_cells]]
+i = 21
+j = 7
+
+[[collidable_cells]]
+i = 21
+j = 8
+
+[[collidable_cells]]
+i = 21
+j = 56
+
+[[collidable_cells]]
+i = 21
+j = 57
+
+[[collidable_cells]]
+i = 21
+j = 100
+
+[[collidable_cells]]
+i = 22
+j = -1
+
+[[collidable_cells]]
+i = 22
+j = 6
+
+[[collidable_cells]]
+i = 22
+j = 7
+
+[[collidable_cells]]
+i = 22
+j = 8
+
+[[collidable_cells]]
+i = 22
+j = 9
+
+[[collidable_cells]]
+i = 22
+j = 33
+
+[[collidable_cells]]
+i = 22
+j = 34
+
+[[collidable_cells]]
+i = 22
+j = 100
+
+[[collidable_cells]]
+i = 23
+j = -1
+
+[[collidable_cells]]
+i = 23
+j = 6
+
+[[collidable_cells]]
+i = 23
+j = 7
+
+[[collidable_cells]]
+i = 23
+j = 8
+
+[[collidable_cells]]
+i = 23
+j = 33
+
+[[collidable_cells]]
+i = 23
+j = 34
+
+[[collidable_cells]]
+i = 23
+j = 46
+
+[[collidable_cells]]
+i = 23
+j = 47
+
+[[collidable_cells]]
+i = 23
+j = 100
+
+[[collidable_cells]]
+i = 24
+j = -1
+
+[[collidable_cells]]
+i = 24
+j = 23
+
+[[collidable_cells]]
+i = 24
+j = 24
+
+[[collidable_cells]]
+i = 24
+j = 46
+
+[[collidable_cells]]
+i = 24
+j = 47
+
+[[collidable_cells]]
+i = 24
+j = 69
+
+[[collidable_cells]]
+i = 24
+j = 70
+
+[[collidable_cells]]
+i = 24
+j = 97
+
+[[collidable_cells]]
+i = 24
+j = 98
+
+[[collidable_cells]]
+i = 24
+j = 100
+
+[[collidable_cells]]
+i = 25
+j = -1
+
+[[collidable_cells]]
+i = 25
+j = 23
+
+[[collidable_cells]]
+i = 25
+j = 24
+
+[[collidable_cells]]
+i = 25
+j = 46
+
+[[collidable_cells]]
+i = 25
+j = 47
+
+[[collidable_cells]]
+i = 25
+j = 70
+
+[[collidable_cells]]
+i = 25
+j = 97
+
+[[collidable_cells]]
+i = 25
+j = 98
+
+[[collidable_cells]]
+i = 25
+j = 100
+
+[[collidable_cells]]
+i = 26
+j = -1
+
+[[collidable_cells]]
+i = 26
+j = 46
+
+[[collidable_cells]]
+i = 26
+j = 47
+
+[[collidable_cells]]
+i = 26
+j = 100
+
+[[collidable_cells]]
+i = 27
+j = -1
+
+[[collidable_cells]]
+i = 27
+j = 16
+
+[[collidable_cells]]
+i = 27
+j = 17
+
+[[collidable_cells]]
+i = 27
+j = 18
+
+[[collidable_cells]]
+i = 27
+j = 36
+
+[[collidable_cells]]
+i = 27
+j = 37
+
+[[collidable_cells]]
+i = 27
+j = 51
+
+[[collidable_cells]]
+i = 27
+j = 79
+
+[[collidable_cells]]
+i = 27
+j = 100
+
+[[collidable_cells]]
+i = 28
+j = -1
+
+[[collidable_cells]]
+i = 28
+j = 16
+
+[[collidable_cells]]
+i = 28
+j = 17
+
+[[collidable_cells]]
+i = 28
+j = 18
+
+[[collidable_cells]]
+i = 28
+j = 36
+
+[[collidable_cells]]
+i = 28
+j = 37
+
+[[collidable_cells]]
+i = 28
+j = 50
+
+[[collidable_cells]]
+i = 28
+j = 66
+
+[[collidable_cells]]
+i = 28
+j = 67
+
+[[collidable_cells]]
+i = 28
+j = 79
+
+[[collidable_cells]]
+i = 28
+j = 81
+
+[[collidable_cells]]
+i = 28
+j = 100
+
+[[collidable_cells]]
+i = 29
+j = -1
+
+[[collidable_cells]]
+i = 29
+j = 67
+
+[[collidable_cells]]
+i = 29
+j = 79
+
+[[collidable_cells]]
+i = 29
+j = 82
+
+[[collidable_cells]]
+i = 29
+j = 100
+
+[[collidable_cells]]
+i = 30
+j = -1
+
+[[collidable_cells]]
+i = 30
+j = 79
+
+[[collidable_cells]]
+i = 30
+j = 80
+
+[[collidable_cells]]
+i = 30
+j = 95
+
+[[collidable_cells]]
+i = 30
+j = 96
+
+[[collidable_cells]]
+i = 30
+j = 100
+
+[[collidable_cells]]
+i = 31
+j = -1
+
+[[collidable_cells]]
+i = 31
+j = 43
+
+[[collidable_cells]]
+i = 31
+j = 44
+
+[[collidable_cells]]
+i = 31
+j = 79
+
+[[collidable_cells]]
+i = 31
+j = 95
+
+[[collidable_cells]]
+i = 31
+j = 96
+
+[[collidable_cells]]
+i = 31
+j = 100
+
+[[collidable_cells]]
+i = 32
+j = -1
+
+[[collidable_cells]]
+i = 32
+j = 43
+
+[[collidable_cells]]
+i = 32
+j = 44
+
+[[collidable_cells]]
+i = 32
+j = 45
+
+[[collidable_cells]]
+i = 32
+j = 73
+
+[[collidable_cells]]
+i = 32
+j = 79
+
+[[collidable_cells]]
+i = 32
+j = 100
+
+[[collidable_cells]]
+i = 33
+j = -1
+
+[[collidable_cells]]
+i = 33
+j = 43
+
+[[collidable_cells]]
+i = 33
+j = 44
+
+[[collidable_cells]]
+i = 33
+j = 73
+
+[[collidable_cells]]
+i = 33
+j = 84
+
+[[collidable_cells]]
+i = 33
+j = 100
+
+[[collidable_cells]]
+i = 34
+j = -1
+
+[[collidable_cells]]
+i = 34
+j = 73
+
+[[collidable_cells]]
+i = 34
+j = 84
+
+[[collidable_cells]]
+i = 34
+j = 100
+
+[[collidable_cells]]
+i = 35
+j = -1
+
+[[collidable_cells]]
+i = 35
+j = 56
+
+[[collidable_cells]]
+i = 35
+j = 57
+
+[[collidable_cells]]
+i = 35
+j = 73
+
+[[collidable_cells]]
+i = 35
+j = 74
+
+[[collidable_cells]]
+i = 35
+j = 85
+
+[[collidable_cells]]
+i = 35
+j = 100
+
+[[collidable_cells]]
+i = 36
+j = -1
+
+[[collidable_cells]]
+i = 36
+j = 56
+
+[[collidable_cells]]
+i = 36
+j = 57
+
+[[collidable_cells]]
+i = 36
+j = 73
+
+[[collidable_cells]]
+i = 36
+j = 85
+
+[[collidable_cells]]
+i = 36
+j = 100
+
+[[collidable_cells]]
+i = 37
+j = -1
+
+[[collidable_cells]]
+i = 37
+j = 73
+
+[[collidable_cells]]
+i = 37
+j = 81
+
+[[collidable_cells]]
+i = 37
+j = 82
+
+[[collidable_cells]]
+i = 37
+j = 100
+
+[[collidable_cells]]
+i = 38
+j = -1
+
+[[collidable_cells]]
+i = 38
+j = 81
+
+[[collidable_cells]]
+i = 38
+j = 82
+
+[[collidable_cells]]
+i = 38
+j = 100
+
+[[collidable_cells]]
+i = 39
+j = -1
+
+[[collidable_cells]]
+i = 39
+j = 81
+
+[[collidable_cells]]
+i = 39
+j = 100
+
+[[collidable_cells]]
+i = 40
+j = -1
+
+[[collidable_cells]]
+i = 40
+j = 46
+
+[[collidable_cells]]
+i = 40
+j = 47
+
+[[collidable_cells]]
+i = 40
+j = 100
+
+[[collidable_cells]]
+i = 41
+j = -1
+
+[[collidable_cells]]
+i = 41
+j = 11
+
+[[collidable_cells]]
+i = 41
+j = 34
+
+[[collidable_cells]]
+i = 41
+j = 35
+
+[[collidable_cells]]
+i = 41
+j = 46
+
+[[collidable_cells]]
+i = 41
+j = 47
+
+[[collidable_cells]]
+i = 41
+j = 49
+
+[[collidable_cells]]
+i = 41
+j = 91
+
+[[collidable_cells]]
+i = 41
+j = 92
+
+[[collidable_cells]]
+i = 41
+j = 100
+
+[[collidable_cells]]
+i = 42
+j = -1
+
+[[collidable_cells]]
+i = 42
+j = 34
+
+[[collidable_cells]]
+i = 42
+j = 35
+
+[[collidable_cells]]
+i = 42
+j = 91
+
+[[collidable_cells]]
+i = 42
+j = 92
+
+[[collidable_cells]]
+i = 42
+j = 100
+
+[[collidable_cells]]
+i = 43
+j = -1
+
+[[collidable_cells]]
+i = 43
+j = 9
+
+[[collidable_cells]]
+i = 43
+j = 21
+
+[[collidable_cells]]
+i = 43
+j = 22
+
+[[collidable_cells]]
+i = 43
+j = 34
+
+[[collidable_cells]]
+i = 43
+j = 46
+
+[[collidable_cells]]
+i = 43
+j = 48
+
+[[collidable_cells]]
+i = 43
+j = 73
+
+[[collidable_cells]]
+i = 43
+j = 74
+
+[[collidable_cells]]
+i = 43
+j = 75
+
+[[collidable_cells]]
+i = 43
+j = 76
+
+[[collidable_cells]]
+i = 43
+j = 91
+
+[[collidable_cells]]
+i = 43
+j = 92
+
+[[collidable_cells]]
+i = 43
+j = 100
+
+[[collidable_cells]]
+i = 44
+j = -1
+
+[[collidable_cells]]
+i = 44
+j = 21
+
+[[collidable_cells]]
+i = 44
+j = 22
+
+[[collidable_cells]]
+i = 44
+j = 23
+
+[[collidable_cells]]
+i = 44
+j = 48
+
+[[collidable_cells]]
+i = 44
+j = 72
+
+[[collidable_cells]]
+i = 44
+j = 73
+
+[[collidable_cells]]
+i = 44
+j = 74
+
+[[collidable_cells]]
+i = 44
+j = 75
+
+[[collidable_cells]]
+i = 44
+j = 76
+
+[[collidable_cells]]
+i = 44
+j = 77
+
+[[collidable_cells]]
+i = 44
+j = 91
+
+[[collidable_cells]]
+i = 44
+j = 100
+
+[[collidable_cells]]
+i = 45
+j = -1
+
+[[collidable_cells]]
+i = 45
+j = 21
+
+[[collidable_cells]]
+i = 45
+j = 22
+
+[[collidable_cells]]
+i = 45
+j = 46
+
+[[collidable_cells]]
+i = 45
+j = 72
+
+[[collidable_cells]]
+i = 45
+j = 73
+
+[[collidable_cells]]
+i = 45
+j = 74
+
+[[collidable_cells]]
+i = 45
+j = 75
+
+[[collidable_cells]]
+i = 45
+j = 76
+
+[[collidable_cells]]
+i = 45
+j = 77
+
+[[collidable_cells]]
+i = 45
+j = 83
+
+[[collidable_cells]]
+i = 45
+j = 84
+
+[[collidable_cells]]
+i = 45
+j = 91
+
+[[collidable_cells]]
+i = 45
+j = 100
+
+[[collidable_cells]]
+i = 46
+j = -1
+
+[[collidable_cells]]
+i = 46
+j = 36
+
+[[collidable_cells]]
+i = 46
+j = 37
+
+[[collidable_cells]]
+i = 46
+j = 64
+
+[[collidable_cells]]
+i = 46
+j = 65
+
+[[collidable_cells]]
+i = 46
+j = 71
+
+[[collidable_cells]]
+i = 46
+j = 72
+
+[[collidable_cells]]
+i = 46
+j = 73
+
+[[collidable_cells]]
+i = 46
+j = 74
+
+[[collidable_cells]]
+i = 46
+j = 75
+
+[[collidable_cells]]
+i = 46
+j = 76
+
+[[collidable_cells]]
+i = 46
+j = 77
+
+[[collidable_cells]]
+i = 46
+j = 83
+
+[[collidable_cells]]
+i = 46
+j = 84
+
+[[collidable_cells]]
+i = 46
+j = 91
+
+[[collidable_cells]]
+i = 46
+j = 92
+
+[[collidable_cells]]
+i = 46
+j = 100
+
+[[collidable_cells]]
+i = 47
+j = -1
+
+[[collidable_cells]]
+i = 47
+j = 3
+
+[[collidable_cells]]
+i = 47
+j = 4
+
+[[collidable_cells]]
+i = 47
+j = 71
+
+[[collidable_cells]]
+i = 47
+j = 72
+
+[[collidable_cells]]
+i = 47
+j = 73
+
+[[collidable_cells]]
+i = 47
+j = 74
+
+[[collidable_cells]]
+i = 47
+j = 75
+
+[[collidable_cells]]
+i = 47
+j = 76
+
+[[collidable_cells]]
+i = 47
+j = 77
+
+[[collidable_cells]]
+i = 47
+j = 84
+
+[[collidable_cells]]
+i = 47
+j = 85
+
+[[collidable_cells]]
+i = 47
+j = 91
+
+[[collidable_cells]]
+i = 47
+j = 92
+
+[[collidable_cells]]
+i = 47
+j = 100
+
+[[collidable_cells]]
+i = 48
+j = -1
+
+[[collidable_cells]]
+i = 48
+j = 1
+
+[[collidable_cells]]
+i = 48
+j = 2
+
+[[collidable_cells]]
+i = 48
+j = 3
+
+[[collidable_cells]]
+i = 48
+j = 4
+
+[[collidable_cells]]
+i = 48
+j = 31
+
+[[collidable_cells]]
+i = 48
+j = 32
+
+[[collidable_cells]]
+i = 48
+j = 33
+
+[[collidable_cells]]
+i = 48
+j = 34
+
+[[collidable_cells]]
+i = 48
+j = 35
+
+[[collidable_cells]]
+i = 48
+j = 36
+
+[[collidable_cells]]
+i = 48
+j = 37
+
+[[collidable_cells]]
+i = 48
+j = 42
+
+[[collidable_cells]]
+i = 48
+j = 43
+
+[[collidable_cells]]
+i = 48
+j = 59
+
+[[collidable_cells]]
+i = 48
+j = 72
+
+[[collidable_cells]]
+i = 48
+j = 73
+
+[[collidable_cells]]
+i = 48
+j = 74
+
+[[collidable_cells]]
+i = 48
+j = 75
+
+[[collidable_cells]]
+i = 48
+j = 76
+
+[[collidable_cells]]
+i = 48
+j = 77
+
+[[collidable_cells]]
+i = 48
+j = 84
+
+[[collidable_cells]]
+i = 48
+j = 85
+
+[[collidable_cells]]
+i = 48
+j = 91
+
+[[collidable_cells]]
+i = 48
+j = 92
+
+[[collidable_cells]]
+i = 48
+j = 100
+
+[[collidable_cells]]
+i = 49
+j = -1
+
+[[collidable_cells]]
+i = 49
+j = 1
+
+[[collidable_cells]]
+i = 49
+j = 2
+
+[[collidable_cells]]
+i = 49
+j = 3
+
+[[collidable_cells]]
+i = 49
+j = 31
+
+[[collidable_cells]]
+i = 49
+j = 32
+
+[[collidable_cells]]
+i = 49
+j = 33
+
+[[collidable_cells]]
+i = 49
+j = 35
+
+[[collidable_cells]]
+i = 49
+j = 36
+
+[[collidable_cells]]
+i = 49
+j = 37
+
+[[collidable_cells]]
+i = 49
+j = 42
+
+[[collidable_cells]]
+i = 49
+j = 43
+
+[[collidable_cells]]
+i = 49
+j = 59
+
+[[collidable_cells]]
+i = 49
+j = 72
+
+[[collidable_cells]]
+i = 49
+j = 73
+
+[[collidable_cells]]
+i = 49
+j = 74
+
+[[collidable_cells]]
+i = 49
+j = 75
+
+[[collidable_cells]]
+i = 49
+j = 76
+
+[[collidable_cells]]
+i = 49
+j = 77
+
+[[collidable_cells]]
+i = 49
+j = 100
+
+[[collidable_cells]]
+i = 50
+j = -1
+
+[[collidable_cells]]
+i = 50
+j = 2
+
+[[collidable_cells]]
+i = 50
+j = 3
+
+[[collidable_cells]]
+i = 50
+j = 13
+
+[[collidable_cells]]
+i = 50
+j = 31
+
+[[collidable_cells]]
+i = 50
+j = 32
+
+[[collidable_cells]]
+i = 50
+j = 33
+
+[[collidable_cells]]
+i = 50
+j = 35
+
+[[collidable_cells]]
+i = 50
+j = 36
+
+[[collidable_cells]]
+i = 50
+j = 37
+
+[[collidable_cells]]
+i = 50
+j = 42
+
+[[collidable_cells]]
+i = 50
+j = 43
+
+[[collidable_cells]]
+i = 50
+j = 60
+
+[[collidable_cells]]
+i = 50
+j = 73
+
+[[collidable_cells]]
+i = 50
+j = 74
+
+[[collidable_cells]]
+i = 50
+j = 75
+
+[[collidable_cells]]
+i = 50
+j = 76
+
+[[collidable_cells]]
+i = 50
+j = 100
+
+[[collidable_cells]]
+i = 51
+j = -1
+
+[[collidable_cells]]
+i = 51
+j = 2
+
+[[collidable_cells]]
+i = 51
+j = 31
+
+[[collidable_cells]]
+i = 51
+j = 32
+
+[[collidable_cells]]
+i = 51
+j = 33
+
+[[collidable_cells]]
+i = 51
+j = 35
+
+[[collidable_cells]]
+i = 51
+j = 36
+
+[[collidable_cells]]
+i = 51
+j = 37
+
+[[collidable_cells]]
+i = 51
+j = 42
+
+[[collidable_cells]]
+i = 51
+j = 43
+
+[[collidable_cells]]
+i = 51
+j = 60
+
+[[collidable_cells]]
+i = 51
+j = 100
+
+[[collidable_cells]]
+i = 52
+j = -1
+
+[[collidable_cells]]
+i = 52
+j = 14
+
+[[collidable_cells]]
+i = 52
+j = 31
+
+[[collidable_cells]]
+i = 52
+j = 32
+
+[[collidable_cells]]
+i = 52
+j = 33
+
+[[collidable_cells]]
+i = 52
+j = 35
+
+[[collidable_cells]]
+i = 52
+j = 36
+
+[[collidable_cells]]
+i = 52
+j = 37
+
+[[collidable_cells]]
+i = 52
+j = 100
+
+[[collidable_cells]]
+i = 53
+j = -1
+
+[[collidable_cells]]
+i = 53
+j = 26
+
+[[collidable_cells]]
+i = 53
+j = 31
+
+[[collidable_cells]]
+i = 53
+j = 32
+
+[[collidable_cells]]
+i = 53
+j = 33
+
+[[collidable_cells]]
+i = 53
+j = 35
+
+[[collidable_cells]]
+i = 53
+j = 100
+
+[[collidable_cells]]
+i = 54
+j = -1
+
+[[collidable_cells]]
+i = 54
+j = 26
+
+[[collidable_cells]]
+i = 54
+j = 27
+
+[[collidable_cells]]
+i = 54
+j = 31
+
+[[collidable_cells]]
+i = 54
+j = 32
+
+[[collidable_cells]]
+i = 54
+j = 33
+
+[[collidable_cells]]
+i = 54
+j = 35
+
+[[collidable_cells]]
+i = 54
+j = 36
+
+[[collidable_cells]]
+i = 54
+j = 37
+
+[[collidable_cells]]
+i = 54
+j = 100
+
+[[collidable_cells]]
+i = 55
+j = -1
+
+[[collidable_cells]]
+i = 55
+j = 26
+
+[[collidable_cells]]
+i = 55
+j = 27
+
+[[collidable_cells]]
+i = 55
+j = 31
+
+[[collidable_cells]]
+i = 55
+j = 32
+
+[[collidable_cells]]
+i = 55
+j = 33
+
+[[collidable_cells]]
+i = 55
+j = 34
+
+[[collidable_cells]]
+i = 55
+j = 35
+
+[[collidable_cells]]
+i = 55
+j = 36
+
+[[collidable_cells]]
+i = 55
+j = 37
+
+[[collidable_cells]]
+i = 55
+j = 42
+
+[[collidable_cells]]
+i = 55
+j = 43
+
+[[collidable_cells]]
+i = 55
+j = 80
+
+[[collidable_cells]]
+i = 55
+j = 81
+
+[[collidable_cells]]
+i = 55
+j = 96
+
+[[collidable_cells]]
+i = 55
+j = 97
+
+[[collidable_cells]]
+i = 55
+j = 100
+
+[[collidable_cells]]
+i = 56
+j = -1
+
+[[collidable_cells]]
+i = 56
+j = 14
+
+[[collidable_cells]]
+i = 56
+j = 15
+
+[[collidable_cells]]
+i = 56
+j = 26
+
+[[collidable_cells]]
+i = 56
+j = 42
+
+[[collidable_cells]]
+i = 56
+j = 43
+
+[[collidable_cells]]
+i = 56
+j = 80
+
+[[collidable_cells]]
+i = 56
+j = 81
+
+[[collidable_cells]]
+i = 56
+j = 88
+
+[[collidable_cells]]
+i = 56
+j = 96
+
+[[collidable_cells]]
+i = 56
+j = 97
+
+[[collidable_cells]]
+i = 56
+j = 100
+
+[[collidable_cells]]
+i = 57
+j = -1
+
+[[collidable_cells]]
+i = 57
+j = 14
+
+[[collidable_cells]]
+i = 57
+j = 15
+
+[[collidable_cells]]
+i = 57
+j = 42
+
+[[collidable_cells]]
+i = 57
+j = 43
+
+[[collidable_cells]]
+i = 57
+j = 60
+
+[[collidable_cells]]
+i = 57
+j = 80
+
+[[collidable_cells]]
+i = 57
+j = 81
+
+[[collidable_cells]]
+i = 57
+j = 96
+
+[[collidable_cells]]
+i = 57
+j = 97
+
+[[collidable_cells]]
+i = 57
+j = 100
+
+[[collidable_cells]]
+i = 58
+j = -1
+
+[[collidable_cells]]
+i = 58
+j = 14
+
+[[collidable_cells]]
+i = 58
+j = 15
+
+[[collidable_cells]]
+i = 58
+j = 25
+
+[[collidable_cells]]
+i = 58
+j = 42
+
+[[collidable_cells]]
+i = 58
+j = 43
+
+[[collidable_cells]]
+i = 58
+j = 60
+
+[[collidable_cells]]
+i = 58
+j = 80
+
+[[collidable_cells]]
+i = 58
+j = 81
+
+[[collidable_cells]]
+i = 58
+j = 96
+
+[[collidable_cells]]
+i = 58
+j = 97
+
+[[collidable_cells]]
+i = 58
+j = 100
+
+[[collidable_cells]]
+i = 59
+j = -1
+
+[[collidable_cells]]
+i = 59
+j = 14
+
+[[collidable_cells]]
+i = 59
+j = 15
+
+[[collidable_cells]]
+i = 59
+j = 25
+
+[[collidable_cells]]
+i = 59
+j = 31
+
+[[collidable_cells]]
+i = 59
+j = 32
+
+[[collidable_cells]]
+i = 59
+j = 33
+
+[[collidable_cells]]
+i = 59
+j = 34
+
+[[collidable_cells]]
+i = 59
+j = 35
+
+[[collidable_cells]]
+i = 59
+j = 36
+
+[[collidable_cells]]
+i = 59
+j = 37
+
+[[collidable_cells]]
+i = 59
+j = 60
+
+[[collidable_cells]]
+i = 59
+j = 100
+
+[[collidable_cells]]
+i = 60
+j = -1
+
+[[collidable_cells]]
+i = 60
+j = 4
+
+[[collidable_cells]]
+i = 60
+j = 25
+
+[[collidable_cells]]
+i = 60
+j = 31
+
+[[collidable_cells]]
+i = 60
+j = 32
+
+[[collidable_cells]]
+i = 60
+j = 33
+
+[[collidable_cells]]
+i = 60
+j = 35
+
+[[collidable_cells]]
+i = 60
+j = 36
+
+[[collidable_cells]]
+i = 60
+j = 37
+
+[[collidable_cells]]
+i = 60
+j = 91
+
+[[collidable_cells]]
+i = 60
+j = 100
+
+[[collidable_cells]]
+i = 61
+j = -1
+
+[[collidable_cells]]
+i = 61
+j = 25
+
+[[collidable_cells]]
+i = 61
+j = 26
+
+[[collidable_cells]]
+i = 61
+j = 31
+
+[[collidable_cells]]
+i = 61
+j = 32
+
+[[collidable_cells]]
+i = 61
+j = 33
+
+[[collidable_cells]]
+i = 61
+j = 35
+
+[[collidable_cells]]
+i = 61
+j = 36
+
+[[collidable_cells]]
+i = 61
+j = 37
+
+[[collidable_cells]]
+i = 61
+j = 58
+
+[[collidable_cells]]
+i = 61
+j = 100
+
+[[collidable_cells]]
+i = 62
+j = -1
+
+[[collidable_cells]]
+i = 62
+j = 25
+
+[[collidable_cells]]
+i = 62
+j = 31
+
+[[collidable_cells]]
+i = 62
+j = 32
+
+[[collidable_cells]]
+i = 62
+j = 33
+
+[[collidable_cells]]
+i = 62
+j = 35
+
+[[collidable_cells]]
+i = 62
+j = 36
+
+[[collidable_cells]]
+i = 62
+j = 37
+
+[[collidable_cells]]
+i = 62
+j = 43
+
+[[collidable_cells]]
+i = 62
+j = 57
+
+[[collidable_cells]]
+i = 62
+j = 58
+
+[[collidable_cells]]
+i = 62
+j = 100
+
+[[collidable_cells]]
+i = 63
+j = -1
+
+[[collidable_cells]]
+i = 63
+j = 25
+
+[[collidable_cells]]
+i = 63
+j = 31
+
+[[collidable_cells]]
+i = 63
+j = 32
+
+[[collidable_cells]]
+i = 63
+j = 33
+
+[[collidable_cells]]
+i = 63
+j = 35
+
+[[collidable_cells]]
+i = 63
+j = 36
+
+[[collidable_cells]]
+i = 63
+j = 37
+
+[[collidable_cells]]
+i = 63
+j = 44
+
+[[collidable_cells]]
+i = 63
+j = 57
+
+[[collidable_cells]]
+i = 63
+j = 58
+
+[[collidable_cells]]
+i = 63
+j = 85
+
+[[collidable_cells]]
+i = 63
+j = 100
+
+[[collidable_cells]]
+i = 64
+j = -1
+
+[[collidable_cells]]
+i = 64
+j = 12
+
+[[collidable_cells]]
+i = 64
+j = 13
+
+[[collidable_cells]]
+i = 64
+j = 31
+
+[[collidable_cells]]
+i = 64
+j = 32
+
+[[collidable_cells]]
+i = 64
+j = 33
+
+[[collidable_cells]]
+i = 64
+j = 35
+
+[[collidable_cells]]
+i = 64
+j = 58
+
+[[collidable_cells]]
+i = 64
+j = 74
+
+[[collidable_cells]]
+i = 64
+j = 75
+
+[[collidable_cells]]
+i = 64
+j = 76
+
+[[collidable_cells]]
+i = 64
+j = 77
+
+[[collidable_cells]]
+i = 64
+j = 100
+
+[[collidable_cells]]
+i = 65
+j = -1
+
+[[collidable_cells]]
+i = 65
+j = 12
+
+[[collidable_cells]]
+i = 65
+j = 13
+
+[[collidable_cells]]
+i = 65
+j = 31
+
+[[collidable_cells]]
+i = 65
+j = 32
+
+[[collidable_cells]]
+i = 65
+j = 33
+
+[[collidable_cells]]
+i = 65
+j = 35
+
+[[collidable_cells]]
+i = 65
+j = 36
+
+[[collidable_cells]]
+i = 65
+j = 37
+
+[[collidable_cells]]
+i = 65
+j = 74
+
+[[collidable_cells]]
+i = 65
+j = 75
+
+[[collidable_cells]]
+i = 65
+j = 76
+
+[[collidable_cells]]
+i = 65
+j = 77
+
+[[collidable_cells]]
+i = 65
+j = 85
+
+[[collidable_cells]]
+i = 65
+j = 100
+
+[[collidable_cells]]
+i = 66
+j = -1
+
+[[collidable_cells]]
+i = 66
+j = 12
+
+[[collidable_cells]]
+i = 66
+j = 13
+
+[[collidable_cells]]
+i = 66
+j = 31
+
+[[collidable_cells]]
+i = 66
+j = 32
+
+[[collidable_cells]]
+i = 66
+j = 33
+
+[[collidable_cells]]
+i = 66
+j = 34
+
+[[collidable_cells]]
+i = 66
+j = 35
+
+[[collidable_cells]]
+i = 66
+j = 36
+
+[[collidable_cells]]
+i = 66
+j = 37
+
+[[collidable_cells]]
+i = 66
+j = 74
+
+[[collidable_cells]]
+i = 66
+j = 75
+
+[[collidable_cells]]
+i = 66
+j = 76
+
+[[collidable_cells]]
+i = 66
+j = 77
+
+[[collidable_cells]]
+i = 66
+j = 100
+
+[[collidable_cells]]
+i = 67
+j = -1
+
+[[collidable_cells]]
+i = 67
+j = 42
+
+[[collidable_cells]]
+i = 67
+j = 43
+
+[[collidable_cells]]
+i = 67
+j = 74
+
+[[collidable_cells]]
+i = 67
+j = 75
+
+[[collidable_cells]]
+i = 67
+j = 76
+
+[[collidable_cells]]
+i = 67
+j = 77
+
+[[collidable_cells]]
+i = 67
+j = 100
+
+[[collidable_cells]]
+i = 68
+j = -1
+
+[[collidable_cells]]
+i = 68
+j = 42
+
+[[collidable_cells]]
+i = 68
+j = 43
+
+[[collidable_cells]]
+i = 68
+j = 74
+
+[[collidable_cells]]
+i = 68
+j = 75
+
+[[collidable_cells]]
+i = 68
+j = 76
+
+[[collidable_cells]]
+i = 68
+j = 77
+
+[[collidable_cells]]
+i = 68
+j = 100
+
+[[collidable_cells]]
+i = 69
+j = -1
+
+[[collidable_cells]]
+i = 69
+j = 40
+
+[[collidable_cells]]
+i = 69
+j = 41
+
+[[collidable_cells]]
+i = 69
+j = 43
+
+[[collidable_cells]]
+i = 69
+j = 44
+
+[[collidable_cells]]
+i = 69
+j = 74
+
+[[collidable_cells]]
+i = 69
+j = 75
+
+[[collidable_cells]]
+i = 69
+j = 76
+
+[[collidable_cells]]
+i = 69
+j = 77
+
+[[collidable_cells]]
+i = 69
+j = 100
+
+[[collidable_cells]]
+i = 70
+j = -1
+
+[[collidable_cells]]
+i = 70
+j = 25
+
+[[collidable_cells]]
+i = 70
+j = 26
+
+[[collidable_cells]]
+i = 70
+j = 27
+
+[[collidable_cells]]
+i = 70
+j = 28
+
+[[collidable_cells]]
+i = 70
+j = 29
+
+[[collidable_cells]]
+i = 70
+j = 30
+
+[[collidable_cells]]
+i = 70
+j = 31
+
+[[collidable_cells]]
+i = 70
+j = 32
+
+[[collidable_cells]]
+i = 70
+j = 33
+
+[[collidable_cells]]
+i = 70
+j = 34
+
+[[collidable_cells]]
+i = 70
+j = 35
+
+[[collidable_cells]]
+i = 70
+j = 36
+
+[[collidable_cells]]
+i = 70
+j = 37
+
+[[collidable_cells]]
+i = 70
+j = 40
+
+[[collidable_cells]]
+i = 70
+j = 41
+
+[[collidable_cells]]
+i = 70
+j = 42
+
+[[collidable_cells]]
+i = 70
+j = 43
+
+[[collidable_cells]]
+i = 70
+j = 44
+
+[[collidable_cells]]
+i = 70
+j = 85
+
+[[collidable_cells]]
+i = 70
+j = 86
+
+[[collidable_cells]]
+i = 70
+j = 100
+
+[[collidable_cells]]
+i = 71
+j = -1
+
+[[collidable_cells]]
+i = 71
+j = 25
+
+[[collidable_cells]]
+i = 71
+j = 26
+
+[[collidable_cells]]
+i = 71
+j = 27
+
+[[collidable_cells]]
+i = 71
+j = 28
+
+[[collidable_cells]]
+i = 71
+j = 30
+
+[[collidable_cells]]
+i = 71
+j = 34
+
+[[collidable_cells]]
+i = 71
+j = 35
+
+[[collidable_cells]]
+i = 71
+j = 36
+
+[[collidable_cells]]
+i = 71
+j = 37
+
+[[collidable_cells]]
+i = 71
+j = 40
+
+[[collidable_cells]]
+i = 71
+j = 41
+
+[[collidable_cells]]
+i = 71
+j = 55
+
+[[collidable_cells]]
+i = 71
+j = 65
+
+[[collidable_cells]]
+i = 71
+j = 66
+
+[[collidable_cells]]
+i = 71
+j = 85
+
+[[collidable_cells]]
+i = 71
+j = 86
+
+[[collidable_cells]]
+i = 71
+j = 100
+
+[[collidable_cells]]
+i = 72
+j = -1
+
+[[collidable_cells]]
+i = 72
+j = 25
+
+[[collidable_cells]]
+i = 72
+j = 26
+
+[[collidable_cells]]
+i = 72
+j = 27
+
+[[collidable_cells]]
+i = 72
+j = 28
+
+[[collidable_cells]]
+i = 72
+j = 34
+
+[[collidable_cells]]
+i = 72
+j = 35
+
+[[collidable_cells]]
+i = 72
+j = 36
+
+[[collidable_cells]]
+i = 72
+j = 37
+
+[[collidable_cells]]
+i = 72
+j = 65
+
+[[collidable_cells]]
+i = 72
+j = 66
+
+[[collidable_cells]]
+i = 72
+j = 100
+
+[[collidable_cells]]
+i = 73
+j = -1
+
+[[collidable_cells]]
+i = 73
+j = 24
+
+[[collidable_cells]]
+i = 73
+j = 25
+
+[[collidable_cells]]
+i = 73
+j = 26
+
+[[collidable_cells]]
+i = 73
+j = 27
+
+[[collidable_cells]]
+i = 73
+j = 28
+
+[[collidable_cells]]
+i = 73
+j = 30
+
+[[collidable_cells]]
+i = 73
+j = 33
+
+[[collidable_cells]]
+i = 73
+j = 34
+
+[[collidable_cells]]
+i = 73
+j = 35
+
+[[collidable_cells]]
+i = 73
+j = 36
+
+[[collidable_cells]]
+i = 73
+j = 37
+
+[[collidable_cells]]
+i = 73
+j = 53
+
+[[collidable_cells]]
+i = 73
+j = 55
+
+[[collidable_cells]]
+i = 73
+j = 56
+
+[[collidable_cells]]
+i = 73
+j = 57
+
+[[collidable_cells]]
+i = 73
+j = 58
+
+[[collidable_cells]]
+i = 73
+j = 59
+
+[[collidable_cells]]
+i = 73
+j = 60
+
+[[collidable_cells]]
+i = 73
+j = 61
+
+[[collidable_cells]]
+i = 73
+j = 62
+
+[[collidable_cells]]
+i = 73
+j = 100
+
+[[collidable_cells]]
+i = 74
+j = -1
+
+[[collidable_cells]]
+i = 74
+j = 24
+
+[[collidable_cells]]
+i = 74
+j = 25
+
+[[collidable_cells]]
+i = 74
+j = 26
+
+[[collidable_cells]]
+i = 74
+j = 27
+
+[[collidable_cells]]
+i = 74
+j = 28
+
+[[collidable_cells]]
+i = 74
+j = 30
+
+[[collidable_cells]]
+i = 74
+j = 33
+
+[[collidable_cells]]
+i = 74
+j = 34
+
+[[collidable_cells]]
+i = 74
+j = 35
+
+[[collidable_cells]]
+i = 74
+j = 55
+
+[[collidable_cells]]
+i = 74
+j = 56
+
+[[collidable_cells]]
+i = 74
+j = 57
+
+[[collidable_cells]]
+i = 74
+j = 58
+
+[[collidable_cells]]
+i = 74
+j = 59
+
+[[collidable_cells]]
+i = 74
+j = 60
+
+[[collidable_cells]]
+i = 74
+j = 61
+
+[[collidable_cells]]
+i = 74
+j = 62
+
+[[collidable_cells]]
+i = 74
+j = 100
+
+[[collidable_cells]]
+i = 75
+j = -1
+
+[[collidable_cells]]
+i = 75
+j = 24
+
+[[collidable_cells]]
+i = 75
+j = 25
+
+[[collidable_cells]]
+i = 75
+j = 26
+
+[[collidable_cells]]
+i = 75
+j = 27
+
+[[collidable_cells]]
+i = 75
+j = 28
+
+[[collidable_cells]]
+i = 75
+j = 30
+
+[[collidable_cells]]
+i = 75
+j = 33
+
+[[collidable_cells]]
+i = 75
+j = 34
+
+[[collidable_cells]]
+i = 75
+j = 35
+
+[[collidable_cells]]
+i = 75
+j = 52
+
+[[collidable_cells]]
+i = 75
+j = 53
+
+[[collidable_cells]]
+i = 75
+j = 55
+
+[[collidable_cells]]
+i = 75
+j = 56
+
+[[collidable_cells]]
+i = 75
+j = 57
+
+[[collidable_cells]]
+i = 75
+j = 58
+
+[[collidable_cells]]
+i = 75
+j = 59
+
+[[collidable_cells]]
+i = 75
+j = 60
+
+[[collidable_cells]]
+i = 75
+j = 61
+
+[[collidable_cells]]
+i = 75
+j = 62
+
+[[collidable_cells]]
+i = 75
+j = 100
+
+[[collidable_cells]]
+i = 76
+j = -1
+
+[[collidable_cells]]
+i = 76
+j = 24
+
+[[collidable_cells]]
+i = 76
+j = 25
+
+[[collidable_cells]]
+i = 76
+j = 26
+
+[[collidable_cells]]
+i = 76
+j = 27
+
+[[collidable_cells]]
+i = 76
+j = 28
+
+[[collidable_cells]]
+i = 76
+j = 30
+
+[[collidable_cells]]
+i = 76
+j = 33
+
+[[collidable_cells]]
+i = 76
+j = 34
+
+[[collidable_cells]]
+i = 76
+j = 35
+
+[[collidable_cells]]
+i = 76
+j = 36
+
+[[collidable_cells]]
+i = 76
+j = 37
+
+[[collidable_cells]]
+i = 76
+j = 52
+
+[[collidable_cells]]
+i = 76
+j = 53
+
+[[collidable_cells]]
+i = 76
+j = 55
+
+[[collidable_cells]]
+i = 76
+j = 56
+
+[[collidable_cells]]
+i = 76
+j = 57
+
+[[collidable_cells]]
+i = 76
+j = 58
+
+[[collidable_cells]]
+i = 76
+j = 59
+
+[[collidable_cells]]
+i = 76
+j = 60
+
+[[collidable_cells]]
+i = 76
+j = 61
+
+[[collidable_cells]]
+i = 76
+j = 62
+
+[[collidable_cells]]
+i = 76
+j = 91
+
+[[collidable_cells]]
+i = 76
+j = 92
+
+[[collidable_cells]]
+i = 76
+j = 100
+
+[[collidable_cells]]
+i = 77
+j = -1
+
+[[collidable_cells]]
+i = 77
+j = 25
+
+[[collidable_cells]]
+i = 77
+j = 26
+
+[[collidable_cells]]
+i = 77
+j = 27
+
+[[collidable_cells]]
+i = 77
+j = 28
+
+[[collidable_cells]]
+i = 77
+j = 34
+
+[[collidable_cells]]
+i = 77
+j = 35
+
+[[collidable_cells]]
+i = 77
+j = 36
+
+[[collidable_cells]]
+i = 77
+j = 37
+
+[[collidable_cells]]
+i = 77
+j = 53
+
+[[collidable_cells]]
+i = 77
+j = 54
+
+[[collidable_cells]]
+i = 77
+j = 55
+
+[[collidable_cells]]
+i = 77
+j = 56
+
+[[collidable_cells]]
+i = 77
+j = 57
+
+[[collidable_cells]]
+i = 77
+j = 58
+
+[[collidable_cells]]
+i = 77
+j = 59
+
+[[collidable_cells]]
+i = 77
+j = 60
+
+[[collidable_cells]]
+i = 77
+j = 61
+
+[[collidable_cells]]
+i = 77
+j = 62
+
+[[collidable_cells]]
+i = 77
+j = 77
+
+[[collidable_cells]]
+i = 77
+j = 78
+
+[[collidable_cells]]
+i = 77
+j = 91
+
+[[collidable_cells]]
+i = 77
+j = 92
+
+[[collidable_cells]]
+i = 77
+j = 100
+
+[[collidable_cells]]
+i = 78
+j = -1
+
+[[collidable_cells]]
+i = 78
+j = 12
+
+[[collidable_cells]]
+i = 78
+j = 25
+
+[[collidable_cells]]
+i = 78
+j = 26
+
+[[collidable_cells]]
+i = 78
+j = 27
+
+[[collidable_cells]]
+i = 78
+j = 28
+
+[[collidable_cells]]
+i = 78
+j = 30
+
+[[collidable_cells]]
+i = 78
+j = 34
+
+[[collidable_cells]]
+i = 78
+j = 35
+
+[[collidable_cells]]
+i = 78
+j = 36
+
+[[collidable_cells]]
+i = 78
+j = 37
+
+[[collidable_cells]]
+i = 78
+j = 45
+
+[[collidable_cells]]
+i = 78
+j = 46
+
+[[collidable_cells]]
+i = 78
+j = 53
+
+[[collidable_cells]]
+i = 78
+j = 54
+
+[[collidable_cells]]
+i = 78
+j = 55
+
+[[collidable_cells]]
+i = 78
+j = 56
+
+[[collidable_cells]]
+i = 78
+j = 57
+
+[[collidable_cells]]
+i = 78
+j = 58
+
+[[collidable_cells]]
+i = 78
+j = 59
+
+[[collidable_cells]]
+i = 78
+j = 60
+
+[[collidable_cells]]
+i = 78
+j = 61
+
+[[collidable_cells]]
+i = 78
+j = 62
+
+[[collidable_cells]]
+i = 78
+j = 77
+
+[[collidable_cells]]
+i = 78
+j = 78
+
+[[collidable_cells]]
+i = 78
+j = 100
+
+[[collidable_cells]]
+i = 79
+j = -1
+
+[[collidable_cells]]
+i = 79
+j = 25
+
+[[collidable_cells]]
+i = 79
+j = 26
+
+[[collidable_cells]]
+i = 79
+j = 27
+
+[[collidable_cells]]
+i = 79
+j = 28
+
+[[collidable_cells]]
+i = 79
+j = 29
+
+[[collidable_cells]]
+i = 79
+j = 30
+
+[[collidable_cells]]
+i = 79
+j = 31
+
+[[collidable_cells]]
+i = 79
+j = 32
+
+[[collidable_cells]]
+i = 79
+j = 33
+
+[[collidable_cells]]
+i = 79
+j = 34
+
+[[collidable_cells]]
+i = 79
+j = 35
+
+[[collidable_cells]]
+i = 79
+j = 36
+
+[[collidable_cells]]
+i = 79
+j = 37
+
+[[collidable_cells]]
+i = 79
+j = 45
+
+[[collidable_cells]]
+i = 79
+j = 46
+
+[[collidable_cells]]
+i = 79
+j = 55
+
+[[collidable_cells]]
+i = 79
+j = 56
+
+[[collidable_cells]]
+i = 79
+j = 57
+
+[[collidable_cells]]
+i = 79
+j = 58
+
+[[collidable_cells]]
+i = 79
+j = 59
+
+[[collidable_cells]]
+i = 79
+j = 60
+
+[[collidable_cells]]
+i = 79
+j = 61
+
+[[collidable_cells]]
+i = 79
+j = 62
+
+[[collidable_cells]]
+i = 79
+j = 100
+
+[[collidable_cells]]
+i = 80
+j = -1
+
+[[collidable_cells]]
+i = 80
+j = 10
+
+[[collidable_cells]]
+i = 80
+j = 41
+
+[[collidable_cells]]
+i = 80
+j = 42
+
+[[collidable_cells]]
+i = 80
+j = 45
+
+[[collidable_cells]]
+i = 80
+j = 46
+
+[[collidable_cells]]
+i = 80
+j = 55
+
+[[collidable_cells]]
+i = 80
+j = 56
+
+[[collidable_cells]]
+i = 80
+j = 57
+
+[[collidable_cells]]
+i = 80
+j = 58
+
+[[collidable_cells]]
+i = 80
+j = 59
+
+[[collidable_cells]]
+i = 80
+j = 60
+
+[[collidable_cells]]
+i = 80
+j = 61
+
+[[collidable_cells]]
+i = 80
+j = 62
+
+[[collidable_cells]]
+i = 80
+j = 100
+
+[[collidable_cells]]
+i = 81
+j = -1
+
+[[collidable_cells]]
+i = 81
+j = 41
+
+[[collidable_cells]]
+i = 81
+j = 42
+
+[[collidable_cells]]
+i = 81
+j = 45
+
+[[collidable_cells]]
+i = 81
+j = 46
+
+[[collidable_cells]]
+i = 81
+j = 100
+
+[[collidable_cells]]
+i = 82
+j = -1
+
+[[collidable_cells]]
+i = 82
+j = 100
+
+[[collidable_cells]]
+i = 83
+j = -1
+
+[[collidable_cells]]
+i = 83
+j = 31
+
+[[collidable_cells]]
+i = 83
+j = 55
+
+[[collidable_cells]]
+i = 83
+j = 56
+
+[[collidable_cells]]
+i = 83
+j = 91
+
+[[collidable_cells]]
+i = 83
+j = 100
+
+[[collidable_cells]]
+i = 84
+j = -1
+
+[[collidable_cells]]
+i = 84
+j = 31
+
+[[collidable_cells]]
+i = 84
+j = 55
+
+[[collidable_cells]]
+i = 84
+j = 56
+
+[[collidable_cells]]
+i = 84
+j = 74
+
+[[collidable_cells]]
+i = 84
+j = 75
+
+[[collidable_cells]]
+i = 84
+j = 91
+
+[[collidable_cells]]
+i = 84
+j = 100
+
+[[collidable_cells]]
+i = 85
+j = -1
+
+[[collidable_cells]]
+i = 85
+j = 6
+
+[[collidable_cells]]
+i = 85
+j = 7
+
+[[collidable_cells]]
+i = 85
+j = 31
+
+[[collidable_cells]]
+i = 85
+j = 74
+
+[[collidable_cells]]
+i = 85
+j = 75
+
+[[collidable_cells]]
+i = 85
+j = 84
+
+[[collidable_cells]]
+i = 85
+j = 85
+
+[[collidable_cells]]
+i = 85
+j = 91
+
+[[collidable_cells]]
+i = 85
+j = 100
+
+[[collidable_cells]]
+i = 86
+j = -1
+
+[[collidable_cells]]
+i = 86
+j = 5
+
+[[collidable_cells]]
+i = 86
+j = 6
+
+[[collidable_cells]]
+i = 86
+j = 7
+
+[[collidable_cells]]
+i = 86
+j = 31
+
+[[collidable_cells]]
+i = 86
+j = 32
+
+[[collidable_cells]]
+i = 86
+j = 34
+
+[[collidable_cells]]
+i = 86
+j = 74
+
+[[collidable_cells]]
+i = 86
+j = 75
+
+[[collidable_cells]]
+i = 86
+j = 84
+
+[[collidable_cells]]
+i = 86
+j = 85
+
+[[collidable_cells]]
+i = 86
+j = 91
+
+[[collidable_cells]]
+i = 86
+j = 100
+
+[[collidable_cells]]
+i = 87
+j = -1
+
+[[collidable_cells]]
+i = 87
+j = 5
+
+[[collidable_cells]]
+i = 87
+j = 6
+
+[[collidable_cells]]
+i = 87
+j = 7
+
+[[collidable_cells]]
+i = 87
+j = 8
+
+[[collidable_cells]]
+i = 87
+j = 14
+
+[[collidable_cells]]
+i = 87
+j = 31
+
+[[collidable_cells]]
+i = 87
+j = 34
+
+[[collidable_cells]]
+i = 87
+j = 91
+
+[[collidable_cells]]
+i = 87
+j = 100
+
+[[collidable_cells]]
+i = 88
+j = -1
+
+[[collidable_cells]]
+i = 88
+j = 7
+
+[[collidable_cells]]
+i = 88
+j = 8
+
+[[collidable_cells]]
+i = 88
+j = 31
+
+[[collidable_cells]]
+i = 88
+j = 34
+
+[[collidable_cells]]
+i = 88
+j = 100
+
+[[collidable_cells]]
+i = 89
+j = -1
+
+[[collidable_cells]]
+i = 89
+j = 2
+
+[[collidable_cells]]
+i = 89
+j = 8
+
+[[collidable_cells]]
+i = 89
+j = 13
+
+[[collidable_cells]]
+i = 89
+j = 34
+
+[[collidable_cells]]
+i = 89
+j = 35
+
+[[collidable_cells]]
+i = 89
+j = 100
+
+[[collidable_cells]]
+i = 90
+j = -1
+
+[[collidable_cells]]
+i = 90
+j = 34
+
+[[collidable_cells]]
+i = 90
+j = 100
+
+[[collidable_cells]]
+i = 91
+j = -1
+
+[[collidable_cells]]
+i = 91
+j = 34
+
+[[collidable_cells]]
+i = 91
+j = 73
+
+[[collidable_cells]]
+i = 91
+j = 74
+
+[[collidable_cells]]
+i = 91
+j = 75
+
+[[collidable_cells]]
+i = 91
+j = 76
+
+[[collidable_cells]]
+i = 91
+j = 77
+
+[[collidable_cells]]
+i = 91
+j = 100
+
+[[collidable_cells]]
+i = 92
+j = -1
+
+[[collidable_cells]]
+i = 92
+j = 46
+
+[[collidable_cells]]
+i = 92
+j = 47
+
+[[collidable_cells]]
+i = 92
+j = 73
+
+[[collidable_cells]]
+i = 92
+j = 74
+
+[[collidable_cells]]
+i = 92
+j = 75
+
+[[collidable_cells]]
+i = 92
+j = 76
+
+[[collidable_cells]]
+i = 92
+j = 77
+
+[[collidable_cells]]
+i = 92
+j = 100
+
+[[collidable_cells]]
+i = 93
+j = -1
+
+[[collidable_cells]]
+i = 93
+j = 26
+
+[[collidable_cells]]
+i = 93
+j = 46
+
+[[collidable_cells]]
+i = 93
+j = 47
+
+[[collidable_cells]]
+i = 93
+j = 73
+
+[[collidable_cells]]
+i = 93
+j = 74
+
+[[collidable_cells]]
+i = 93
+j = 75
+
+[[collidable_cells]]
+i = 93
+j = 76
+
+[[collidable_cells]]
+i = 93
+j = 77
+
+[[collidable_cells]]
+i = 93
+j = 100
+
+[[collidable_cells]]
+i = 94
+j = -1
+
+[[collidable_cells]]
+i = 94
+j = 26
+
+[[collidable_cells]]
+i = 94
+j = 46
+
+[[collidable_cells]]
+i = 94
+j = 47
+
+[[collidable_cells]]
+i = 94
+j = 73
+
+[[collidable_cells]]
+i = 94
+j = 74
+
+[[collidable_cells]]
+i = 94
+j = 75
+
+[[collidable_cells]]
+i = 94
+j = 76
+
+[[collidable_cells]]
+i = 94
+j = 77
+
+[[collidable_cells]]
+i = 94
+j = 100
+
+[[collidable_cells]]
+i = 95
+j = -1
+
+[[collidable_cells]]
+i = 95
+j = 4
+
+[[collidable_cells]]
+i = 95
+j = 11
+
+[[collidable_cells]]
+i = 95
+j = 26
+
+[[collidable_cells]]
+i = 95
+j = 100
+
+[[collidable_cells]]
+i = 96
+j = -1
+
+[[collidable_cells]]
+i = 96
+j = 100
+
+[[collidable_cells]]
+i = 97
+j = -1
+
+[[collidable_cells]]
+i = 97
+j = 100
+
+[[collidable_cells]]
+i = 98
+j = -1
+
+[[collidable_cells]]
+i = 98
+j = 100
+
+[[collidable_cells]]
+i = 99
+j = -1
+
+[[collidable_cells]]
+i = 99
+j = 100
+
+[[collidable_cells]]
+i = 100
+j = 0
+
+[[collidable_cells]]
+i = 100
+j = 1
+
+[[collidable_cells]]
+i = 100
+j = 2
+
+[[collidable_cells]]
+i = 100
+j = 3
+
+[[collidable_cells]]
+i = 100
+j = 4
+
+[[collidable_cells]]
+i = 100
+j = 5
+
+[[collidable_cells]]
+i = 100
+j = 6
+
+[[collidable_cells]]
+i = 100
+j = 7
+
+[[collidable_cells]]
+i = 100
+j = 8
+
+[[collidable_cells]]
+i = 100
+j = 9
+
+[[collidable_cells]]
+i = 100
+j = 10
+
+[[collidable_cells]]
+i = 100
+j = 11
+
+[[collidable_cells]]
+i = 100
+j = 12
+
+[[collidable_cells]]
+i = 100
+j = 13
+
+[[collidable_cells]]
+i = 100
+j = 14
+
+[[collidable_cells]]
+i = 100
+j = 15
+
+[[collidable_cells]]
+i = 100
+j = 16
+
+[[collidable_cells]]
+i = 100
+j = 17
+
+[[collidable_cells]]
+i = 100
+j = 18
+
+[[collidable_cells]]
+i = 100
+j = 19
+
+[[collidable_cells]]
+i = 100
+j = 20
+
+[[collidable_cells]]
+i = 100
+j = 21
+
+[[collidable_cells]]
+i = 100
+j = 22
+
+[[collidable_cells]]
+i = 100
+j = 23
+
+[[collidable_cells]]
+i = 100
+j = 24
+
+[[collidable_cells]]
+i = 100
+j = 25
+
+[[collidable_cells]]
+i = 100
+j = 26
+
+[[collidable_cells]]
+i = 100
+j = 27
+
+[[collidable_cells]]
+i = 100
+j = 28
+
+[[collidable_cells]]
+i = 100
+j = 29
+
+[[collidable_cells]]
+i = 100
+j = 30
+
+[[collidable_cells]]
+i = 100
+j = 31
+
+[[collidable_cells]]
+i = 100
+j = 32
+
+[[collidable_cells]]
+i = 100
+j = 33
+
+[[collidable_cells]]
+i = 100
+j = 34
+
+[[collidable_cells]]
+i = 100
+j = 35
+
+[[collidable_cells]]
+i = 100
+j = 36
+
+[[collidable_cells]]
+i = 100
+j = 37
+
+[[collidable_cells]]
+i = 100
+j = 38
+
+[[collidable_cells]]
+i = 100
+j = 39
+
+[[collidable_cells]]
+i = 100
+j = 40
+
+[[collidable_cells]]
+i = 100
+j = 41
+
+[[collidable_cells]]
+i = 100
+j = 42
+
+[[collidable_cells]]
+i = 100
+j = 43
+
+[[collidable_cells]]
+i = 100
+j = 44
+
+[[collidable_cells]]
+i = 100
+j = 45
+
+[[collidable_cells]]
+i = 100
+j = 46
+
+[[collidable_cells]]
+i = 100
+j = 47
+
+[[collidable_cells]]
+i = 100
+j = 48
+
+[[collidable_cells]]
+i = 100
+j = 49
+
+[[collidable_cells]]
+i = 100
+j = 50
+
+[[collidable_cells]]
+i = 100
+j = 51
+
+[[collidable_cells]]
+i = 100
+j = 52
+
+[[collidable_cells]]
+i = 100
+j = 53
+
+[[collidable_cells]]
+i = 100
+j = 54
+
+[[collidable_cells]]
+i = 100
+j = 55
+
+[[collidable_cells]]
+i = 100
+j = 56
+
+[[collidable_cells]]
+i = 100
+j = 57
+
+[[collidable_cells]]
+i = 100
+j = 58
+
+[[collidable_cells]]
+i = 100
+j = 59
+
+[[collidable_cells]]
+i = 100
+j = 60
+
+[[collidable_cells]]
+i = 100
+j = 61
+
+[[collidable_cells]]
+i = 100
+j = 62
+
+[[collidable_cells]]
+i = 100
+j = 63
+
+[[collidable_cells]]
+i = 100
+j = 64
+
+[[collidable_cells]]
+i = 100
+j = 65
+
+[[collidable_cells]]
+i = 100
+j = 66
+
+[[collidable_cells]]
+i = 100
+j = 67
+
+[[collidable_cells]]
+i = 100
+j = 68
+
+[[collidable_cells]]
+i = 100
+j = 69
+
+[[collidable_cells]]
+i = 100
+j = 70
+
+[[collidable_cells]]
+i = 100
+j = 71
+
+[[collidable_cells]]
+i = 100
+j = 72
+
+[[collidable_cells]]
+i = 100
+j = 73
+
+[[collidable_cells]]
+i = 100
+j = 74
+
+[[collidable_cells]]
+i = 100
+j = 75
+
+[[collidable_cells]]
+i = 100
+j = 76
+
+[[collidable_cells]]
+i = 100
+j = 77
+
+[[collidable_cells]]
+i = 100
+j = 78
+
+[[collidable_cells]]
+i = 100
+j = 79
+
+[[collidable_cells]]
+i = 100
+j = 80
+
+[[collidable_cells]]
+i = 100
+j = 81
+
+[[collidable_cells]]
+i = 100
+j = 82
+
+[[collidable_cells]]
+i = 100
+j = 83
+
+[[collidable_cells]]
+i = 100
+j = 84
+
+[[collidable_cells]]
+i = 100
+j = 85
+
+[[collidable_cells]]
+i = 100
+j = 86
+
+[[collidable_cells]]
+i = 100
+j = 87
+
+[[collidable_cells]]
+i = 100
+j = 88
+
+[[collidable_cells]]
+i = 100
+j = 89
+
+[[collidable_cells]]
+i = 100
+j = 90
+
+[[collidable_cells]]
+i = 100
+j = 91
+
+[[collidable_cells]]
+i = 100
+j = 92
+
+[[collidable_cells]]
+i = 100
+j = 93
+
+[[collidable_cells]]
+i = 100
+j = 94
+
+[[collidable_cells]]
+i = 100
+j = 95
+
+[[collidable_cells]]
+i = 100
+j = 96
+
+[[collidable_cells]]
+i = 100
+j = 97
+
+[[collidable_cells]]
+i = 100
+j = 98
+
+[[collidable_cells]]
+i = 100
+j = 99
+
+[[textures]]
+i = 37
+j = 39
+priority = 2
+txt_id = 2
+
+[[textures]]
+i = 48
+j = 42
+priority = 2
+txt_id = 18
+
+[[textures]]
+i = 55
+j = 42
+priority = 2
+txt_id = 18
+
+[[textures]]
+i = 48
+j = 33
+priority = 2
+txt_id = 297
+
+[[textures]]
+i = 70
+j = 26
+priority = 2
+txt_id = 298
+
+[[textures]]
+i = 59
+j = 33
+priority = 2
+txt_id = 295
+
+[[textures]]
+i = 48
+j = 31
+priority = 2
+txt_id = 296
+
+[[textures]]
+i = 59
+j = 31
+priority = 2
+txt_id = 294
+
+[[textures]]
+i = 48
+j = 30
+priority = 3
+txt_id = 307
+
+[[textures]]
+i = 59
+j = 30
+priority = 3
+txt_id = 307
+
+[[textures]]
+i = 70
+j = 24
+priority = 2
+txt_id = 299
+
+[[textures]]
+i = 73
+j = 28
+priority = 2
+txt_id = 321
+
+[[textures]]
+i = 71
+j = 28
+priority = 2
+txt_id = 320
+
+[[textures]]
+i = 78
+j = 28
+priority = 2
+txt_id = 320
+
+[[textures]]
+i = 77
+j = 32
+priority = 2
+txt_id = 318
+
+[[textures]]
+i = 72
+j = 32
+priority = 2
+txt_id = 318
+
+[[textures]]
+i = 60
+j = 35
+priority = 0
+txt_id = 89
+
+[[textures]]
+i = 62
+j = 35
+priority = 0
+txt_id = 89
+
+[[textures]]
+i = 63
+j = 36
+priority = 0
+txt_id = 89
+
+[[textures]]
+i = 64
+j = 36
+priority = 0
+txt_id = 89
+
+[[textures]]
+i = 49
+j = 36
+priority = 0
+txt_id = 89
+
+[[textures]]
+i = 52
+j = 36
+priority = 0
+txt_id = 89
+
+[[textures]]
+i = 53
+j = 36
+priority = 0
+txt_id = 89
+
+[[textures]]
+i = 73
+j = 36
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 75
+j = 36
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 70
+j = 29
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 72
+j = 29
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 74
+j = 29
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 76
+j = 29
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 78
+j = 29
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 78
+j = 31
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 76
+j = 31
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 74
+j = 31
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 72
+j = 31
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 70
+j = 31
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 70
+j = 33
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 72
+j = 33
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 74
+j = 33
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 76
+j = 33
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 78
+j = 33
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 62
+j = 43
+priority = 2
+txt_id = 239
+
+[[textures]]
+i = 61
+j = 53
+priority = 2
+txt_id = 291
+
+[[textures]]
+i = 46
+j = 36
+priority = 2
+txt_id = 289
+
+[[textures]]
+i = 67
+j = 42
+priority = 2
+txt_id = 247
+
+[[textures]]
+i = 69
+j = 43
+priority = 2
+txt_id = 247
+
+[[textures]]
+i = 45
+j = 46
+priority = 2
+txt_id = 244
+
+[[textures]]
+i = 57
+j = 55
+priority = 2
+txt_id = 286
+
+[[textures]]
+i = 77
+j = 36
+priority = 2
+txt_id = 283
+
+[[textures]]
+i = 38
+j = 28
+priority = 2
+txt_id = 213
+
+[[textures]]
+i = 82
+j = 25
+priority = 2
+txt_id = 215
+
+[[textures]]
+i = 85
+j = 28
+priority = 2
+txt_id = 215
+
+[[textures]]
+i = 57
+j = 19
+priority = 2
+txt_id = 215
+
+[[textures]]
+i = 43
+j = 48
+priority = 2
+txt_id = 174
+
+[[textures]]
+i = 41
+j = 49
+priority = 2
+txt_id = 175
+
+[[textures]]
+i = 43
+j = 46
+priority = 2
+txt_id = 175
+
+[[textures]]
+i = 73
+j = 55
+priority = 0
+txt_id = 170
+
+[[textures]]
+i = 73
+j = 55
+priority = 1
+txt_id = 109
+
+[[textures]]
+i = 73
+j = 61
+priority = 1
+txt_id = 108
+
+[[textures]]
+i = 79
+j = 61
+priority = 1
+txt_id = 115
+
+[[textures]]
+i = 79
+j = 55
+priority = 1
+txt_id = 114
+
+[[textures]]
+i = 79
+j = 57
+priority = 1
+txt_id = 113
+
+[[textures]]
+i = 79
+j = 59
+priority = 1
+txt_id = 113
+
+[[textures]]
+i = 75
+j = 55
+priority = 1
+txt_id = 110
+
+[[textures]]
+i = 77
+j = 55
+priority = 1
+txt_id = 110
+
+[[textures]]
+i = 73
+j = 57
+priority = 1
+txt_id = 111
+
+[[textures]]
+i = 73
+j = 59
+priority = 1
+txt_id = 111
+
+[[textures]]
+i = 75
+j = 61
+priority = 1
+txt_id = 112
+
+[[textures]]
+i = 77
+j = 61
+priority = 1
+txt_id = 112
+
+[[textures]]
+i = 69
+j = 40
+priority = 2
+txt_id = 19
+
+[[textures]]
+i = 73
+j = 53
+priority = 2
+txt_id = 220
+
+[[textures]]
+i = 71
+j = 55
+priority = 2
+txt_id = 220
+
+[[textures]]
+i = 75
+j = 52
+priority = 2
+txt_id = 236
+
+[[textures]]
+i = 77
+j = 53
+priority = 2
+txt_id = 236
+
+[[textures]]
+i = 80
+j = 48
+priority = 2
+txt_id = 2
+
+[[textures]]
+i = 68
+j = 58
+priority = 2
+txt_id = 2
+
+[[textures]]
+i = 63
+j = 44
+priority = 2
+txt_id = 239
+
+[[textures]]
+i = 78
+j = 45
+priority = 2
+txt_id = 327
+
+[[textures]]
+i = 50
+j = 59
+priority = 2
+txt_id = 188
+
+[[textures]]
+i = 48
+j = 58
+priority = 2
+txt_id = 188
+
+[[textures]]
+i = 43
+j = 56
+priority = 2
+txt_id = 192
+
+[[textures]]
+i = 32
+j = 49
+priority = 2
+txt_id = 182
+
+[[textures]]
+i = 24
+j = 29
+priority = 2
+txt_id = 2
+
+[[textures]]
+i = 19
+j = 26
+priority = 2
+txt_id = 2
+
+[[textures]]
+i = 3
+j = 26
+priority = 2
+txt_id = 2
+
+[[textures]]
+i = 12
+j = 31
+priority = 2
+txt_id = 18
+
+[[textures]]
+i = 23
+j = 41
+priority = 2
+txt_id = 22
+
+[[textures]]
+i = 1
+j = 48
+priority = 2
+txt_id = 217
+
+[[textures]]
+i = 17
+j = 50
+priority = 2
+txt_id = 211
+
+[[textures]]
+i = 15
+j = 55
+priority = 2
+txt_id = 220
+
+[[textures]]
+i = 16
+j = 56
+priority = 2
+txt_id = 220
+
+[[textures]]
+i = 27
+j = 51
+priority = 2
+txt_id = 241
+
+[[textures]]
+i = 28
+j = 50
+priority = 2
+txt_id = 241
+
+[[textures]]
+i = 31
+j = 43
+priority = 2
+txt_id = 172
+
+[[textures]]
+i = 5
+j = 65
+priority = 1
+txt_id = 42
+
+[[textures]]
+i = 11
+j = 65
+priority = 1
+txt_id = 42
+
+[[textures]]
+i = 6
+j = 66
+priority = 1
+txt_id = 42
+
+[[textures]]
+i = 7
+j = 66
+priority = 1
+txt_id = 42
+
+[[textures]]
+i = 10
+j = 67
+priority = 1
+txt_id = 42
+
+[[textures]]
+i = 11
+j = 67
+priority = 1
+txt_id = 42
+
+[[textures]]
+i = 6
+j = 65
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 8
+j = 65
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 15
+j = 65
+priority = 2
+txt_id = 324
+
+[[textures]]
+i = 21
+j = 63
+priority = 2
+txt_id = 225
+
+[[textures]]
+i = 25
+j = 60
+priority = 2
+txt_id = 225
+
+[[textures]]
+i = 31
+j = 67
+priority = 2
+txt_id = 215
+
+[[textures]]
+i = 4
+j = 73
+priority = 2
+txt_id = 215
+
+[[textures]]
+i = 26
+j = 73
+priority = 2
+txt_id = 215
+
+[[textures]]
+i = 34
+j = 75
+priority = 2
+txt_id = 213
+
+[[textures]]
+i = 7
+j = 80
+priority = 2
+txt_id = 208
+
+[[textures]]
+i = 35
+j = 84
+priority = 2
+txt_id = 188
+
+[[textures]]
+i = 33
+j = 83
+priority = 2
+txt_id = 188
+
+[[textures]]
+i = 28
+j = 81
+priority = 2
+txt_id = 175
+
+[[textures]]
+i = 29
+j = 82
+priority = 2
+txt_id = 175
+
+[[textures]]
+i = 13
+j = 87
+priority = 2
+txt_id = 175
+
+[[textures]]
+i = 2
+j = 87
+priority = 2
+txt_id = 20
+
+[[textures]]
+i = 2
+j = 58
+priority = 2
+txt_id = 20
+
+[[textures]]
+i = 27
+j = 88
+priority = 2
+txt_id = 2
+
+[[textures]]
+i = 21
+j = 90
+priority = 2
+txt_id = 2
+
+[[textures]]
+i = 54
+j = 74
+priority = 2
+txt_id = 258
+
+[[textures]]
+i = 74
+j = 71
+priority = 2
+txt_id = 257
+
+[[textures]]
+i = 75
+j = 87
+priority = 2
+txt_id = 254
+
+[[textures]]
+i = 56
+j = 87
+priority = 2
+txt_id = 260
+
+[[textures]]
+i = 63
+j = 85
+priority = 2
+txt_id = 268
+
+[[textures]]
+i = 65
+j = 85
+priority = 2
+txt_id = 267
+
+[[textures]]
+i = 66
+j = 85
+priority = 1
+txt_id = 269
+
+[[textures]]
+i = 75
+j = 82
+priority = 1
+txt_id = 270
+
+[[textures]]
+i = 84
+j = 72
+priority = 2
+txt_id = 176
+
+[[textures]]
+i = 82
+j = 78
+priority = 2
+txt_id = 256
+
+[[textures]]
+i = 82
+j = 89
+priority = 2
+txt_id = 255
+
+[[textures]]
+i = 59
+j = 90
+priority = 2
+txt_id = 263
+
+[[textures]]
+i = 70
+j = 85
+priority = 2
+txt_id = 271
+
+[[textures]]
+i = 64
+j = 69
+priority = 2
+txt_id = 276
+
+[[textures]]
+i = 93
+j = 75
+priority = 1
+txt_id = 35
+
+[[textures]]
+i = 93
+j = 83
+priority = 1
+txt_id = 35
+
+[[textures]]
+i = 90
+j = 69
+priority = 2
+txt_id = 277
+
+[[textures]]
+i = 53
+j = 70
+priority = 1
+txt_id = 28
+
+[[textures]]
+i = 57
+j = 70
+priority = 1
+txt_id = 37
+
+[[textures]]
+i = 61
+j = 70
+priority = 1
+txt_id = 37
+
+[[textures]]
+i = 65
+j = 70
+priority = 1
+txt_id = 37
+
+[[textures]]
+i = 53
+j = 74
+priority = 1
+txt_id = 34
+
+[[textures]]
+i = 53
+j = 78
+priority = 1
+txt_id = 34
+
+[[textures]]
+i = 53
+j = 82
+priority = 1
+txt_id = 34
+
+[[textures]]
+i = 53
+j = 93
+priority = 1
+txt_id = 30
+
+[[textures]]
+i = 53
+j = 86
+priority = 1
+txt_id = 34
+
+[[textures]]
+i = 53
+j = 89
+priority = 1
+txt_id = 34
+
+[[textures]]
+i = 57
+j = 93
+priority = 1
+txt_id = 33
+
+[[textures]]
+i = 61
+j = 93
+priority = 1
+txt_id = 33
+
+[[textures]]
+i = 65
+j = 93
+priority = 1
+txt_id = 33
+
+[[textures]]
+i = 69
+j = 93
+priority = 1
+txt_id = 33
+
+[[textures]]
+i = 73
+j = 93
+priority = 1
+txt_id = 33
+
+[[textures]]
+i = 77
+j = 93
+priority = 1
+txt_id = 33
+
+[[textures]]
+i = 81
+j = 93
+priority = 1
+txt_id = 33
+
+[[textures]]
+i = 85
+j = 93
+priority = 1
+txt_id = 33
+
+[[textures]]
+i = 93
+j = 93
+priority = 1
+txt_id = 31
+
+[[textures]]
+i = 93
+j = 87
+priority = 1
+txt_id = 35
+
+[[textures]]
+i = 93
+j = 89
+priority = 1
+txt_id = 35
+
+[[textures]]
+i = 69
+j = 70
+priority = 1
+txt_id = 37
+
+[[textures]]
+i = 73
+j = 70
+priority = 1
+txt_id = 37
+
+[[textures]]
+i = 77
+j = 70
+priority = 1
+txt_id = 37
+
+[[textures]]
+i = 81
+j = 70
+priority = 1
+txt_id = 37
+
+[[textures]]
+i = 85
+j = 70
+priority = 1
+txt_id = 37
+
+[[textures]]
+i = 89
+j = 70
+priority = 1
+txt_id = 37
+
+[[textures]]
+i = 93
+j = 70
+priority = 1
+txt_id = 29
+
+[[textures]]
+i = 93
+j = 79
+priority = 1
+txt_id = 35
+
+[[textures]]
+i = 93
+j = 74
+priority = 1
+txt_id = 35
+
+[[textures]]
+i = 57
+j = 74
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 61
+j = 74
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 69
+j = 74
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 73
+j = 74
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 77
+j = 74
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 81
+j = 74
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 85
+j = 74
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 89
+j = 74
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 89
+j = 78
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 89
+j = 86
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 57
+j = 78
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 61
+j = 78
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 69
+j = 78
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 73
+j = 78
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 77
+j = 78
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 80
+j = 78
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 84
+j = 78
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 57
+j = 82
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 61
+j = 82
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 65
+j = 82
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 69
+j = 82
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 73
+j = 82
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 77
+j = 82
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 81
+j = 82
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 85
+j = 82
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 85
+j = 78
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 57
+j = 86
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 61
+j = 86
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 65
+j = 86
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 69
+j = 86
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 73
+j = 86
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 77
+j = 86
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 81
+j = 86
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 85
+j = 86
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 57
+j = 89
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 61
+j = 89
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 65
+j = 90
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 69
+j = 89
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 73
+j = 90
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 78
+j = 90
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 82
+j = 90
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 85
+j = 90
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 43
+j = 70
+priority = 2
+txt_id = 325
+
+[[textures]]
+i = 41
+j = 85
+priority = 2
+txt_id = 279
+
+[[textures]]
+i = 47
+j = 84
+priority = 2
+txt_id = 249
+
+[[textures]]
+i = 45
+j = 83
+priority = 2
+txt_id = 249
+
+[[textures]]
+i = 55
+j = 96
+priority = 2
+txt_id = 250
+
+[[textures]]
+i = 21
+j = 17
+priority = 2
+txt_id = 207
+
+[[textures]]
+i = 1
+j = 17
+priority = 2
+txt_id = 205
+
+[[textures]]
+i = 24
+j = 9
+priority = 2
+txt_id = 186
+
+[[textures]]
+i = 2
+j = 10
+priority = 2
+txt_id = 176
+
+[[textures]]
+i = 21
+j = 5
+priority = 2
+txt_id = 20
+
+[[textures]]
+i = 17
+j = 3
+priority = 2
+txt_id = 20
+
+[[textures]]
+i = 2
+j = 1
+priority = 2
+txt_id = 20
+
+[[textures]]
+i = 51
+j = 20
+priority = 2
+txt_id = 217
+
+[[textures]]
+i = 39
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 43
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 35
+j = 0
+priority = 0
+txt_id = 148
+
+[[textures]]
+i = 35
+j = 4
+priority = 0
+txt_id = 148
+
+[[textures]]
+i = 35
+j = 16
+priority = 0
+txt_id = 144
+
+[[textures]]
+i = 35
+j = 8
+priority = 0
+txt_id = 148
+
+[[textures]]
+i = 35
+j = 12
+priority = 0
+txt_id = 148
+
+[[textures]]
+i = 39
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 43
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 47
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 51
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 55
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 59
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 63
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 67
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 71
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 75
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 79
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 83
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 87
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 91
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 95
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 96
+j = 16
+priority = 0
+txt_id = 149
+
+[[textures]]
+i = 96
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 96
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 96
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 96
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 92
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 92
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 92
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 92
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 88
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 88
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 88
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 88
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 84
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 84
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 84
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 84
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 80
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 80
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 80
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 80
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 47
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 51
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 55
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 59
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 63
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 67
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 71
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 75
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 76
+j = 0
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 39
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 39
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 39
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 43
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 47
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 51
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 55
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 59
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 43
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 47
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 51
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 55
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 59
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 63
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 67
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 71
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 75
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 75
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 43
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 47
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 51
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 55
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 59
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 63
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 67
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 71
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 63
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 67
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 71
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 75
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 77
+j = 12
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 77
+j = 8
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 76
+j = 4
+priority = 0
+txt_id = 96
+
+[[textures]]
+i = 41
+j = 9
+priority = 2
+txt_id = 303
+
+[[textures]]
+i = 43
+j = 7
+priority = 2
+txt_id = 303
+
+[[textures]]
+i = 60
+j = 2
+priority = 2
+txt_id = 303
+
+[[textures]]
+i = 80
+j = 8
+priority = 2
+txt_id = 303
+
+[[textures]]
+i = 78
+j = 10
+priority = 2
+txt_id = 303
+
+[[textures]]
+i = 95
+j = 2
+priority = 2
+txt_id = 303
+
+[[textures]]
+i = 89
+j = 0
+priority = 2
+txt_id = 303
+
+[[textures]]
+i = 87
+j = 13
+priority = 2
+txt_id = 304
+
+[[textures]]
+i = 89
+j = 12
+priority = 2
+txt_id = 304
+
+[[textures]]
+i = 52
+j = 13
+priority = 2
+txt_id = 304
+
+[[textures]]
+i = 50
+j = 12
+priority = 2
+txt_id = 304
+
+[[textures]]
+i = 47
+j = 1
+priority = 2
+txt_id = 274
+
+[[textures]]
+i = 85
+j = 5
+priority = 2
+txt_id = 273
+
+[[textures]]
+i = 95
+j = 10
+priority = 2
+txt_id = 260
+
+[[textures]]
+i = 64
+j = 10
+priority = 2
+txt_id = 176
+
+[[textures]]
+i = 43
+j = 21
+priority = 2
+txt_id = 19
+
+[[textures]]
+i = 67
+j = 1
+priority = 2
+txt_id = 266
+
+[[textures]]
+i = 72
+j = 2
+priority = 2
+txt_id = 266
+
+[[textures]]
+i = 93
+j = 21
+priority = 2
+txt_id = 286
+
+[[textures]]
+i = 91
+j = 41
+priority = 2
+txt_id = 285
+
+[[textures]]
+i = 56
+j = 14
+priority = 2
+txt_id = 328
+
+[[textures]]
+i = 0
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 92
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 88
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 84
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 80
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 76
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 72
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 68
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 64
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 60
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 56
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 56
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 60
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 65
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 69
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 69
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 69
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 13
+j = 65
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 13
+j = 61
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 59
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 11
+j = 59
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 13
+j = 59
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 55
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 55
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 17
+j = 55
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 52
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 52
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 48
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 48
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 51
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 51
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 52
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 48
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 47
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 47
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 17
+j = 59
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 17
+j = 63
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 69
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 17
+j = 67
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 21
+j = 56
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 21
+j = 60
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 21
+j = 64
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 21
+j = 67
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 73
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 73
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 73
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 73
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 71
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 75
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 70
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 74
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 78
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 77
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 77
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 77
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 77
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 79
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 83
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 87
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 91
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 92
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 92
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 92
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 92
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 88
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 84
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 80
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 81
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 13
+j = 81
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 17
+j = 81
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 85
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 85
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 85
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 88
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 88
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 88
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 82
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 86
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 28
+j = 86
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 32
+j = 86
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 28
+j = 94
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 32
+j = 94
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 28
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 32
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 32
+j = 90
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 36
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 40
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 44
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 48
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 52
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 56
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 60
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 64
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 68
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 72
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 76
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 80
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 84
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 88
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 92
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 96
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 92
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 88
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 84
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 80
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 76
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 72
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 68
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 92
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 88
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 84
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 80
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 76
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 72
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 68
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 64
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 60
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 56
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 52
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 50
+j = 71
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 50
+j = 75
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 50
+j = 79
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 50
+j = 83
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 50
+j = 87
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 50
+j = 91
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 50
+j = 93
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 50
+j = 69
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 49
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 45
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 41
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 41
+j = 70
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 45
+j = 70
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 47
+j = 70
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 41
+j = 74
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 41
+j = 78
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 45
+j = 78
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 47
+j = 78
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 41
+j = 82
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 41
+j = 86
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 41
+j = 90
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 41
+j = 92
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 45
+j = 92
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 46
+j = 92
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 45
+j = 87
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 45
+j = 82
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 46
+j = 84
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 46
+j = 89
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 36
+j = 92
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 36
+j = 88
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 36
+j = 84
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 28
+j = 82
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 32
+j = 82
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 28
+j = 78
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 32
+j = 78
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 36
+j = 80
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 38
+j = 81
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 39
+j = 84
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 39
+j = 87
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 39
+j = 90
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 28
+j = 70
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 33
+j = 70
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 37
+j = 70
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 31
+j = 74
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 35
+j = 74
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 38
+j = 74
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 48
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 25
+j = 48
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 25
+j = 52
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 25
+j = 56
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 25
+j = 60
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 25
+j = 65
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 25
+j = 67
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 29
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 32
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 36
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 37
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 29
+j = 62
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 33
+j = 62
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 37
+j = 62
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 41
+j = 62
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 45
+j = 62
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 49
+j = 62
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 53
+j = 62
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 57
+j = 62
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 61
+j = 62
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 65
+j = 62
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 68
+j = 62
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 72
+j = 63
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 76
+j = 63
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 80
+j = 63
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 81
+j = 59
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 81
+j = 55
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 79
+j = 51
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 75
+j = 51
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 71
+j = 51
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 69
+j = 55
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 65
+j = 58
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 65
+j = 54
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 65
+j = 50
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 65
+j = 46
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 69
+j = 46
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 73
+j = 46
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 77
+j = 46
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 81
+j = 46
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 68
+j = 51
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 69
+j = 49
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 73
+j = 49
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 77
+j = 49
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 85
+j = 46
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 89
+j = 46
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 93
+j = 46
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 46
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 85
+j = 50
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 85
+j = 58
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 84
+j = 62
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 88
+j = 62
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 64
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 60
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 56
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 52
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 49
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 89
+j = 50
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 93
+j = 50
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 89
+j = 54
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 93
+j = 54
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 89
+j = 58
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 92
+j = 58
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 92
+j = 62
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 42
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 38
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 34
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 30
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 26
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 22
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 96
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 92
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 88
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 84
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 80
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 76
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 72
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 68
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 64
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 59
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 56
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 52
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 48
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 44
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 40
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 36
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 32
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 31
+j = 17
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 31
+j = 13
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 31
+j = 9
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 31
+j = 5
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 31
+j = 1
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 31
+j = 0
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 27
+j = 0
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 27
+j = 4
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 27
+j = 8
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 27
+j = 12
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 27
+j = 16
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 27
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 23
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 16
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 12
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 8
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 4
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 0
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 0
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 0
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 0
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 0
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 0
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 0
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 4
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 9
+j = 4
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 13
+j = 4
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 17
+j = 4
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 21
+j = 4
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 23
+j = 4
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 8
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 8
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 8
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 8
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 8
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 8
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 12
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 12
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 12
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 12
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 12
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 23
+j = 12
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 16
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 16
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 16
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 16
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 16
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 16
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 32
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 36
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 40
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 0
+j = 44
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 44
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 40
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 36
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 32
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 32
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 36
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 40
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 44
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 8
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 32
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 36
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 40
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 43
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 44
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 40
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 36
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 32
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 16
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 29
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 33
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 36
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 40
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 20
+j = 44
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 44
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 40
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 36
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 32
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 26
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 28
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 32
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 36
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 28
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 28
+j = 33
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 28
+j = 37
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 28
+j = 41
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 28
+j = 45
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 29
+j = 49
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 29
+j = 53
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 29
+j = 57
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 29
+j = 59
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 33
+j = 58
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 33
+j = 54
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 32
+j = 45
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 32
+j = 41
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 32
+j = 37
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 32
+j = 33
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 32
+j = 29
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 32
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 36
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 36
+j = 32
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 36
+j = 36
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 36
+j = 40
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 36
+j = 44
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 36
+j = 48
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 36
+j = 52
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 37
+j = 56
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 37
+j = 59
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 41
+j = 58
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 41
+j = 54
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 40
+j = 45
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 40
+j = 49
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 40
+j = 52
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 40
+j = 33
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 40
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 40
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 44
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 44
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 44
+j = 35
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 40
+j = 37
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 44
+j = 39
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 44
+j = 43
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 44
+j = 51
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 45
+j = 55
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 45
+j = 58
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 49
+j = 58
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 49
+j = 54
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 48
+j = 43
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 48
+j = 39
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 52
+j = 39
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 52
+j = 43
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 53
+j = 55
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 53
+j = 58
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 57
+j = 58
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 61
+j = 58
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 57
+j = 54
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 56
+j = 51
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 56
+j = 47
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 60
+j = 47
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 60
+j = 51
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 62
+j = 51
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 62
+j = 47
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 48
+j = 38
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 52
+j = 38
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 55
+j = 35
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 55
+j = 31
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 56
+j = 39
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 56
+j = 43
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 60
+j = 38
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 60
+j = 42
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 64
+j = 42
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 64
+j = 38
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 68
+j = 38
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 72
+j = 38
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 76
+j = 38
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 68
+j = 42
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 72
+j = 42
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 76
+j = 42
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 80
+j = 42
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 80
+j = 38
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 80
+j = 34
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 80
+j = 30
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 80
+j = 26
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 80
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 48
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 48
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 52
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 52
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 56
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 56
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 60
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 60
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 64
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 64
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 66
+j = 34
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 66
+j = 30
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 67
+j = 26
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 67
+j = 22
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 71
+j = 22
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 75
+j = 22
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 78
+j = 23
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 84
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 88
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 92
+j = 24
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 92
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 92
+j = 32
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 92
+j = 36
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 92
+j = 39
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 92
+j = 43
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 88
+j = 42
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 84
+j = 42
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 84
+j = 38
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 88
+j = 38
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 84
+j = 34
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 88
+j = 34
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 84
+j = 30
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 88
+j = 28
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 61
+j = 55
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 55
+j = 64
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 44
+j = 47
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 48
+j = 47
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 52
+j = 47
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 48
+j = 51
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 52
+j = 51
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 33
+j = 49
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 60
+j = 46
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 61
+j = 46
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 56
+j = 36
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 60
+j = 20
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 30
+j = 21
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 6
+j = 4
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 28
+j = 30
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 21
+j = 48
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 21
+j = 52
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 13
+j = 55
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 3
+j = 63
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 35
+j = 77
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 38
+j = 78
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 30
+j = 71
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 26
+j = 62
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 10
+j = 81
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 24
+j = 89
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 18
+j = 93
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 28
+j = 90
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 37
+j = 94
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 46
+j = 82
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 46
+j = 87
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 42
+j = 85
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 44
+j = 90
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 40
+j = 29
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 74
+j = 35
+priority = 0
+txt_id = 38
+
+[[textures]]
+i = 85
+j = 54
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 82
+j = 52
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 54
+j = 67
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 58
+j = 67
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 62
+j = 67
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 64
+j = 67
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 68
+j = 67
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 72
+j = 67
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 76
+j = 67
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 80
+j = 67
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 84
+j = 67
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 88
+j = 67
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 92
+j = 67
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 46
+j = 76
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 43
+j = 76
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 44
+j = 32
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 45
+j = 32
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 45
+j = 34
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 95
+j = 73
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 95
+j = 70
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 94
+j = 76
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 94
+j = 79
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 94
+j = 83
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 94
+j = 86
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 94
+j = 89
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 94
+j = 92
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 89
+j = 93
+priority = 1
+txt_id = 33
+
+[[textures]]
+i = 89
+j = 82
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 89
+j = 90
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 91
+j = 95
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 87
+j = 95
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 83
+j = 95
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 80
+j = 95
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 76
+j = 95
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 72
+j = 95
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 68
+j = 95
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 65
+j = 95
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 61
+j = 95
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 57
+j = 95
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 53
+j = 94
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 53
+j = 91
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 53
+j = 87
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 52
+j = 83
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 52
+j = 78
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 52
+j = 79
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 52
+j = 74
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 53
+j = 68
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 57
+j = 68
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 62
+j = 68
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 6
+j = 61
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 9
+j = 61
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 64
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 12
+j = 66
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 89
+j = 30
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 10
+j = 65
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 10
+j = 64
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 8
+j = 64
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 6
+j = 64
+priority = 1
+txt_id = 46
+
+[[textures]]
+i = 5
+j = 64
+priority = 1
+txt_id = 42
+
+[[textures]]
+i = 11
+j = 64
+priority = 1
+txt_id = 42
+
+[[textures]]
+i = 5
+j = 64
+priority = 2
+txt_id = 300
+
+[[textures]]
+i = 5
+j = 62
+priority = 2
+txt_id = 301
+
+[[textures]]
+i = 28
+j = 74
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 23
+j = 91
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 90
+j = 69
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 85
+j = 68
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 81
+j = 68
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 78
+j = 68
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 73
+j = 68
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 69
+j = 68
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 52
+j = 71
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 69
+j = 59
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 80
+j = 49
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 83
+j = 50
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 56
+j = 33
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 19
+j = 27
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 26
+j = 30
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 4
+j = 27
+priority = 0
+txt_id = 0
+
+[[textures]]
+i = 65
+j = 78
+priority = 0
+txt_id = 36
+
+[[textures]]
+i = 75
+j = 89
+priority = 0
+txt_id = 36

@@ -1,0 +1,560 @@
+#include "GameWindow.h"
+
+#include <algorithm>
+#include <cmath>
+#include <stdexcept>
+#include <string>
+
+#include "CityEntityModel.h"
+#include "CityEntityRenderable.h"
+#include "Formulas.h"
+#include "GroundItemEntity.h"
+#include "NPCEntity.h"
+#include "PlayerEntity.h"
+
+namespace {
+constexpr int kMargin = 8;
+constexpr int kChatGap = 4;
+constexpr int kSidePanelWidth = 267;
+constexpr int kChatMessagesHeight = 112;
+constexpr int kChatInputHeight = 32;
+constexpr int kInventoryPanelHeight = 294;
+constexpr int kInfoPanelHeight = 114;
+constexpr int kStatsPanelHeight = 104;
+
+constexpr SDL_Color kTitleColor{255, 255, 255, 255};
+constexpr SDL_Color kHeaderAccent{255, 223, 128, 255};
+constexpr SDL_Color kPrimaryText{238, 232, 213, 255};
+constexpr SDL_Color kHighlightText{255, 215, 0, 255};
+constexpr SDL_Color kHpFill{200, 40, 40, 255};
+constexpr SDL_Color kHpBg{60, 10, 10, 255};
+constexpr SDL_Color kManaFill{40, 80, 220, 255};
+constexpr SDL_Color kManaBg{10, 20, 60, 255};
+constexpr SDL_Color kExpFill{60, 200, 60, 255};
+constexpr SDL_Color kExpBg{10, 50, 10, 255};
+constexpr float kNormalCameraZoom = 1.0f;
+constexpr float kZoomedOutCameraZoom = 0.65f;
+
+bool sameColor(SDL_Color a, SDL_Color b) {
+  return a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a;
+}
+} // namespace
+
+GameWindow::GameWindow(uint32_t myPlayerID)
+    : camera(Camera(960, 540)), myPlayerID(myPlayerID), windowWidth(960),
+      windowHeight(540) {
+  window = std::make_unique<SDL2pp::Window>(
+      "Argentum Online", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 960,
+      540, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+
+  renderer =
+      std::make_unique<SDL2pp::Renderer>(*window, -1, SDL_RENDERER_ACCELERATED);
+
+  renderer->SetLogicalSize(960, 540);
+  renderer->SetDrawBlendMode(SDL_BLENDMODE_BLEND);
+
+  initResources();
+}
+
+void GameWindow::initResources() {
+  font = std::make_unique<SDL2pp::Font>("fonts/Vera.ttf", 14);
+  titleFont = std::make_unique<SDL2pp::Font>("fonts/OldLondon.ttf", 34);
+  uiFont = std::make_unique<SDL2pp::Font>("fonts/CinzelBold.ttf", 18);
+
+  chatView = std::make_unique<GameChatView>(font.get());
+
+  auto loadTexture = [this](const std::string &path) {
+    return std::make_unique<SDL2pp::Texture>(*renderer, SDL2pp::Surface(path));
+  };
+
+  uiFrameTexture = loadTexture("assets/HUD/UpperLayer.png");
+  chatMessagesBackground = loadTexture("assets/HUD/UserChat/base_messages.png");
+  chatInputBackground = loadTexture("assets/HUD/UserChat/base_input.png");
+  userInfoBackground = loadTexture("assets/HUD/UserInfo/base.png");
+  userInventoryBackground = loadTexture("assets/HUD/UserInventory/base.png");
+  userStatsBackground = loadTexture("assets/HUD/UserStats/base.png");
+
+  textureMapper = std::make_unique<TextureMapper>(*renderer);
+  textureMapper->loadFromToml("assets/textures.toml");
+
+  textureManager = std::make_unique<TextureManager>(*renderer);
+  textureManager->loadLayoutsFromToml("assets/layouts.toml");
+  textureManager->loadTexturesFromToml("assets/sprites.toml");
+
+  bloodOverlay = std::make_unique<BloodOverlay>(*renderer);
+  bloodOverlay->loadTextures("assets/sangrado/");
+
+  invPanel = std::make_unique<InventoryPanel>(*renderer, *textureManager);
+  invPanel->loadTextures();
+}
+
+SDL2pp::Renderer &GameWindow::getRenderer() { return *renderer; }
+
+SDL2pp::Font &GameWindow::getFont() { return *font; }
+
+void GameWindow::setMapData(int maxSize_, int gridSize_,
+                            int commonGroundTextureId_,
+                            const std::list<TileOrigin> &origins) {
+  maxSize = maxSize_;
+  gridSize = gridSize_;
+  commonGroundTextureId = commonGroundTextureId_;
+
+  textureMapper->buildRenderGrid(origins, gridSize);
+  tilesToRender = textureMapper->getTilesToRender();
+}
+
+void GameWindow::setChatState(const std::deque<ChatMessage> &messages,
+                              const std::string &input, bool active) {
+  chatMessages = messages;
+  currentChatInput = input;
+  chatActive = active;
+}
+
+void GameWindow::scrollChatUp() {
+  if (chatView)
+    chatView->scrollChatUp();
+}
+
+void GameWindow::scrollChatDown() {
+  if (chatView)
+    chatView->scrollChatDown();
+}
+
+std::pair<int, int> GameWindow::screenToWorld(int mouseX, int mouseY) {
+  return camera.mouseToWorld(mouseX, mouseY);
+}
+
+void GameWindow::zoomOutCamera() { camera.setZoom(kZoomedOutCameraZoom); }
+
+void GameWindow::resetCameraZoom() { camera.setZoom(kNormalCameraZoom); }
+
+void GameWindow::addEntity(EntityType type, uint32_t id,
+                           std::unique_ptr<RenderableEntity> entity) {
+  EntityKey key(type, id);
+  entities[key] = std::move(entity);
+}
+
+void GameWindow::removeEntity(EntityType type, uint32_t id) {
+  EntityKey key(type, id);
+
+  if (myPlayerEntity && type == EntityType::Player && id == myPlayerID) {
+    myPlayerEntity = nullptr;
+  }
+
+  entities.erase(key);
+}
+
+void GameWindow::setMyPlayer(const ClientPlayer &player, uint32_t ID) {
+  myPlayerID = ID;
+
+  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
+  myPlayerEntity = entity.get();
+
+  addEntity(EntityType::Player, ID, std::move(entity));
+}
+
+void GameWindow::addPlayer(uint32_t ID, const ClientPlayer &player) {
+  if (ID == myPlayerID) {
+    setMyPlayer(player, ID);
+    return;
+  }
+
+  auto entity = std::make_unique<PlayerEntity>(player, *textureManager, *font);
+  addEntity(EntityType::Player, ID, std::move(entity));
+}
+
+void GameWindow::renderInventoryPanel() {
+  if (!invPanel || !myPlayerEntity)
+    return;
+
+  invPanel->render(myPlayerEntity->getPlayer());
+}
+
+void GameWindow::show(unsigned int it) {
+  SDL_ClearError();
+  clear();
+
+  renderer->SetDrawColor(6, 8, 12, 255);
+  renderer->FillRect(layout.windowRect);
+
+  camera.setViewport(layout.gameRect.GetX(), layout.gameRect.GetY(),
+                     layout.gameRect.GetW(), layout.gameRect.GetH());
+
+  renderer->SetDrawColor(12, 16, 24, 255);
+  renderer->FillRect(layout.gameRect);
+
+  if (myPlayerEntity) {
+    camera.follow(myPlayerEntity->get_x(), myPlayerEntity->get_y(),
+                  ClientPlayer::Width, ClientPlayer::Height);
+  }
+
+  // Si algun renderizado de entidad se sale de la pantalla,
+  // se recorta para que solo se renderice la parte visible
+  SDL_Rect worldClip{layout.gameRect.GetX(), layout.gameRect.GetY(),
+                     layout.gameRect.GetW(), layout.gameRect.GetH()};
+
+  SDL_RenderSetClipRect(renderer->Get(), &worldClip);
+  renderWorld(it);
+  SDL_RenderSetClipRect(renderer->Get(), nullptr);
+
+  if (myPlayerEntity) {
+    const auto &p = myPlayerEntity->getPlayer();
+    bloodOverlay->render(p.getHp(), p.getMaxHp());
+  }
+
+  renderUIBackgrounds();
+  renderHUD();
+  renderUIFrame();
+
+  renderer->Present();
+}
+
+void GameWindow::removePlayer(uint32_t ID) {
+  removeEntity(EntityType::Player, ID);
+}
+
+void GameWindow::addCityEntity(uint32_t ID, CityEntityModel &entity,
+                               CityEntityType entityType) {
+  CityEntityInfo info = cityEntityParser.getInfo(entityType);
+  auto renderable = std::make_unique<CityEntityRenderable>(
+      entity, *textureManager, *font, info.textureId, info.layoutType,
+      info.name);
+  addEntity(EntityType::CityEntity, ID, std::move(renderable));
+}
+
+void GameWindow::removeCityEntity(uint32_t ID) {
+  removeEntity(EntityType::CityEntity, ID);
+}
+
+void GameWindow::renderWorld(unsigned int it) {
+  renderCommonGround();
+
+  std::vector<RenderableEntity *> sortedEntities;
+  getSortedEntities(sortedEntities);
+
+  for (size_t i = 0; i < tilesToRender.size(); i++) {
+    auto &priority = tilesToRender[i];
+
+    for (auto &[pair, info] : priority) {
+      int maxRow = pair.first;
+      int yMax = (maxRow - maxSize / 2 + 1) * gridSize;
+
+      for (auto *entity : sortedEntities) {
+        if (!entity->rendered() && entity->get_y() + entity->get_h() < yMax &&
+            entity->hasPriority(i)) {
+          entity->render(*renderer, camera, it);
+        }
+      }
+
+      SDL2pp::Rect dstRect =
+          camera.toScreen((info.origin_i - maxSize / 2) * gridSize,
+                          (info.origin_j - maxSize / 2) * gridSize,
+                          info.width_px, info.height_px);
+
+      if (camera.isVisibleOnScreen(dstRect)) {
+        SDL2pp::Rect srcRect = {0, 0, info.width_px, info.height_px};
+        renderer->Copy(textureMapper->getTexture(info.texture_id), srcRect,
+                       dstRect);
+      }
+    }
+
+    for (auto *entity : sortedEntities) {
+      if (!entity->rendered() && entity->hasPriority(i)) {
+        entity->render(*renderer, camera, it);
+      }
+    }
+  }
+
+  for (auto &entity : sortedEntities) {
+    if (!entity->rendered()) {
+      entity->render(*renderer, camera, it);
+    }
+  }
+}
+
+void GameWindow::renderCommonGround() {
+
+  int startX = (-maxSize / 2) * gridSize;
+  int startY = (-maxSize / 2) * gridSize;
+  int totalWidth = maxSize * gridSize;
+  int totalHeight = maxSize * gridSize;
+
+  SDL2pp::Rect dstRect =
+      camera.toScreen(startX, startY, totalWidth, totalHeight);
+
+  renderer->SetDrawColor(18, 22, 26, 255);
+
+  renderer->FillRect(dstRect);
+}
+
+void GameWindow::renderHUD() {
+  renderInventoryPanel();
+  renderChat();
+  renderPlayerHeader();
+  renderPlayerStats();
+  renderVitals();
+}
+
+void GameWindow::renderUIBackgrounds() {
+  if (chatMessagesBackground) {
+    renderer->Copy(*chatMessagesBackground, SDL2pp::NullOpt,
+                   layout.chatMessagesRect);
+  }
+
+  if (chatInputBackground) {
+    renderer->Copy(*chatInputBackground, SDL2pp::NullOpt, layout.chatInputRect);
+  }
+
+  if (userInfoBackground) {
+    renderer->Copy(*userInfoBackground, SDL2pp::NullOpt, layout.rightTopRect);
+  }
+
+  if (userInventoryBackground) {
+    renderer->Copy(*userInventoryBackground, SDL2pp::NullOpt,
+                   layout.inventoryRect);
+  }
+
+  if (userStatsBackground) {
+    renderer->Copy(*userStatsBackground, SDL2pp::NullOpt,
+                   layout.bottomRightRect);
+  }
+}
+
+void GameWindow::renderUIFrame() {
+  if (!uiFrameTexture)
+    return;
+
+  renderer->Copy(*uiFrameTexture, SDL2pp::NullOpt, layout.windowRect);
+}
+
+void GameWindow::renderChat() {
+  if (!chatView)
+    return;
+
+  chatView->render(*renderer, layout.chatMessagesRect, layout.chatInputRect,
+                   chatMessages, currentChatInput, chatActive);
+}
+
+void GameWindow::renderPlayerHeader() {
+  if (!titleFont)
+    return;
+
+  const std::string title = "Argentum";
+  const SDL_Color color{255, 255, 255, 255};
+  if (!playerHeaderTexture || playerHeaderCachedText != title ||
+      !sameColor(playerHeaderCachedColor, color) ||
+      playerHeaderCachedFont != titleFont.get()) {
+    SDL2pp::Surface surf = titleFont->RenderUTF8_Blended(title, color);
+    playerHeaderTexture = std::make_unique<SDL2pp::Texture>(*renderer, surf);
+    playerHeaderCachedText = title;
+    playerHeaderCachedColor = color;
+    playerHeaderCachedFont = titleFont.get();
+    playerHeaderTextW = surf.GetWidth();
+    playerHeaderTextH = surf.GetHeight();
+  }
+
+  int x = layout.rightTopRect.GetX() + 24 +
+          (layout.rightTopRect.GetW() - playerHeaderTextW) / 2;
+
+  int y = layout.rightTopRect.GetY() + 18;
+
+  renderer->Copy(*playerHeaderTexture, SDL2pp::NullOpt,
+                 SDL2pp::Rect(x, y, playerHeaderTextW, playerHeaderTextH));
+}
+
+void GameWindow::renderPlayerStats() {
+  if (!myPlayerEntity)
+    return;
+
+  const ClientPlayer &p = myPlayerEntity->getPlayer();
+
+  uint32_t xpCur = p.getExperience();
+  uint32_t xpMax = Formulas::calcularLimiteXP(p.getLevel());
+
+  int x = layout.rightTopRect.GetX();
+  int y = layout.rightTopRect.GetY();
+
+  SDL2pp::Rect levelRect(x + 27, y + 17, 36, 36);
+  renderCachedCenteredUIText(levelTextCache, levelRect,
+                             std::to_string(p.getLevel()),
+                             SDL_Color{255, 255, 200, 255});
+
+  int xpX = x + 20;
+  int xpY = y + 84;
+  int xpW = 227;
+  int xpH = 20;
+
+  drawBar(xpX, xpY, xpW, xpH, xpCur, xpMax, SDL_Color{60, 180, 60, 255},
+          SDL_Color{20, 20, 20, 255});
+
+  SDL2pp::Rect xpBarRect(xpX, xpY, xpW, xpH);
+
+  renderCachedCenteredText(xpTextCache, xpBarRect,
+                           std::to_string(xpCur) + " / " +
+                               std::to_string(xpMax),
+                           SDL_Color{255, 255, 255, 255});
+}
+
+void GameWindow::renderVitals() {
+  if (!myPlayerEntity)
+    return;
+
+  const ClientPlayer &p = myPlayerEntity->getPlayer();
+
+  int x = layout.bottomRightRect.GetX();
+  int y = layout.bottomRightRect.GetY();
+
+  int barX = x + 20;
+  int barW = layout.bottomRightRect.GetW() - 40;
+  int barH = 20;
+
+  if (barW < 20)
+    barW = 20;
+
+  int hpY = y + 30;
+  drawBar(barX, hpY, barW, barH, p.getHp(), p.getMaxHp(), kHpFill, kHpBg);
+
+  SDL2pp::Rect hpBarRect(barX, hpY, barW, barH);
+  renderCachedCenteredText(hpTextCache, hpBarRect,
+                           std::to_string(p.getHp()) + " / " +
+                               std::to_string(p.getMaxHp()),
+                           SDL_Color{255, 255, 255, 255});
+
+  int manaY = y + 74;
+  drawBar(barX, manaY, barW, barH, p.getMana(), p.getMaxMana(), kManaFill,
+          kManaBg);
+
+  SDL2pp::Rect manaBarRect(barX, manaY, barW, barH);
+  renderCachedCenteredText(manaTextCache, manaBarRect,
+                           std::to_string(p.getMana()) + " / " +
+                               std::to_string(p.getMaxMana()),
+                           SDL_Color{255, 255, 255, 255});
+}
+
+void GameWindow::clear() {
+  for (auto &[key, entity] : entities) {
+    entity->clear();
+  }
+  renderer->SetDrawColor(0, 0, 0, 255);
+  renderer->Clear();
+}
+
+void GameWindow::addNpc(uint32_t ID, NPC &npc, NPCType npcType) {
+  NPCInfo info = npcParser.getInfo(npcType);
+  auto entity = std::make_unique<NPCEntity>(npc, *textureManager,
+                                            info.textureId, info.layoutType);
+  addEntity(EntityType::Npc, ID, std::move(entity));
+}
+
+void GameWindow::addGroundItem(uint32_t ID, uint8_t itemId, int x, int y) {
+  auto entity =
+      std::make_unique<GroundItemEntity>(itemId, x, y, *textureManager);
+  addEntity(EntityType::GroundItem, ID, std::move(entity));
+}
+
+ClickTarget GameWindow::hitTestInventory(int screenX, int screenY) const {
+  if (invPanel)
+    return invPanel->handleClick(screenX, screenY);
+  return {ClickTargetType::None, -1};
+}
+
+void GameWindow::getSortedEntities(
+    std::vector<RenderableEntity *> &sortedEntities) {
+
+  sortedEntities.reserve(entities.size());
+
+  for (auto &[key, entity] : entities) {
+    sortedEntities.push_back(entity.get());
+  }
+
+  std::sort(sortedEntities.begin(), sortedEntities.end(),
+            [](RenderableEntity *a, RenderableEntity *b) {
+              if (a->get_y() != b->get_y())
+                return a->get_y() < b->get_y();
+              return a->get_x() < b->get_x();
+            });
+}
+void GameWindow::renderCachedText(CachedTextTexture &cache, int x, int y,
+                                  const std::string &text, SDL_Color color) {
+  SDL2pp::Font *activeFont = uiFont ? uiFont.get() : font.get();
+
+  if (!activeFont)
+    return;
+
+  updateTextCache(cache, *activeFont, text, color);
+
+  renderer->Copy(*cache.texture, SDL2pp::NullOpt,
+                 SDL2pp::Rect(x, y, cache.w, cache.h));
+}
+
+void GameWindow::renderCachedCenteredText(CachedTextTexture &cache,
+                                          const SDL2pp::Rect &rect,
+                                          const std::string &text,
+                                          SDL_Color color) {
+  if (!font)
+    return;
+
+  updateTextCache(cache, *font, text, color);
+
+  int x = rect.GetX() + (rect.GetW() - cache.w) / 2;
+  int y = rect.GetY() + (rect.GetH() - cache.h) / 2;
+
+  renderer->Copy(*cache.texture, SDL2pp::NullOpt,
+                 SDL2pp::Rect(x, y, cache.w, cache.h));
+}
+
+void GameWindow::renderCachedCenteredUIText(CachedTextTexture &cache,
+                                            const SDL2pp::Rect &rect,
+                                            const std::string &text,
+                                            SDL_Color color) {
+  SDL2pp::Font *activeFont = uiFont ? uiFont.get() : font.get();
+
+  if (!activeFont)
+    return;
+
+  updateTextCache(cache, *activeFont, text, color);
+
+  int x = rect.GetX() + (rect.GetW() - cache.w) / 2;
+  int y = rect.GetY() + (rect.GetH() - cache.h) / 2;
+
+  renderer->Copy(*cache.texture, SDL2pp::NullOpt,
+                 SDL2pp::Rect(x, y, cache.w, cache.h));
+}
+
+void GameWindow::updateTextCache(CachedTextTexture &cache,
+                                 SDL2pp::Font &activeFont,
+                                 const std::string &text, SDL_Color color) {
+  if (cache.texture && cache.text == text && sameColor(cache.color, color) &&
+      cache.font == &activeFont) {
+    return;
+  }
+
+  SDL2pp::Surface surf = activeFont.RenderUTF8_Solid(text, color);
+  cache.texture = std::make_unique<SDL2pp::Texture>(*renderer, surf);
+  cache.text = text;
+  cache.color = color;
+  cache.font = &activeFont;
+  cache.w = surf.GetWidth();
+  cache.h = surf.GetHeight();
+}
+
+void GameWindow::drawBar(int x, int y, int w, int h, uint32_t cur, uint32_t max,
+                         SDL_Color fg, SDL_Color bg) {
+  SDL2pp::Rect bgRect(x, y, w, h);
+
+  renderer->SetDrawColor(bg.r, bg.g, bg.b, bg.a);
+  renderer->FillRect(bgRect);
+
+  if (max == 0)
+    return;
+
+  int fillW = static_cast<int>((static_cast<double>(cur) / max) * w);
+
+  if (fillW <= 0)
+    return;
+
+  SDL2pp::Rect fillRect(x, y, fillW, h);
+
+  renderer->SetDrawColor(fg.r, fg.g, fg.b, fg.a);
+  renderer->FillRect(fillRect);
+}

@@ -1,63 +1,47 @@
-#include "common/foo.h"
-
-#include <iostream>
+#include "Client.h"
+#include "ClientData.h"
+#include "MainWindow.h"
+#include <QApplication>
 #include <exception>
+#include <iostream>
 
-#include <SDL2pp/SDL2pp.hh>
-#include <SDL2/SDL.h>
+#define EXPECTED_ARGS 2
 
-#include "Player.h"
-#include "Background.h"
-#include "Display.h"
+int main(int argc, char *argv[]) {
 
+  if (argc != EXPECTED_ARGS + 1) {
+    std::cerr << "Bad program call. The following call is expected:"
+              << "./client <hostname> <servname>" << std::endl;
+    return 1;
+  }
 
-int main() try {
+  const char *hostname = argv[1];
+  const char *port = argv[2];
 
-	SDL2pp::SDL sdl(SDL_INIT_VIDEO);
-	SDL2pp::SDLTTF ttf;
+  ClientData clientData = NullClientData{};
+  {
+    QApplication app(argc, argv);
 
-	SDL2pp::Window window("Example",
-			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-			720, 410,
-			SDL_WINDOW_MINIMIZED);
+    MainWindow window(hostname, port);
+    QObject::connect(&window, &MainWindow::gameStartRequested,
+                     [&](const ClientData &d) {
+                       clientData = d;
+                       app.quit();
+                     });
+    window.show();
+    app.exec();
+  }
 
-	SDL2pp::Renderer renderer(window, -1, SDL_RENDERER_ACCELERATED);
+  if (!std::holds_alternative<NullClientData>(clientData)) {
+    try {
+      Client client(hostname, port, clientData);
+      client.run();
 
-	Player player(renderer);
-	Background background(renderer);
-	Display display(renderer, player);
-	
-	unsigned int prev_ticks = SDL_GetTicks();
+    } catch (const std::exception &e) {
+      std::cerr << e.what() << std::endl;
+      return 1;
+    }
+  }
 
-	while (1) {
-		
-		unsigned int frame_ticks = SDL_GetTicks();
-		unsigned int frame_delta = frame_ticks - prev_ticks;
-		prev_ticks = frame_ticks;
-
-		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_QUIT) 
-				return 0;
-			player.handleEvent(event);
-		}
-
-		player.updatePosition(frame_delta, frame_ticks);
-
-		renderer.Clear();
-
-		background.render();		
-		player.render();
-		display.render();
-
-		renderer.Present();
-
-		// Frame limiter: sleep for a little bit to not eat 100% of CPU
-		SDL_Delay(1);
-	}
-
-	return 0;
-} catch (std::exception& e) {
-	std::cerr << e.what() << std::endl;
-	return 1;
+  return 0;
 }

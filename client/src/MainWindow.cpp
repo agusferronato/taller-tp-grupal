@@ -1,0 +1,70 @@
+#include "MainWindow.h"
+#include "pages/CharacterCreationPage.h"
+#include "pages/LoginPage.h"
+#include "pages/MainMenuPage.h"
+
+#include <QApplication>
+#include <QStackedWidget>
+
+MainWindow::MainWindow(const QString &hostname, const QString &port,
+                       QWidget *parent)
+    : QMainWindow(parent), hostname(hostname), port(port) {
+  setWindowTitle("Lobby");
+  setWindowState(Qt::WindowMaximized);
+
+  stack = new QStackedWidget(this);
+  setCentralWidget(stack);
+
+  setupPages();
+
+  stack->setCurrentWidget(mainMenu);
+}
+
+void MainWindow::setupPages() {
+  mainMenu = new MainMenuPage(this);
+  loginPage = new LoginPage(hostname, port, this);
+  charCreationPage = new CharacterCreationPage(hostname, port, this);
+
+  stack->addWidget(mainMenu);
+  stack->addWidget(loginPage);
+  stack->addWidget(charCreationPage);
+
+  connect(mainMenu, &MainMenuPage::continueGame, this, &MainWindow::showLogin);
+  connect(mainMenu, &MainMenuPage::newGame, this, &MainWindow::onNewGame);
+  connect(mainMenu, &MainMenuPage::quitGame, qApp, &QApplication::quit);
+
+  connect(loginPage, &LoginPage::connectRequested, this,
+          &MainWindow::onStartGame);
+  connect(loginPage, &LoginPage::backToMenuRequested, this,
+          &MainWindow::showMainMenu);
+
+  connect(charCreationPage, &CharacterCreationPage::characterCreated, this,
+          &MainWindow::onCharacterCreated);
+  connect(charCreationPage, &CharacterCreationPage::backToMenuRequested, this,
+          &MainWindow::showMainMenu);
+}
+
+void MainWindow::showMainMenu() { stack->setCurrentWidget(mainMenu); }
+
+void MainWindow::showLogin() { stack->setCurrentWidget(loginPage); }
+
+void MainWindow::showCharacterCreation() {
+  stack->setCurrentWidget(charCreationPage);
+}
+
+void MainWindow::onNewGame() { showCharacterCreation(); }
+
+void MainWindow::onStartGame(const QString &username) {
+  ClientData data = ClientDataLogin{username.toStdString()};
+
+  emit gameStartRequested(data);
+}
+
+void MainWindow::onCharacterCreated(const QString &username,
+                                    const QString &race,
+                                    const QString &playerClass) {
+  auto s = username.toStdString();
+  ClientData data =
+      ClientDataRegister{s, s, race.toStdString(), playerClass.toStdString()};
+  emit gameStartRequested(data);
+}

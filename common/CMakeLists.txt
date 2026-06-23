@@ -1,8 +1,21 @@
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+)
+
 target_sources(taller_common
     PRIVATE
-    # .cpp files
-    foo.cpp
+        ${SOURCES}
+)
+
+target_include_directories(taller_common
     PUBLIC
-    # .h files
-    foo.h
-    )
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/DTO
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/DTO/Commands
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/DTO/Events
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/parser
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/parser/Commands
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/parser/Events
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/exceptions
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/player
+)

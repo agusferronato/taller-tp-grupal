@@ -1,5 +1,19 @@
-#include "common/foo.h"
+#include <QApplication>
+#include <QByteArray>
 
-int main() {
-    return foo(4);
+#include "Editor.h"
+
+int main(int argc, char *argv[]) {
+
+  qputenv("QT_QPA_PLATFORM", "xcb");
+  QApplication app(argc, argv);
+
+  std::string mapPath;
+  if (argc > 1)
+    mapPath = argv[1];
+
+  Editor editor(mapPath);
+  editor.show();
+
+  return app.exec(); /* Loop */
 }
