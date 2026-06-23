@@ -5,7 +5,7 @@
 </center>
 
 ## Video Promocional 
-[https://drive.google.com/file/d/1hanoveDPYEIaBPZZCS-CtXBydTw-EC9v/view?usp=drive_link]
+https://drive.google.com/file/d/1hanoveDPYEIaBPZZCS-CtXBydTw-EC9v/view?usp=drive_link
 
 
 ## Integrantes
