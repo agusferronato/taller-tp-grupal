@@ -43,10 +43,12 @@ void Biome::NPCgenerationStrategy(Game &game) {
   if (counter != 0)
     return;
 
-  auto trySpawn = [&](double probability, auto &&createNPC) {
+  auto trySpawn = [&](double probability, auto &&createNPC, uint8_t npcTypeId) {
     if (getRandomNumber() <= probability) {
       Position pos = getRandomPositionBetween(start, end);
-      if (!game.thereIsACollidableEntityAt(pos)) {
+      int w = npcData->getWidth(npcTypeId);
+      int h = npcData->getHeight(npcTypeId);
+      if (!game.thereIsACollidableEntityAt(pos, w, h)) {
         uint32_t npcId = game.appearNPC(std::move(createNPC(pos)));
         registerNPC(npcId);
       }
@@ -55,5 +57,6 @@ void Biome::NPCgenerationStrategy(Game &game) {
 
   for (const auto &entry : biomeData->getNPCsFor(type))
     trySpawn(entry.probability,
-             [&](Position p) { return npcData->createNPC(entry.npcId, p); });
+             [&](Position p) { return npcData->createNPC(entry.npcId, p); },
+             entry.npcId);
 }

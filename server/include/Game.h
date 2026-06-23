@@ -128,7 +128,7 @@ public:
   void sendPlayerInfoUpdate(uint32_t playerId);
   void sendPlayerMoved(uint32_t playerId);
 
-  bool thereIsACollidableEntityAt(Position position);
+  bool thereIsACollidableEntityAt(Position position, int width, int height);
   uint32_t appearNPC(std::unique_ptr<NPC> &&npc);
   uint32_t nextNPCId{1};
   uint32_t nextCityEntityId{1};
@@ -176,6 +176,7 @@ private:
   void createCityEntities();
 
   bool checkIfItCollides(Colisionable *entity);
+  bool thereAreCollidableCellsAt(int x, int y, int width, int height);
   int floorDiv(int a, int b);
 
   void restorePlayers();

@@ -38,7 +38,8 @@ public:
 private:
   Position
   getRandomPositionInCity(Game &game,
-                          const std::vector<Position> &existingPositions);
+                          const std::vector<Position> &existingPositions,
+                          int width, int height);
 
   Position getRandomPositionBetween(Delimiter start, Delimiter end);
 };
