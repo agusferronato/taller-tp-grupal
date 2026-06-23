@@ -47,10 +47,6 @@ std::unique_ptr<NPC> NPCData::createNPC(uint8_t npcId, Position pos) const {
   return std::make_unique<NPC>(pos, stats);
 }
 
-int NPCData::getWidth(uint8_t npcId) const {
-  return npcs.at(npcId).width;
-}
+int NPCData::getWidth(uint8_t npcId) const { return npcs.at(npcId).width; }
 
-int NPCData::getHeight(uint8_t npcId) const {
-  return npcs.at(npcId).height;
-}
+int NPCData::getHeight(uint8_t npcId) const { return npcs.at(npcId).height; }

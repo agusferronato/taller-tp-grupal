@@ -56,7 +56,8 @@ void Biome::NPCgenerationStrategy(Game &game) {
   };
 
   for (const auto &entry : biomeData->getNPCsFor(type))
-    trySpawn(entry.probability,
-             [&](Position p) { return npcData->createNPC(entry.npcId, p); },
-             entry.npcId);
+    trySpawn(
+        entry.probability,
+        [&](Position p) { return npcData->createNPC(entry.npcId, p); },
+        entry.npcId);
 }
