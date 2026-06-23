@@ -156,9 +156,9 @@ std::pair<int, int> Character::getTargetPosition(Direction dir,
   return {targetX, targetY};
 }
 
-uint32_t Character::takeDamage(uint32_t damage) {
+uint32_t Character::takeDamage(uint32_t damage, int defenseBonusPercent) {
   timeSinceLastHit = 0;
-  return player.takeDamage(damage);
+  return player.takeDamage(damage, defenseBonusPercent);
 }
 
 void Character::heal(uint32_t amount) { player.heal(amount); }

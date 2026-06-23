@@ -1,6 +1,15 @@
 #include "CombatSystem.h"
 #include "Formulas.h"
 #include <algorithm>
+#include <cstdlib>
+#include <string>
+
+namespace {
+constexpr int CLAN_BONUS_RADIUS_TILES = 10;
+constexpr int CLAN_BONUS_PERCENT_PER_MEMBER = 5;
+constexpr int CLAN_BONUS_MAX_PERCENT = 20;
+constexpr int PERCENT_BASE = 100;
+} // namespace
 
 CombatSystem::CombatSystem(
     PlayerService &playerService, std::list<std::unique_ptr<NPC>> &npcs,
@@ -35,6 +44,16 @@ void CombatSystem::attack(Character &attacker, int16_t x, int16_t y) {
   }
 }
 
+std::string CombatSystem::clanBonusMessage(const std::string &bonusType, int nearbyMembers,
+                             int bonusPercent) {
+  if (bonusPercent <= 0) {
+    return "";
+  }
+  return " Bonus de clan " + bonusType + ": +" +
+         std::to_string(bonusPercent) + "% (" +
+         std::to_string(nearbyMembers) + " miembro(s) cerca).";
+}
+
 void CombatSystem::tryAttack(NPC &npc, Character &target) {
   if (!npc.collidesWith(target) || !npc.reachesAttackCounter()) {
     return;
@@ -55,8 +74,19 @@ void CombatSystem::tryAttack(NPC &npc, Character &target) {
     return;
   }
 
-  target.takeDamage(npc.getDamage());
+  int targetNearbyClanMembers = countNearbyClanMembers(target);
+  int targetDefenseBonusPercent =
+      calculateClanBonusPercent(targetNearbyClanMembers);
 
+  if (hasInfiniteHealth(target.getId())) {
+    senderQueueMonitor.sendToClient(
+        target.getId(),
+        ChatMessageEventDTO{ChatMessageCategory::Combat, "Sistema",
+                            npc.getName() + " te ataco pero no recibiste daño"});
+    return;
+  }
+  
+  target.takeDamage(npc.getDamage(), targetDefenseBonusPercent);
   if (target.getHp() <= 0) {
     killPlayer(target);
     return;
@@ -103,6 +133,13 @@ void CombatSystem::playerAttackPlayer(Character &attacker, Character &target) {
 
   uint32_t damage = calculateDamage(attacker);
   bool critical = (damage != attacker.getDamage());
+  int attackerNearbyClanMembers = countNearbyClanMembers(attacker);
+  int attackerAttackBonusPercent =
+      calculateClanBonusPercent(attackerNearbyClanMembers);
+  int targetNearbyClanMembers = countNearbyClanMembers(target);
+  int targetDefenseBonusPercent =
+      calculateClanBonusPercent(targetNearbyClanMembers);
+  damage = applyClanAttackBonus(damage, attackerAttackBonusPercent);
 
   if (!critical && target.tryParry()) {
     senderQueueMonitor.sendToClient(
@@ -120,7 +157,7 @@ void CombatSystem::playerAttackPlayer(Character &attacker, Character &target) {
   if (hasInfiniteHealth(target.getId())) {
     damage = 0;
   } else {
-    damage = target.takeDamage(damage);
+    damage = target.takeDamage(damage, targetDefenseBonusPercent);
   }
 
   messagesToSend.push_back(AttackReceivedEventDTO{
@@ -144,13 +181,19 @@ void CombatSystem::playerAttackPlayer(Character &attacker, Character &target) {
         ChatMessageEventDTO{ChatMessageCategory::Combat, "Sistema",
                             "Atacaste a " + target.getName() +
                                 " y le hiciste " + std::to_string(damage) +
-                                " de daño!"});
+                                " de daño!" +
+                                clanBonusMessage("ataque",
+                                                 attackerNearbyClanMembers,
+                                                 attackerAttackBonusPercent)});
     senderQueueMonitor.sendToClient(
         target.getId(),
         ChatMessageEventDTO{ChatMessageCategory::Combat, "Sistema",
                             "Recibiste un ataque de " + attacker.getName() +
                                 " y te hicieron " + std::to_string(damage) +
-                                " de daño!"});
+                                " de daño!" +
+                                clanBonusMessage("defensa",
+                                                 targetNearbyClanMembers,
+                                                 targetDefenseBonusPercent)});
   }
   messagesToSend.push_back(attacker.toPlayerInfoEvent());
   messagesToSend.push_back(target.toPlayerInfoEvent());
@@ -168,8 +211,11 @@ void CombatSystem::playerAttackNPC(Character &attacker, NPC &target) {
     return;
 
   uint32_t damage = calculateDamage(attacker);
-
   bool critico = (damage != attacker.getDamage());
+  int attackerNearbyClanMembers = countNearbyClanMembers(attacker);
+  int attackerAttackBonusPercent =
+      calculateClanBonusPercent(attackerNearbyClanMembers);
+  damage = applyClanAttackBonus(damage, attackerAttackBonusPercent);
 
   if (!critico && target.tryParry()) {
     senderQueueMonitor.sendToClient(
@@ -239,7 +285,10 @@ void CombatSystem::playerAttackNPC(Character &attacker, NPC &target) {
         ChatMessageEventDTO{ChatMessageCategory::Combat, "Sistema",
                             "Atacaste a un " + target.getName() +
                                 " y le hiciste " + std::to_string(damage) +
-                                " de daño!"});
+                                " de daño!" +
+                                clanBonusMessage("ataque",
+                                                 attackerNearbyClanMembers,
+                                                 attackerAttackBonusPercent)});
   }
   messagesToSend.push_back(attacker.toPlayerInfoEvent());
 }
@@ -345,6 +394,47 @@ uint32_t CombatSystem::calculateDamage(Character &attacker) {
     return damage * 2;
   }
   return damage;
+}
+
+int CombatSystem::countNearbyClanMembers(const Character &character) const {
+  if (!character.hasClan()) {
+    return 0;
+  }
+
+  int nearbyMembers = 0;
+  int tileSize = std::max(gridSize, 1);
+  int characterTileX = character.getX() / tileSize;
+  int characterTileY = character.getY() / tileSize;
+  for (auto &[pid, player] : playerService.getPlayers()) {
+    if (player->getId() == character.getId() || player->isDead() ||
+        !player->hasClan() || player->getClanId() != character.getClanId() ||
+        !clanManager.sameClan(character.getName(), player->getName())) {
+      continue;
+    }
+
+    int playerTileX = player->getX() / tileSize;
+    int playerTileY = player->getY() / tileSize;
+    int distance = std::abs(characterTileX - playerTileX) +
+                   std::abs(characterTileY - playerTileY);
+    if (distance <= CLAN_BONUS_RADIUS_TILES) {
+      nearbyMembers++;
+    }
+  }
+
+  return nearbyMembers;
+}
+
+int CombatSystem::calculateClanBonusPercent(int nearbyMembers) const {
+  int bonusPercent = nearbyMembers * CLAN_BONUS_PERCENT_PER_MEMBER;
+  return std::min(bonusPercent, CLAN_BONUS_MAX_PERCENT);
+}
+
+uint32_t CombatSystem::applyClanAttackBonus(uint32_t damage,
+                                            int bonusPercent) const {
+  if (bonusPercent <= 0) {
+    return damage;
+  }
+  return damage + damage * static_cast<uint32_t>(bonusPercent) / PERCENT_BASE;
 }
 
 bool CombatSystem::consumeManaForAttack(Character &attacker) {

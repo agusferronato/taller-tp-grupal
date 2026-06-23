@@ -37,7 +37,7 @@ public:
   void startMoving(Direction dir);
   void stopMoving();
   void move(int newX, int newY);
-  uint32_t takeDamage(uint32_t damage);
+  uint32_t takeDamage(uint32_t damage, int defenseBonusPercent = 0);
   void heal(uint32_t amount);
   bool useMana(uint32_t amount);
   void addMana(uint32_t amount);
