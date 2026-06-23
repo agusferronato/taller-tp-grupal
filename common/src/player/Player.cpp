@@ -89,7 +89,7 @@ void Player::move(int newX, int newY) {
   y = newY;
 }
 
-uint32_t Player::takeDamage(uint32_t damage) {
+uint32_t Player::takeDamage(uint32_t damage, int defenseBonusPercent) {
   Armor armor = getEquippedArmor();
   Shield shield = getEquippedShield();
   Helmet helmet = getEquippedHelmet();
@@ -97,6 +97,9 @@ uint32_t Player::takeDamage(uint32_t damage) {
       armor.minDefense(), armor.maxDefense(), shield.minDefense(),
       shield.maxDefense(), helmet.minDefense(), helmet.maxDefense(), rand(),
       rand(), rand());
+  if (defenseBonusPercent > 0) {
+    defence += defence * static_cast<uint32_t>(defenseBonusPercent) / 100;
+  }
   uint32_t actualDamage = damage > defence ? damage - defence : 0;
   stats.takeDamage(actualDamage);
   return actualDamage;

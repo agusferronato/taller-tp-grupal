@@ -59,7 +59,11 @@ private:
   Character *findPlayerByCoordinates(int16_t x, int16_t y);
   NPC *findNPCByCoordinates(int16_t x, int16_t y);
   uint32_t calculateDamage(Character &attacker);
+  int countNearbyClanMembers(const Character &character) const;
+  int calculateClanBonusPercent(int nearbyMembers) const;
+  uint32_t applyClanAttackBonus(uint32_t damage, int bonusPercent) const;
   bool consumeManaForAttack(Character &attacker);
+  std::string clanBonusMessage(const std::string &bonusType, int nearbyMembers, int bonusPercent);
 };
 
 #endif

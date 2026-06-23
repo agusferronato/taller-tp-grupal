@@ -87,7 +87,7 @@ public:
   const Shield &getEquippedShield() const;
 
   // Stats management (delegates to Player)
-  uint32_t takeDamage(uint32_t damage);
+  uint32_t takeDamage(uint32_t damage, int defenseBonusPercent = 0);
   void heal(uint32_t amount);
   void addMana(uint32_t amount);
   bool useMana(uint32_t amount);
