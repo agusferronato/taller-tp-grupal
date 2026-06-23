@@ -721,18 +721,18 @@ void Game::reviewClan(uint32_t playerId) {
   sendToPlayer(playerId, makeClanMessage(pending.str()));
 }
 
-bool Game::thereIsACollidableEntityAt(Position position) {
+bool Game::thereIsACollidableEntityAt(Position position, int width, int height) {
   int center = maxSize / 2;
   int cellX = (position.row - center) * gridSize;
   int cellY = (position.column - center) * gridSize;
 
-  if (collidableCells.count({position.row, position.column, 0}))
+  if (thereAreCollidableCellsAt(cellX, cellY, width, height))
     return true;
 
   for (auto &col : colisionables) {
-    if (!(cellX + gridSize <= col->getX() ||
+    if (!(cellX + width <= col->getX() ||
           cellX >= col->getX() + col->getAncho() ||
-          cellY + gridSize <= col->getY() ||
+          cellY + height <= col->getY() ||
           cellY >= col->getY() + col->getAlto()))
       return true;
   }
@@ -892,19 +892,24 @@ bool Game::checkIfItCollides(Colisionable *entity) {
       return true;
   }
 
-  int start_i = floorDiv(entity->getX(), gridSize) + maxSize / 2;
-  int end_i =
-      floorDiv(entity->getX() + entity->getAncho(), gridSize) + maxSize / 2;
-  int start_j = floorDiv(entity->getY(), gridSize) + maxSize / 2;
-  int end_j =
-      floorDiv(entity->getY() + entity->getAlto(), gridSize) + maxSize / 2;
-  for (int i = start_i; i <= end_i; i++) {
-    for (int j = start_j; j <= end_j; j++) {
+  if (thereAreCollidableCellsAt(entity->getX(), entity->getY(),
+                                entity->getAncho(), entity->getAlto()))
+    return true;
+
+  return false;
+}
+
+bool Game::thereAreCollidableCellsAt(int x, int y, int width,
+                                     int height) {
+  int center = maxSize / 2;
+  int startRow = floorDiv(x, gridSize) + center;
+  int endRow = floorDiv(x + width, gridSize) + center;
+  int startCol = floorDiv(y, gridSize) + center;
+  int endCol = floorDiv(y + height, gridSize) + center;
+  for (int i = startRow; i <= endRow; i++)
+    for (int j = startCol; j <= endCol; j++)
       if (collidableCells.count({i, j, 0}))
         return true;
-    }
-  }
-
   return false;
 }
 

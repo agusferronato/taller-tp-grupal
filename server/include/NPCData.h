@@ -28,6 +28,9 @@ public:
   explicit NPCData(const std::string &path);
 
   std::unique_ptr<NPC> createNPC(uint8_t npcId, Position pos) const;
+
+  int getWidth(uint8_t npcId) const;
+  int getHeight(uint8_t npcId) const;
 };
 
 #endif
