@@ -14,6 +14,7 @@
 #include "SenderQueueMonitor.h"
 #include <list>
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -63,7 +64,8 @@ private:
   int calculateClanBonusPercent(int nearbyMembers) const;
   uint32_t applyClanAttackBonus(uint32_t damage, int bonusPercent) const;
   bool consumeManaForAttack(Character &attacker);
-  std::string clanBonusMessage(const std::string &bonusType, int nearbyMembers, int bonusPercent);
+  std::string clanBonusMessage(const std::string &bonusType, int nearbyMembers,
+                               int bonusPercent);
 };
 
 #endif
