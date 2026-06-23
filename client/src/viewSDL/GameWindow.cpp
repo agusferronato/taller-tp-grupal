@@ -188,7 +188,14 @@ void GameWindow::show(unsigned int it) {
                   ClientPlayer::Width, ClientPlayer::Height);
   }
 
+  // Si algun renderizado de entidad se sale de la pantalla,
+  // se recorta para que solo se renderice la parte visible
+  SDL_Rect worldClip{layout.gameRect.GetX(), layout.gameRect.GetY(),
+                     layout.gameRect.GetW(), layout.gameRect.GetH()};
+
+  SDL_RenderSetClipRect(renderer->Get(), &worldClip);
   renderWorld(it);
+  SDL_RenderSetClipRect(renderer->Get(), nullptr);
 
   if (myPlayerEntity) {
     const auto &p = myPlayerEntity->getPlayer();
@@ -275,7 +282,7 @@ void GameWindow::renderCommonGround() {
   SDL2pp::Rect dstRect =
       camera.toScreen(startX, startY, totalWidth, totalHeight);
 
-  renderer->SetDrawColor(34, 139, 34, 255);
+  renderer->SetDrawColor(18, 22, 26, 255);
 
   renderer->FillRect(dstRect);
 }

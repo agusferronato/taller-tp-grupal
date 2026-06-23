@@ -44,14 +44,14 @@ void CombatSystem::attack(Character &attacker, int16_t x, int16_t y) {
   }
 }
 
-std::string CombatSystem::clanBonusMessage(const std::string &bonusType, int nearbyMembers,
-                             int bonusPercent) {
+std::string CombatSystem::clanBonusMessage(const std::string &bonusType,
+                                           int nearbyMembers,
+                                           int bonusPercent) {
   if (bonusPercent <= 0) {
     return "";
   }
-  return " Bonus de clan " + bonusType + ": +" +
-         std::to_string(bonusPercent) + "% (" +
-         std::to_string(nearbyMembers) + " miembro(s) cerca).";
+  return " Bonus de clan " + bonusType + ": +" + std::to_string(bonusPercent) +
+         "% (" + std::to_string(nearbyMembers) + " miembro(s) cerca).";
 }
 
 void CombatSystem::tryAttack(NPC &npc, Character &target) {
@@ -82,10 +82,11 @@ void CombatSystem::tryAttack(NPC &npc, Character &target) {
     senderQueueMonitor.sendToClient(
         target.getId(),
         ChatMessageEventDTO{ChatMessageCategory::Combat, "Sistema",
-                            npc.getName() + " te ataco pero no recibiste daño"});
+                            npc.getName() +
+                                " te ataco pero no recibiste daño"});
     return;
   }
-  
+
   target.takeDamage(npc.getDamage(), targetDefenseBonusPercent);
   if (target.getHp() <= 0) {
     killPlayer(target);
@@ -178,22 +179,20 @@ void CombatSystem::playerAttackPlayer(Character &attacker, Character &target) {
   } else {
     senderQueueMonitor.sendToClient(
         attacker.getId(),
-        ChatMessageEventDTO{ChatMessageCategory::Combat, "Sistema",
-                            "Atacaste a " + target.getName() +
-                                " y le hiciste " + std::to_string(damage) +
-                                " de daño!" +
-                                clanBonusMessage("ataque",
-                                                 attackerNearbyClanMembers,
-                                                 attackerAttackBonusPercent)});
+        ChatMessageEventDTO{
+            ChatMessageCategory::Combat, "Sistema",
+            "Atacaste a " + target.getName() + " y le hiciste " +
+                std::to_string(damage) + " de daño!" +
+                clanBonusMessage("ataque", attackerNearbyClanMembers,
+                                 attackerAttackBonusPercent)});
     senderQueueMonitor.sendToClient(
         target.getId(),
-        ChatMessageEventDTO{ChatMessageCategory::Combat, "Sistema",
-                            "Recibiste un ataque de " + attacker.getName() +
-                                " y te hicieron " + std::to_string(damage) +
-                                " de daño!" +
-                                clanBonusMessage("defensa",
-                                                 targetNearbyClanMembers,
-                                                 targetDefenseBonusPercent)});
+        ChatMessageEventDTO{
+            ChatMessageCategory::Combat, "Sistema",
+            "Recibiste un ataque de " + attacker.getName() + " y te hicieron " +
+                std::to_string(damage) + " de daño!" +
+                clanBonusMessage("defensa", targetNearbyClanMembers,
+                                 targetDefenseBonusPercent)});
   }
   messagesToSend.push_back(attacker.toPlayerInfoEvent());
   messagesToSend.push_back(target.toPlayerInfoEvent());
@@ -233,13 +232,12 @@ void CombatSystem::playerAttackNPC(Character &attacker, NPC &target) {
 
   senderQueueMonitor.sendToClient(
       attacker.getId(),
-      ChatMessageEventDTO{ChatMessageCategory::Combat, "Sistema",
-                          "Atacaste a un " + target.getName() +
-                              " y le hiciste " + std::to_string(damage) +
-                              " de daño!" +
-                              clanBonusMessage("ataque",
-                                               attackerNearbyClanMembers,
-                                               attackerAttackBonusPercent)});
+      ChatMessageEventDTO{
+          ChatMessageCategory::Combat, "Sistema",
+          "Atacaste a un " + target.getName() + " y le hiciste " +
+              std::to_string(damage) + " de daño!" +
+              clanBonusMessage("ataque", attackerNearbyClanMembers,
+                               attackerAttackBonusPercent)});
 
   uint32_t xp = Formulas::calcularExperiencia(damage, attacker.getLevel(),
                                               target.getLevel());

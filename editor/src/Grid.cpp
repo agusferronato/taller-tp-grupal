@@ -154,7 +154,7 @@ void Grid::renderCommonGround(SDL2pp::Renderer &renderer) {
   SDL2pp::Rect dstRect =
       camera.toScreen(startX, startY, totalWidth, totalHeight);
 
-  renderer.SetDrawColor(34, 139, 34, 255);
+  renderer.SetDrawColor(18, 22, 26, 255);
 
   renderer.FillRect(dstRect);
 }
