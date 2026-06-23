@@ -721,7 +721,8 @@ void Game::reviewClan(uint32_t playerId) {
   sendToPlayer(playerId, makeClanMessage(pending.str()));
 }
 
-bool Game::thereIsACollidableEntityAt(Position position, int width, int height) {
+bool Game::thereIsACollidableEntityAt(Position position, int width,
+                                      int height) {
   int center = maxSize / 2;
   int cellX = (position.row - center) * gridSize;
   int cellY = (position.column - center) * gridSize;
@@ -899,8 +900,7 @@ bool Game::checkIfItCollides(Colisionable *entity) {
   return false;
 }
 
-bool Game::thereAreCollidableCellsAt(int x, int y, int width,
-                                     int height) {
+bool Game::thereAreCollidableCellsAt(int x, int y, int width, int height) {
   int center = maxSize / 2;
   int startRow = floorDiv(x, gridSize) + center;
   int endRow = floorDiv(x + width, gridSize) + center;

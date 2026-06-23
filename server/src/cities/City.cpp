@@ -32,18 +32,18 @@ bool City::contains(int pixelX, int pixelY, int gridSize, int maxSize) const {
 
 void City::createEntities(Game &game, const CityEntitiesStoreData &storeData) {
   std::vector<Position> occupiedPositions;
-  banker = std::make_unique<Banker>(
-      getRandomPositionInCity(game, occupiedPositions, BANKER_WIDTH, BANKER_HEIGHT));
+  banker = std::make_unique<Banker>(getRandomPositionInCity(
+      game, occupiedPositions, BANKER_WIDTH, BANKER_HEIGHT));
   occupiedPositions.push_back(banker->getPosition());
-  priest =
-      std::make_unique<Priest>(getRandomPositionInCity(game, occupiedPositions,
-                                                       PRIEST_WIDTH, PRIEST_HEIGHT),
-                               storeData.getPriestData());
+  priest = std::make_unique<Priest>(
+      getRandomPositionInCity(game, occupiedPositions, PRIEST_WIDTH,
+                              PRIEST_HEIGHT),
+      storeData.getPriestData());
   occupiedPositions.push_back(priest->getPosition());
-  trader =
-      std::make_unique<Trader>(getRandomPositionInCity(game, occupiedPositions,
-                                                       TRADER_WIDTH, TRADER_HEIGHT),
-                               storeData.getTraderData());
+  trader = std::make_unique<Trader>(
+      getRandomPositionInCity(game, occupiedPositions, TRADER_WIDTH,
+                              TRADER_HEIGHT),
+      storeData.getTraderData());
   entities = {banker.get(), priest.get(), trader.get()};
 }
 

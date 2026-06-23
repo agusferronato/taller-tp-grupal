@@ -141,7 +141,8 @@ void Player::removeGold(uint32_t amount) {
 uint32_t Player::attack() const {
   Weapon weapon = getEquippedWeapon();
   return Formulas::calcularDaño(stats.getStrength(), weapon.minDamage(),
-                                weapon.maxDamage(), rand());
+                                weapon.maxDamage(),
+                                static_cast<double>(std::rand()) / RAND_MAX);
 }
 
 void Player::setLevel(uint32_t level) {
