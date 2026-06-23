@@ -7,28 +7,28 @@
 class Game;
 class Character;
 
+#define BANKER_WIDTH 32
+#define BANKER_HEIGHT 64
+
 class Banker : public CityEntity {
 
 private:
-    Bank bank;
+  Bank bank;
 
 public:
+  explicit Banker(Position position);
 
-    Banker(Position position) : CityEntity(position) {}
+  CityEntityType getCityEntityType() override;
 
-    CityEntityType getCityEntityType() override {
-        return CityEntityType::Banker;
-    }
+  void saveItem(Game &game, Character &character, uint8_t id);
+  void takeItem(Game &game, Character &character, uint8_t id);
+  void saveGold(Game &game, Character &character, uint16_t ammount);
+  void takeGold(Game &game, Character &character, uint16_t ammount);
+  void showGoldAvailable(Game &game, Character &character);
+  void listItemsAvailables(Game &game, Character &character);
 
-    void saveItem(Game& game, Character& character, uint8_t id);
-    void takeItem(Game& game, Character& character, uint8_t id);
-    void saveGold(Game& game, Character& character, uint16_t ammount);
-    void takeGold(Game& game, Character& character, uint16_t ammount);
-    void showGoldAvailable(Game& game, Character& character);
-    void listItemsAvailables(Game& game, Character& character);
-
-    int getAncho() const override { return 32; }
-    int getAlto() const override { return 64; }
+  int getAncho() const override;
+  int getAlto() const override;
 };
 
 #endif

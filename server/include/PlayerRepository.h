@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "ItemData.h"
 #include "PlayerData.h"
 
 class PlayerRepository {

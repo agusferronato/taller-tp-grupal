@@ -2,6 +2,7 @@
 #include "parser/Commands/AcceptClanRequestCommandParser.h"
 #include "parser/Commands/BanClanPlayerCommandParser.h"
 #include "parser/Commands/CheatCommandParser.h"
+#include "parser/Commands/CityEntityCommandParser.h"
 #include "parser/Commands/CreateClanCommandParser.h"
 #include "parser/Commands/DropItemCommandParser.h"
 #include "parser/Commands/EquipCommandParser.h"
@@ -19,8 +20,8 @@
 #include "parser/Commands/ReviewClanCommandParser.h"
 #include "parser/Commands/TakeItemCommandParser.h"
 #include "parser/Commands/UnequipCommandParser.h"
-#include "parser/Events/AttackReceivedEventParser.h"
 #include "parser/Commands/ValidateLoginCommandParser.h"
+#include "parser/Events/AttackReceivedEventParser.h"
 #include "parser/Events/ChatMessageEventParser.h"
 #include "parser/Events/CityEntityAppearedEventParser.h"
 #include "parser/Events/CityEntityMovedEventParser.h"
@@ -36,11 +37,11 @@
 #include "parser/Events/NpcDefeatedEventParser.h"
 #include "parser/Events/PlayerAppearedEventParser.h"
 #include "parser/Events/PlayerDieEventParser.h"
-#include "parser/Events/PlayerResurrectEventParser.h"
 #include "parser/Events/PlayerInfoEventParser.h"
 #include "parser/Events/PlayerListEventParser.h"
 #include "parser/Events/PlayerMovedEventParser.h"
 #include "parser/Events/PlayerRemovedEventParser.h"
+#include "parser/Events/PlayerResurrectEventParser.h"
 #include "parser/Events/PlayerStoppedEventParser.h"
 #include "parser/Events/PrivateMessageEventParser.h"
 #include "parser/Events/RegisterPlayerEventParser.h"
@@ -48,7 +49,6 @@
 #include "protocol/Protocol.h"
 #include "protocol/ProtocolCodes.h"
 #include <AttackCommandParser.h>
-#include "parser/Commands/CityEntityCommandParser.h"
 #include <GlobalChatMessageCommandParser.h>
 #include <GlobalChatMessageEventParser.h>
 

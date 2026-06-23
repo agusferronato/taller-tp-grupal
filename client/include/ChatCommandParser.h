@@ -1,8 +1,8 @@
 #ifndef CHAT_COMMAND_PARSER_H
 #define CHAT_COMMAND_PARSER_H
 
-#include <string>
 #include <cstdint>
+#include <string>
 
 enum class ChatCommandType {
   None,
@@ -40,13 +40,19 @@ enum class ChatCommandType {
   Supervelocidad,
   VelocidadNormal,
   SetLevel,
-  Revivir
+  Revivir,
+  SetGold,
+  Meditar,
+  Obtener
 };
 
 struct ChatCommand {
   ChatCommandType type{ChatCommandType::None};
   int arg{0};
   std::string textArg{};
+
+  // Para Oro
+  uint32_t unsignedArg{0};
 };
 
 class ChatCommandParser {

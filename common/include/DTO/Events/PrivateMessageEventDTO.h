@@ -6,8 +6,7 @@
 
 struct PrivateMessageEventDTO {
 private:
-  static constexpr EventOpcode opCode =
-      EventOpcode::PrivateMessageEvent;
+  static constexpr EventOpcode opCode = EventOpcode::PrivateMessageEvent;
 
 public:
   EventOpcode getCode() const { return opCode; }

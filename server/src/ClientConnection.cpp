@@ -18,16 +18,16 @@ void ClientConnection::kill() {
   receiver.kill();
   sender.kill();
 
-  try {
-    peer.shutdown(SHUT_RDWR);
-    peer.close();
-  } catch (...) {}
+  peer.shutdown(SHUT_RDWR);
+  peer.close();
 }
 
 void ClientConnection::run() {
   receiver.start();
   sender.start();
+}
 
+void ClientConnection::join() {
   receiver.join();
   sender.join();
 }

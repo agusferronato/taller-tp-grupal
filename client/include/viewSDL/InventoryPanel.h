@@ -8,14 +8,12 @@
 #include <string>
 #include <unordered_map>
 
-#include "TextureManager.h"
 #include "ClientPlayer.h"
+#include "TextureManager.h"
 
 struct SlotRect {
   int x, y, w, h;
-  bool hitTest(int px, int py) const {
-    return px >= x && px < x + w && py >= y && py < y + h;
-  }
+  bool hitTest(int px, int py) const;
 };
 
 enum class ClickTargetType { Equipment, Inventory, None };
@@ -48,6 +46,9 @@ private:
   SlotRect getInventorySlotRect(int row, int col) const;
 
   void renderItemIcon(int slotX, int slotY, uint8_t itemId);
+  void renderGoldText(const ClientPlayer &player);
+  void renderCenteredText(const std::string &text, const SDL2pp::Rect &rect,
+                          SDL_Color color);
 
   static constexpr int SLOT_W = 32;
   static constexpr int SLOT_H = 32;
@@ -62,6 +63,12 @@ private:
 
   static constexpr int BASE_W = 267;
   static constexpr int BASE_H = 294;
+
+  static constexpr int SAFE_GOLD_X = 59;
+  static constexpr int EXCESS_GOLD_X = 173;
+  static constexpr int GOLD_VALUE_Y = 260;
+  static constexpr int GOLD_VALUE_W = 74;
+  static constexpr int GOLD_VALUE_H = 25;
 
   static constexpr int EQUIP_X[EQUIP_COLS] = {32, 89, 146, 203};
   static constexpr int INV_X[INV_COLS] = {20, 59, 98, 137, 176, 215};

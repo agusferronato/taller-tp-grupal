@@ -1,8 +1,8 @@
 #include "GameController.h"
 
 #include "ChatCommandParser.h"
-#include "CityEntityCommandDTO.h"
 #include "CheatType.h"
+#include "CityEntityCommandDTO.h"
 #include "PlayerStoppedEventDTO.h"
 #include "WindowClosed.h"
 
@@ -23,8 +23,7 @@ void GameController::handleEvent(const SDL_Event &event) {
 
   case SDL_KEYDOWN:
     if (event.key.repeat == 0 ||
-        (gameModel->isChatActive() &&
-         event.key.keysym.sym == SDLK_BACKSPACE)) {
+        (gameModel->isChatActive() && event.key.keysym.sym == SDLK_BACKSPACE)) {
       handleKeyDown(event.key.keysym.sym);
     }
     break;
@@ -73,133 +72,142 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
       if (cmd.type != ChatCommandType::None) {
         switch (cmd.type) {
         case ChatCommandType::Unknown:
-            gameModel->addLocalChatMessage("Ese comando no existe",
-                                          ChatMessageCategory::Error);
-            break;
+          gameModel->addLocalChatMessage("Ese comando no existe",
+                                         ChatMessageCategory::Error);
+          break;
         case ChatCommandType::PrivateMessage: {
-            size_t separator = cmd.textArg.find('\n');
-            if (separator != std::string::npos) {
-                gameModel->sendPrivateMessage(
-                    cmd.textArg.substr(0, separator),
-                    cmd.textArg.substr(separator + 1));
-            }
-            break;
+          size_t separator = cmd.textArg.find('\n');
+          if (separator != std::string::npos) {
+            gameModel->sendPrivateMessage(cmd.textArg.substr(0, separator),
+                                          cmd.textArg.substr(separator + 1));
+          }
+          break;
         }
         case ChatCommandType::Tomar:
-            gameModel->takeItem();
-            break;
+          gameModel->takeItem();
+          break;
         case ChatCommandType::Tirar:
-            gameModel->dropItem(static_cast<uint8_t>(cmd.arg));
-            break;
+          gameModel->dropItem(static_cast<uint8_t>(cmd.arg));
+          break;
         case ChatCommandType::Equipar:
-            gameModel->equipItem(static_cast<uint8_t>(cmd.arg));
-            break;
+          gameModel->equipItem(static_cast<uint8_t>(cmd.arg));
+          break;
         case ChatCommandType::Desequipar:
-            gameModel->unequipItem(static_cast<uint8_t>(cmd.arg));
-            break;
+          gameModel->unequipItem(static_cast<uint8_t>(cmd.arg));
+          break;
         case ChatCommandType::Curar:
-            gameModel->sendCityEntityCommand(CityEntityCommandDTO::CURAR, -1);
-            break;
+          gameModel->sendCityEntityCommand(CityEntityCommandDTO::CURAR, "");
+          break;
         case ChatCommandType::Resucitar:
-            gameModel->sendCityEntityCommand(CityEntityCommandDTO::RESUCITAR, -1);
-            break;
+          gameModel->sendCityEntityCommand(CityEntityCommandDTO::RESUCITAR, "");
+          break;
         case ChatCommandType::Comprar:
-            gameModel->sendCityEntityCommand(CityEntityCommandDTO::COMPRAR,
-                                            static_cast<int16_t>(cmd.arg));
-            break;
+          gameModel->sendCityEntityCommand(CityEntityCommandDTO::COMPRAR,
+                                           cmd.textArg);
+          break;
         case ChatCommandType::Vender:
-            gameModel->sendCityEntityCommand(CityEntityCommandDTO::VENDER,
-                                            static_cast<int16_t>(cmd.arg));
-            break;
+          gameModel->sendCityEntityCommand(CityEntityCommandDTO::VENDER,
+                                           cmd.textArg);
+          break;
         case ChatCommandType::Listar:
-            gameModel->sendCityEntityCommand(CityEntityCommandDTO::LISTAR, -1);
-            break;
+          gameModel->sendCityEntityCommand(CityEntityCommandDTO::LISTAR, "");
+          break;
         case ChatCommandType::ConsultarOro:
-            gameModel->sendCityEntityCommand(CityEntityCommandDTO::CONSULTAR_ORO, -1);
-            break;
+          gameModel->sendCityEntityCommand(CityEntityCommandDTO::CONSULTAR_ORO,
+                                           "");
+          break;
         case ChatCommandType::Depositar:
-            gameModel->sendCityEntityCommand(CityEntityCommandDTO::DEPOSITAR_ITEM,
-                                            static_cast<int16_t>(cmd.arg));
-            break;
+          gameModel->sendCityEntityCommand(CityEntityCommandDTO::DEPOSITAR_ITEM,
+                                           cmd.textArg);
+          break;
         case ChatCommandType::Retirar:
-            gameModel->sendCityEntityCommand(CityEntityCommandDTO::RETIRAR_ITEM,
-                                            static_cast<int16_t>(cmd.arg));
-            break;
+          gameModel->sendCityEntityCommand(CityEntityCommandDTO::RETIRAR_ITEM,
+                                           cmd.textArg);
+          break;
         case ChatCommandType::DepositarOro:
-            gameModel->sendCityEntityCommand(CityEntityCommandDTO::DEPOSITAR_ORO,
-                                            static_cast<int16_t>(cmd.arg));
-            break;
+          gameModel->sendCityEntityCommand(CityEntityCommandDTO::DEPOSITAR_ORO,
+                                           std::to_string(cmd.arg));
+          break;
         case ChatCommandType::RetirarOro:
-            gameModel->sendCityEntityCommand(CityEntityCommandDTO::RETIRAR_ORO,
-                                            static_cast<int16_t>(cmd.arg));
-            break;
+          gameModel->sendCityEntityCommand(CityEntityCommandDTO::RETIRAR_ORO,
+                                           std::to_string(cmd.arg));
+          break;
         case ChatCommandType::FundarClan:
-            gameModel->createClan(cmd.textArg);
-            break;
+          gameModel->createClan(cmd.textArg);
+          break;
         case ChatCommandType::UnirseClan:
-            gameModel->joinClan(cmd.textArg);
-            break;
+          gameModel->joinClan(cmd.textArg);
+          break;
         case ChatCommandType::ClanAceptar:
-            gameModel->acceptClanRequest(cmd.textArg);
-            break;
+          gameModel->acceptClanRequest(cmd.textArg);
+          break;
         case ChatCommandType::DejarClan:
-            gameModel->leaveClan();
-            break;
+          gameModel->leaveClan();
+          break;
         case ChatCommandType::RevisarClan:
-            gameModel->reviewClan();
-            break;
+          gameModel->reviewClan();
+          break;
         case ChatCommandType::ClanRechazar:
-            gameModel->rejectClanRequest(cmd.textArg);
-            break;
+          gameModel->rejectClanRequest(cmd.textArg);
+          break;
         case ChatCommandType::ClanBan:
-            gameModel->banClanPlayer(cmd.textArg);
-            break;
+          gameModel->banClanPlayer(cmd.textArg);
+          break;
         case ChatCommandType::ClanKick:
-            gameModel->kickClanMember(cmd.textArg);
-            break;
+          gameModel->kickClanMember(cmd.textArg);
+          break;
         case ChatCommandType::AlejarCamara:
-            gameModel->zoomOutCamera();
-            break;
+          gameModel->zoomOutCamera();
+          break;
         case ChatCommandType::CamaraNormal:
-            gameModel->resetCameraZoom();
-            break;
+          gameModel->resetCameraZoom();
+          break;
         case ChatCommandType::Morir:
-            gameModel->sendCheat(CheatType::Die);
-            break;
+          gameModel->sendCheat(CheatType::Die);
+          break;
         case ChatCommandType::VidaInfinita:
-            gameModel->sendCheat(CheatType::InfiniteHealth);
-            break;
+          gameModel->sendCheat(CheatType::InfiniteHealth);
+          break;
         case ChatCommandType::VidaNormal:
-            gameModel->sendCheat(CheatType::NormalHealth);
-            break;
+          gameModel->sendCheat(CheatType::NormalHealth);
+          break;
         case ChatCommandType::ManaInfinito:
-            gameModel->sendCheat(CheatType::InfiniteMana);
-            break;
+          gameModel->sendCheat(CheatType::InfiniteMana);
+          break;
         case ChatCommandType::ManaNormal:
-            gameModel->sendCheat(CheatType::NormalMana);
-            break;
+          gameModel->sendCheat(CheatType::NormalMana);
+          break;
         case ChatCommandType::Supervelocidad:
-            gameModel->sendCheat(CheatType::SuperSpeed);
-            break;
+          gameModel->sendCheat(CheatType::SuperSpeed);
+          break;
         case ChatCommandType::VelocidadNormal:
-            gameModel->sendCheat(CheatType::NormalSpeed);
-            break;
+          gameModel->sendCheat(CheatType::NormalSpeed);
+          break;
         case ChatCommandType::SetLevel:
-            gameModel->sendCheat(CheatType::SetLevel,
-                                 static_cast<uint32_t>(cmd.arg));
-            break;
+          gameModel->sendCheat(CheatType::SetLevel,
+                               static_cast<uint32_t>(cmd.arg));
+          break;
         case ChatCommandType::Revivir:
-            gameModel->sendCheat(CheatType::Revive);
-            break;
+          gameModel->sendCheat(CheatType::Revive);
+          break;
+        case ChatCommandType::SetGold:
+          gameModel->sendCheat(CheatType::SetGold, cmd.unsignedArg);
+          break;
+        case ChatCommandType::Meditar:
+          gameModel->meditate();
+          break;
+        case ChatCommandType::Obtener:
+          gameModel->sendCheat(CheatType::Obtener, 0, cmd.textArg);
+          break;
         default:
-            break;
+          break;
         }
         gameModel->closeChat();
       } else {
         gameModel->submitChat();
       }
       return;
-    } 
+    }
 
     if (key == SDLK_BACKSPACE) {
       gameModel->backspaceChat();
@@ -212,7 +220,7 @@ void GameController::handleKeyDown(const SDL_Keycode &key) {
     }
 
     return;
-  } 
+  }
 
   if (key == SDLK_RETURN) {
     gameModel->openChat();

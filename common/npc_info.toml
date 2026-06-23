@@ -1,0 +1,131 @@
+[npc.0]
+name = "Zombie"
+agility = 4
+attack_counter = 130
+damage = 25
+width = 32
+height = 64
+range = 128
+hp = 200
+level = 5
+
+[npc.1]
+name = "Spider"
+agility = 18
+attack_counter = 50
+damage = 15
+width = 48
+height = 48
+range = 128
+hp = 100
+level = 8
+
+[npc.2]
+name = "SpecialSpider"
+agility = 15
+attack_counter = 45
+damage = 18
+width = 96
+height = 64
+range = 128
+hp = 150
+level = 10
+
+[npc.3]
+name = "Elf"
+agility = 35
+attack_counter = 25
+damage = 5
+width = 32
+height = 32
+range = 128
+hp = 100
+level = 7
+
+[npc.4]
+name = "SpecialElf"
+agility = 40
+attack_counter = 20
+damage = 10
+width = 32
+height = 32
+range = 128
+hp = 150
+level = 32
+
+[npc.5]
+name = "Skeleton"
+agility = 14
+attack_counter = 80
+damage = 10
+width = 32
+height = 64
+range = 128
+hp = 150
+level = 7
+
+[npc.6]
+name = "SpecialSkeleton"
+agility = 18
+attack_counter = 75
+damage = 25
+width = 32
+height = 64
+range = 128
+hp = 150
+level = 20
+
+[npc.7]
+name = "Orc"
+agility = 4
+attack_counter = 200
+damage = 60
+width = 48
+height = 96
+range = 128
+hp = 400
+level = 25
+
+[npc.8]
+name = "GreatReamer"
+agility = 40
+attack_counter = 15
+damage = 80
+width = 64
+height = 64
+range = 128
+hp = 450
+level = 100
+
+[npc.9]
+name = "Giant"
+agility = 15
+attack_counter = 125
+damage = 125
+width = 32
+height = 128
+range = 128
+hp = 600
+level = 125
+
+[npc.10]
+name = "Golem"
+agility = 4
+attack_counter = 225
+damage = 80
+width = 32
+height = 96
+range = 128
+hp = 325
+level = 8
+
+[npc.11]
+name = "SpecialGolem"
+agility = 6
+attack_counter = 220
+damage = 85
+width = 32
+height = 96
+range = 128
+hp = 350
+level = 12

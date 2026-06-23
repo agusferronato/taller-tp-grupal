@@ -1,12 +1,14 @@
 #include "GameModel.h"
-#include "AttackReceivedEventDTO.h"
 #include "AcceptClanRequestCommandDTO.h"
+#include "AttackCommandDTO.h"
+#include "AttackReceivedEventDTO.h"
+#include "Audio.h"
 #include "BanClanPlayerCommandDTO.h"
 #include "ChatMessageEventDTO.h"
 #include "CheatCommandDTO.h"
+#include "CityEntityCommandDTO.h"
 #include "CreateClanCommandDTO.h"
 #include "DropItemCommandDTO.h"
-#include "CityEntityCommandDTO.h"
 #include "EquipCommandDTO.h"
 #include "GameWindow.h"
 #include "GlobalChatMessageCommandDTO.h"
@@ -18,6 +20,7 @@
 #include "JoinClanCommandDTO.h"
 #include "KickClanMemberCommandDTO.h"
 #include "LeaveClanCommandDTO.h"
+#include "MeditateCommandDTO.h"
 #include "NPC.h"
 #include "NPCAppearedEventDTO.h"
 #include "NPCMovedEventDTO.h"
@@ -37,18 +40,20 @@
 #include "RegisterPlayerEventDTO.h"
 #include "RejectClanRequestCommandDTO.h"
 #include "ReviewClanCommandDTO.h"
+#include "TakeItemCommandDTO.h"
 #include "TextureInfoEventDTO.h"
 #include "UnequipCommandDTO.h"
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 
 static constexpr int MAX_NUMBER_OF_MESSAGES = 100;
 
 GameModel::GameModel(uint32_t myPlayerID, GameWindow *gameView,
                      Queue<ServerEventDTO> &receptionQueue,
-                     Queue<ClientCommandDTO> &sendingQueue)
+                     Queue<ClientCommandDTO> &sendingQueue, Audio *audio)
     : receptionQueue(receptionQueue), sendingQueue(sendingQueue),
-      myPlayerID(myPlayerID), gameView(gameView) {
+      myPlayerID(myPlayerID), gameView(gameView), audio(audio) {
   registerPlayers();
 }
 
@@ -57,7 +62,6 @@ void GameModel::updateStateFromServer() {
   while (receptionQueue.try_pop(event)) {
     std::visit([this](const auto &e) { handle(e); }, event);
   }
-
 }
 
 void GameModel::handleInventoryClick(int screenX, int screenY, uint8_t button) {
@@ -89,14 +93,28 @@ void GameModel::dropItem(uint8_t slot) {
 
 void GameModel::equipItem(uint8_t slot) {
   sendingQueue.push(EquipCommandDTO{myPlayerID, slot});
+  auto it = players.find(myPlayerID);
+  if (it != players.end()) {
+    audio->playEquip(it->second->getInventory().getItemId(slot));
+  }
 }
 
 void GameModel::unequipItem(uint8_t equipSlot) {
   sendingQueue.push(UnequipCommandDTO{myPlayerID, equipSlot});
 }
 
-void GameModel::sendCityEntityCommand(uint8_t cmdType, int16_t arg) {
+void GameModel::sendCityEntityCommand(uint8_t cmdType, const std::string &arg) {
   sendingQueue.push(CityEntityCommandDTO{myPlayerID, cmdType, arg});
+  if (cmdType == CityEntityCommandDTO::CURAR) {
+    audio->playHeal();
+  } else if (cmdType == CityEntityCommandDTO::COMPRAR ||
+             cmdType == CityEntityCommandDTO::VENDER ||
+             cmdType == CityEntityCommandDTO::DEPOSITAR_ITEM ||
+             cmdType == CityEntityCommandDTO::RETIRAR_ITEM ||
+             cmdType == CityEntityCommandDTO::DEPOSITAR_ORO ||
+             cmdType == CityEntityCommandDTO::RETIRAR_ORO) {
+    audio->playCoin();
+  }
 }
 
 void GameModel::createClan(const std::string &clanName) {
@@ -147,16 +165,17 @@ void GameModel::addLocalChatMessage(std::string text,
   updateChatView();
 }
 
-void GameModel::zoomOutCamera() {
-  gameView->zoomOutCamera();
+void GameModel::zoomOutCamera() { gameView->zoomOutCamera(); }
+
+void GameModel::resetCameraZoom() { gameView->resetCameraZoom(); }
+
+void GameModel::sendCheat(CheatType cheat, uint32_t arg,
+                          const std::string &itemName) {
+  sendingQueue.push(CheatCommandDTO{cheat, arg, itemName});
 }
 
-void GameModel::resetCameraZoom() {
-  gameView->resetCameraZoom();
-}
-
-void GameModel::sendCheat(CheatType cheat, uint32_t arg) {
-  sendingQueue.push(CheatCommandDTO{cheat, arg});
+void GameModel::meditate() {
+  sendingQueue.push(MeditateCommandDTO{myPlayerID});
 }
 
 void GameModel::moveMyPlayer(Direction direction) {
@@ -217,6 +236,10 @@ void GameModel::handle(const PlayerInfoEventDTO &event) {
     it->second->updateStats(event.hp, event.maxHp, event.mana, event.maxMana,
                             event.gold, event.level, event.experience);
   }
+  if (event.playerId == myPlayerID && event.level > lastKnownLevel) {
+    lastKnownLevel = event.level;
+    audio->playLevelUp();
+  }
 }
 
 void GameModel::handle(const TextureInfoEventDTO &texInfo) {
@@ -260,20 +283,26 @@ void GameModel::handle(const InventoryUpdateEventDTO &inv) {
   it->second->setEquippedArmor(inv.equippedArmor);
   it->second->setEquippedHelmet(inv.equippedHelmet);
   it->second->setEquippedShield(inv.equippedShield);
+
+  if (inv.playerId == myPlayerID) {
+    audio->playPickup();
+    audio->playSfx("equip", 0);
+  }
 }
 void GameModel::handle(const PlayerListEventDTO &) {}
 void GameModel::handle(const ChatMessageEventDTO &event) {
 
   std::istringstream stream(event.message);
-    std::string line;
-    while (std::getline(stream, line, '\n')) {
-        if (line.empty()) continue;
+  std::string line;
+  while (std::getline(stream, line, '\n')) {
+    if (line.empty())
+      continue;
 
-        chatMessages.push_back(ChatMessage{line, event.category});
-        while (chatMessages.size() > 100)
-            chatMessages.pop_front();
-    }
-    updateChatView();
+    chatMessages.push_back(ChatMessage{line, event.category});
+    while (chatMessages.size() > 100)
+      chatMessages.pop_front();
+  }
+  updateChatView();
 }
 
 void GameModel::handle(const PrivateMessageEventDTO &event) {
@@ -295,9 +324,8 @@ void GameModel::handle(const PrivateMessageEventDTO &event) {
 }
 
 void GameModel::handle(const GlobalChatMessageEventDTO &event) {
-  chatMessages.push_back(
-      ChatMessage{event.playerName + ": " + event.message,
-                  ChatMessageCategory::Global});
+  chatMessages.push_back(ChatMessage{event.playerName + ": " + event.message,
+                                     ChatMessageCategory::Global});
 
   while (chatMessages.size() > MAX_NUMBER_OF_MESSAGES) {
     chatMessages.pop_front();
@@ -364,7 +392,7 @@ void GameModel::handle(const GroundItemRemovedEventDTO &e) {
   gameView->removeEntity(EntityType::GroundItem, e.groundItemId);
 }
 void GameModel::handle(const GroundItemsListEventDTO &e) {
-  for (auto& item : e.items) {
+  for (auto &item : e.items) {
     gameView->addGroundItem(item.groundItemId, item.itemId, item.x, item.y);
   }
 }
@@ -386,6 +414,7 @@ void GameModel::handle(const NPCStoppedEventDTO &event) {
 void GameModel::handle(const NpcDefeatedEventDTO &event) {
   gameView->removeEntity(EntityType::Npc, event.npcId);
   npcs.erase(event.npcId);
+  audio->playNpcDeath();
 }
 
 void GameModel::handle(const NPCAppearedEventDTO &event) {
@@ -421,11 +450,20 @@ void GameModel::handle(const AttackReceivedEventDTO &event) {
   if (event.entityType == EntityType::Player) {
     auto it = players.find(event.entityId);
     if (it != players.end())
-      it->second->setBeingAttacked(true);
+      it->second->setBeingAttacked(true, event.effectType);
+
+    if (event.entityId == myPlayerID)
+      audio->playHitReceived();
+
+    if (event.effectType != EffectType::None)
+      audio->playAttack(event.effectType);
+
   } else if (event.entityType == EntityType::Npc) {
     auto it = npcs.find(event.entityId);
     if (it != npcs.end())
-      it->second->setBeingAttacked(true);
+      it->second->setBeingAttacked(true, event.effectType);
+
+    audio->playAttack(event.effectType);
   }
 }
 
@@ -434,24 +472,26 @@ void GameModel::handle(const RegisterPlayerEventDTO &) {}
 void GameModel::handle(const LoginResultEventDTO &) {}
 
 PlayerStatsInfo GameModel::playerStatsFrom(const PlayerInfoDTO &info) {
-  PlayerStatsInfo stats{stats.health = info.hp,
-                        stats.mana = info.mana,
-                        stats.gold = info.gold,
-                        stats.level = info.level,
-                        stats.experience = info.experience,
-                        stats.race = info.race,
-                        stats.playerClass = info.playerClass};
+  PlayerStatsInfo stats{};
+  stats.health = info.hp;
+  stats.mana = info.mana;
+  stats.level = info.level;
+  stats.experience = info.experience;
+  stats.gold = info.gold;
+  stats.race = info.race;
+  stats.playerClass = info.playerClass;
   return stats;
 }
 
 PlayerStatsInfo GameModel::playerStatsFrom(const PlayerAppearedEventDTO &info) {
-  PlayerStatsInfo stats{stats.health = info.hp,
-                        stats.mana = info.mana,
-                        stats.gold = info.gold,
-                        stats.level = info.level,
-                        stats.experience = info.experience,
-                        stats.race = info.race,
-                        stats.playerClass = info.playerClass};
+  PlayerStatsInfo stats{};
+  stats.health = info.hp;
+  stats.mana = info.mana;
+  stats.level = info.level;
+  stats.experience = info.experience;
+  stats.gold = info.gold;
+  stats.race = info.race;
+  stats.playerClass = info.playerClass;
   return stats;
 }
 
@@ -481,6 +521,7 @@ void GameModel::handle(const PlayerDieEventDTO &event) {
   }
   if (event.playerId == myPlayerID) {
     it->second->die();
+    audio->playPlayerDeath();
   } else {
     gameView->removePlayer(event.playerId);
     players.erase(event.playerId);
@@ -494,4 +535,5 @@ void GameModel::handle(const PlayerResurrectEventDTO &event) {
   if (it == players.end())
     return;
   it->second->resurrect(event.x, event.y);
+  audio->playResurrect();
 }

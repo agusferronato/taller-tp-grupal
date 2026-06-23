@@ -2,10 +2,8 @@
 #include "protocol/RegisterAllParsers.h"
 
 ClientSender::ClientSender(Socket &socket,
-                           Queue<ClientCommandDTO> &sendingQueue,
-                           ShutdownEvent &shutdownEvent)
-    : socket(socket), sendingQueue(sendingQueue), shutdownEvent(shutdownEvent),
-      protocol(Protocol(socket)) {
+                           Queue<ClientCommandDTO> &sendingQueue)
+    : socket(socket), sendingQueue(sendingQueue), protocol(Protocol(socket)) {
   registerAllParsers(protocol);
 }
 
@@ -19,7 +17,6 @@ void ClientSender::run() {
 
     } catch (const CommunicationEnded &e) {
 
-      shutdownEvent.put(ShutdownReason::ConnectionClosed);
       sendingQueue.close();
       return;
 

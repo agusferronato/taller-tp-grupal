@@ -2,9 +2,9 @@
 
 #include "AcceptClanRequestCommandDTO.h"
 #include "AttackCommandDTO.h"
-#include "CityEntityCommandDTO.h"
 #include "BanClanPlayerCommandDTO.h"
 #include "CheatCommandDTO.h"
+#include "CityEntityCommandDTO.h"
 #include "CreateClanCommandDTO.h"
 #include "DropItemCommandDTO.h"
 #include "EquipCommandDTO.h"
@@ -14,6 +14,7 @@
 #include "KickClanMemberCommandDTO.h"
 #include "LeaveClanCommandDTO.h"
 #include "LoginPlayerCommandDTO.h"
+#include "MeditateCommandDTO.h"
 #include "MoveCommandDTO.h"
 #include "PlayerStopCommandDTO.h"
 #include "PrivateMessageCommandDTO.h"
@@ -25,9 +26,9 @@
 #include "ValidateLoginCommandDTO.h"
 #include "command/AcceptClanRequestCommand.h"
 #include "command/AttackCommand.h"
-#include "command/CityEntityCommand.h"
 #include "command/BanClanPlayerCommand.h"
 #include "command/CheatCommand.h"
+#include "command/CityEntityCommand.h"
 #include "command/CreateClanCommand.h"
 #include "command/DropItemCommand.h"
 #include "command/EquipCommand.h"
@@ -37,6 +38,7 @@
 #include "command/KickClanMemberCommand.h"
 #include "command/LeaveClanCommand.h"
 #include "command/LoginPlayerCommand.h"
+#include "command/MeditateCommand.h"
 #include "command/MovePlayerCommand.h"
 #include "command/PlayerStoppedCommand.h"
 #include "command/PrivateMessageCommand.h"
@@ -108,7 +110,7 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
     return std::make_unique<CityEntityCommand>(request->playerId, request->type,
                                                request->arg);
   }
-  
+
   if (const auto *request = std::get_if<CreateClanCommandDTO>(&dto)) {
     return std::make_unique<CreateClanCommand>(request->playerId,
                                                request->clanName);
@@ -148,11 +150,16 @@ std::unique_ptr<Command> CommandFactory::create(const ClientCommandDTO &dto) {
   }
 
   if (const auto *request = std::get_if<CheatCommandDTO>(&dto)) {
-    return std::make_unique<CheatCommand>(request->cheat, request->arg);
+    return std::make_unique<CheatCommand>(request->cheat, request->arg,
+                                          request->itemName);
   }
-  
+
   if (const auto *request = std::get_if<ValidateLoginCommandDTO>(&dto)) {
     return std::make_unique<ValidateLoginCommand>(request->playerName);
+  }
+
+  if (const auto *request = std::get_if<MeditateCommandDTO>(&dto)) {
+    return std::make_unique<MeditateCommand>(request->playerId);
   }
 
   throw std::runtime_error("Unknown client request DTO type");

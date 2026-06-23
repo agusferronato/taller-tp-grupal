@@ -30,29 +30,31 @@ void NPCEntity::renderAttackEffect(SDL2pp::Renderer &renderer, Camera &camera,
                                    unsigned int it) {
   (void)it;
 
-  if (!npc.isBeingAttacked()) {
-    attackNextFrame = -1;
+  if (!npc.isBeingAttackOrCured()) {
+    effectNextFrame = -1;
     return;
   }
 
-  if (attackNextFrame == -1) {
-    attackNextFrame = 0;
+  if (effectNextFrame == -1) {
+    effectNextFrame = 0;
   }
 
-  auto result = textureManager.getAttackFrame(350, attackNextFrame);
+  auto result = textureManager.getAttackFrame(
+      effectParser.getEffectLayout(npc.getEffect()),
+      effectParser.getEffectID(npc.getEffect()), effectNextFrame);
+
   Sprite &src = result.sprite;
 
-  attackNextFrame++;
+  effectNextFrame++;
 
-  const int totalTicks = 24;
-  if (attackNextFrame >= totalTicks) {
+  if (effectNextFrame >= result.max_ticks) {
     npc.stopAttackEffect();
-    attackNextFrame = -1;
+    effectNextFrame = -1;
     return;
   }
 
-  SDL2pp::Rect dst = camera.toScreen(
-      get_x() + spriteWidth / 2 - 32, get_y() + spriteHeight / 2 - 32, 64, 64);
+  SDL2pp::Rect dst = camera.toScreen(get_x() + spriteWidth / 2 - 32,
+                                     get_y() + spriteHeight / 2 - 32, 64, 64);
 
   if (!camera.isVisibleOnScreen(dst))
     return;

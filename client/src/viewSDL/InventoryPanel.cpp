@@ -1,6 +1,13 @@
 #include "InventoryPanel.h"
 
+#include "Formulas.h"
+
 #include <string>
+
+bool SlotRect::hitTest(int px, int py) const {
+  return px >= x && px < x + w && py >= y && py < y + h;
+}
+
 #include <unordered_map>
 
 InventoryPanel::InventoryPanel(SDL2pp::Renderer &renderer,
@@ -100,6 +107,7 @@ void InventoryPanel::render(const ClientPlayer &player) {
     }
   }
 
+  renderGoldText(player);
 }
 
 ClickTarget InventoryPanel::handleClick(int screenX, int screenY) const {
@@ -121,4 +129,36 @@ ClickTarget InventoryPanel::handleClick(int screenX, int screenY) const {
     }
   }
   return {ClickTargetType::None, -1};
+}
+
+void InventoryPanel::renderGoldText(const ClientPlayer &player) {
+  uint32_t totalGold = player.getGold();
+  uint32_t excessGold =
+      Formulas::calcularOroExceso(totalGold, player.getLevel());
+  uint32_t safeGold = totalGold - excessGold;
+
+  SDL_Color goldColor{255, 223, 128, 255};
+  SDL2pp::Rect safeRect(INV_PANEL_X + SAFE_GOLD_X, INV_PANEL_Y + GOLD_VALUE_Y,
+                        GOLD_VALUE_W, GOLD_VALUE_H);
+  SDL2pp::Rect excessRect(INV_PANEL_X + EXCESS_GOLD_X,
+                          INV_PANEL_Y + GOLD_VALUE_Y, GOLD_VALUE_W,
+                          GOLD_VALUE_H);
+
+  renderCenteredText(std::to_string(safeGold), safeRect, goldColor);
+  renderCenteredText(std::to_string(excessGold), excessRect, goldColor);
+}
+
+void InventoryPanel::renderCenteredText(const std::string &text,
+                                        const SDL2pp::Rect &rect,
+                                        SDL_Color color) {
+  if (!slotFont)
+    return;
+
+  SDL2pp::Surface surf = slotFont->RenderUTF8_Solid(text, color);
+  SDL2pp::Texture tex(renderer, surf);
+  int x = rect.GetX() + (rect.GetW() - surf.GetWidth()) / 2;
+  int y = rect.GetY() + (rect.GetH() - surf.GetHeight()) / 2;
+
+  renderer.Copy(tex, SDL2pp::NullOpt,
+                SDL2pp::Rect(x, y, surf.GetWidth(), surf.GetHeight()));
 }

@@ -1,9 +1,12 @@
 #include "ChatCommandParser.h"
 
+#include <cctype>
+#include <limits>
+
 static constexpr uint8_t EQUIP_SLOT_FROM_VISUAL[4] = {0, 2, 1, 3};
 
-// Para soportar nombres de clan con espacios, se pueden escribir entre comillas. Ejemplo:
-// /fundar-clan "Los Guerreros"
+// Para soportar nombres de clan con espacios, se pueden escribir entre
+// comillas. Ejemplo: /fundar-clan "Los Guerreros"
 static std::string stripQuotes(std::string s) {
   if (s.size() >= 2 && s.front() == '"' && s.back() == '"') {
     return s.substr(1, s.size() - 2);
@@ -17,6 +20,28 @@ static int parseIntArg(const std::string &message, size_t prefixLen) {
   } catch (...) {
     return -1;
   }
+}
+
+static bool parseUint32Arg(const std::string &message, size_t prefixLen,
+                           uint32_t &value) {
+  if (message.size() <= prefixLen) {
+    return false;
+  }
+
+  uint64_t parsed = 0;
+  for (unsigned char ch : message.substr(prefixLen)) {
+    if (!std::isdigit(ch)) {
+      return false;
+    }
+
+    parsed = parsed * 10 + static_cast<uint64_t>(ch - '0');
+    if (parsed > std::numeric_limits<uint32_t>::max()) {
+      return false;
+    }
+  }
+
+  value = static_cast<uint32_t>(parsed);
+  return true;
 }
 
 ChatCommand ChatCommandParser::parse(const std::string &message) {
@@ -80,16 +105,16 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
     return {ChatCommandType::ConsultarOro, -1};
 
   if (message.rfind("/comprar ", 0) == 0 && message.size() > 9) {
-    int id = parseIntArg(message, 9);
-    if (id > 0 && id < 20)
-      return {ChatCommandType::Comprar, id};
+    std::string itemName = message.substr(9);
+    if (!itemName.empty())
+      return {ChatCommandType::Comprar, 0, itemName};
     return {ChatCommandType::None, 0};
   }
 
   if (message.rfind("/vender ", 0) == 0 && message.size() > 8) {
-    int id = parseIntArg(message, 8);
-    if (id > 0 && id < 20)
-      return {ChatCommandType::Vender, id};
+    std::string itemName = message.substr(8);
+    if (!itemName.empty())
+      return {ChatCommandType::Vender, 0, itemName};
     return {ChatCommandType::None, 0};
   }
 
@@ -99,9 +124,9 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
       if (amount > 0)
         return {ChatCommandType::DepositarOro, amount};
     } else {
-      int id = parseIntArg(message, 11);
-      if (id > 0 && id < 20)
-        return {ChatCommandType::Depositar, id};
+      std::string itemName = message.substr(11);
+      if (!itemName.empty())
+        return {ChatCommandType::Depositar, 0, itemName};
     }
     return {ChatCommandType::None, 0};
   }
@@ -112,9 +137,9 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
       if (amount > 0)
         return {ChatCommandType::RetirarOro, amount};
     } else {
-      int id = parseIntArg(message, 9);
-      if (id > 0 && id < 20)
-        return {ChatCommandType::Retirar, id};
+      std::string itemName = message.substr(9);
+      if (!itemName.empty())
+        return {ChatCommandType::Retirar, 0, itemName};
     }
     return {ChatCommandType::Unknown, 0};
   }
@@ -197,6 +222,10 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
     return {ChatCommandType::Revivir, 0};
   }
 
+  if (message == "/meditar") {
+    return {ChatCommandType::Meditar, 0};
+  }
+
   if (message == "/nivel") {
     return {ChatCommandType::SetLevel, 0};
   }
@@ -207,6 +236,21 @@ ChatCommand ChatCommandParser::parse(const std::string &message) {
       return {ChatCommandType::SetLevel, level};
     }
     return {ChatCommandType::SetLevel, 0};
+  }
+
+  if (message.rfind("/setoro ", 0) == 0) {
+    uint32_t amount = 0;
+    if (parseUint32Arg(message, 8, amount)) {
+      return {ChatCommandType::SetGold, 0, "", amount};
+    }
+    return {ChatCommandType::Unknown, 0};
+  }
+
+  if (message.rfind("/obtener ", 0) == 0 && message.size() > 9) {
+    std::string itemName = message.substr(9);
+    if (!itemName.empty())
+      return {ChatCommandType::Obtener, 0, itemName};
+    return {ChatCommandType::None, 0};
   }
 
   if (message.rfind("/clan-rechazar ", 0) == 0 && message.size() > 15) {

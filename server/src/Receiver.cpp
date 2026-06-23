@@ -1,5 +1,7 @@
 #include "Receiver.h"
 
+#include <iostream>
+
 #include "DTO/Commands/ExitCommandDTO.h"
 #include "DTO/Commands/MoveCommandDTO.h"
 #include "DTO/Commands/PlayerStopCommandDTO.h"
@@ -23,8 +25,7 @@ void Receiver::run() {
 
     } catch (const CommunicationEnded &e) {
       if (keepRunning) {
-        gameloopQueue.push(
-            ClientMessage{ExitCommandDTO{}, connectionId});
+        gameloopQueue.push(ClientMessage{ExitCommandDTO{}, connectionId});
       }
       break;
 

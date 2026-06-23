@@ -19,9 +19,9 @@ void Acceptor::run() {
           std::move(peer), gameloopQueue, senderQueueMonitor, clientId);
 
       reap(connections);
-      connection->start();
+      connection->run();
       connections.push_back(std::move(connection));
-      
+
     } catch (...) {
       break;
     }
@@ -32,18 +32,17 @@ void Acceptor::run() {
 void Acceptor::kill() {
   keepRunning = false;
 
-  try {
-    acceptor.shutdown(SHUT_RDWR);
-    acceptor.close();
-  } catch (...) {}
+  acceptor.shutdown(SHUT_RDWR);
+  acceptor.close();
 }
 
-void Acceptor::reap(std::vector<std::unique_ptr<ClientConnection>>& connections) {
+void Acceptor::reap(
+    std::vector<std::unique_ptr<ClientConnection>> &connections) {
 
   auto it = connections.begin();
 
   while (it != connections.end()) {
-    ClientConnection& client = **it;
+    ClientConnection &client = **it;
 
     if (client.isDead()) {
       client.join();
@@ -55,12 +54,13 @@ void Acceptor::reap(std::vector<std::unique_ptr<ClientConnection>>& connections)
 }
 
 void Acceptor::clear(
-    std::vector<std::unique_ptr<ClientConnection>>& connections) {
+    std::vector<std::unique_ptr<ClientConnection>> &connections) {
 
-  for (auto& client : connections) {
+  for (auto &client : connections) {
     try {
       client->kill();
-    } catch (...) {}
+    } catch (...) {
+    }
 
     client->join();
   }

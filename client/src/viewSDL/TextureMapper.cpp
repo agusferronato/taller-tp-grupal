@@ -32,12 +32,9 @@ void TextureMapper::loadFromToml(const std::string &path) {
 void TextureMapper::buildRenderGrid(const std::list<TileOrigin> &origins,
                                     int gridSizePx) {
   int maxPriority = 0;
-  auto maxCmp = [](const auto &a, const auto &b) {
-    return a.priority < b.priority;
-  };
-  auto itMax = std::max_element(origins.begin(), origins.end(), maxCmp);
-  if (itMax != origins.end()) {
-    maxPriority = itMax->priority;
+  for (const auto &origin : origins) {
+    if (origin.priority > maxPriority)
+      maxPriority = origin.priority;
   }
   tilesToRender.resize(maxPriority + 1);
 
@@ -49,42 +46,24 @@ void TextureMapper::buildRenderGrid(const std::list<TileOrigin> &origins,
     int rows = std::ceil(static_cast<float>(it->second.height) / gridSizePx);
     int columns = std::ceil(static_cast<float>(it->second.width) / gridSizePx);
 
-    int spare_y = it->second.height;
-    std::vector<GridItem> items;
-    int max_row = 0, max_col = 0;
+    TextureRenderInfo info;
+    info.texture_id = origin.texture_id;
+    info.origin_i = origin.x;
+    info.origin_j = origin.y;
+    info.width_px = it->second.width;
+    info.height_px = it->second.height;
 
-    for (int j = origin.y; j < origin.y + rows; j++) {
-      int spare_x = it->second.width;
-
-      for (int i = origin.x; i < origin.x + columns; i++) {
-        GridItem tile;
-        tile.texture_id = origin.texture_id;
-        tile.x_start = (i - origin.x) * gridSizePx;
-        tile.y_start = (j - origin.y) * gridSizePx;
-        tile.x_end = tile.x_start + std::min(gridSizePx, spare_x);
-        tile.y_end = tile.y_start + std::min(gridSizePx, spare_y);
-        tile.i = i;
-        tile.j = j;
-        items.push_back(std::move(tile));
-        max_col = i;
-        spare_x -= gridSizePx;
-      }
-
-      spare_y -= gridSizePx;
-      max_row = j;
-    }
-
-    auto key = std::make_pair(max_row, max_col);
-    tilesToRender[origin.priority][key] = std::move(items);
+    auto key = std::make_pair(origin.y + rows - 1, origin.x + columns - 1);
+    tilesToRender[origin.priority][key] = info;
   }
 }
 
 SDL2pp::Texture &TextureMapper::getTexture(int id) {
-  SDL2pp::Texture& texture = textures.at(id).texture;
+  SDL2pp::Texture &texture = textures.at(id).texture;
   return texture;
 }
 
-const std::vector<std::map<std::pair<int, int>, std::vector<GridItem>>> &
+const std::vector<std::map<std::pair<int, int>, TextureRenderInfo>> &
 TextureMapper::getTilesToRender() const {
   return tilesToRender;
 }

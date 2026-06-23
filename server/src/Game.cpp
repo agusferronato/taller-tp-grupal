@@ -4,6 +4,7 @@
 #include <cmath>
 #include <sstream>
 
+#include "AttackReceivedEventDTO.h"
 #include "CityEntityAppearedEventDTO.h"
 #include "CityEntityMovedEventDTO.h"
 #include "CityEntityStoppedEventDTO.h"
@@ -13,42 +14,39 @@
 #include "GlobalChatMessageEventDTO.h"
 #include "GroundItemsListEventDTO.h"
 #include "InventoryUpdateEventDTO.h"
+#include "ItemData.h"
 #include "LoginResultEventDTO.h"
 #include "MapLoader.h"
+#include "MeditateCommandDTO.h"
 #include "MoveCommandDTO.h"
 #include "NPCAppearedEventDTO.h"
 #include "NPCMovedEventDTO.h"
 #include "NPCStoppedEventDTO.h"
 #include "PlayerAppearedEventDTO.h"
 #include "PlayerInfoEventDTO.h"
-#include "PlayerResurrectEventDTO.h"
 #include "PlayerListEventDTO.h"
 #include "PlayerMovedEventDTO.h"
 #include "PlayerRemovedEventDTO.h"
+#include "PlayerResurrectEventDTO.h"
 #include "PlayerStopCommandDTO.h"
 #include "PlayerStoppedEventDTO.h"
 #include "RegisterPlayerCommandDTO.h"
 #include "RegisterPlayerEventDTO.h"
 #include "TextureInfoEventDTO.h"
+#include "Weapon.h"
 #include "command/CommandFactory.h"
-#include "GroundItemsListEventDTO.h"
-#include "AttackReceivedEventDTO.h"
-#include "InventoryUpdateEventDTO.h"
-#include "GlobalChatMessageEventDTO.h"
 #include <NPCType.h>
 
 namespace {
 constexpr uint32_t MIN_LEVEL_TO_CREATE_CLAN = 6;
 
 ChatMessageEventDTO makeChatMessage(ChatMessageCategory category,
-                                    std::string sender,
-                                    std::string message) {
+                                    std::string sender, std::string message) {
   return ChatMessageEventDTO{category, std::move(sender), std::move(message)};
 }
 
 ChatMessageEventDTO makeClanMessage(std::string message) {
-  return makeChatMessage(ChatMessageCategory::Clan, "Clan",
-                         std::move(message));
+  return makeChatMessage(ChatMessageCategory::Clan, "Clan", std::move(message));
 }
 
 ChatMessageEventDTO makeClanErrorMessage(std::string message) {
@@ -65,34 +63,39 @@ ChatMessageEventDTO makeSystemMessage(std::string message) {
   return makeChatMessage(ChatMessageCategory::System, "Sistema",
                          std::move(message));
 }
-
-ChatMessageEventDTO makeCombatMessage(std::string message) {
-  return makeChatMessage(ChatMessageCategory::Combat, "Sistema",
-                         std::move(message));
-}
 } // namespace
 
 Game::Game(Queue<ClientMessage> &gameloopQueue,
            SenderQueueMonitor &senderQueueMonitor, PlayerRepository &repository,
            ClanManager &clanManager, const std::string &mapPath)
     : gameloopQueue(gameloopQueue), senderQueueMonitor(senderQueueMonitor),
-      repository(repository), clanManager(clanManager), mapPath(mapPath) {}
+      repository(repository), clanManager(clanManager), mapLoader(mapPath),
+      maxSize(mapLoader.GetMaxSize()), gridSize(mapLoader.GetGridSize()),
+      commonGroundTextureId(mapLoader.GetCommonGroundTextureId()),
+      textureOrigins(mapLoader.GetTextureOrigins()),
+      collidableCells(mapLoader.GetCollidableCells()),
+      storeData("store_data.toml"), groundItems(),
+      playerService(senderQueueMonitor, repository, clanManager, messagesToSend,
+                    colisionables, cities, npcs, maxSize, gridSize,
+                    commonGroundTextureId, textureOrigins, groundItems),
+      players(playerService.getPlayers()),
+      inventoryManager(players, messagesToSend, groundItems),
+      combatSystem(playerService, npcs, cities, colisionables, biomes,
+                   messagesToSend, senderQueueMonitor, inventoryManager,
+                   clanManager, cheatsByPlayer, gridSize, maxSize) {}
 
 void Game::run() {
-  MapLoader mapLoader(mapPath);
-  maxSize = mapLoader.GetMaxSize();
-  gridSize = mapLoader.GetGridSize();
-  commonGroundTextureId = mapLoader.GetCommonGroundTextureId();
-  textureOrigins = mapLoader.GetTextureOrigins();
-  collidableCells = mapLoader.GetCollidableCells();
-
   biomes = std::move(mapLoader.GetBiomes());
   cities = std::move(mapLoader.GetCities());
-  createCityEntities();
 
-  for (uint8_t id = 1; id <= 19; ++id) {
-    inventoryManager.addGroundItem(id, (id - 1) * 64, 32);
+  BiomeData biomeData("biome_strategy.toml");
+  NPCData npcData("npc_info.toml");
+
+  for (auto &biome : biomes) {
+    biome->setData(biomeData, npcData);
   }
+
+  createCityEntities();
 
   ConstantRateLoop rateloop(FPS_SERVER);
   CommandFactory factory;
@@ -103,6 +106,11 @@ void Game::run() {
     ClientMessage msg;
 
     if (gameloopQueue.try_pop(msg)) {
+      auto popIt = players.find(msg.connectionId);
+      if (popIt != players.end() && popIt->second->isMeditating() &&
+          !std::get_if<MeditateCommandDTO>(&msg.dto)) {
+        stopMeditating(msg.connectionId);
+      }
       auto command = factory.create(msg.dto);
       command->execute(*this, msg.connectionId);
     }
@@ -124,9 +132,7 @@ void Game::run() {
     }
 
     if (it % 60 == 0) {
-      for (auto &[pid, p] : players) {
-        messagesToSend.push_back(p->toPlayerInfoEvent());
-      }
+      restorePlayers();
     }
 
     rateloop.updateTimer(it);
@@ -138,223 +144,32 @@ void Game::run() {
 
 void Game::kill() { keepRunning = false; }
 
+void Game::sendExistingPlayersInventory(uint32_t connectionId,
+                                        uint32_t newPlayerId) {
+  for (auto &[pid, info] : players) {
+    if (pid == newPlayerId)
+      continue;
+    senderQueueMonitor.sendToClient(
+        connectionId,
+        InventoryUpdateEventDTO{
+            pid, info->getInventoryItems(), info->getEquippedWeapon().getID(),
+            info->getEquippedArmor().getID(), info->getEquippedHelmet().getID(),
+            info->getEquippedShield().getID()});
+  }
+}
+
 void Game::registerPlayer(const std::string &name, const Race race,
                           const PlayerClass playerClass,
                           uint32_t connectionId) {
-
-  if (repository.exists(name)) {
-    senderQueueMonitor.sendToClient(
-        connectionId,
-        RegisterPlayerEventDTO{0, RegisterStatus::PlayerAlreadyExists});
-    return;
-  }
-
-  uint32_t newId = connectionId;
-  int spawnX = nextSpawnX;
-  int spawnY = 0;
-  nextSpawnX += 64;
-
-  auto player = std::make_unique<Character>(newId, name, race, playerClass,
-                                             spawnX, spawnY, Direction::Down);
-  player->addItem(17);
-  player->addItem(1);
-  repository.create(player->toPlayerData());
-
-  colisionables.push_back(player.get());
-  players[newId] = std::move(player);
-  playerIdByName[name] = newId;
-
-  senderQueueMonitor.markAsRegistered(connectionId);
-
-  senderQueueMonitor.sendToClient(connectionId,
-                                  RegisterPlayerEventDTO{newId,
-                                                         RegisterStatus::Success});
-
-  {
-    std::vector<TextureOriginDTO> origins;
-    origins.reserve(textureOrigins.size());
-    for (const auto &o : textureOrigins) {
-      origins.push_back(
-          {static_cast<uint8_t>(o.priority), static_cast<uint16_t>(o.texture_id),
-           static_cast<uint16_t>(o.x), static_cast<uint16_t>(o.y)});
-    }
-    senderQueueMonitor.sendToClient(
-        connectionId,
-        TextureInfoEventDTO{
-            static_cast<uint16_t>(maxSize), static_cast<uint16_t>(gridSize),
-            static_cast<uint16_t>(commonGroundTextureId), std::move(origins)});
-  }
-
-  std::vector<PlayerInfoDTO> playerList;
-  for (auto &[pid, info] : players) {
-    playerList.push_back(info->toPlayerInfo(pid));
-  }
-
-  senderQueueMonitor.sendToClient(connectionId,
-                                  PlayerListEventDTO{std::move(playerList)});
-
-  for (auto &npc : npcs) {
-    senderQueueMonitor.sendToClient(
-        connectionId,
-        NPCAppearedEventDTO{npc->getId(), static_cast<uint8_t>(npc->getType()),
-                            static_cast<int16_t>(npc->getX()),
-                            static_cast<int16_t>(npc->getY())});
-  }
-
-  for (auto &city : cities) {
-    for (auto *entity : city.getEntities()) {
-      senderQueueMonitor.sendToClient(
-          connectionId,
-          CityEntityAppearedEventDTO{
-              entity->getId(),
-              static_cast<uint8_t>(entity->getCityEntityType()),
-              static_cast<int16_t>(entity->getX()),
-              static_cast<int16_t>(entity->getY()), entity->getDirection()});
-    }
-  }
-
-  messagesToSend.push_back(players[newId]->toPlayerAppeared());
-
-  messagesToSend.push_back(InventoryUpdateEventDTO{
-      newId, players[newId]->getInventoryItems(),
-      players[newId]->getEquippedWeapon(), players[newId]->getEquippedArmor(),
-      players[newId]->getEquippedHelmet(),
-      players[newId]->getEquippedShield()});
-
-  {
-    std::vector<GroundItemInfoDTO> groundItemList;
-    for (const auto &gi : inventoryManager.getGroundItems()) {
-      groundItemList.push_back({gi.id, gi.itemId, static_cast<int16_t>(gi.x),
-                                static_cast<int16_t>(gi.y)});
-    }
-    senderQueueMonitor.sendToClient(
-        connectionId, GroundItemsListEventDTO{std::move(groundItemList)});
-  }
+  playerService.registerPlayer(name, race, playerClass, connectionId);
 }
 
 void Game::validateLogin(const std::string &name, uint32_t connectionId) {
-  if (!repository.exists(name)) {
-    senderQueueMonitor.sendToClient(
-        connectionId, LoginResultEventDTO{0, LoginStatus::PlayerNotFound});
-    return;
-  }
-
-  for (auto &[pid, info] : players) {
-    if (info->getName() == name) {
-      senderQueueMonitor.sendToClient(
-          connectionId, LoginResultEventDTO{0, LoginStatus::AlreadyOnline});
-      return;
-    }
-  }
-
-  senderQueueMonitor.sendToClient(connectionId,
-                                  LoginResultEventDTO{0, LoginStatus::Success});
+  playerService.validateLogin(name, connectionId);
 }
 
 void Game::loginPlayer(const std::string &name, uint32_t connectionId) {
-
-  if (!repository.exists(name)) {
-    senderQueueMonitor.sendToClient(
-        connectionId, LoginResultEventDTO{0, LoginStatus::PlayerNotFound});
-    return;
-  }
-
-  for (auto &[pid, info] : players) {
-    if (info->getName() == name) {
-      senderQueueMonitor.sendToClient(
-          connectionId, LoginResultEventDTO{0, LoginStatus::AlreadyOnline});
-      return;
-    }
-  }
-
-  PlayerData data = repository.load(name);
-  uint32_t newId = connectionId;
-
-  auto player = std::make_unique<Character>(newId, data);
-  uint32_t savedClanId = player->getClanId();
-  if (savedClanId != 0) {
-    const Clan *clan = clanManager.getClan(savedClanId);
-    if (clan == nullptr || !clan->hasMember(player->getName())) {
-      player->leaveClan();
-      repository.save(player->getName(), player->toPlayerData());
-    }
-  }
-
-  colisionables.push_back(player.get());
-  players[newId] = std::move(player);
-  playerIdByName[name] = newId;
-
-  senderQueueMonitor.markAsRegistered(connectionId);
-
-  senderQueueMonitor.sendToClient(connectionId,
-                                  LoginResultEventDTO{newId,
-                                                      LoginStatus::Success});
-
-  std::vector<TextureOriginDTO> origins;
-  origins.reserve(textureOrigins.size());
-  for (const auto &o : textureOrigins) {
-    origins.push_back({static_cast<uint8_t>(o.priority),
-                       static_cast<uint16_t>(o.texture_id),
-                       static_cast<uint16_t>(o.x), static_cast<uint16_t>(o.y)});
-  }
-  senderQueueMonitor.sendToClient(
-      connectionId,
-      TextureInfoEventDTO{
-          static_cast<uint16_t>(maxSize), static_cast<uint16_t>(gridSize),
-           static_cast<uint16_t>(commonGroundTextureId), std::move(origins)});
-
-  std::vector<PlayerInfoDTO> playerList;
-  for (auto &[pid, info] : players) {
-    playerList.push_back(info->toPlayerInfo(pid));
-  }
-  senderQueueMonitor.sendToClient(connectionId,
-                                  PlayerListEventDTO{std::move(playerList)});
-
-  for (auto &npc : npcs) {
-    senderQueueMonitor.sendToClient(
-        connectionId,
-        NPCAppearedEventDTO{npc->getId(), static_cast<uint8_t>(npc->getType()),
-                            static_cast<int16_t>(npc->getX()),
-                            static_cast<int16_t>(npc->getY())});
-  }
-
-  for (auto &city : cities) {
-    for (auto *entity : city.getEntities()) {
-      senderQueueMonitor.sendToClient(
-          connectionId,
-          CityEntityAppearedEventDTO{
-              entity->getId(),
-              static_cast<uint8_t>(entity->getCityEntityType()),
-              static_cast<int16_t>(entity->getX()),
-              static_cast<int16_t>(entity->getY()), entity->getDirection()});
-    }
-  }
-
-  messagesToSend.push_back(players[newId]->toPlayerAppeared());
-
-  if (players[newId]->isDead())
-    messagesToSend.push_back(PlayerDieEventDTO{players[newId]->getId()});
-
-  messagesToSend.push_back(InventoryUpdateEventDTO{
-      newId, players[newId]->getInventoryItems(),
-      players[newId]->getEquippedWeapon(), players[newId]->getEquippedArmor(),
-      players[newId]->getEquippedHelmet(),
-      players[newId]->getEquippedShield()});
-
-  {
-    std::vector<GroundItemInfoDTO> groundItemList;
-    for (const auto &gi : inventoryManager.getGroundItems()) {
-      groundItemList.push_back({gi.id, gi.itemId, static_cast<int16_t>(gi.x),
-                                static_cast<int16_t>(gi.y)});
-    }
-    senderQueueMonitor.sendToClient(
-        connectionId, GroundItemsListEventDTO{std::move(groundItemList)});
-  }
-
-  uint32_t clanId = players[newId]->getClanId();
-  if (clanId != 0) {
-    sendToClan(clanId, makeClanMessage(name + " entro a Argentum"), newId);
-  }
+  playerService.loginPlayer(name, connectionId);
 }
 
 void Game::movePlayer(uint32_t playerId, Direction direction) {
@@ -377,31 +192,7 @@ void Game::stopPlayer(uint32_t playerId) {
   messagesToSend.push_back(PlayerStoppedEventDTO{playerId});
 }
 
-void Game::exitPlayer(uint32_t playerId) {
-  auto it = players.find(playerId);
-  if (it == players.end()) {
-    return;
-  }
-
-  const std::string playerName = it->second->getName();
-  uint32_t clanId = it->second->getClanId();
-  repository.save(playerName, it->second->toPlayerData());
-
-  if (clanId != 0) {
-    sendToClan(clanId, makeClanMessage(playerName + " salio de Argentum"),
-               playerId);
-  }
-
-  colisionables.erase(
-      std::remove(colisionables.begin(), colisionables.end(), it->second.get()),
-      colisionables.end());
-
-  messagesToSend.push_back(PlayerRemovedEventDTO{playerId});
-
-  playerIdByName.erase(playerName);
-  cheatsByPlayer.erase(playerId);
-  players.erase(it);
-}
+void Game::exitPlayer(uint32_t playerId) { playerService.exitPlayer(playerId); }
 
 void Game::equipItem(uint32_t playerId, uint8_t inventorySlot) {
   inventoryManager.equipItem(playerId, inventorySlot);
@@ -431,22 +222,23 @@ void Game::sendPrivateMessage(uint32_t connectionId,
     return;
   }
 
-  auto targetPlayerId = findPlayerIdByName(targetName);
-  if (!targetPlayerId.has_value()) {
-    sendToPlayer(senderIt->second->getId(),
-                 makeSystemErrorMessage(
-                     "Ese jugador no existe o no esta online"));
+  auto targetPlayerOpt = playerService.getPlayer(targetName);
+  if (!targetPlayerOpt.has_value()) {
+    sendToPlayer(
+        senderIt->second->getId(),
+        makeSystemErrorMessage("Ese jugador no existe o no esta online"));
     return;
   }
 
   const std::string &senderName = senderIt->second->getName();
-  sendToPlayer(targetPlayerId.value(),
+  sendToPlayer(targetPlayerOpt.value()->getId(),
                PrivateMessageEventDTO{senderName, targetName, message});
   sendToPlayer(senderIt->second->getId(),
                PrivateMessageEventDTO{senderName, targetName, message});
 }
 
-void Game::applyCheat(uint32_t connectionId, CheatType cheat, uint32_t arg) {
+void Game::applyCheat(uint32_t connectionId, CheatType cheat, uint32_t arg,
+                      const std::string &itemName) {
   uint32_t playerId = connectionId;
   auto playerIt = players.find(playerId);
   if (playerIt == players.end()) {
@@ -463,7 +255,7 @@ void Game::applyCheat(uint32_t connectionId, CheatType cheat, uint32_t arg) {
       sendToPlayer(playerId, makeSystemErrorMessage("Ya estas muerto"));
       return;
     }
-    killPlayer(player);
+    combatSystem.killPlayer(player);
     messagesToSend.push_back(player.toPlayerInfoEvent());
     sendSystemMessageToPlayer(playerId, "Has muerto");
     return;
@@ -514,7 +306,8 @@ void Game::applyCheat(uint32_t connectionId, CheatType cheat, uint32_t arg) {
       sendSystemMessageToPlayer(playerId, "Ya estas vivo");
       return;
     }
-    // Si el jugador estaba en proceso de resurreccion, se lo saca de ese proceso para revivirlo
+    // Si el jugador estaba en proceso de resurreccion, se lo saca de ese
+    // proceso para revivirlo
     resurrectingPlayers.remove_if(
         [playerId](const ResurrectingPlayer &resurrectingPlayer) {
           return resurrectingPlayer.character->getId() == playerId;
@@ -528,6 +321,46 @@ void Game::applyCheat(uint32_t connectionId, CheatType cheat, uint32_t arg) {
     sendPlayerInfoUpdate(playerId);
     sendSystemMessageToPlayer(playerId, "Has revivido");
     return;
+
+  case CheatType::SetGold: {
+    uint32_t previousGold = player.getGold();
+    player.setGold(arg);
+
+    uint32_t currentGold = player.getGold();
+    int64_t appliedGold =
+        static_cast<int64_t>(currentGold) - static_cast<int64_t>(previousGold);
+
+    bool goldWasRemoved = appliedGold < 0;
+    if (goldWasRemoved) {
+      sendSystemMessageToPlayer(
+          playerId, "Oro solicitado: " + std::to_string(arg) +
+                        ". Oro removido: " + std::to_string(-appliedGold) +
+                        ". Oro actual: " + std::to_string(currentGold) + ".");
+    } else {
+      sendSystemMessageToPlayer(
+          playerId, "Oro solicitado: " + std::to_string(arg) +
+                        ". Oro agregado: " + std::to_string(appliedGold) +
+                        ". Oro actual: " + std::to_string(currentGold) + ".");
+    }
+    sendPlayerInfoUpdate(playerId);
+    return;
+  }
+
+  case CheatType::Obtener: {
+    uint8_t itemId = ItemData::instance().getItemIdByName(itemName);
+    if (itemId == 0) {
+      sendToPlayer(playerId, makeSystemErrorMessage("Item no encontrado"));
+      return;
+    }
+    if (!player.addItem(itemId)) {
+      sendToPlayer(playerId, makeSystemErrorMessage("Inventario lleno"));
+      return;
+    }
+    sendInventoryUpdate(playerId);
+    sendSystemMessageToPlayer(
+        playerId, "Has obtenido " + ItemData::instance().getItemName(itemId));
+    return;
+  }
   }
 }
 
@@ -540,10 +373,9 @@ void Game::createClan(uint32_t playerId, const std::string &clanName) {
   const std::string &playerName = playerIt->second->getName();
   if (playerIt->second->getLevel() < MIN_LEVEL_TO_CREATE_CLAN) {
     sendToPlayer(playerId,
-                 makeClanErrorMessage(
-                     "Necesitas ser nivel " +
-                     std::to_string(MIN_LEVEL_TO_CREATE_CLAN) +
-                     " para fundar un clan"));
+                 makeClanErrorMessage("Necesitas ser nivel " +
+                                      std::to_string(MIN_LEVEL_TO_CREATE_CLAN) +
+                                      " para fundar un clan"));
     return;
   }
 
@@ -577,15 +409,15 @@ void Game::requestJoinClan(uint32_t playerId, const std::string &clanName) {
   ClanJoinRequestResult result =
       clanManager.requestJoinClan(clanName, playerIt->second->getName());
   if (result == ClanJoinRequestResult::Success) {
-    sendToPlayer(
-        playerId, makeClanMessage("Solicitud enviada al clan " + clanName));
+    sendToPlayer(playerId,
+                 makeClanMessage("Solicitud enviada al clan " + clanName));
 
     uint32_t clanId = clanManager.getClanIdByName(clanName);
     const Clan *clan = clanManager.getClan(clanId);
     if (clan != nullptr) {
-      auto founderId = findPlayerIdByName(clan->founderName);
-      if (founderId.has_value()) {
-        sendToPlayer(founderId.value(),
+      auto founderOpt = playerService.getPlayer(clan->founderName);
+      if (founderOpt.has_value()) {
+        sendToPlayer(founderOpt.value()->getId(),
                      makeClanMessage(playerIt->second->getName() +
                                      " solicito unirse al clan " + clanName));
       }
@@ -615,11 +447,13 @@ void Game::acceptClanRequest(uint32_t founderId,
     return;
   }
 
-  auto targetPlayerId = findPlayerIdByName(playerName);
-  if (!targetPlayerId.has_value() && !repository.exists(playerName)) {
+  auto targetPlayerOpt = playerService.getPlayer(playerName);
+  if (!targetPlayerOpt.has_value() || !repository.exists(playerName)) {
     sendToPlayer(founderId, makeClanErrorMessage("Jugador no encontrado"));
     return;
   }
+
+  std::optional<uint32_t> targetPlayerId = targetPlayerOpt.value()->getId();
 
   const std::string &founderName = founderIt->second->getName();
   uint32_t clanId = clanManager.getClanId(founderName);
@@ -639,10 +473,10 @@ void Game::acceptClanRequest(uint32_t founderId,
 
       sendToPlayer(targetPlayerId.value(),
                    makeClanMessage("Bienvenido al clan " + clanName));
-      sendToClan(clanId,
-                 makeClanMessage("El jugador " + playerName +
-                                 " se unio al clan"),
-                 targetPlayerId.value());
+      sendToClan(
+          clanId,
+          makeClanMessage("El jugador " + playerName + " se unio al clan"),
+          targetPlayerId.value());
     } else {
       PlayerData data = repository.load(playerName);
       data.clanId = clanId;
@@ -676,8 +510,8 @@ void Game::rejectClanRequest(uint32_t founderId,
     return;
   }
 
-  auto targetPlayerId = findPlayerIdByName(playerName);
-  if (!targetPlayerId.has_value() && !repository.exists(playerName)) {
+  auto targetPlayerOpt = playerService.getPlayer(playerName);
+  if (!targetPlayerOpt.has_value() && !repository.exists(playerName)) {
     sendToPlayer(founderId, makeClanErrorMessage("Jugador no encontrado"));
     return;
   }
@@ -686,8 +520,8 @@ void Game::rejectClanRequest(uint32_t founderId,
       clanManager.rejectJoinRequest(founderIt->second->getName(), playerName);
   if (result == ClanRejectResult::Success) {
     sendToPlayer(founderId, makeClanMessage("Solicitud rechazada"));
-    if (targetPlayerId.has_value()) {
-      sendToPlayer(targetPlayerId.value(),
+    if (targetPlayerOpt.has_value()) {
+      sendToPlayer(targetPlayerOpt.value()->getId(),
                    makeClanMessage("Tu solicitud fue rechazada"));
     }
     return;
@@ -710,8 +544,8 @@ void Game::banClanPlayer(uint32_t founderId, const std::string &playerName) {
     return;
   }
 
-  auto targetPlayerId = findPlayerIdByName(playerName);
-  if (!targetPlayerId.has_value() && !repository.exists(playerName)) {
+  auto targetPlayerOpt = playerService.getPlayer(playerName);
+  if (!targetPlayerOpt.has_value() && !repository.exists(playerName)) {
     sendToPlayer(founderId, makeClanErrorMessage("Jugador no encontrado"));
     return;
   }
@@ -720,18 +554,18 @@ void Game::banClanPlayer(uint32_t founderId, const std::string &playerName) {
   uint32_t clanId = clanManager.getClanId(founderName);
   ClanBanResult result = clanManager.banPlayer(founderName, playerName);
   if (result == ClanBanResult::Success) {
-    if (targetPlayerId.has_value()) {
-      auto playerIt = players.find(targetPlayerId.value());
+    if (targetPlayerOpt.has_value()) {
+      auto playerIt = players.find(targetPlayerOpt.value()->getId());
       playerIt->second->leaveClan();
       repository.save(playerIt->second->getName(),
                       playerIt->second->toPlayerData());
 
-      sendToPlayer(targetPlayerId.value(),
+      sendToPlayer(targetPlayerOpt.value()->getId(),
                    makeClanMessage("Fuiste baneado del clan"));
-      sendToClan(clanId,
-                 makeClanMessage("El jugador " + playerName +
-                                 " fue baneado del clan"),
-                 targetPlayerId.value());
+      sendToClan(
+          clanId,
+          makeClanMessage("El jugador " + playerName + " fue baneado del clan"),
+          targetPlayerOpt.value()->getId());
     } else {
       PlayerData data = repository.load(playerName);
       data.clanId = 0;
@@ -761,8 +595,8 @@ void Game::kickClanMember(uint32_t founderId, const std::string &playerName) {
     return;
   }
 
-  auto targetPlayerId = findPlayerIdByName(playerName);
-  if (!targetPlayerId.has_value() && !repository.exists(playerName)) {
+  auto targetPlayerOpt = playerService.getPlayer(playerName);
+  if (!targetPlayerOpt.has_value() && !repository.exists(playerName)) {
     sendToPlayer(founderId, makeClanErrorMessage("Jugador no encontrado"));
     return;
   }
@@ -771,18 +605,18 @@ void Game::kickClanMember(uint32_t founderId, const std::string &playerName) {
   uint32_t clanId = clanManager.getClanId(founderName);
   ClanKickResult result = clanManager.kickMember(founderName, playerName);
   if (result == ClanKickResult::Success) {
-    if (targetPlayerId.has_value()) {
-      auto playerIt = players.find(targetPlayerId.value());
+    if (targetPlayerOpt.has_value()) {
+      auto playerIt = players.find(targetPlayerOpt.value()->getId());
       playerIt->second->leaveClan();
       repository.save(playerIt->second->getName(),
                       playerIt->second->toPlayerData());
 
-      sendToPlayer(targetPlayerId.value(),
+      sendToPlayer(targetPlayerOpt.value()->getId(),
                    makeClanMessage("Fuiste expulsado del clan"));
       sendToClan(clanId,
                  makeClanMessage("El jugador " + playerName +
                                  " fue expulsado del clan"),
-                 targetPlayerId.value());
+                 targetPlayerOpt.value()->getId());
     } else {
       PlayerData data = repository.load(playerName);
       data.clanId = 0;
@@ -844,16 +678,14 @@ void Game::reviewClan(uint32_t playerId) {
 
   const std::string &playerName = playerIt->second->getName();
   if (!clanManager.hasClan(playerName)) {
-    sendToPlayer(playerId,
-                 makeClanErrorMessage("No perteneces a un clan"));
+    sendToPlayer(playerId, makeClanErrorMessage("No perteneces a un clan"));
     return;
   }
 
   uint32_t clanId = clanManager.getClanId(playerName);
   const Clan *clan = clanManager.getClan(clanId);
   if (clan == nullptr) {
-    sendToPlayer(playerId,
-                 makeClanErrorMessage("No perteneces a un clan"));
+    sendToPlayer(playerId, makeClanErrorMessage("No perteneces a un clan"));
     return;
   }
 
@@ -936,7 +768,8 @@ void Game::movePlayers() {
     if (!info->isMoving())
       continue;
 
-    auto [targetX, targetY] = info->getTargetPosition(movementSpeedFor(playerID));
+    auto [targetX, targetY] =
+        info->getTargetPosition(movementSpeedFor(playerID));
 
     int origX = info->getX();
     int origY = info->getY();
@@ -970,24 +803,9 @@ void Game::sendGlobalChatMessage(uint32_t playerId,
 }
 
 void Game::attack(uint32_t playerId, int16_t x, int16_t y) {
-  auto it = players.find(playerId);
-  if (it == players.end()) {
-    return;
-  }
-  auto attacker = it->second.get();
-  if (!attacker->assertAttackDistance(x, y)) {
-    return;
-  }
-  auto targetNPC = findNPCByCoordinates(x, y);
-  if (targetNPC != nullptr) {
-    playerAttackNPC(*attacker, *targetNPC);
-    return;
-  }
-
-  auto targetPlayer = findPlayerByCoordinates(x, y);
-  if (targetPlayer != nullptr) {
-    playerAttackPlayer(*attacker, *targetPlayer);
-    return;
+  auto player = playerService.getPlayer(playerId);
+  if (player.has_value()) {
+    combatSystem.attack(*(player.value()), x, y);
   }
 }
 
@@ -997,19 +815,12 @@ void Game::appearNPCs() {
   }
 }
 
-std::optional<uint32_t>
-Game::findPlayerIdByName(const std::string &name) const {
-  auto it = playerIdByName.find(name);
-  if (it == playerIdByName.end())
-    return std::nullopt;
-  return it->second;
-}
-
-std::string Game::getPlayerName(uint32_t playerId) const {
-  auto it = players.find(playerId);
-  if (it == players.end())
+std::string Game::getPlayerName(uint32_t playerId) {
+  auto playerOpt = playerService.getPlayer(playerId);
+  if (!playerOpt.has_value()) {
     return "Player " + std::to_string(playerId);
-  return it->second->getName();
+  }
+  return playerOpt.value()->getName();
 }
 
 void Game::sendToPlayer(uint32_t playerId, const ServerEventDTO &event) {
@@ -1027,15 +838,15 @@ void Game::sendToClan(uint32_t clanId, const ServerEventDTO &event,
                       std::optional<uint32_t> exceptPlayerId) {
   std::vector<std::string> members = clanManager.getMembers(clanId);
   for (const std::string &playerName : members) {
-    auto playerId = findPlayerIdByName(playerName);
-    if (!playerId.has_value()) {
+    auto playerOpt = playerService.getPlayer(playerName);
+    if (!playerOpt.has_value()) {
       continue;
     }
     if (exceptPlayerId.has_value() &&
-        playerId.value() == exceptPlayerId.value()) {
+        playerOpt.value()->getId() == exceptPlayerId.value()) {
       continue;
     }
-    sendToPlayer(playerId.value(), event);
+    sendToPlayer(playerOpt.value()->getId(), event);
   }
 }
 
@@ -1050,7 +861,8 @@ void Game::sendSystemMessageToPlayer(uint32_t playerId,
 
 void Game::sendErrorMessageToConnection(uint32_t connectionId,
                                         const std::string &message) {
-  senderQueueMonitor.sendToClient(connectionId, makeSystemErrorMessage(message));
+  senderQueueMonitor.sendToClient(connectionId,
+                                  makeSystemErrorMessage(message));
 }
 
 uint32_t Game::movementSpeedFor(uint32_t playerId) const {
@@ -1098,7 +910,7 @@ bool Game::checkIfItCollides(Colisionable *entity) {
 
 void Game::createCityEntities() {
   for (auto &city : cities) {
-    city.createEntities(*this);
+    city.createEntities(*this, storeData);
 
     for (auto *entity : city.getEntities()) {
       int center = maxSize / 2;
@@ -1118,40 +930,9 @@ void Game::createCityEntities() {
   }
 }
 
-
-
-
-void Game::tryAttack(NPC& npc, Character& target) {
-
-  if (!npc.collidesWith(target) || !npc.reachesAttackCounter())
-    return;
-
-  if (target.tryParry()) {
-    senderQueueMonitor.sendToClient(
-        target.getId(),
-        makeCombatMessage(npc.getName() + " trato de atacarte pero lo esquivaste"));
-    return;
-  }
-
-  target.takeDamage(npc.getDamage());
-
-  if (target.getHp() <= 0) {
-    killPlayer(target);
-    return;
-  }
-
-  messagesToSend.push_back(
-      AttackReceivedEventDTO{EntityType::Player, target.getId(),
-                             EffectType::NormalAttack});
-  messagesToSend.push_back(target.toPlayerInfoEvent());
-}
-
-
-
-void Game::makeNPCsfollowPlayers()
-{
-  for (auto& npc : npcs) {
-    Character* target = nullptr;
+void Game::makeNPCsfollowPlayers() {
+  for (auto &npc : npcs) {
+    Character *target = nullptr;
 
     for (auto &[_, player] : players) {
       if (player->isInCity(cities, gridSize, maxSize) || player->isDead())
@@ -1172,7 +953,7 @@ void Game::makeNPCsfollowPlayers()
       if (npc->updatePosition(*target)) {
         if (checkIfItCollides(npc.get())) {
 
-          tryAttack(*npc, *target);
+          combatSystem.tryAttack(*npc, *target);
 
           npc->setPixelPosition(oldX, oldY);
           npc->stop();
@@ -1192,320 +973,94 @@ void Game::makeNPCsfollowPlayers()
   }
 }
 
-
 void Game::makeCitiesEntitiesFollowPlayers() {
   for (auto &city : cities) {
     for (auto *cityEntity : city.getEntities()) {
       Character *target = nullptr;
 
       for (auto &[_, player] : players) {
-        if (!city.contains(player->getX(), player->getY(), gridSize, maxSize) || player->isDead())
+        if (!city.contains(player->getX(), player->getY(), gridSize, maxSize) ||
+            player->isDead())
           continue;
 
         int dx = cityEntity->getX() - player->getX();
         int dy = cityEntity->getY() - player->getY();
-        if (abs(dx) <= cityEntity->getRange() && abs(dy) <= cityEntity->getRange()) {
-            target = player.get();
-            break;
-        }
-      }
-
-            if (target) {
-                int oldX = cityEntity->getX();
-                int oldY = cityEntity->getY();
-
-                if (cityEntity->updatePosition(*target)) {
-                    if (checkIfItCollides(cityEntity)) {
-                        cityEntity->setPixelPosition(oldX, oldY);
-                        cityEntity->stop();
-                        messagesToSend.push_back(CityEntityStoppedEventDTO{cityEntity->getId()});
-                    } else {
-                        messagesToSend.push_back(
-                            CityEntityMovedEventDTO{cityEntity->getId(),
-                                                    static_cast<int16_t>(cityEntity->getX()),
-                                                    static_cast<int16_t>(cityEntity->getY()),
-                                                    cityEntity->getDirection()});
-                    }
-                } else {
-                  if (cityEntity->getIsMoving()) {
-                    cityEntity->stop();
-                    messagesToSend.push_back(CityEntityStoppedEventDTO{cityEntity->getId()});
-                  }
-                }
-            } else {
-                if (cityEntity->getIsMoving()) {
-                    cityEntity->stop();
-                    messagesToSend.push_back(CityEntityStoppedEventDTO{cityEntity->getId()});
-                }
-            }
-        }
-      }
-    }
-
-    
-void Game::playerAttackPlayer(Character &attacker, Character &target) {
-
-  if (!validAttack(attacker, target)) {
-    return;
-  }
-  uint32_t damage = calculateDamage(attacker);
-  bool critico = (damage != attacker.getDamage());
-
-  if (!critico && target.tryParry()) {
-    senderQueueMonitor.sendToClient(
-        attacker.getId(),
-        makeCombatMessage("Atacaste a " + target.getName() +
-                          " pero el lo esquivo"));
-    senderQueueMonitor.sendToClient(
-        target.getId(),
-        makeCombatMessage(attacker.getName() +
-                          " trato de atacarte pero lo esquivaste"));
-    return;
-  }
-  if (hasInfiniteHealth(target.getId())) {
-    damage = 0;
-  } else {
-    damage = target.takeDamage(damage);
-  }
-
-  messagesToSend.push_back(
-      AttackReceivedEventDTO{EntityType::Player, target.getId(),
-                             EffectType::NormalAttack});
-
-  uint32_t xp = Formulas::calcularExperiencia(damage, attacker.getLevel(),
-                                              target.getLevel());
-  attacker.gainExperience(xp);
-
-  if (target.getHp() <= 0) {
-    uint32_t oro = target.dropGoldOnDeath();
-    attacker.addGold(oro);
-    uint32_t xpMuerte = Formulas::calcularExperienciaMuerte(
-        target.getMaxHp(), attacker.getLevel(), target.getLevel(),
-        (std::rand() % 100) / 100.0);
-    attacker.gainExperience(xpMuerte);
-    killPlayer(target);
-  } else {
-    senderQueueMonitor.sendToClient(
-        attacker.getId(),
-        makeCombatMessage("Atacaste a " + target.getName() +
-                          " y le hiciste " + std::to_string(damage) +
-                          " de daño!"));
-    senderQueueMonitor.sendToClient(
-        target.getId(),
-        makeCombatMessage("Recibiste un ataque de " + attacker.getName() +
-                          " y te hicieron " + std::to_string(damage) +
-                          " de daño!"));
-  }
-  messagesToSend.push_back(attacker.toPlayerInfoEvent());
-  messagesToSend.push_back(target.toPlayerInfoEvent());
-}
-
-void Game::playerAttackNPC(Character &attacker, NPC &target) {
-
-  if (!validAttackToNpc(attacker))
-    return;
-
-  uint32_t damage = calculateDamage(attacker);
-
-  bool critico = (damage != attacker.getDamage());
-
-  if (!critico && target.tryParry()) {
-    senderQueueMonitor.sendToClient(
-        attacker.getId(),
-        makeCombatMessage("Atacaste a " + target.getName() + " pero lo esquivo"));
-    return;
-  }
-
-  target.takeDamage(damage);
-
-  messagesToSend.push_back(
-      AttackReceivedEventDTO{EntityType::Npc, target.getId(),
-                             EffectType::NormalAttack});
-
-  uint32_t xp = Formulas::calcularExperiencia(damage, attacker.getLevel(),
-                                              target.getLevel());
-  attacker.gainExperience(xp);
-
-  if (target.getHP() <= 0) {
-
-    ObjectDropped objectDropped = target.getDroppedObject();
-
-    switch (objectDropped.type) {
-      case ObjectDroppedType::Gold:
-        attacker.addGold(objectDropped.value);
-        break;
-
-      case ObjectDroppedType::Item:
-        inventoryManager.addGroundItem(
-            static_cast<uint8_t>(objectDropped.value), target.getX(),
-            target.getY());
-        break;
-
-      default:
-        break;
-    }
-
-    uint32_t xpMuerte = Formulas::calcularExperienciaMuerte(
-        target.getMaxHp(), attacker.getLevel(), target.getLevel(),
-        (std::rand() % 100) / 100.0);
-    attacker.gainExperience(xpMuerte);
-
-    messagesToSend.push_back(NpcDefeatedEventDTO{target.getId()});
-
-    colisionables.erase(
-        std::remove(colisionables.begin(), colisionables.end(), &target),
-        colisionables.end());
-
-    auto npcIt = std::find_if(
-        npcs.begin(), npcs.end(),
-        [&target](const auto &npc) { return npc.get() == &target; });
-    if (npcIt != npcs.end()) {
-      uint32_t npcId = (*npcIt)->getId();
-      for (auto &biome : biomes) {
-        if (biome->hasNPC(npcId)) {
-          biome->unregisterNPC(npcId);
+        if (abs(dx) <= cityEntity->getRange() &&
+            abs(dy) <= cityEntity->getRange()) {
+          target = player.get();
           break;
         }
       }
-      npcs.erase(npcIt);
-    }
 
-  } else {
-    senderQueueMonitor.sendToClient(
-        attacker.getId(),
-        makeCombatMessage("Atacaste a un " + target.getName() +
-                          " y le hiciste " + std::to_string(damage) +
-                          " de daño!"));
-  }
-  messagesToSend.push_back(attacker.toPlayerInfoEvent());
+      if (target) {
+        int oldX = cityEntity->getX();
+        int oldY = cityEntity->getY();
 
-}
-
-uint32_t Game::calculateDamage(Character &attacker) {
-  uint32_t damage = attacker.getDamage();
-  if (Formulas::calcularCritico(std::rand())) {
-    return damage * 2;
-  }
-  return damage;
-}
-
-bool Game::validAttack(Character &attacker, Character &target) {
-  
-  // No puedes atacarte a ti mismo
-  if (attacker.getId() == target.getId()) {
-    return false;
-  }
-  
-  if (attacker.isNewbie()) {
-    senderQueueMonitor.sendToClient(
-        attacker.getId(),
-        makeCombatMessage("No podes atacar a otros jugadores siendo newbie."));
-    return false;
-  }
-
-  if (target.isNewbie()) {
-    senderQueueMonitor.sendToClient(
-        attacker.getId(),
-        makeCombatMessage("No podes atacar a un jugador newbie."));
-    return false;
-  }
-
-  if (clanManager.sameClan(attacker.getName(), target.getName())) {
-    senderQueueMonitor.sendToClient(
-        attacker.getId(),
-        makeCombatMessage("No podes atacar a un miembro de tu clan."));
-    return false;
-  }
-
-  if (abs(static_cast<int>(attacker.getLevel()) -
-          static_cast<int>(target.getLevel())) > 10) {
-    senderQueueMonitor.sendToClient(
-        attacker.getId(),
-        makeCombatMessage("No podes atacar a un jugador con tanta diferencia "
-                          "de nivel."));
-    return false;
-  }
-  for (const auto &city : cities) {
-    if (city.contains(attacker.getX(), attacker.getY(), gridSize, maxSize) ||
-        city.contains(target.getX(), target.getY(), gridSize, maxSize)) {
-      senderQueueMonitor.sendToClient(
-          attacker.getId(),
-          makeCombatMessage("No podes atacar jugadores dentro de una ciudad."));
-      return false;
+        if (cityEntity->updatePosition(*target)) {
+          if (checkIfItCollides(cityEntity)) {
+            cityEntity->setPixelPosition(oldX, oldY);
+            cityEntity->stop();
+            messagesToSend.push_back(
+                CityEntityStoppedEventDTO{cityEntity->getId()});
+          } else {
+            messagesToSend.push_back(CityEntityMovedEventDTO{
+                cityEntity->getId(), static_cast<int16_t>(cityEntity->getX()),
+                static_cast<int16_t>(cityEntity->getY()),
+                cityEntity->getDirection()});
+          }
+        } else {
+          if (cityEntity->getIsMoving()) {
+            cityEntity->stop();
+            messagesToSend.push_back(
+                CityEntityStoppedEventDTO{cityEntity->getId()});
+          }
+        }
+      } else {
+        if (cityEntity->getIsMoving()) {
+          cityEntity->stop();
+          messagesToSend.push_back(
+              CityEntityStoppedEventDTO{cityEntity->getId()});
+        }
+      }
     }
   }
-  if (attacker.isDead() || target.isDead()) {
-    senderQueueMonitor.sendToClient(
-        attacker.getId(),
-        makeCombatMessage("No podes atacar o ser atacado estando muerto."));
-    return false;
-  }
-  return true;
 }
 
-bool Game::validAttackToNpc(Character &attacker) {
-  if (attacker.isDead())
-    return false;
-  for (const auto &city : cities) {
-    if (city.contains(attacker.getX(), attacker.getY(), gridSize, maxSize)) {
-      return false;
-    }
+void Game::restorePlayers() {
+  for (auto &[pid, p] : players) {
+    p->restore();
+    messagesToSend.push_back(p->toPlayerInfoEvent());
   }
-  return true;
 }
-
-Character *Game::findPlayerByCoordinates(int16_t x, int16_t y) {
-  for (auto &[pid, player] : players) {
-    if (player->colisionaCon(x, y, 16, 16)) {
-      return player.get();
-    }
-  }
-  return nullptr;
-}
-
-NPC *Game::findNPCByCoordinates(int16_t x, int16_t y) {
-  for (auto &npc : npcs) {
-    if (npc->colisionaCon(x, y, 16, 16)) {
-      return npc.get();
-    }
-  }
-  return nullptr;
-}
-
-void Game::killPlayer(Character &dyingPlayer) {
-  dyingPlayer.dropGoldOnDeath();
-  auto items = dyingPlayer.die();
-  int16_t x = dyingPlayer.getX();
-  int16_t y = dyingPlayer.getY();
-  for (auto itemId : items) {
-    inventoryManager.addGroundItem(itemId, x, y);
-  }
-  messagesToSend.push_back(PlayerDieEventDTO{dyingPlayer.getId()});
-}
-
 
 void Game::sendInventoryUpdate(uint32_t playerId) {
-  auto it = players.find(playerId);
-  if (it == players.end())
+  auto playerOpt = playerService.getPlayer(playerId);
+  if (!playerOpt.has_value()) {
     return;
+  }
+  Character &player = *(playerOpt.value());
   messagesToSend.push_back(InventoryUpdateEventDTO{
-      playerId, it->second->getInventoryItems(),
-      it->second->getEquippedWeapon(), it->second->getEquippedArmor(),
-      it->second->getEquippedHelmet(), it->second->getEquippedShield()});
+      playerId, player.getInventoryItems(), player.getEquippedWeapon().getID(),
+      player.getEquippedArmor().getID(), player.getEquippedHelmet().getID(),
+      player.getEquippedShield().getID()});
 }
 
 void Game::sendPlayerInfoUpdate(uint32_t playerId) {
-  auto it = players.find(playerId);
-  if (it == players.end())
+  auto playerOpt = playerService.getPlayer(playerId);
+  if (!playerOpt.has_value()) {
     return;
-  messagesToSend.push_back(it->second->toPlayerInfoEvent());
+  }
+  Character &player = *(playerOpt.value());
+  messagesToSend.push_back(player.toPlayerInfoEvent());
 }
 
 void Game::sendPlayerMoved(uint32_t playerId) {
-  auto it = players.find(playerId);
-  if (it == players.end())
+  auto playerOpt = playerService.getPlayer(playerId);
+  if (!playerOpt.has_value()) {
     return;
-  messagesToSend.push_back(it->second->toPlayerMoved());
+  }
+  Character &player = *(playerOpt.value());
+  messagesToSend.push_back(player.toPlayerMoved());
 }
 
 bool Game::isNearEntity(CityEntity &entity, const Character &character) {
@@ -1515,10 +1070,11 @@ bool Game::isNearEntity(CityEntity &entity, const Character &character) {
 }
 
 CityEntity *Game::findNearestEntity(uint32_t playerId, CityEntityType type) {
-  auto playerIt = players.find(playerId);
-  if (playerIt == players.end())
+  auto playerOpt = playerService.getPlayer(playerId);
+  if (!playerOpt.has_value()) {
     return nullptr;
-  auto &character = playerIt->second;
+  }
+  Character *character = playerOpt.value();
   CityEntity *nearest = nullptr;
   int minDist = INT_MAX;
 
@@ -1538,15 +1094,35 @@ CityEntity *Game::findNearestEntity(uint32_t playerId, CityEntityType type) {
   return nearest;
 }
 
+void Game::startMeditating(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end() || it->second->isDead())
+    return;
+  if (it->second->getMaxMana() == 0) {
+    sendSystemMessage(playerId, "Tu clase no puede meditar.");
+    return;
+  }
+  it->second->startMeditating();
+  sendSystemMessage(playerId, "Comenzaste a meditar.");
+}
+
+void Game::stopMeditating(uint32_t playerId) {
+  auto it = players.find(playerId);
+  if (it == players.end() || !it->second->isMeditating())
+    return;
+  it->second->stopMeditating();
+  sendSystemMessage(playerId, "Dejaste de meditar.");
+}
+
 void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
-                                    int16_t arg) {
+                                    const std::string &arg) {
   auto playerIt = players.find(playerId);
   if (playerIt == players.end())
     return;
   auto &character = playerIt->second;
 
-  if (character->isDead() && 
-      static_cast<CityEntityCommandDTO::Type>(type) != CityEntityCommandDTO::RESUCITAR)
+  if (character->isDead() && static_cast<CityEntityCommandDTO::Type>(type) !=
+                                 CityEntityCommandDTO::RESUCITAR)
     return;
 
   switch (static_cast<CityEntityCommandDTO::Type>(type)) {
@@ -1557,7 +1133,7 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
     if (!priest || !isNearEntity(*priest, *character)) {
 
       sendSystemMessage(playerId, "No estas cerca de un sacerdote.");
-      
+
       return;
     }
     priest->heal(*this, *character);
@@ -1576,7 +1152,8 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
     auto *priest = dynamic_cast<Priest *>(
         findNearestEntity(playerId, CityEntityType::Priest));
     if (!priest) {
-      sendSystemMessage(playerId, "No hay ningun sacerdote disponible para resucitarte.");
+      sendSystemMessage(playerId,
+                        "No hay ningun sacerdote disponible para resucitarte.");
       return;
     }
     priest->resurrect(*this, *character);
@@ -1584,11 +1161,11 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
   }
 
   case CityEntityCommandDTO::COMPRAR: {
-    if (arg < 1 || arg >= 20) {
-      sendSystemMessage(playerId, "ID de objeto invalido.");
+    uint8_t itemId = ItemData::instance().getItemIdByName(arg);
+    if (itemId == NOT_FOUND) {
+      sendSystemMessage(playerId, "Objeto no encontrado.");
       return;
     }
-    uint8_t itemId = static_cast<uint8_t>(arg);
     auto *priest = dynamic_cast<Priest *>(
         findNearestEntity(playerId, CityEntityType::Priest));
     if (priest && isNearEntity(*priest, *character)) {
@@ -1601,13 +1178,15 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       trader->buyItem(*this, *character, itemId);
       break;
     }
-    sendSystemMessage(playerId, "No estas cerca de un sacerdote o comerciante.");
+    sendSystemMessage(playerId,
+                      "No estas cerca de un sacerdote o comerciante.");
     break;
   }
 
   case CityEntityCommandDTO::VENDER: {
-    if (arg < 1 || arg >= 20) {
-      sendSystemMessage(playerId, "ID de objeto invalido.");
+    uint8_t itemId = ItemData::instance().getItemIdByName(arg);
+    if (itemId == NOT_FOUND) {
+      sendSystemMessage(playerId, "Objeto no encontrado.");
       return;
     }
     auto *trader = dynamic_cast<Trader *>(
@@ -1616,7 +1195,7 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       sendSystemMessage(playerId, "No estas cerca de un comerciante.");
       return;
     }
-    trader->sellItem(*this, *character, static_cast<uint8_t>(arg));
+    trader->sellItem(*this, *character, itemId);
     break;
   }
 
@@ -1639,7 +1218,8 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       banker->listItemsAvailables(*this, *character);
       break;
     }
-    sendSystemMessage(playerId, "No estas cerca de un sacerdote, comerciante o banquero.");
+    sendSystemMessage(
+        playerId, "No estas cerca de un sacerdote, comerciante o banquero.");
     break;
   }
 
@@ -1655,8 +1235,9 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
   }
 
   case CityEntityCommandDTO::DEPOSITAR_ITEM: {
-    if (arg < 1 || arg >= 20) {
-      sendSystemMessage(playerId, "ID de objeto invalido.");
+    uint8_t itemId = ItemData::instance().getItemIdByName(arg);
+    if (itemId == NOT_FOUND) {
+      sendSystemMessage(playerId, "Objeto no encontrado.");
       return;
     }
     auto *banker = dynamic_cast<Banker *>(
@@ -1665,13 +1246,14 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       sendSystemMessage(playerId, "No estas cerca de un banquero.");
       return;
     }
-    banker->saveItem(*this, *character, static_cast<uint8_t>(arg));
+    banker->saveItem(*this, *character, itemId);
     break;
   }
 
   case CityEntityCommandDTO::RETIRAR_ITEM: {
-    if (arg < 1 || arg >= 20) {
-      sendSystemMessage(playerId, "ID de objeto invalido.");
+    uint8_t itemId = ItemData::instance().getItemIdByName(arg);
+    if (itemId == NOT_FOUND) {
+      sendSystemMessage(playerId, "Objeto no encontrado.");
       return;
     }
     auto *banker = dynamic_cast<Banker *>(
@@ -1680,12 +1262,19 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       sendSystemMessage(playerId, "No hay ningun banquero disponible.");
       return;
     }
-    banker->takeItem(*this, *character, static_cast<uint8_t>(arg));
+    banker->takeItem(*this, *character, itemId);
     break;
   }
 
   case CityEntityCommandDTO::DEPOSITAR_ORO: {
-    if (arg <= 0) {
+    int16_t amount = 0;
+    try {
+      amount = static_cast<int16_t>(std::stoi(arg));
+    } catch (...) {
+      sendSystemMessage(playerId, "Cantidad invalida.");
+      return;
+    }
+    if (amount <= 0) {
       sendSystemMessage(playerId, "Cantidad invalida.");
       return;
     }
@@ -1695,12 +1284,19 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       sendSystemMessage(playerId, "No estas cerca de un banquero.");
       return;
     }
-    banker->saveGold(*this, *character, static_cast<uint16_t>(arg));
+    banker->saveGold(*this, *character, static_cast<uint16_t>(amount));
     break;
   }
 
   case CityEntityCommandDTO::RETIRAR_ORO: {
-    if (arg <= 0) {
+    int16_t amount = 0;
+    try {
+      amount = static_cast<int16_t>(std::stoi(arg));
+    } catch (...) {
+      sendSystemMessage(playerId, "Cantidad invalida.");
+      return;
+    }
+    if (amount <= 0) {
       sendSystemMessage(playerId, "Cantidad invalida.");
       return;
     }
@@ -1710,17 +1306,15 @@ void Game::executeCityEntityCommand(uint32_t playerId, uint8_t type,
       sendSystemMessage(playerId, "No hay ningun banquero disponible.");
       return;
     }
-    banker->takeGold(*this, *character, static_cast<uint16_t>(arg));
+    banker->takeGold(*this, *character, static_cast<uint16_t>(amount));
     break;
   }
   }
 }
 
-
-void Game::addResurrectingPlayer(Character &character, int priestX,
-                                 int priestY, int maxCounter) {
-  resurrectingPlayers.push_back(
-      {&character, priestX, priestY, 0, maxCounter});
+void Game::addResurrectingPlayer(Character &character, int priestX, int priestY,
+                                 int maxCounter) {
+  resurrectingPlayers.push_back({&character, priestX, priestY, 0, maxCounter});
 }
 
 void Game::updateResurrectingPlayers() {
@@ -1736,9 +1330,8 @@ void Game::updateResurrectingPlayers() {
       sendSystemMessage(pid, "Has sido resucitado.");
 
       senderQueueMonitor.sendToClient(
-          pid,
-          PlayerResurrectEventDTO{pid, static_cast<int16_t>(it->priestX),
-                                  static_cast<int16_t>(it->priestY)});
+          pid, PlayerResurrectEventDTO{pid, static_cast<int16_t>(it->priestX),
+                                       static_cast<int16_t>(it->priestY)});
 
       messagesToSend.push_back(it->character->toPlayerAppeared());
 
@@ -1750,6 +1343,8 @@ void Game::updateResurrectingPlayers() {
     }
   }
 }
+
+int Game::floorDiv(int a, int b) { return (a >= 0) ? a / b : (a - b + 1) / b; }
 
 bool Game::isResurrecting(uint32_t playerId) {
   for (auto &rp : resurrectingPlayers) {

@@ -6,11 +6,12 @@
 
 class AttackLayout {
 private:
-    std::vector<SpriteData> frames;
+  std::vector<SpriteData> frames;
+
 public:
-    explicit AttackLayout(std::vector<SpriteData> &frames);
-    SpriteData getLayout(unsigned int iterator, int &frameOut) const;
-    int size() const { return frames.size(); }
+  explicit AttackLayout(std::vector<SpriteData> &frames);
+  SpriteData getLayout(unsigned int iterator, int &frameOut) const;
+  int size() const;
 };
 
 #endif

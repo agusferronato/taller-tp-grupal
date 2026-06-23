@@ -1,8 +1,8 @@
 #ifndef CITY_ENTITY_MOVED_EVENT_DTO_H
 #define CITY_ENTITY_MOVED_EVENT_DTO_H
 
-#include "protocol/ProtocolCodes.h"
 #include "Direction.h"
+#include "protocol/ProtocolCodes.h"
 #include <cstdint>
 
 struct CityEntityMovedEventDTO {

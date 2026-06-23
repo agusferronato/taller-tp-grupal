@@ -5,11 +5,14 @@
 #include "DTO/Events/InventoryUpdateEventDTO.h"
 #include "DTO/Events/PlayerInfoEventDTO.h"
 #include "InventoryConstants.h"
+#include "ItemData.h"
 
 InventoryManager::InventoryManager(
     std::unordered_map<uint32_t, std::unique_ptr<Character>> &players,
-    std::list<ServerEventDTO> &messagesToSend)
-    : players(players), messagesToSend(messagesToSend) {}
+    std::list<ServerEventDTO> &messagesToSend,
+    std::vector<GroundItem> &groundItems)
+    : players(players), messagesToSend(messagesToSend),
+      groundItems(groundItems) {}
 
 void InventoryManager::equipItem(uint32_t playerId, uint8_t slotIndex) {
   auto it = players.find(playerId);
@@ -21,12 +24,12 @@ void InventoryManager::equipItem(uint32_t playerId, uint8_t slotIndex) {
   if (itemId == EMPTY_ITEM)
     return;
 
-  const ItemDef &def = ITEM_TABLE[itemId];
+  auto &idata = ItemData::instance();
 
-  if (def.type == ItemType::PotionHp || def.type == ItemType::PotionMana) {
+  if (idata.isPotionHp(itemId) || idata.isPotionMana(itemId)) {
     if (!player.removeItem(slotIndex))
       return;
-    consumePotion(player, def);
+    consumePotion(player, itemId);
     broadcastInventoryUpdate(player);
     broadcastPlayerInfo(player);
     return;
@@ -70,9 +73,9 @@ void InventoryManager::dropItem(uint32_t playerId, uint8_t slotIndex) {
   gi.y = player.getY();
   groundItems.push_back(gi);
 
-  messagesToSend.push_back(GroundItemAppearedEventDTO{
-      gi.id, gi.itemId, static_cast<int16_t>(gi.x),
-      static_cast<int16_t>(gi.y)});
+  messagesToSend.push_back(
+      GroundItemAppearedEventDTO{gi.id, gi.itemId, static_cast<int16_t>(gi.x),
+                                 static_cast<int16_t>(gi.y)});
 
   broadcastInventoryUpdate(player);
 }
@@ -103,8 +106,8 @@ void InventoryManager::takeItem(uint32_t playerId) {
 void InventoryManager::broadcastInventoryUpdate(Character &player) {
   messagesToSend.push_back(InventoryUpdateEventDTO{
       player.getId(), player.getInventoryItems(),
-      player.getEquippedWeapon(), player.getEquippedArmor(),
-      player.getEquippedHelmet(), player.getEquippedShield()});
+      player.getEquippedWeapon().getID(), player.getEquippedArmor().getID(),
+      player.getEquippedHelmet().getID(), player.getEquippedShield().getID()});
 }
 
 void InventoryManager::broadcastPlayerInfo(Character &player) {
@@ -114,17 +117,13 @@ void InventoryManager::broadcastPlayerInfo(Character &player) {
       player.getExperience()});
 }
 
-void InventoryManager::consumePotion(Character &player, const ItemDef &def) {
-  if (def.type == ItemType::PotionHp) {
-    player.heal(def.healAmount);
-  } else if (def.type == ItemType::PotionMana) {
-    player.addMana(def.healAmount);
+void InventoryManager::consumePotion(Character &player, uint8_t itemId) {
+  auto &idata = ItemData::instance();
+  if (idata.isPotionHp(itemId)) {
+    player.heal(idata.getPotionData(itemId).healAmount);
+  } else if (idata.isPotionMana(itemId)) {
+    player.addMana(idata.getPotionData(itemId).healAmount);
   }
-}
-
-const std::vector<InventoryManager::GroundItem> &
-InventoryManager::getGroundItems() const {
-  return groundItems;
 }
 
 void InventoryManager::addGroundItem(uint8_t itemId, int x, int y) {
@@ -135,13 +134,13 @@ void InventoryManager::addGroundItem(uint8_t itemId, int x, int y) {
   gi.y = y;
   groundItems.push_back(gi);
 
-  messagesToSend.push_back(GroundItemAppearedEventDTO{
-      gi.id, gi.itemId, static_cast<int16_t>(gi.x),
-      static_cast<int16_t>(gi.y)});
+  messagesToSend.push_back(
+      GroundItemAppearedEventDTO{gi.id, gi.itemId, static_cast<int16_t>(gi.x),
+                                 static_cast<int16_t>(gi.y)});
 }
 
 bool InventoryManager::isOnGroundItem(int px, int py,
-                                       const GroundItem &gi) const {
+                                      const GroundItem &gi) const {
   constexpr int margin = 16;
   return gi.x >= px - margin && gi.x < px + Character::ANCHO + margin &&
          gi.y >= py - margin && gi.y < py + Character::ALTO + margin;

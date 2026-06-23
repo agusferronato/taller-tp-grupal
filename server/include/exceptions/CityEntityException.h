@@ -11,8 +11,7 @@ public:
 
 class InsufficientGold : public std::runtime_error {
 public:
-  InsufficientGold()
-      : std::runtime_error("No tienes suficiente oro.") {}
+  InsufficientGold() : std::runtime_error("No tienes suficiente oro.") {}
 };
 
 class PlayerDoesNotHaveTheItem : public std::runtime_error {
@@ -24,7 +23,8 @@ public:
 class ItemNotFoundInBank : public std::runtime_error {
 public:
   ItemNotFoundInBank()
-      : std::runtime_error("Ese objeto no se encuentra en tu cuenta bancaria.") {}
+      : std::runtime_error(
+            "Ese objeto no se encuentra en tu cuenta bancaria.") {}
 };
 
 class NoGoldAvailable : public std::runtime_error {

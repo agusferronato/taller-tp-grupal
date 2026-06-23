@@ -2,10 +2,9 @@
 #include "protocol/RegisterAllParsers.h"
 
 ClientReceiver::ClientReceiver(Socket &socket,
-                               Queue<ServerEventDTO> &receptionQueue,
-                               ShutdownEvent &shutdownEvent)
+                               Queue<ServerEventDTO> &receptionQueue)
     : socket(socket), receptionQueue(receptionQueue),
-      shutdownEvent(shutdownEvent), protocol(Protocol(socket)) {
+      protocol(Protocol(socket)) {
   registerAllParsers(protocol);
 }
 
@@ -20,7 +19,6 @@ void ClientReceiver::run() {
 
     } catch (const CommunicationEnded &e) {
 
-      shutdownEvent.put(ShutdownReason::ConnectionClosed);
       receptionQueue.close();
       return;
 

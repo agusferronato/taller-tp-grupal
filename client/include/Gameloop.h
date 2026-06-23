@@ -17,14 +17,13 @@
 #include "PlayerMovedEventDTO.h"
 #include "Queue.h"
 #include "RegisterPlayerEventDTO.h"
-#include "ShutdownEvent.h"
+#include "ShutdownReason.h"
 #include "Thread.h"
 #include "WindowClosed.h"
 
 class Gameloop {
 
 private:
-  ShutdownEvent &shutdownEvent;
   ClientData clientData;
 
   std::unique_ptr<Audio> audio;
@@ -34,10 +33,9 @@ private:
 
 public:
   Gameloop(Queue<ServerEventDTO> &receptionQueue,
-           Queue<ClientCommandDTO> &sendingQueue, ShutdownEvent &shutdownEvent,
-           const ClientData &clientData);
+           Queue<ClientCommandDTO> &sendingQueue, const ClientData &clientData);
 
-  void run();
+  ShutdownReason run();
 
 private:
   void makeGame(Queue<ServerEventDTO> &receptionQueue,

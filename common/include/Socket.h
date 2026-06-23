@@ -178,9 +178,7 @@ public:
    * */
   ~Socket();
 
-#ifdef TESTING
 public:
-  static Socket from_fd(int skt) { return Socket(skt); }
-#endif
+  static Socket from_fd(int skt);
 };
 #endif

@@ -12,7 +12,8 @@ private:
   std::string message;
 
 public:
-  explicit GlobalChatMessageCommand(uint32_t playerId, const std::string &message);
+  explicit GlobalChatMessageCommand(uint32_t playerId,
+                                    const std::string &message);
 
   void execute(Game &game, uint32_t connectionId) override;
 };

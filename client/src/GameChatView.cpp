@@ -95,10 +95,8 @@ void GameChatView::renderMessages(SDL2pp::Renderer &renderer,
       break;
 
     renderer.Copy(*it->texture, SDL2pp::NullOpt,
-                  SDL2pp::Rect(messagesRect.GetX() + CHAT_PADDING_X_LEFT,
-                               y,
-                               it->width,
-                               it->height));
+                  SDL2pp::Rect(messagesRect.GetX() + CHAT_PADDING_X_LEFT, y,
+                               it->width, it->height));
   }
 }
 
@@ -119,11 +117,11 @@ void GameChatView::renderInput(SDL2pp::Renderer &renderer,
   int srcX = std::max(0, surf.GetWidth() - visibleWidth);
   int renderWidth = std::min(surf.GetWidth(), visibleWidth);
 
-  renderer.Copy(tex, SDL2pp::Rect(srcX, 0, renderWidth, surf.GetHeight()),
-                SDL2pp::Rect(
-                    inputRect.GetX() + CHAT_PADDING_X_LEFT,
-                    inputRect.GetY() + (inputRect.GetH() - surf.GetHeight()) / 2,
-                    renderWidth, surf.GetHeight()));
+  renderer.Copy(
+      tex, SDL2pp::Rect(srcX, 0, renderWidth, surf.GetHeight()),
+      SDL2pp::Rect(inputRect.GetX() + CHAT_PADDING_X_LEFT,
+                   inputRect.GetY() + (inputRect.GetH() - surf.GetHeight()) / 2,
+                   renderWidth, surf.GetHeight()));
 }
 
 std::vector<std::string> GameChatView::wrapText(const std::string &text,

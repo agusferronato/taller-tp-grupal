@@ -2,6 +2,7 @@
 #define CLIENT_PLAYER_H
 
 #include "Direction.h"
+#include "EffectType.h"
 #include "Inventory.h"
 #include "InventoryConstants.h"
 #include "Player.h"
@@ -22,6 +23,7 @@ private:
   uint32_t id;
   Player player;
   mutable bool beingAttacked{false};
+  mutable EffectType currentEffect{EffectType::NormalAttack};
 
 public:
   ClientPlayer(uint32_t id, std::string name, int xOrigin, int yOrigin,
@@ -34,40 +36,39 @@ public:
   void updateStats(uint32_t hp, uint32_t maxHp, uint32_t mana, uint32_t maxMana,
                    uint32_t gold, uint32_t level, uint32_t experience);
 
-  void setInventory(const std::array<uint8_t, MAX_INVENTORY_SLOTS> &items) {
-    player.setInventoryItems(items);
-  }
-  void setEquippedWeapon(uint8_t id) { player.setEquippedWeapon(id); }
-  void setEquippedArmor(uint8_t id) { player.setEquippedArmor(id); }
-  void setEquippedHelmet(uint8_t id) { player.setEquippedHelmet(id); }
-  void setEquippedShield(uint8_t id) { player.setEquippedShield(id); }
+  void setInventory(const std::array<uint8_t, MAX_INVENTORY_SLOTS> &items);
+  void setEquippedWeapon(uint8_t id);
+  void setEquippedArmor(uint8_t id);
+  void setEquippedHelmet(uint8_t id);
+  void setEquippedShield(uint8_t id);
 
   /* View */
-  bool getIsMoving() const { return player.isMoving(); }
-  Direction getDirection() const { return player.getDirection(); }
-  int get_x() const { return player.getX(); }
-  int get_y() const { return player.getY(); }
-  Race getRace() const { return player.getRace(); }
-  const std::string &getName() const { return player.getName(); }
-  uint32_t getHp() const { return player.getHp(); }
-  uint32_t getMaxHp() const { return player.getMaxHp(); }
-  uint32_t getMana() const { return player.getMana(); }
-  uint32_t getMaxMana() const { return player.getMaxMana(); }
-  uint32_t getGold() const { return player.getGold(); }
-  uint32_t getLevel() const { return player.getLevel(); }
-  uint32_t getExperience() const { return player.getExperience(); }
+  bool getIsMoving() const;
+  Direction getDirection() const;
+  int get_x() const;
+  int get_y() const;
+  Race getRace() const;
+  const std::string &getName() const;
+  uint32_t getHp() const;
+  uint32_t getMaxHp() const;
+  uint32_t getMana() const;
+  uint32_t getMaxMana() const;
+  uint32_t getGold() const;
+  uint32_t getLevel() const;
+  uint32_t getExperience() const;
 
-  const Player &getPlayer() const { return player; }
+  const Player &getPlayer() const;
 
-  bool isBeingAttacked() const { return beingAttacked; }
-  void setBeingAttacked(bool v) { beingAttacked = v; }
-  void stopAttackEffect() const { beingAttacked = false; }
+  bool isBeingAttackOrCured() const;
+  EffectType getEffect() const;
+  void setBeingAttacked(bool v, EffectType effect = EffectType::NormalAttack);
+  void stopAttackEffect() const;
 
-  uint8_t getEquippedWeapon() const { return player.getEquippedWeapon(); }
-  uint8_t getEquippedArmor() const { return player.getEquippedArmor(); }
-  uint8_t getEquippedHelmet() const { return player.getEquippedHelmet(); }
-  uint8_t getEquippedShield() const { return player.getEquippedShield(); }
-  const Inventory &getInventory() const { return player.getInventory(); }
+  uint8_t getEquippedWeapon() const;
+  uint8_t getEquippedArmor() const;
+  uint8_t getEquippedHelmet() const;
+  uint8_t getEquippedShield() const;
+  const Inventory &getInventory() const;
   void die();
   void resurrect(int x, int y);
   bool isDead() const;

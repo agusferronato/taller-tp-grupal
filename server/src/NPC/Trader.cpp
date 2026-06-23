@@ -1,63 +1,71 @@
 #include "Trader.h"
 #include "Game.h"
+#include "ItemData.h"
 
-Trader::Trader(Position position)
+std::map<uint8_t, ItemInStore>
+Trader::buildStoreItems(const std::map<uint8_t, StoreItemEntry> &entries) {
+  std::map<uint8_t, ItemInStore> items;
+  for (const auto &[id, entry] : entries) {
+    const PriceData &price = ItemData::instance().getPriceData(id);
+    items[id] = {price.buyPrice, price.sellPrice, entry.stock};
+  }
+  return items;
+}
+
+CityEntityType Trader::getCityEntityType() { return CityEntityType::Trader; }
+
+int Trader::getAncho() const { return TRADER_WIDTH; }
+int Trader::getAlto() const { return TRADER_HEIGHT; }
+
+Trader::Trader(Position position, const EntityStoreData &storeData)
     : CityEntity(position),
-      store(
-          {{{1, {50, 25, 10}},   {2, {80, 40, 8}},
-            {3, {60, 30, 10}},   {4, {100, 50, 6}},
-            {5, {200, 100, 4}},  {10, {100, 50, 8}},
-            {11, {400, 200, 3}}, {12, {200, 100, 5}},
-            {13, {50, 25, 10}},  {14, {100, 50, 8}},
-            {15, {200, 100, 4}}, {16, {50, 25, 10}},
-            {17, {100, 50, 8}},  {18, {30, 15, 20}},
-            {19, {50, 25, 15}}}},
-          {6, 7, 8, 9}) {}
+      store(buildStoreItems(storeData.items), storeData.itemsNotForTrading) {}
 
-void Trader::buyItem(Game& game, Character& character, uint8_t itemId) {
-    try {
-        store.buyItemWith(character, itemId);
-        game.sendSystemMessage(character.getId(),
-            "Has comprado " + ITEM_TABLE[itemId].name + " por " +
+void Trader::buyItem(Game &game, Character &character, uint8_t itemId) {
+  try {
+    store.buyItemWith(character, itemId);
+    game.sendSystemMessage(
+        character.getId(),
+        "Has comprado " + ItemData::instance().getItemName(itemId) + " por " +
             std::to_string(getStoreItem(itemId).purchase_price) + " de oro.");
-        game.sendInventoryUpdate(character.getId());
-    } catch (const ItemNotAvailable& e) {
-        game.sendSystemMessage(character.getId(), e.what());
-    } catch (const InsufficientGold& e) {
-        game.sendSystemMessage(character.getId(), e.what());
-    }
+    game.sendInventoryUpdate(character.getId());
+  } catch (const ItemNotAvailable &e) {
+    game.sendSystemMessage(character.getId(), e.what());
+  } catch (const InsufficientGold &e) {
+    game.sendSystemMessage(character.getId(), e.what());
+  }
 }
 
-void Trader::sellItem(Game& game, Character& character, uint8_t itemId) {
-    try {
-        store.sellItem(character, itemId);
-        game.sendSystemMessage(character.getId(),
-            "Has vendido " + ITEM_TABLE[itemId].name + " por " +
+void Trader::sellItem(Game &game, Character &character, uint8_t itemId) {
+  try {
+    store.sellItem(character, itemId);
+    game.sendSystemMessage(
+        character.getId(),
+        "Has vendido " + ItemData::instance().getItemName(itemId) + " por " +
             std::to_string(getStoreItem(itemId).sell_price) + " de oro.");
-        game.sendInventoryUpdate(character.getId());
-    } catch (const PlayerDoesNotHaveTheItem& e) {
-        game.sendSystemMessage(character.getId(), e.what());
-    } catch (const ItemNotAvailable& e) {
-        game.sendSystemMessage(character.getId(), e.what());
-    }
+    game.sendInventoryUpdate(character.getId());
+  } catch (const PlayerDoesNotHaveTheItem &e) {
+    game.sendSystemMessage(character.getId(), e.what());
+  } catch (const ItemNotAvailable &e) {
+    game.sendSystemMessage(character.getId(), e.what());
+  }
 }
 
-void Trader::listItems(Game& game, Character& character) { 
-    const auto& items = store.getItems();
-    if (items.empty()) {
-        game.sendSystemMessage(character.getId(),
-            "El comerciante no tiene objetos disponibles.");
-        return;
-    }
-    std::string msg = "Objetos del comerciante: \n";
-    for (auto& [id, item] : items) {
-        msg += "    (# " + std::to_string(id) + ") " + ITEM_TABLE[id].name 
-            + " (x" + std::to_string(item.stock) + "). Compra: " 
-            + std::to_string(item.purchase_price) + " Venta: " 
-            + std::to_string(item.sell_price) + " \n";
-
-    }
-    msg.erase(msg.size() - 2);
-    game.sendSystemMessage(character.getId(), msg);
+void Trader::listItems(Game &game, Character &character) {
+  const auto &items = store.getItems();
+  if (items.empty()) {
+    game.sendSystemMessage(character.getId(),
+                           "El comerciante no tiene objetos disponibles.");
+    return;
+  }
+  std::string msg = "Objetos del comerciante: \n";
+  for (auto &[id, item] : items) {
+    msg += "    (# " + std::to_string(id) + ") " +
+           ItemData::instance().getItemName(id) + " (x" +
+           std::to_string(item.stock) +
+           "). Compra: " + std::to_string(item.purchase_price) +
+           " Venta: " + std::to_string(item.sell_price) + " \n";
+  }
+  msg.erase(msg.size() - 2);
+  game.sendSystemMessage(character.getId(), msg);
 }
-

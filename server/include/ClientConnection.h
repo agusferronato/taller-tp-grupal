@@ -13,7 +13,7 @@
 #include "Thread.h"
 #include <sys/socket.h>
 
-class ClientConnection : public Thread {
+class ClientConnection {
 
 private:
   Socket peer;
@@ -35,7 +35,8 @@ public:
 
   bool isDead();
 
-  virtual void run() override;
+  void run();
+  void join();
 };
 
 #endif

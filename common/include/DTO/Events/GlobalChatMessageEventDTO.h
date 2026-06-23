@@ -6,8 +6,7 @@
 
 struct GlobalChatMessageEventDTO {
 private:
-  static constexpr EventOpcode opCode =
-      EventOpcode::GlobalChatMessageEvent;
+  static constexpr EventOpcode opCode = EventOpcode::GlobalChatMessageEvent;
 
 public:
   EventOpcode getCode() const { return opCode; }

@@ -6,8 +6,9 @@
 
 class AttackReceivedEventParser : public ServerEventParser {
 public:
-    void serialize(std::vector<uint8_t> &bytes, const ServerEventDTO &dto) override;
-    ServerEventDTO deserialize(Protocol &protocol) override;
+  void serialize(std::vector<uint8_t> &bytes,
+                 const ServerEventDTO &dto) override;
+  ServerEventDTO deserialize(Protocol &protocol) override;
 };
 
 #endif

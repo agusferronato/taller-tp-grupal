@@ -5,18 +5,20 @@
 #include "Biome.h"
 #include "Camera.h"
 #include "TextureMap.h"
+#include <QGuiApplication>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPaintEngine>
+#include <QPushButton>
 #include <QResizeEvent>
 #include <QTimer>
 #include <QWidget>
+#include <QWindow>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2pp/SDL2pp.hh>
 #include <memory>
 #include <string>
-#include <QPushButton>
 
 class Grid;
 
@@ -28,7 +30,6 @@ private:
 
   QPushButton *moveBtn{nullptr};
   QPushButton *deleteBtn{nullptr};
-  
 
   std::optional<SDL2pp::SDL> sdl;
   std::optional<SDL2pp::Window> window;
@@ -58,7 +59,6 @@ public:
   void saveMap(const std::string &path);
 
 private:
-
   void updateFloatingButtonsPos();
   void hideFloatingButtons();
 

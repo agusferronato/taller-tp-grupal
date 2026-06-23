@@ -5,17 +5,19 @@ CityEntityModel::CityEntityModel(int x, int y, Direction dir)
 
 int CityEntityModel::get_x() const { return x; }
 int CityEntityModel::get_y() const { return y; }
+Direction CityEntityModel::getDirection() const { return direction; }
+bool CityEntityModel::getIsMoving() const { return isMoving; }
 
 void CityEntityModel::setCoordinates(int x, int y) {
-    this->x = x;
-    this->y = y;
+  this->x = x;
+  this->y = y;
 }
 
 void CityEntityModel::updateCoordinates(int x, int y, Direction direction) {
-    setCoordinates(x, y);
-    isMoving = true;
-    if (direction != this->direction)
-        this->direction = direction;
+  setCoordinates(x, y);
+  isMoving = true;
+  if (direction != this->direction)
+    this->direction = direction;
 }
 
 void CityEntityModel::stopMoving() { isMoving = false; }

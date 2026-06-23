@@ -7,10 +7,11 @@
 #include <variant>
 
 void GlobalChatMessageEventParser::serialize(std::vector<uint8_t> &bytes,
-                                               const ServerEventDTO &dto) {
+                                             const ServerEventDTO &dto) {
   const auto &request = std::get<GlobalChatMessageEventDTO>(dto);
 
-  utils.appendBytes(static_cast<uint8_t>(EventOpcode::GlobalChatMessageEvent), bytes);
+  utils.appendBytes(static_cast<uint8_t>(EventOpcode::GlobalChatMessageEvent),
+                    bytes);
   utils.appendBytes(request.playerName, bytes);
   utils.appendBytes(request.message, bytes);
 }
